@@ -1,0 +1,11 @@
+services\core\aiva_core\core_capabilities\attack\exploit_orchestrator.py:27: error: Library stubs not installed for "yaml"  [import-untyped]
+services\core\aiva_core\core_capabilities\attack\exploit_orchestrator.py:27: note: Hint: "python3 -m pip install types-PyYAML"
+services\core\aiva_core\core_capabilities\attack\exploit_orchestrator.py:27: note: (or run "mypy --install-types" to install all missing stub packages)
+services\core\aiva_core\core_capabilities\attack\exploit_orchestrator.py:27: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+services\core\aiva_core\core_capabilities\risk_policy_manager.py:10: error: Library stubs not installed for "yaml"  [import-untyped]
+services\core\aiva_core\service_backbone\api\sse.py:21: error: Library stubs not installed for "aiofiles"  [import-untyped]
+services\core\aiva_core\service_backbone\api\sse.py:21: note: Hint: "python3 -m pip install types-aiofiles"
+services\core\aiva_core\service_backbone\coordination\ai_manager.py:37: error: Library stubs not installed for "aiofiles"  [import-untyped]
+services\core\aiva_core\task_planning\commander\policy_manager.py:12: error: Library stubs not installed for "yaml"  [import-untyped]
+services\aiva_common\__init__.py: error: Source file found twice under different module names: "services.aiva_common" and "aiva_common"
+Found 6 errors in 6 files (errors prevented further checking)

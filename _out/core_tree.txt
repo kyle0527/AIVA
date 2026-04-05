@@ -1,0 +1,477 @@
+列出磁碟區 OS 的資料夾 PATH
+磁碟區序號為 AA21-0736
+C:\D\FOLD7\AIVA-GIT\SERVICES\CORE\AIVA_CORE
+|   ai_executor_interface.py
+|   README.md
+|   __init__.py
+|   
++---cognitive_core
+|   |   ai_capability_query.py
+|   |   capability_encoder.py
+|   |   capability_orchestrator.py
+|   |   dispatcher.py
+|   |   external_loop_connector.py
+|   |   internal_loop_connector.py
+|   |   plugins
+|   |   plugin_system
+|   |   README.md
+|   |   __init__.py
+|   |   
+|   +---decision
+|   |   |   bounty_strategy_agent.py
+|   |   |   enhanced_decision_agent.py
+|   |   |   knowledge_decision_mixin.py
+|   |   |   README.md
+|   |   |   scan_execution_planner.py
+|   |   |   skill_graph.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           bounty_strategy_agent.cpython-313.pyc
+|   |           enhanced_decision_agent.cpython-313.pyc
+|   |           knowledge_decision_mixin.cpython-313.pyc
+|   |           skill_graph.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---embedded_knowledge
+|   |   |   base.py
+|   |   |   cve_identification.py
+|   |   |   README.md
+|   |   |   USAGE.md
+|   |   |   vulnerability_detection.py
+|   |   |   waf_bypass.py
+|   |   |   web_architecture.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           base.cpython-313.pyc
+|   |           cve_identification.cpython-313.pyc
+|   |           vulnerability_detection.cpython-313.pyc
+|   |           waf_bypass.cpython-313.pyc
+|   |           web_architecture.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---external_knowledge
+|   |       AI 掃描器漏洞判斷邏輯資料庫.md
+|   |       AI 識別高危險 CVE 模組.md
+|   |       WAF 繞過技術字典生成.md
+|   |       Web 架構安全漏洞檢測指南.md
+|   |       
+|   +---learning_system
+|   |   |   cli_decision_engine.py
+|   |   |   event_listener.py
+|   |   |   experience_manager.py
+|   |   |   flow_executor_adapter.py
+|   |   |   notification_system.py
+|   |   |   rag_trigger.py
+|   |   |   README.md
+|   |   |   
+|   |   +---analysis
+|   |   |   |   ast_trace_comparator.py
+|   |   |   |   dynamic_strategy_adjustment.py
+|   |   |   |   README.md
+|   |   |   |   
+|   |   |   \---__pycache__
+|   |   |           dynamic_strategy_adjustment.cpython-313.pyc
+|   |   |           
+|   |   +---data
+|   |   +---knowledge
+|   |   |       module_knowledge_manager.py
+|   |   |       README.md
+|   |   |       
+|   |   +---learning
+|   |   |       continuous_learning.py
+|   |   |       model_trainer.py
+|   |   |       online_learner.py
+|   |   |       README.md
+|   |   |       rl_models.py
+|   |   |       rl_trainers.py
+|   |   |       scalable_bio_trainer.py
+|   |   |       __init__.py
+|   |   |       
+|   |   +---tracing
+|   |   |   |   README.md
+|   |   |   |   trace_recorder.py
+|   |   |   |   unified_tracer.py
+|   |   |   |   
+|   |   |   \---__pycache__
+|   |   |           trace_recorder.cpython-313.pyc
+|   |   |           unified_tracer.cpython-313.pyc
+|   |   |           
+|   |   \---__pycache__
+|   |           cli_decision_engine.cpython-313.pyc
+|   |           flow_executor_adapter.cpython-313.pyc
+|   |           
+|   +---neural
+|   |   |   aiva_embedding.py
+|   |   |   README.md
+|   |   |   real_bio_net_adapter.py
+|   |   |   real_neural_core.py
+|   |   |   weight_manager.py
+|   |   |   __init__.py
+|   |   |   
+|   |   +---weights
+|   |   |       aiva_real_weights.pth
+|   |   |       
+|   |   \---__pycache__
+|   |           aiva_embedding.cpython-313.pyc
+|   |           real_neural_core.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---orchestration
+|   +---rag
+|   |   |   knowledge_base.py
+|   |   |   postgresql_vector_store.py
+|   |   |   rag_engine.py
+|   |   |   RAG_TODO.md
+|   |   |   README.md
+|   |   |   sync_experiences.py
+|   |   |   unified_vector_store.py
+|   |   |   vector_store.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           knowledge_base.cpython-313.pyc
+|   |           postgresql_vector_store.cpython-313.pyc
+|   |           rag_engine.cpython-313.pyc
+|   |           sync_experiences.cpython-313.pyc
+|   |           unified_vector_store.cpython-313.pyc
+|   |           vector_store.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   \---__pycache__
+|           ai_capability_query.cpython-313.pyc
+|           external_loop_connector.cpython-313.pyc
+|           internal_loop_connector.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---config
+|   |   risk_policies.yaml
+|   |   
+|   \---exploits
+|           cmdi_basic.yaml
+|           sqli_basic.yaml
+|           xss_reflected.yaml
+|           
++---core_capabilities
+|   |   capability_registry.py
+|   |   multilang_coordinator.py
+|   |   README.md
+|   |   risk_policy_manager.py
+|   |   task_context.py
+|   |   __init__.py
+|   |   
+|   +---analysis
+|   |   |   analysis_engine.py
+|   |   |   bizlogic_scanner.py
+|   |   |   initial_surface.py
+|   |   |   README.md
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           analysis_engine.cpython-313.pyc
+|   |           bizlogic_scanner.cpython-313.pyc
+|   |           initial_surface.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---attack
+|   |       attack_chain.py
+|   |       exploit_orchestrator.py
+|   |       README.md
+|   |       __init__.py
+|   |       
+|   +---cli
+|   |   |   aiva_cli.py
+|   |   |   README.md
+|   |   |   
+|   |   \---__pycache__
+|   |           aiva_cli.cpython-313.pyc
+|   |           
+|   +---dialog
+|   |   |   ai_menu.py
+|   |   |   assistant.py
+|   |   |   README.md
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           ai_menu.cpython-313.pyc
+|   |           assistant.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---ingestion
+|   |   |   README.md
+|   |   |   scan_module_interface.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           scan_module_interface.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---orchestration
+|   |       README.md
+|   |       two_phase_scan_orchestrator.py
+|   |       
+|   +---output
+|   |       README.md
+|   |       to_functions.py
+|   |       __init__.py
+|   |       
+|   +---processing
+|   |   |   README.md
+|   |   |   scan_result_processor.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           scan_result_processor.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   \---__pycache__
+|           capability_registry.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---internal_exploration
+|   |   aiva_external_classifier.py
+|   |   aiva_external_executor.py
+|   |   aiva_internal_classifier.py
+|   |   aiva_internal_executor.py
+|   |   README.md
+|   |   system_self_explorer.py
+|   |   __init__.py
+|   |   
+|   +---classification_results
+|   |       analyze_same_file.py
+|   |       check_connections.py
+|   |       
+|   +---data
+|   |       capability_registry.db
+|   |       
+|   +---go_tools
+|   |       go.mod
+|   |       go2mermaid.exe
+|   |       go2mermaid.go
+|   |       paths_config.go
+|   |       README.md
+|   |       
+|   +---python_tools
+|   |   |   aiva_flow_analysis_v3.json
+|   |   |   aiva_flow_analyzer.py
+|   |   |   
+|   |   \---__pycache__
+|   |           aiva_flow_analyzer.cpython-313.pyc
+|   |           
+|   +---rust_tools
+|   |   |   Cargo.lock
+|   |   |   Cargo.toml
+|   |   |   README.md
+|   |   |   
+|   |   \---src
+|   |           main.rs
+|   |           paths_config.rs
+|   |           
+|   +---self_healing
+|   |   |   analyze_connection_recommendations.py
+|   |   |   analyze_dataflow_breakpoints.py
+|   |   |   analyze_missing_function_connections.py
+|   |   |   analyze_results.py
+|   |   |   core_analyzer.py
+|   |   |   practical_analyzer.py
+|   |   |   README.md
+|   |   |   run_analysis.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           analyze_dataflow_breakpoints.cpython-313.pyc
+|   |           analyze_missing_function_connections.cpython-313.pyc
+|   |           core_analyzer.cpython-313.pyc
+|   |           practical_analyzer.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---typescript_tools
+|   |       package-lock.json
+|   |       package.json
+|   |       paths.config.ts
+|   |       README.md
+|   |       ts2mermaid.ts
+|   |       
+|   +---utils
+|   |       standalone_cli_validator.py
+|   |       
+|   \---__pycache__
+|           aiva_external_executor.cpython-313.pyc
+|           aiva_internal_executor.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---service_backbone
+|   |   context_manager.py
+|   |   README.md
+|   |   REPAIR_REPORT.md
+|   |   __init__.py
+|   |   
+|   +---adapters
+|   |       protocol_adapter.py
+|   |       README.md
+|   |       __init__.py
+|   |       
+|   +---api
+|   |   |   ai_service.py
+|   |   |   app.py
+|   |   |   README.md
+|   |   |   sse.py
+|   |   |   unified_function_caller.py
+|   |   |   __init__.py
+|   |   |   
+|   |   +---data
+|   |   |       capability_registry.db
+|   |   |       
+|   |   \---__pycache__
+|   |           ai_service.cpython-313.pyc
+|   |           app.cpython-313.pyc
+|   |           sse.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---authz
+|   |       authz_mapper.py
+|   |       matrix_visualizer.py
+|   |       permission_matrix.py
+|   |       README.md
+|   |       __init__.py
+|   |       
+|   +---coordination
+|   |   |   ai_controller.py
+|   |   |   ai_manager.py
+|   |   |   core_service_coordinator.py
+|   |   |   flowchart TB.mmd
+|   |   |   README.md
+|   |   |   REPAIR_DETAILED_COMPARISON.md
+|   |   |   REPAIR_SUMMARY.md
+|   |   |   __init__.py
+|   |   |   ┌─────────────────────────────────────┐.txt
+|   |   |   
+|   |   \---__pycache__
+|   |           ai_controller.cpython-313.pyc
+|   |           ai_manager.cpython-313.pyc
+|   |           core_service_coordinator.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---messaging
+|   |   |   message_broker.py
+|   |   |   README.md
+|   |   |   result_collector.py
+|   |   |   task_dispatcher.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           message_broker.cpython-313.pyc
+|   |           result_collector.cpython-313.pyc
+|   |           task_dispatcher.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---performance
+|   |       diagnose.py
+|   |       health_check.py
+|   |       monitoring.py
+|   |       parallel_processor.py
+|   |       README.md
+|   |       unified_memory_manager.py
+|   |       __init__.py
+|   |       
+|   +---state
+|   |   |   README.md
+|   |   |   session_state_manager.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           session_state_manager.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---storage
+|   |       backends.py
+|   |       command_repository.py
+|   |       config.py
+|   |       models.py
+|   |       README.md
+|   |       storage_manager.py
+|   |       __init__.py
+|   |       
+|   +---system
+|   |       __init__.py
+|   |       
+|   +---utils
+|   |       README.md
+|   |       repair_tool.py
+|   |       __init__.py
+|   |       
+|   \---__pycache__
+|           context_manager.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---task_planning
+|   |   command_builder.py
+|   |   command_router.py
+|   |   dispatcher.py
+|   |   README.md
+|   |   strategy_profiles.py
+|   |   unified_executor.py
+|   |   __init__.py
+|   |   
+|   +---commander
+|   |   |   attack_coordinator.py
+|   |   |   capability_manager.py
+|   |   |   capability_matcher.py
+|   |   |   learning_adapter.py
+|   |   |   plan_builder.py
+|   |   |   policy_manager.py
+|   |   |   README.md
+|   |   |   strategy_engine.py
+|   |   |   types.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           attack_coordinator.cpython-313.pyc
+|   |           capability_manager.cpython-313.pyc
+|   |           plan_builder.cpython-313.pyc
+|   |           policy_manager.cpython-313.pyc
+|   |           strategy_engine.cpython-313.pyc
+|   |           types.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---executor
+|   |   |   attack_plan_mapper.py
+|   |   |   execution_status_monitor.py
+|   |   |   plan_executor.py
+|   |   |   README.md
+|   |   |   task_executor.py
+|   |   |   task_queue_manager.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           execution_status_monitor.cpython-313.pyc
+|   |           task_queue_manager.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---planner
+|   |   |   ast_parser.py
+|   |   |   plan_comparator.py
+|   |   |   README.md
+|   |   |   task_converter.py
+|   |   |   task_execution_planner.py
+|   |   |   task_generator.py
+|   |   |   tool_selector.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           ast_parser.cpython-313.pyc
+|   |           task_converter.cpython-313.pyc
+|   |           task_execution_planner.cpython-313.pyc
+|   |           task_generator.cpython-313.pyc
+|   |           tool_selector.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   \---__pycache__
+|           command_router.cpython-313.pyc
+|           unified_executor.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
+\---__pycache__
+        __init__.cpython-313.pyc
+        

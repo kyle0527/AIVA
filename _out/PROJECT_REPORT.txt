@@ -2,49 +2,49 @@
 ║                         AIVA 專案完整分析報告                                 ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-生成時間: 2026-02-03 15:23:24
+生成時間: 2026-04-05 12:57:55
 專案路徑: C:\D\fold7\AIVA-git
 
 ═══════════════════════════════════════════════════════════════════════════════
 📊 專案統計摘要
 ═══════════════════════════════════════════════════════════════════════════════
 
-總文件數量: 2148
-總程式碼行數: 1341872
-程式碼檔案數: 1486
+總文件數量: 2006
+總程式碼行數: 1359400
+程式碼檔案數: 1520
 
 ───────────────────────────────────────────────────────────────────────────────
 🎯 檔案類型統計 (Top 10)
 ───────────────────────────────────────────────────────────────────────────────
 
-  .py                593 個檔案
-  .md                542 個檔案
-  .json              183 個檔案
-  .no_ext            174 個檔案
-  .mmd               119 個檔案
-  .timestamp          71 個檔案
-  .d                  51 個檔案
-  .rmeta              40 個檔案
-  .rlib               40 個檔案
+  .py                605 個檔案
+  .md                603 個檔案
+  .json              145 個檔案
+  .mmd               120 個檔案
+  .no_ext            103 個檔案
+  .timestamp          40 個檔案
   .go                 26 個檔案
+  .d                  26 個檔案
+  .yaml               25 個檔案
+  .rs                 22 個檔案
 
 
 ───────────────────────────────────────────────────────────────────────────────
 💻 程式碼行數統計 (依副檔名)
 ───────────────────────────────────────────────────────────────────────────────
 
-  .json        903375 行  (  183 個檔案, 平均  4936.5 行/檔案)
-  .md          228297 行  (  542 個檔案, 平均   421.2 行/檔案)
-  .py          175953 行  (  593 個檔案, 平均   296.7 行/檔案)
+  .json        903363 行  (  145 個檔案, 平均  6230.1 行/檔案)
+  .md          242249 行  (  603 個檔案, 平均   401.7 行/檔案)
+  .py          179816 行  (  605 個檔案, 平均   297.2 行/檔案)
   .rs            8874 行  (   22 個檔案, 平均   403.4 行/檔案)
-  .go            6044 行  (   26 個檔案, 平均   232.5 行/檔案)
-  .ps1           5846 行  (   24 個檔案, 平均   243.6 行/檔案)
-  .ts            5815 行  (   20 個檔案, 平均   290.8 行/檔案)
-  .yaml          4190 行  (   24 個檔案, 平均   174.6 行/檔案)
+  .go            6368 行  (   26 個檔案, 平均   244.9 行/檔案)
+  .ts            5816 行  (   20 個檔案, 平均   290.8 行/檔案)
+  .ps1           5139 行  (   22 個檔案, 平均   233.6 行/檔案)
+  .yaml          4267 行  (   25 個檔案, 平均   170.7 行/檔案)
   .sh            1334 行  (   17 個檔案, 平均    78.5 行/檔案)
   .yml            778 行  (    8 個檔案, 平均    97.2 行/檔案)
+  .toml           547 行  (   13 個檔案, 平均    42.1 行/檔案)
   .sql            524 行  (    2 個檔案, 平均     262 行/檔案)
-  .toml           517 行  (   13 個檔案, 平均    39.8 行/檔案)
   .bat            325 行  (   12 個檔案, 平均    27.1 行/檔案)
 
 
@@ -52,34 +52,34 @@
 📈 專案規模分析
 ───────────────────────────────────────────────────────────────────────────────
 
-🐍 Python 程式碼: 175953 行 (593 個檔案, 13.1% 佔比)
-   平均每個檔案: 296.7 行
+🐍 Python 程式碼: 179816 行 (605 個檔案, 13.2% 佔比)
+   平均每個檔案: 297.2 行
 
-🔷 Go 程式碼: 6044 行 (26 個檔案, 0.5% 佔比)
-   平均每個檔案: 232.5 行
+🔷 Go 程式碼: 6368 行 (26 個檔案, 0.5% 佔比)
+   平均每個檔案: 244.9 行
 
 🦀 Rust 程式碼: 8874 行 (22 個檔案, 0.7% 佔比)
    平均每個檔案: 403.4 行
 
-📘 TypeScript/JavaScript: 5815 行 (20 個檔案, 0.4% 佔比)
+📘 TypeScript/JavaScript: 5816 行 (20 個檔案, 0.4% 佔比)
    平均每個檔案: 290.8 行
 
-📝 文檔 (Markdown) 行數: 228297 行
-⚙️  配置檔案數量: 230 個
+📝 文檔 (Markdown) 行數: 242249 行
+⚙️  配置檔案數量: 192 個
 
 ───────────────────────────────────────────────────────────────────────────────
 🌐 多語言架構概覽
 ───────────────────────────────────────────────────────────────────────────────
 
-總程式碼檔案數: 1486
-總程式碼行數: 1341872
+總程式碼檔案數: 1520
+總程式碼行數: 1359400
 
 語言分布:
-  Python:     13.1% ████████████████████
+  Python:     13.2% ████████████████████
   Go:         0.5%
   Rust:       0.7%
   TS/JS:      0.4%
-  其他:       85.3%
+  其他:       85.2%
 
 ───────────────────────────────────────────────────────────────────────────────
 🚫 已排除的目錄類型
@@ -121,6 +121,20 @@
 │   │   │   ├─📝 DATA_DIFFERENCE_ANALYSIS.md
 │   │   │   ├─📝 GUIDES_REORGANIZATION_ANALYSIS.md
 │   │   │   └─📝 USAGE_GUIDE_VALIDATION_REPORT.md
+│   │   ├─📁 2026-02/
+│   │   │   ├─📁 root/
+│   │   │   │   ├─📝 AI_MODULES_CAPABILITY_CHECK.md
+│   │   │   │   ├─📝 CLI_AI_INTEGRATION_IMPLEMENTATION.md
+│   │   │   │   ├─📝 DOCUMENTATION_REORGANIZATION_PLAN.md
+│   │   │   │   ├─📝 function_xss_operable_classification.md
+│   │   │   │   ├─📝 P0_RAG_IMPLEMENTATION_ANALYSIS.md
+│   │   │   │   └─📝 兩個入口點連接修復報告.md
+│   │   │   └─📁 services/
+│   │   │       ├─📁 core/
+│   │   │       │   └─📁 aiva_core/
+│   │   │       │       ├─📝 問題解決狀態報告_20260205.md
+│   │   │       │       └─📝 待辦事項總結_20260205.md
+│   │   │       └─📝 SERVICES_MODULE_CHECK_REPORT_20260205.md
 │   │   └─📝 cli-changelog-2026-01-10.md
 │   ├─📁 06_documentation_archive/
 │   │   ├─📁 2026-01/
@@ -130,8 +144,22 @@
 │   │   │   ├─📝 services_directory_structure_analysis.md
 │   │   │   ├─📝 WHY_171_INTERNAL_FUNCTIONS_NOT_CALLABLE.md
 │   │   │   └─📝 XSS_174_FLOWS_ANALYSIS_REPORT.md
-│   │   └─📁 cli-data-2026-01-10/
-│   │       └─📝 CLI_USAGE_GUIDE.md
+│   │   ├─📁 cli-data-2026-01-10/
+│   │   │   └─📝 CLI_USAGE_GUIDE.md
+│   │   └─📁 user_manuals_old_20260211/
+│   │       ├─📝 BAT_FILES_USAGE_GUIDE.md
+│   │       ├─📝 CLI_TECHNICAL_GUIDE.md
+│   │       ├─📝 CLI_USAGE_GUIDE.md
+│   │       ├─📝 DUAL_LOOP_OPERATION_GUIDE.md
+│   │       ├─📝 EXTERNAL_CAPABILITIES_USAGE_GUIDE.md
+│   │       ├─📝 EXTERNAL_MODULE_EXECUTION_GUIDE.md
+│   │       ├─📝 INTERNAL_LOOP_EXECUTION_GUIDE.md
+│   │       ├─📝 LEARNING_SYSTEM_USER_GUIDE.md
+│   │       ├─📝 OPERATION_MANUAL.md
+│   │       ├─📝 QUICK_REFERENCE_GUIDE.md
+│   │       ├─📝 QUICK_START_GUIDE.md
+│   │       ├─📝 README.md
+│   │       └─📝 SCAN_USAGE_GUIDE.md
 │   ├─📁 07_configuration_archive/
 │   ├─📁 07_documentation_archive/
 │   │   ├─📁 cli-docs-2026-01-10/
@@ -140,15 +168,313 @@
 │   │   │   ├─📝 ARCHIVE_README.md
 │   │   │   ├─📝 CLI_COMPLETE_GUIDE_archived.md
 │   │   │   └─📝 CLI_FLOW_USAGE_GUIDE_archived.md
+│   │   ├─📝 CLI架構重構指南.md
 │   │   ├─📝 跨語言CLI設計指南.md
-│   │   ├─📝 雙閉環可行性分析指南_v1.0_archived.md
-│   │   └─📝 CLI架構重構指南.md
+│   │   └─📝 雙閉環可行性分析指南_v1.0_archived.md
 │   ├─📁 08_tool_archive/
 │   ├─📁 09_integration_archive/
+│   │   ├─📁 alembic/
+│   │   │   ├─📁 versions/
+│   │   │   │   ├─📁 image/
+│   │   │   │   │   └─📁 001_initial_schema/
+│   │   │   │   │       └─📄 1766628073892.png
+│   │   │   │   └─🐍 001_initial_schema.py
+│   │   │   └─🐍 env.py
+│   │   ├─📁 deprecated_managers/
+│   │   │   ├─🐍 authn_manager.py
+│   │   │   ├─🐍 minimal_manifest.py
+│   │   │   ├─🐍 postex_manager.py
+│   │   │   └─🐍 scanner_manager.py
+│   │   └─📝 ARCHIVE_INDEX.md
+│   ├─📁 base_feature_infrastructure/
+│   │   ├─📁 base/
+│   │   │   ├─🐍 __init__.py
+│   │   │   ├─🐍 feature_registry.py
+│   │   │   ├─🐍 integration_helper.py
+│   │   │   └─🐍 result_schema.py
+│   │   ├─📝 ARCHIVE_README.md
+│   │   └─🐍 feature_step_executor.py
+│   ├─📁 docs/
+│   │   ├─📁 analysis_reports/
+│   │   │   └─📁 2026-01/
+│   │   │       ├─📝 MOCK_REMOVAL_COMPLETION_REPORT_V2.md
+│   │   │       ├─📝 MOCK_REMOVAL_COMPLETION_REPORT.md
+│   │   │       ├─📝 MOCK_REMOVAL_FINAL_REPORT.md
+│   │   │       ├─📝 SERVICES_CORE_TOC_ISSUES_REPORT.md
+│   │   │       └─📝 VERIFICATION_REPORT.md
+│   │   └─📁 fix_reports/
+│   │       └─📁 2026-01/
+│   │           ├─📝 ARCHITECTURE_FIX_REPORT_20260109.md
+│   │           ├─📝 CODE_FIX_REPORT.md
+│   │           └─📝 FIX_REPORT_2026_01_13.md
+│   ├─📁 docs_20260310/
+│   │   ├─📁 01_architecture/
+│   │   │   ├─📁 services/
+│   │   │   │   └─📝 SERVICES_ARCHITECTURE_OVERVIEW.md
+│   │   │   ├─📝 AI_CAPABILITY_SELECTION_MECHANISM_REPORT.md
+│   │   │   ├─📝 COMMANDER_CLI_ARCHITECTURE_UPDATE.md
+│   │   │   ├─📝 SERVICES_ARCHITECTURE_ANALYSIS_REPORT.md
+│   │   │   └─📝 UNIFIED_NAMING_CONVENTION.md
+│   │   ├─📁 02_technical_documentation/
+│   │   │   ├─📁 api/
+│   │   │   │   └─📝 GO_ENGINE_ARCHITECTURE_UPDATE.md
+│   │   │   ├─📁 architecture/
+│   │   │   │   ├─📁 01_core_architecture/
+│   │   │   │   │   ├─📝 _CORE_DIRECTORIES_FUNCTIONALITY_GUIDE.md
+│   │   │   │   │   ├─📝 _PROJECT_ROOT_STRUCTURE_GUIDE.md
+│   │   │   │   │   ├─📝 ARCHITECTURE_EVOLUTION_HISTORY.md
+│   │   │   │   │   └─📝 SIMPLE_ARCHITECTURE.md
+│   │   │   │   ├─📁 02_dual_loop/
+│   │   │   │   │   ├─📝 13_STEPS_WORKFLOW_VERIFICATION.md
+│   │   │   │   │   ├─📝 EXPERIENCE_LEARNING_DESIGN.md
+│   │   │   │   │   ├─📝 EXTERNAL_LOOP_ACTIVATION_PLAN.md
+│   │   │   │   │   ├─📝 INTEGRATION_DUAL_LOOP_DESIGN.md
+│   │   │   │   │   └─📝 INTERNAL_LOOP_EXECUTION_GUIDE.md
+│   │   │   │   ├─📁 06_design_philosophy/
+│   │   │   │   │   ├─📝 COMPLEXITY_REDUCTION_GUIDE.md
+│   │   │   │   │   ├─📝 CORRECT_DESIGN_UNDERSTANDING.md
+│   │   │   │   │   ├─📝 DESIGN_EVALUATION_REPORT.md
+│   │   │   │   │   └─📝 MODULE_DESIGN_PHILOSOPHY.md
+│   │   │   │   ├─📝 AI_COMMAND_EXECUTION_ARCHITECTURE_ANALYSIS.md
+│   │   │   │   ├─📝 AI_COMMAND_FLOW_ARCHITECTURE.md
+│   │   │   │   ├─📝 ARCHITECTURE_DEEP_ANALYSIS.md
+│   │   │   │   ├─📝 COMMAND_DISPATCH_ARCHITECTURE_PLAN.md
+│   │   │   │   ├─📝 COMPONENT_ARCHITECTURE_GUIDE.md
+│   │   │   │   ├─📝 DEPENDENCY_ANALYSIS.md
+│   │   │   │   ├─📝 EXPERIENCE_LEARNING_DESIGN.md
+│   │   │   │   └─📝 SERVICES_ARCHITECTURE_ANALYSIS.md
+│   │   │   ├─📁 development/
+│   │   │   │   ├─📝 services_DEVELOPMENT_STANDARDS.md
+│   │   │   │   ├─📝 指令系統優化_UI更新與網路搜索集成方案.md
+│   │   │   │   └─📝 數據合約差異與遷移說明.md
+│   │   │   └─📁 technical/
+│   │   │       ├─📄 design
+│   │   │       ├─📝 MODULE_EXECUTION_ANALYSIS.md
+│   │   │       └─📝 README.md
+│   │   ├─📁 03_analysis_reports/
+│   │   │   ├─📁 analysis/
+│   │   │   │   ├─📝 00_FIVE_MODULES_SUMMARY.md
+│   │   │   │   ├─📝 02_AIVA_COMMON_MODULE_ANALYSIS.md
+│   │   │   │   ├─📝 03_FEATURES_MODULE_ANALYSIS.md
+│   │   │   │   ├─📝 04_SCAN_MODULE_ANALYSIS.md
+│   │   │   │   ├─📝 05_INTEGRATION_MODULE_ANALYSIS.md
+│   │   │   │   └─📝 內部分析數據運用與自我優化方案.md
+│   │   │   ├─📁 reports/
+│   │   │   │   ├─📁 image/
+│   │   │   │   │   └─📁 BIZLOGIC_INTEGRATION_SUMMARY/
+│   │   │   │   │       └─📄 1765764556687.png
+│   │   │   │   ├─📁 testing/
+│   │   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_135856.json
+│   │   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_140636.json
+│   │   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_140725.json
+│   │   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_140800.json
+│   │   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_140836.json
+│   │   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_141050.json
+│   │   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_141923.json
+│   │   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_142200.json
+│   │   │   │   │   └─⚙️ aiva_ai_analysis_test_report_20251110_142757.json
+│   │   │   │   ├─📝 AI_MODULE_INTEGRATION_IMPLEMENTATION_PLAN.md
+│   │   │   │   └─📝 SYSTEM_READINESS_ANALYSIS.md
+│   │   │   ├─📝 AI_EXTERNAL_MODULE_INTEGRATION_ANALYSIS.md
+│   │   │   ├─📝 AIVA_CORE_CHANGELOG.md
+│   │   │   ├─📝 CLI_AI_MODULE_REPORT.md
+│   │   │   ├─📝 CLI_PARAMETER_MAPPING.md
+│   │   │   ├─📝 COMMANDER_REFACTOR_VERIFICATION.md
+│   │   │   ├─📝 DEPENDENCY_OPTIMIZATION.md
+│   │   │   ├─📝 EXTERNAL_MODULE_CLASSIFIER_V2_DESIGN.md
+│   │   │   ├─📝 MULTILANG_JSON_FORMAT_UNIFICATION.md
+│   │   │   ├─📝 MULTILANG_TOOL_UNIFICATION_PLAN.md
+│   │   │   ├─📝 PHASE_1_COMPLETION_CHECKLIST.md
+│   │   │   ├─📝 SYSTEM_STATUS.md
+│   │   │   └─📝 TOOL_TXT_EVALUATION_AND_CORRECTION.md
+│   │   ├─📁 04_capability_documentation/
+│   │   │   ├─📁 各模組詳細說明/
+│   │   │   │   ├─📝 cognitive_core_詳細說明.md
+│   │   │   │   ├─📝 core_capabilities_詳細說明.md
+│   │   │   │   ├─📝 internal_exploration_詳細說明.md
+│   │   │   │   ├─📝 service_backbone_詳細說明.md
+│   │   │   │   └─📝 task_planning_詳細說明.md
+│   │   │   ├─📝 AI_能力參考手冊_v926.md
+│   │   │   ├─📝 五大核心模組完整能力與數據流詳細說明_v926.md
+│   │   │   └─📝 服務骨幹模組詳細說明.md
+│   │   ├─📁 05_implementation_guides/
+│   │   │   ├─📝 AI_COORDINATOR_REFACTOR_PLAN.md
+│   │   │   ├─📝 MODULE_CONNECTION_IMPLEMENTATION_PLAN.md
+│   │   │   ├─📝 MODULE_CONNECTION_IMPLEMENTATION.md
+│   │   │   ├─📝 REFACTOR_GUIDE_EVALUATION.md
+│   │   │   ├─📝 REFACTOR_IMPLEMENTATION_SUMMARY.md
+│   │   │   └─📝 REFACTOR_QUICK_REFERENCE.md
+│   │   ├─📁 06_analysis_and_assessment/
+│   │   │   ├─📝 ATTACK_SCAN_CAPABILITIES_ANALYSIS.md
+│   │   │   ├─📝 MODULE_CAPABILITIES_DISTRIBUTION_ANALYSIS.md
+│   │   │   ├─📝 MODULE_COMPATIBILITY_ANALYSIS.md
+│   │   │   ├─📝 MULTI_PATH_FLOWS_ANALYSIS.md
+│   │   │   └─📝 UNIQUE_ENDPOINTS_BY_MODULE_ANALYSIS.md
+│   │   ├─📁 07_architecture_and_design/
+│   │   │   ├─📝 BIDIRECTIONAL_CONNECTIVITY_IMPROVEMENT_PLAN.md
+│   │   │   ├─📝 CAPABILITY_INTEGRATION_SOLUTION.md
+│   │   │   └─📝 UNIFIED_OUTPUT_PATHS.md
+│   │   ├─📁 08_feature_documentation/
+│   │   │   ├─📁 ai_core_options/
+│   │   │   │   └─📝 README.md
+│   │   │   ├─📝 5M_AI_CAPABILITY_UPGRADE_REPORT.md
+│   │   │   └─📝 AI_OPERATES_FEATURES_READY.md
+│   │   ├─📁 09_reference_materials/
+│   │   │   ├─📁 diagrams/
+│   │   │   │   ├─📁 typescript_analysis/
+│   │   │   │   │   └─📁 image/
+│   │   │   │   │       └─📁 ANALYSIS_REPORT/
+│   │   │   │   │           └─📄 1763757614670.png
+│   │   │   │   └─📝 README.md
+│   │   │   ├─📁 examples/
+│   │   │   │   ├─🐍 example_ai_scan.py
+│   │   │   │   └─📝 README_API_SERVICE.md
+│   │   │   ├─📁 guides/
+│   │   │   │   └─📁 services/
+│   │   │   │       ├─📝 aiva_core_USAGE_GUIDE.md
+│   │   │   │       ├─📝 rust_engine_USAGE_GUIDE.md
+│   │   │   │       └─📝 typescript_engine_DEPENDENCIES_GUIDE.md
+│   │   │   ├─📝 CLI_VS_COMMAND_SYSTEM.md
+│   │   │   ├─📝 CLI_vs_DirectImport_對比.md
+│   │   │   └─📝 CROSS_LANGUAGE_COMMUNICATION_BEST_PRACTICES.md
+│   │   ├─📁 core_architecture/
+│   │   │   ├─📁 image/
+│   │   │   │   ├─📁 13_STEPS_DATAFLOW_STATIC_ANALYSIS/
+│   │   │   │   │   └─📄 1769909454231.png
+│   │   │   │   └─📁 AIVA_Core_HackOne_Strategy/
+│   │   │   │       └─📄 1767838534298.png
+│   │   │   ├─📝 13_STEPS_DATAFLOW_STATIC_ANALYSIS.md
+│   │   │   ├─📝 AIVA_Core_HackOne_Strategy.md
+│   │   │   ├─📝 DUAL_LOOP_COMPLIANCE_ANALYSIS_REPORT.md
+│   │   │   └─📝 DUAL_LOOP_IMPLEMENTATION_STATUS.md
+│   │   ├─📁 guides/
+│   │   │   └─📝 general.md
+│   │   ├─📁 learning_system/
+│   │   │   ├─📝 AI_LEARNING_DATA_FLOW.md
+│   │   │   ├─📝 DUAL_LOOP_IMPLEMENTATION_GAPS_AND_PLAN.md
+│   │   │   └─📝 LEARNING_SYSTEM_COMPLETE_ARCHITECTURE.md
+│   │   ├─📁 rag_system/
+│   │   │   ├─📝 RAG_CLI_COMMAND_DECISION_SYSTEM.md
+│   │   │   ├─📝 RAG_INTERNAL_EXPLORATION_INTEGRATION.md
+│   │   │   └─📝 VECTOR_STORE_AND_RAG_ARCHITECTURE.md
+│   │   ├─📁 technical/
+│   │   │   ├─📝 DECISION_METHODS_ALIGNMENT_ISSUE.md
+│   │   │   └─📝 THREE_DECISION_METHODS_IMPLEMENTATION.md
+│   │   ├─📝 AI_INTERNAL_WORKFLOW.md
+│   │   ├─📝 BAT_FILES_USAGE_GUIDE.md
+│   │   ├─📝 COGNITIVE_CORE_URL_PROCESSING.md
+│   │   ├─📝 EXTERNAL_CLI_VERIFICATION_REPORT.md
+│   │   ├─📝 EXTERNAL_MODULE_EXECUTION_GUIDE.md
+│   │   ├─📝 EXTERNAL_MODULES_CLI_VERIFICATION.md
+│   │   ├─📝 FEEDBACK_OPTIMIZATION_GUIDE.md
+│   │   ├─📝 HACKONE_V2_INTEGRATION_GUIDE.md
+│   │   ├─📝 HACKONE_V2_INTEGRATION_VERIFICATION.md
+│   │   ├─📝 INTEGRATION_CHECKLIST.md
+│   │   ├─📝 INTERNAL_EXTERNAL_CAPABILITY_COMPARISON.md
+│   │   ├─📝 MULTI_LANGUAGE_CAPABILITY_TESTING_REPORT.md
+│   │   └─📝 SYSTEM_EXECUTION_FLOW.md
+│   ├─📁 guides_20260310/
+│   │   ├─📁 architecture/
+│   │   │   ├─📝 AIVA_AI核心架構實施路線圖.md
+│   │   │   ├─📝 AIVA雙閉環架構可行性評估報告_v2.md
+│   │   │   ├─📝 AI排序器實施指南.md
+│   │   │   ├─📝 CLI_ARCHITECTURE_OVERVIEW.md
+│   │   │   ├─📝 README.md
+│   │   │   ├─📝 SERVICES_AI_提升分析報告.md
+│   │   │   ├─📝 服務架構分析指南.md
+│   │   │   ├─📝 服務架構演進規劃.md
+│   │   │   ├─📝 架構指南整合報告.md
+│   │   │   ├─📝 架構指南索引.md
+│   │   │   ├─📝 架構綜合評估指南.md
+│   │   │   ├─📝 雙CLI架構設計指南.md
+│   │   │   └─📝 雙閉環數據協調指南.md
+│   │   ├─📁 development/
+│   │   │   ├─📁 image/
+│   │   │   │   ├─📁 MULTI_LANGUAGE_ENVIRONMENT_STANDARD/
+│   │   │   │   │   └─📄 1764022126015.png
+│   │   │   │   └─📁 TOKEN_OPTIMIZATION_GUIDE/
+│   │   │   │       └─📄 1761920630254.png
+│   │   │   ├─📝 COMPLEXITY_REDUCTION_GUIDE.md
+│   │   │   ├─📝 FUNCTION_CALLABLE_JUDGMENT_GUIDE.md
+│   │   │   ├─📝 GIT_PUSH_GUIDELINES.md
+│   │   │   ├─📝 PLUGINS_AND_TOOLS_INVENTORY.md
+│   │   │   ├─📝 README.md
+│   │   │   ├─📝 UI_LAUNCH_GUIDE.md
+│   │   │   └─📝 指令系統優化_使用示例.md
+│   │   ├─📁 general/
+│   │   │   ├─📝 API_KEYS_配置指南.md
+│   │   │   ├─📝 EXTERNAL_CAPABILITIES_USAGE_GUIDE.md
+│   │   │   ├─📝 INDEX.md
+│   │   │   ├─📝 OPERATION_MANUAL.md
+│   │   │   ├─📝 OVERVIEW_EN.md
+│   │   │   ├─📝 QUICK_REFERENCE_GUIDE.md
+│   │   │   ├─📝 QUICK_REFERENCE.md
+│   │   │   └─📝 QUICK_START_GUIDE.md
+│   │   ├─📁 modules/
+│   │   │   ├─📝 LEARNING_SYSTEM_USER_GUIDE.md
+│   │   │   ├─📝 README.md
+│   │   │   ├─📝 SCAN_USAGE_GUIDE.md
+│   │   │   └─📝 TYPESCRIPT_ENGINE_GUIDE.md
+│   │   ├─📁 technical/
+│   │   │   ├─📝 CLI架構技術指南.md
+│   │   │   ├─📝 RAG_TRIGGER_AND_NOTIFICATION_GUIDE.md
+│   │   │   └─📝 雙CLI在AI內部實現指南.md
+│   │   ├─📁 technical_user_manual/
+│   │   │   ├─📝 CLI_TECHNICAL_GUIDE.md
+│   │   │   └─📝 CLI_USAGE_GUIDE.md
+│   │   ├─📝 _GUIDE_TEMPLATE.md
+│   │   ├─📝 AIVA_TECHNICAL_GUIDE_INDEX.md
+│   │   ├─📝 DOCUMENTS_TO_CREATE.md
+│   │   ├─📝 DUAL_LOOP_DESIGN_GUIDE.md
+│   │   ├─📝 DUAL_LOOP_OPERATION_GUIDE.md
+│   │   ├─📝 INTERNAL_LOOP_EXECUTION_GUIDE.md
+│   │   └─📝 stage8_analysis_learning_integration.md
+│   ├─📁 services/
+│   │   ├─📁 core/
+│   │   │   └─📁 aiva_core/
+│   │   │       ├─📁 cleanup_reports/
+│   │   │       │   └─📝 CLEANUP_VERIFICATION_REPORT_2026_01_31.md
+│   │   │       ├─📁 fixed_issues/
+│   │   │       │   └─📁 2026-01/
+│   │   │       │       └─📝 ATTACK_COORDINATOR_ISSUES.md
+│   │   │       └─📁 reports/
+│   │   │           └─📁 2026-01/
+│   │   │               ├─📝 ISSUES_REPORT_20260118.md
+│   │   │               └─📝 文檔更新清單_20260201.md
+│   │   └─📁 reports/
+│   │       └─📁 2026-02/
+│   │           ├─📁 classification_results/
+│   │           │   ├─📁 analysis_results/
+│   │           │   │   ├─📝 clap_cli_reference.md
+│   │           │   │   ├─📝 classification_summary.md
+│   │           │   │   ├─📝 complete_flow_details.md
+│   │           │   │   └─📝 multi_path_analysis.md
+│   │           │   ├─📁 internal_exploration/
+│   │           │   │   ├─📝 classification_summary.md
+│   │           │   │   ├─📝 complete_flow_details.md
+│   │           │   │   └─📝 multi_path_analysis.md
+│   │           │   ├─📁 scan_analysis/
+│   │           │   │   └─📝 data_flow_summary.md
+│   │           │   ├─📝 classification_summary.md
+│   │           │   ├─📝 complete_flow_details.md
+│   │           │   └─📝 multi_path_analysis.md
+│   │           ├─📝 AIVA_CORE_COMPLETE_ARCHITECTURE_ANALYSIS.md
+│   │           ├─📝 ARCHITECTURE_ANALYSIS_2026.md
+│   │           ├─📝 ARCHITECTURE_ANALYSIS.md
+│   │           ├─📝 DATA_CONVERSION_REPORT.md
+│   │           ├─📝 EXECUTOR_VALIDATION_REPORT.md
+│   │           ├─📝 external_executor_validation_report.md
+│   │           ├─📝 IMPORT_ISSUES_REPORT_2026_02_02.md
+│   │           ├─📝 RESULT_COORDINATOR_INTEGRATION_PLAN.md
+│   │           ├─📝 SCAN_ENGINE_ENHANCEMENT_REPORT.md
+│   │           ├─📝 SERVICES_ANALYSIS_REPORT.md
+│   │           ├─📝 SERVICES_CURRENT_STATUS_REPORT.md
+│   │           └─📝 SERVICES_FILES_REORGANIZATION_PLAN.md
 │   ├─📁 validation/
-│   │   ├─🐍 驗證功能.py
 │   │   ├─🐍 test_ai_integration.py
-│   │   └─🐍 test_external_learning_integration.py
+│   │   ├─🐍 test_external_learning_integration.py
+│   │   └─🐍 驗證功能.py
+│   ├─📝 ARCHIVE_INDEX_ROOT.md
 │   ├─📝 ARCHIVE_INDEX.md
 │   └─📝 README.md
 ├─📁 _dev_tools/
@@ -242,7 +568,21 @@
 │   ├─🐍 real_ai_core.py
 │   └─🐍 scan_real_targets.py
 ├─📁 _out/
+│   ├─📁 repair_plan/
+│   │   ├─📝 00_REPAIR_OVERVIEW.md
+│   │   ├─📝 01_PHASE1_CRITICAL_FIXES.md
+│   │   ├─📝 02_PHASE2_DEPLOYMENT_FIXES.md
+│   │   ├─📝 03_PHASE3_FEATURE_COMPLETION.md
+│   │   ├─📝 04_GIT_CLEANUP.md
+│   │   └─📝 05_CROSS_REFERENCE_REPORT.md
+│   ├─📝 AI_CORE_CLI_OPTIMIZATION_PROPOSAL.md
+│   ├─📝 CAPABILITY_COMPARISON_ANALYSIS.md
+│   ├─📝 CLI_ARCHITECTURE_IMPLEMENTATION_COMPLETE.md
+│   ├─📝 IMPLEMENTATION_RISK_ASSESSMENT.md
 │   ├─📄 PROJECT_REPORT.txt
+│   ├─🐍 real_attack_test.py
+│   ├─⚙️ sqli_test.json
+│   ├─📄 tree_ultimate_chinese_20260311_033329.txt
 │   └─📄 tree.mmd
 ├─📁 .github/
 │   ├─📁 workflows/
@@ -263,6 +603,7 @@
 │   │   └─📄 ruff.toml
 │   ├─🔧 aiva_capability_integration_config.yaml
 │   ├─🐍 api_keys.py
+│   ├─🔧 dashboard_config.yaml
 │   ├─⚙️ monitor_config.json
 │   └─🐍 settings.py
 ├─📁 data/
@@ -305,6 +646,8 @@
 │   │       │   └─⚙️ report.json
 │   │       ├─⚙️ plan.json
 │   │       └─⚙️ summary.json
+│   ├─📁 unified_executor/
+│   │   └─📁 vectors/
 │   ├─📁 vector_db/
 │   │   └─📁 chroma/
 │   │       ├─📁 db5bea07-c22b-401a-8c1e-465bcf070000/
@@ -366,17 +709,10 @@
 │   ├─📁 _archive/
 │   │   ├─📝 01_CORE_MODULE_ANALYSIS.md
 │   │   ├─📝 02_technical_architecture_README.md
-│   │   ├─📝 六大模組完整能力與數據流詳細說明.md
-│   │   ├─📝 六大模組完整詳細說明總覽.md
-│   │   ├─📝 六大模組能力分類清單_統一編號.md
-│   │   ├─📝 各模組能力數據流統計摘要.md
-│   │   ├─📝 完整能力分類詳細清單.md
-│   │   ├─📝 能力分類文檔索引.md
-│   │   ├─📝 數據流終點分類完整報告.md
 │   │   ├─📝 AI_MODULE_INTEGRATION_ARCHITECTURE.md
 │   │   ├─📝 AI_MODULE_INTEGRATION_QUICKSTART.md
-│   │   ├─📝 AI決策邏輯完善建議_基於網路研究與架構分析.md
 │   │   ├─📝 AIVA_MODULES_REALITY_CHECK.md
+│   │   ├─📝 AI決策邏輯完善建議_基於網路研究與架構分析.md
 │   │   ├─📝 CLEANUP_SUMMARY.md
 │   │   ├─📝 external_learning_詳細說明.md
 │   │   ├─📝 INTERNAL_EXTERNAL_CAPABILITIES_ANALYSIS.md
@@ -385,181 +721,45 @@
 │   │   ├─📝 SIX_MODULES_CAPABILITIES_AND_CLI_GUIDE.md
 │   │   ├─📝 SIX_MODULES_COMPATIBILITY_ANALYSIS.md
 │   │   ├─📝 SIX_MODULES_EVALUATION_AGAINST_13STEPS.md
-│   │   └─📝 UNCOVERED_CAPABILITIES_ANALYSIS.md
+│   │   ├─📝 UNCOVERED_CAPABILITIES_ANALYSIS.md
+│   │   ├─📝 六大模組完整能力與數據流詳細說明.md
+│   │   ├─📝 六大模組完整詳細說明總覽.md
+│   │   ├─📝 六大模組能力分類清單_統一編號.md
+│   │   ├─📝 各模組能力數據流統計摘要.md
+│   │   ├─📝 完整能力分類詳細清單.md
+│   │   ├─📝 數據流終點分類完整報告.md
+│   │   └─📝 能力分類文檔索引.md
 │   ├─📁 01_architecture/
-│   │   ├─📝 AI_CAPABILITY_SELECTION_MECHANISM_REPORT.md
-│   │   ├─📝 COMMANDER_CLI_ARCHITECTURE_UPDATE.md
-│   │   ├─📝 SERVICES_ARCHITECTURE_ANALYSIS_REPORT.md
-│   │   └─📝 UNIFIED_NAMING_CONVENTION.md
+│   │   └─📁 services/
+│   │       └─📁 core/
 │   ├─📁 01_user_documentation/
 │   ├─📁 02_technical_documentation/
-│   │   ├─📁 api/
-│   │   │   └─📝 GO_ENGINE_ARCHITECTURE_UPDATE.md
-│   │   ├─📁 architecture/
-│   │   │   ├─📁 01_core_architecture/
-│   │   │   │   ├─📝 _CORE_DIRECTORIES_FUNCTIONALITY_GUIDE.md
-│   │   │   │   ├─📝 _PROJECT_ROOT_STRUCTURE_GUIDE.md
-│   │   │   │   ├─📝 ARCHITECTURE_EVOLUTION_HISTORY.md
-│   │   │   │   └─📝 SIMPLE_ARCHITECTURE.md
-│   │   │   ├─📁 02_dual_loop/
-│   │   │   │   ├─📝 13_STEPS_WORKFLOW_VERIFICATION.md
-│   │   │   │   ├─📝 EXPERIENCE_LEARNING_DESIGN.md
-│   │   │   │   ├─📝 EXTERNAL_LOOP_ACTIVATION_PLAN.md
-│   │   │   │   ├─📝 INTEGRATION_DUAL_LOOP_DESIGN.md
-│   │   │   │   └─📝 INTERNAL_LOOP_EXECUTION_GUIDE.md
-│   │   │   ├─📁 04_cli_system/
-│   │   │   ├─📁 05_implementation_plans/
-│   │   │   ├─📁 06_design_philosophy/
-│   │   │   │   ├─📝 COMPLEXITY_REDUCTION_GUIDE.md
-│   │   │   │   ├─📝 CORRECT_DESIGN_UNDERSTANDING.md
-│   │   │   │   ├─📝 DESIGN_EVALUATION_REPORT.md
-│   │   │   │   └─📝 MODULE_DESIGN_PHILOSOPHY.md
-│   │   │   ├─📝 AI_COMMAND_EXECUTION_ARCHITECTURE_ANALYSIS.md
-│   │   │   ├─📝 AI_COMMAND_FLOW_ARCHITECTURE.md
-│   │   │   ├─📝 ARCHITECTURE_DEEP_ANALYSIS.md
-│   │   │   ├─📝 COMMAND_DISPATCH_ARCHITECTURE_PLAN.md
-│   │   │   ├─📝 COMPONENT_ARCHITECTURE_GUIDE.md
-│   │   │   ├─📝 DEPENDENCY_ANALYSIS.md
-│   │   │   ├─📝 EXPERIENCE_LEARNING_DESIGN.md
-│   │   │   └─📝 SERVICES_ARCHITECTURE_ANALYSIS.md
-│   │   ├─📁 development/
-│   │   │   ├─📝 指令系統優化_UI更新與網路搜索集成方案.md
-│   │   │   ├─📝 數據合約差異與遷移說明.md
-│   │   │   └─📝 services_DEVELOPMENT_STANDARDS.md
-│   │   └─📁 technical/
-│   │       ├─📄 design
-│   │       ├─📝 MODULE_EXECUTION_ANALYSIS.md
-│   │       └─📝 README.md
-│   ├─📁 03_analysis_reports/
-│   │   ├─📁 analysis/
-│   │   │   ├─📝 00_FIVE_MODULES_SUMMARY.md
-│   │   │   ├─📝 02_AIVA_COMMON_MODULE_ANALYSIS.md
-│   │   │   ├─📝 03_FEATURES_MODULE_ANALYSIS.md
-│   │   │   ├─📝 04_SCAN_MODULE_ANALYSIS.md
-│   │   │   ├─📝 05_INTEGRATION_MODULE_ANALYSIS.md
-│   │   │   ├─📝 內部分析數據運用與自我優化方案.md
-│   │   │   ├─📝 MOCK_REMOVAL_COMPLETION_REPORT_V2.md
-│   │   │   ├─📝 MOCK_REMOVAL_COMPLETION_REPORT.md
-│   │   │   └─📝 MOCK_REMOVAL_FINAL_REPORT.md
-│   │   ├─📁 reports/
-│   │   │   ├─📁 image/
-│   │   │   │   └─📁 BIZLOGIC_INTEGRATION_SUMMARY/
-│   │   │   │       └─📄 1765764556687.png
-│   │   │   ├─📁 testing/
-│   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_135856.json
-│   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_140636.json
-│   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_140725.json
-│   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_140800.json
-│   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_140836.json
-│   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_141050.json
-│   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_141923.json
-│   │   │   │   ├─⚙️ aiva_ai_analysis_test_report_20251110_142200.json
-│   │   │   │   └─⚙️ aiva_ai_analysis_test_report_20251110_142757.json
-│   │   │   ├─📝 AI_MODULE_INTEGRATION_IMPLEMENTATION_PLAN.md
-│   │   │   ├─📝 CODE_FIX_REPORT.md
-│   │   │   ├─📝 SERVICES_CORE_TOC_ISSUES_REPORT.md
-│   │   │   ├─📝 SYSTEM_READINESS_ANALYSIS.md
-│   │   │   └─📝 VERIFICATION_REPORT.md
-│   │   ├─📝 AI_EXTERNAL_MODULE_INTEGRATION_ANALYSIS.md
-│   │   ├─📝 AIVA_CORE_CHANGELOG.md
-│   │   ├─📝 ARCHITECTURE_FIX_REPORT_20260109.md
-│   │   ├─📝 CLI_AI_MODULE_REPORT.md
-│   │   ├─📝 CLI_PARAMETER_MAPPING.md
-│   │   ├─📝 COMMANDER_REFACTOR_VERIFICATION.md
-│   │   ├─📝 DEPENDENCY_OPTIMIZATION.md
-│   │   ├─📝 EXTERNAL_MODULE_CLASSIFIER_V2_DESIGN.md
-│   │   ├─📝 MULTILANG_JSON_FORMAT_UNIFICATION.md
-│   │   ├─📝 MULTILANG_TOOL_UNIFICATION_PLAN.md
-│   │   ├─📝 PHASE_1_COMPLETION_CHECKLIST.md
-│   │   ├─📝 SYSTEM_STATUS.md
-│   │   └─📝 TOOL_TXT_EVALUATION_AND_CORRECTION.md
-│   ├─📁 04_capability_documentation/
-│   │   ├─📁 各模組詳細說明/
-│   │   │   ├─📝 cognitive_core_詳細說明.md
-│   │   │   ├─📝 core_capabilities_詳細說明.md
-│   │   │   ├─📝 internal_exploration_詳細說明.md
-│   │   │   ├─📝 service_backbone_詳細說明.md
-│   │   │   └─📝 task_planning_詳細說明.md
-│   │   ├─📝 五大核心模組完整能力與數據流詳細說明_v926.md
-│   │   ├─📝 服務骨幹模組詳細說明.md
-│   │   └─📝 AI_能力參考手冊_v926.md
-│   ├─📁 05_implementation_guides/
-│   │   ├─📝 AI_COORDINATOR_REFACTOR_PLAN.md
-│   │   ├─📝 MODULE_CONNECTION_IMPLEMENTATION_PLAN.md
-│   │   ├─📝 MODULE_CONNECTION_IMPLEMENTATION.md
-│   │   ├─📝 REFACTOR_GUIDE_EVALUATION.md
-│   │   ├─📝 REFACTOR_IMPLEMENTATION_SUMMARY.md
-│   │   └─📝 REFACTOR_QUICK_REFERENCE.md
-│   ├─📁 06_analysis_and_assessment/
-│   │   ├─📝 ATTACK_SCAN_CAPABILITIES_ANALYSIS.md
-│   │   ├─📝 MODULE_CAPABILITIES_DISTRIBUTION_ANALYSIS.md
-│   │   ├─📝 MODULE_COMPATIBILITY_ANALYSIS.md
-│   │   ├─📝 MULTI_PATH_FLOWS_ANALYSIS.md
-│   │   └─📝 UNIQUE_ENDPOINTS_BY_MODULE_ANALYSIS.md
-│   ├─📁 07_architecture_and_design/
-│   │   ├─📝 BIDIRECTIONAL_CONNECTIVITY_IMPROVEMENT_PLAN.md
-│   │   ├─📝 CAPABILITY_INTEGRATION_SOLUTION.md
-│   │   └─📝 UNIFIED_OUTPUT_PATHS.md
-│   ├─📁 08_feature_documentation/
-│   │   ├─📁 ai_core_options/
-│   │   │   └─📝 README.md
-│   │   ├─📝 5M_AI_CAPABILITY_UPGRADE_REPORT.md
-│   │   └─📝 AI_OPERATES_FEATURES_READY.md
-│   ├─📁 09_reference_materials/
-│   │   ├─📁 diagrams/
-│   │   │   ├─📁 typescript_analysis/
-│   │   │   │   └─📁 image/
-│   │   │   │       └─📁 ANALYSIS_REPORT/
-│   │   │   │           └─📄 1763757614670.png
-│   │   │   └─📝 README.md
-│   │   ├─📁 examples/
-│   │   │   ├─🐍 example_ai_scan.py
-│   │   │   └─📝 README_API_SERVICE.md
-│   │   ├─📁 guides/
-│   │   │   └─📁 services/
-│   │   │       ├─📝 aiva_core_USAGE_GUIDE.md
-│   │   │       ├─📝 rust_engine_USAGE_GUIDE.md
-│   │   │       └─📝 typescript_engine_DEPENDENCIES_GUIDE.md
-│   │   ├─📝 CLI_VS_COMMAND_SYSTEM.md
-│   │   └─📝 CROSS_LANGUAGE_COMMUNICATION_BEST_PRACTICES.md
-│   ├─📁 core_architecture/
-│   │   ├─📁 image/
-│   │   │   ├─📁 13_STEPS_DATAFLOW_STATIC_ANALYSIS/
-│   │   │   │   └─📄 1769909454231.png
-│   │   │   └─📁 AIVA_Core_HackOne_Strategy/
-│   │   │       └─📄 1767838534298.png
-│   │   ├─📝 13_STEPS_DATAFLOW_STATIC_ANALYSIS.md
-│   │   ├─📝 AIVA_Core_HackOne_Strategy.md
-│   │   ├─📝 DUAL_LOOP_COMPLIANCE_ANALYSIS_REPORT.md
-│   │   └─📝 DUAL_LOOP_IMPLEMENTATION_STATUS.md
-│   ├─📁 guides/
-│   │   └─📝 general.md
-│   ├─📁 learning_system/
-│   │   ├─📝 AI_LEARNING_DATA_FLOW.md
-│   │   ├─📝 DUAL_LOOP_IMPLEMENTATION_GAPS_AND_PLAN.md
-│   │   └─📝 LEARNING_SYSTEM_COMPLETE_ARCHITECTURE.md
-│   ├─📁 rag_system/
-│   │   ├─📝 RAG_CLI_COMMAND_DECISION_SYSTEM.md
-│   │   ├─📝 RAG_INTERNAL_EXPLORATION_INTEGRATION.md
-│   │   └─📝 VECTOR_STORE_AND_RAG_ARCHITECTURE.md
-│   ├─📁 technical/
-│   │   ├─📝 DECISION_METHODS_ALIGNMENT_ISSUE.md
-│   │   └─📝 THREE_DECISION_METHODS_IMPLEMENTATION.md
-│   ├─📝 AI_INTERNAL_WORKFLOW.md
-│   ├─📝 BAT_FILES_USAGE_GUIDE.md
-│   ├─📝 COGNITIVE_CORE_URL_PROCESSING.md
+│   │   └─📁 architecture/
+│   │       ├─📁 04_cli_system/
+│   │       └─📁 05_implementation_plans/
+│   ├─📁 technical_manuals/
+│   │   ├─📝 01_CORE_MODULE_TECHNICAL_MANUAL.md
+│   │   ├─📝 02_FEATURES_MODULE_TECHNICAL_MANUAL.md
+│   │   ├─📝 03_SCAN_MODULE_TECHNICAL_MANUAL.md
+│   │   ├─📝 04_INTEGRATION_MODULE_TECHNICAL_MANUAL.md
+│   │   ├─📝 05_AIVA_COMMON_TECHNICAL_MANUAL.md
+│   │   ├─📝 06_COGNITIVE_CORE_TECHNICAL_MANUAL.md
+│   │   ├─📝 07_RAG_SYSTEM_TECHNICAL_MANUAL.md
+│   │   ├─📝 08_DUAL_LOOP_TECHNICAL_MANUAL.md
+│   │   └─📝 README.md
+│   ├─📝 capability_mapping_todo.md
+│   ├─📝 CODE_QUALITY_FIX_REPORT.md
+│   ├─📝 critical_bugs_verified.md
+│   ├─📝 dependency-analysis.md
+│   ├─📝 dependency-necessity.md
 │   ├─📝 DOCS_INDEX.md
-│   ├─📝 EXTERNAL_CLI_VERIFICATION_REPORT.md
-│   ├─📝 EXTERNAL_MODULE_EXECUTION_GUIDE.md
-│   ├─📝 EXTERNAL_MODULES_CLI_VERIFICATION.md
-│   ├─📝 FEEDBACK_OPTIMIZATION_GUIDE.md
-│   ├─📝 FIX_REPORT_2026_01_13.md
-│   ├─📝 HACKONE_V2_INTEGRATION_GUIDE.md
-│   ├─📝 HACKONE_V2_INTEGRATION_VERIFICATION.md
-│   ├─📝 INTEGRATION_CHECKLIST.md
-│   ├─📝 INTERNAL_EXTERNAL_CAPABILITY_COMPARISON.md
-│   ├─📝 MULTI_LANGUAGE_CAPABILITY_TESTING_REPORT.md
-│   └─📝 SYSTEM_EXECUTION_FLOW.md
+│   ├─📝 feature-modules-capability-report.md
+│   ├─📝 module-health-analysis.md
+│   ├─📝 open_issues_tracker.md
+│   ├─📝 project_strategic_assessment.md
+│   ├─📝 project-issues-analysis.md
+│   ├─📝 UI_DASHBOARD_IMPLEMENTATION_PLAN.md
+│   └─📝 UI_DASHBOARD_USER_GUIDE.md
 ├─📁 enhanced_classification/
 │   ├─📁 1_raw_analysis/
 │   │   └─⚙️ raw_analysis_results.json
@@ -738,92 +938,30 @@
 │   ├─📝 flow_98.md
 │   └─📝 flow_99.md
 ├─📁 guides/
-│   ├─📁 architecture/
-│   │   ├─📝 服務架構分析指南.md
-│   │   ├─📝 服務架構演進規劃.md
-│   │   ├─📝 架構指南索引.md
-│   │   ├─📝 架構指南整合報告.md
-│   │   ├─📝 架構綜合評估指南.md
-│   │   ├─📝 雙閉環數據協調指南.md
-│   │   ├─📝 雙CLI架構設計指南.md
-│   │   ├─📝 AI排序器實施指南.md
-│   │   ├─📝 AIVA_AI核心架構實施路線圖.md
-│   │   ├─📝 AIVA雙閉環架構可行性評估報告_v2.md
-│   │   ├─📝 CLI_ARCHITECTURE_OVERVIEW.md
-│   │   ├─📝 README.md
-│   │   └─📝 SERVICES_AI_提升分析報告.md
 │   ├─📁 deployment/
 │   │   └─📝 README.md
-│   ├─📁 development/
-│   │   ├─📁 image/
-│   │   │   ├─📁 MULTI_LANGUAGE_ENVIRONMENT_STANDARD/
-│   │   │   │   └─📄 1764022126015.png
-│   │   │   └─📁 TOKEN_OPTIMIZATION_GUIDE/
-│   │   │       └─📄 1761920630254.png
-│   │   ├─📝 指令系統優化_使用示例.md
-│   │   ├─📝 COMPLEXITY_REDUCTION_GUIDE.md
-│   │   ├─📝 FUNCTION_CALLABLE_JUDGMENT_GUIDE.md
-│   │   ├─📝 GIT_PUSH_GUIDELINES.md
-│   │   ├─📝 PLUGINS_AND_TOOLS_INVENTORY.md
-│   │   ├─📝 README.md
-│   │   └─📝 UI_LAUNCH_GUIDE.md
-│   ├─📁 general/
-│   │   ├─📝 API_KEYS_配置指南.md
-│   │   ├─📝 EXTERNAL_CAPABILITIES_USAGE_GUIDE.md
-│   │   ├─📝 INDEX.md
-│   │   ├─📝 OPERATION_MANUAL.md
-│   │   ├─📝 OVERVIEW_EN.md
-│   │   ├─📝 QUICK_REFERENCE_GUIDE.md
-│   │   ├─📝 QUICK_REFERENCE.md
-│   │   └─📝 QUICK_START_GUIDE.md
 │   ├─📁 image/
 │   │   ├─📁 DUAL_LOOP_DESIGN_GUIDE/
 │   │   └─📁 README/
 │   │       └─📄 1763843920394.png
-│   ├─📁 modules/
-│   │   ├─📝 LEARNING_SYSTEM_USER_GUIDE.md
-│   │   ├─📝 README.md
-│   │   ├─📝 SCAN_USAGE_GUIDE.md
-│   │   └─📝 TYPESCRIPT_ENGINE_GUIDE.md
-│   ├─📁 technical/
-│   │   ├─📝 雙CLI在AI內部實現指南.md
-│   │   ├─📝 CLI架構技術指南.md
-│   │   └─📝 RAG_TRIGGER_AND_NOTIFICATION_GUIDE.md
 │   ├─📁 technical_manual/
-│   ├─📁 technical_user_manual/
-│   │   ├─📝 CLI_TECHNICAL_GUIDE.md
-│   │   └─📝 CLI_USAGE_GUIDE.md
 │   ├─📁 troubleshooting/
 │   │   └─📝 README.md
 │   ├─📁 user_manuals/
-│   │   ├─📁 old/
-│   │   │   ├─📝 BAT_FILES_USAGE_GUIDE.md
-│   │   │   ├─📝 CLI_TECHNICAL_GUIDE.md
-│   │   │   ├─📝 CLI_USAGE_GUIDE.md
-│   │   │   ├─📝 DUAL_LOOP_OPERATION_GUIDE.md
-│   │   │   ├─📝 EXTERNAL_CAPABILITIES_USAGE_GUIDE.md
-│   │   │   ├─📝 EXTERNAL_MODULE_EXECUTION_GUIDE.md
-│   │   │   ├─📝 INTERNAL_LOOP_EXECUTION_GUIDE.md
-│   │   │   ├─📝 LEARNING_SYSTEM_USER_GUIDE.md
-│   │   │   ├─📝 OPERATION_MANUAL.md
-│   │   │   ├─📝 QUICK_REFERENCE_GUIDE.md
-│   │   │   ├─📝 QUICK_START_GUIDE.md
-│   │   │   ├─📝 README.md
-│   │   │   └─📝 SCAN_USAGE_GUIDE.md
+│   │   ├─📝 README.md
 │   │   ├─📝 使用者手冊_第1冊_系統入門與架構.md
+│   │   ├─📝 使用者手冊_第2-1冊_策略系統更新指南.md
+│   │   ├─📝 使用者手冊_第2-2冊_13步驟黑盒測試架構詳解.md
 │   │   ├─📝 使用者手冊_第2冊_AI決策流程.md
 │   │   ├─📝 使用者手冊_第3冊_執行與適應.md
+│   │   ├─📝 使用者手冊_第4-1冊_RAG_P1驗證指南.md
 │   │   ├─📝 使用者手冊_第4冊_功能模組操作.md
 │   │   ├─📝 使用者手冊_第5冊_數據流分析與執行器.md
-│   │   └─📝 使用者手冊_第6冊_進階開發.md
-│   ├─📝 _GUIDE_TEMPLATE.md
-│   ├─📝 AIVA_TECHNICAL_GUIDE_INDEX.md
-│   ├─📝 DOCUMENTS_TO_CREATE.md
-│   ├─📝 DUAL_LOOP_DESIGN_GUIDE.md
-│   ├─📝 DUAL_LOOP_OPERATION_GUIDE.md
-│   ├─📝 INTERNAL_LOOP_EXECUTION_GUIDE.md
-│   ├─📝 README.md
-│   └─📝 stage8_analysis_learning_integration.md
+│   │   ├─📝 使用者手冊_第6冊_進階開發.md
+│   │   ├─📝 使用者手冊_閱讀指南.md
+│   │   ├─📝 檢查報告_20260205.md
+│   │   └─📝 檢查報告_20260211.md
+│   └─📝 README.md
 ├─📁 hackingtool_sql_tools/
 │   └─📁 sqlmap/
 ├─📁 image/
@@ -935,7 +1073,21 @@
 │   ├─📝 FIX_MODULE_IMPORT_GUIDE.md
 │   ├─🐍 planning_execution_coordinator.py
 │   ├─📝 README.md
-│   └─🐍 scan_with_constraints.py
+│   ├─🐍 scan_with_constraints.py
+│   ├─⚡ start_aiva_core.ps1
+│   ├─🐍 start_dashboard.py
+│   ├─🐍 validate_rag_p1.py
+│   ├─⚡ 分類外部模組.bat
+│   ├─⚡ 執行Flow.bat
+│   ├─⚡ 執行外部模組.bat
+│   ├─⚡ 外部模組選單.bat
+│   ├─⚡ 快速執行能力.bat
+│   ├─⚡ 啟動AIVA.ps1
+│   ├─⚡ 啟動AIVA系統.bat
+│   ├─⚡ 啟動外部能力選單.bat
+│   ├─⚡ 啟動統一執行器.bat
+│   ├─⚡ 啟動能力選單.bat
+│   └─⚡ 預覽Flow.bat
 ├─📁 services/
 │   ├─📁 aiva_common/
 │   │   ├─📁 ai/
@@ -1155,8 +1307,10 @@
 │   │   │   │   ├─📁 decision/
 │   │   │   │   │   ├─🐍 __init__.py
 │   │   │   │   │   ├─🐍 adaptive_weight_manager.py
+│   │   │   │   │   ├─🐍 bounty_strategy_agent.py
 │   │   │   │   │   ├─🐍 enhanced_decision_agent.py
 │   │   │   │   │   ├─🐍 execution_orchestrator.py
+│   │   │   │   │   ├─🐍 knowledge_decision_mixin.py
 │   │   │   │   │   ├─📝 README.md
 │   │   │   │   │   ├─🐍 scan_execution_planner.py
 │   │   │   │   │   └─🐍 skill_graph.py
@@ -1202,9 +1356,10 @@
 │   │   │   │   │   │   ├─🐍 __init__.py
 │   │   │   │   │   │   ├─📝 README.md
 │   │   │   │   │   │   └─🐍 scenario_manager.py
-│   │   │   │   │   ├─📝 DATA_CONVERSION_REPORT.md
+│   │   │   │   │   ├─🐍 cli_decision_engine.py
 │   │   │   │   │   ├─🐍 event_listener.py
 │   │   │   │   │   ├─🐍 experience_manager.py
+│   │   │   │   │   ├─🐍 flow_executor_adapter.py
 │   │   │   │   │   ├─🐍 notification_system.py
 │   │   │   │   │   ├─🐍 rag_trigger.py
 │   │   │   │   │   └─📝 README.md
@@ -1233,7 +1388,6 @@
 │   │   │   │   ├─🐍 __init__.py
 │   │   │   │   ├─🐍 ai_capability_query.py
 │   │   │   │   ├─🐍 ai_decision_core.py
-│   │   │   │   ├─📝 ARCHITECTURE_ANALYSIS.md
 │   │   │   │   ├─🐍 capability_encoder.py
 │   │   │   │   ├─🐍 capability_orchestrator.py
 │   │   │   │   ├─🐍 dispatcher.py
@@ -1241,8 +1395,7 @@
 │   │   │   │   ├─🐍 internal_loop_connector.py
 │   │   │   │   ├─📄 plugin_system
 │   │   │   │   ├─📄 plugins
-│   │   │   │   ├─📝 README.md
-│   │   │   │   └─📝 RESULT_COORDINATOR_INTEGRATION_PLAN.md
+│   │   │   │   └─📝 README.md
 │   │   │   ├─📁 config/
 │   │   │   │   ├─📁 exploits/
 │   │   │   │   │   ├─🔧 cmdi_basic.yaml
@@ -1291,53 +1444,16 @@
 │   │   │   │   ├─📝 README.md
 │   │   │   │   ├─🐍 risk_policy_manager.py
 │   │   │   │   └─🐍 task_context.py
+│   │   │   ├─📁 image/
+│   │   │   │   └─📁 文檔更新清單_20260201/
+│   │   │   │       └─📄 1770228418569.png
 │   │   │   ├─📁 internal_exploration/
 │   │   │   │   ├─📁 classification_results/
 │   │   │   │   │   ├─🐍 analyze_same_file.py
-│   │   │   │   │   ├─🐍 check_connections.py
-│   │   │   │   │   ├─📝 classification_summary.md
-│   │   │   │   │   ├─📝 complete_flow_details.md
-│   │   │   │   │   └─📝 multi_path_analysis.md
+│   │   │   │   │   └─🐍 check_connections.py
 │   │   │   │   ├─📁 data/
 │   │   │   │   │   └─📄 capability_registry.db
 │   │   │   │   ├─📁 go_tools/
-│   │   │   │   │   ├─📁 go_analysis/
-│   │   │   │   │   │   ├─⚙️ analysis_results.json
-│   │   │   │   │   │   ├─⚡ cli_commands.sh
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Builder_BuildFunction.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Builder_buildStmt.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Builder_inspectBlock.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Builder_inspectExpr.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Builder_inspectStmt.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Classifier_Classify.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Classifier_GetResult.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_extractStructFields.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_formatEdge.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_formatNode.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_formatType.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_GenerateCLI.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_getFunctionName.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Graph_Add.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Graph_Link.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Graph_ToMermaid.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_main.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_NewBuilder.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_NewClassifier.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_NewGraph.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_NewStitcher.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_processFile.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_sanitizeID.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_sanitizeText.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Stitcher_AddScript.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Stitcher_AnalyzeBranches.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Stitcher_findProviderInPackage.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Stitcher_GenerateSystemFlow.mmd
-│   │   │   │   │   │   ├─📄 go2mermaid.go_Stitcher_ResolveConnections.mmd
-│   │   │   │   │   │   ├─📄 paths_config.go_GetPathsConfig.mmd
-│   │   │   │   │   │   ├─📄 paths_config.go_PathsConfig_EnsureDirectories.mmd
-│   │   │   │   │   │   ├─📄 paths_config.go_PathsConfig_GetAnalysisOutputDir.mmd
-│   │   │   │   │   │   ├─📄 paths_config.go_PathsConfig_GetDefaultOutputDir.mmd
-│   │   │   │   │   │   └─📄 system_flow.mmd
 │   │   │   │   │   ├─📄 go.mod
 │   │   │   │   │   ├─📄 go2mermaid.exe
 │   │   │   │   │   ├─🔷 go2mermaid.go
@@ -1350,272 +1466,6 @@
 │   │   │   │   │   ├─📁 src/
 │   │   │   │   │   │   ├─🦀 main.rs
 │   │   │   │   │   │   └─🦀 paths_config.rs
-│   │   │   │   │   ├─📁 target/
-│   │   │   │   │   │   ├─📁 release/
-│   │   │   │   │   │   │   ├─📁 .fingerprint/
-│   │   │   │   │   │   │   │   ├─📁 aho-corasick-e2b2eba27ede2389/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-aho_corasick
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-aho_corasick
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-aho_corasick.json
-│   │   │   │   │   │   │   │   ├─📁 autocfg-110bdd5999cc8351/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-autocfg
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-autocfg
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-autocfg.json
-│   │   │   │   │   │   │   │   ├─📁 chrono-f9189be15da30350/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-chrono
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-chrono
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-chrono.json
-│   │   │   │   │   │   │   │   ├─📁 itoa-9a1612c132340039/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-itoa
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-itoa
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-itoa.json
-│   │   │   │   │   │   │   │   ├─📁 memchr-f5170a6b46119bba/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-memchr
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-memchr
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-memchr.json
-│   │   │   │   │   │   │   │   ├─📁 num-traits-1197391293a90219/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-num_traits
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-num_traits
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-num_traits.json
-│   │   │   │   │   │   │   │   ├─📁 num-traits-27cb43ca7d4899fd/
-│   │   │   │   │   │   │   │   │   ├─📄 run-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─⚙️ run-build-script-build-script-build.json
-│   │   │   │   │   │   │   │   ├─📁 num-traits-b69565de82bce0cc/
-│   │   │   │   │   │   │   │   │   ├─📄 build-script-build-script-build
-│   │   │   │   │   │   │   │   │   ├─⚙️ build-script-build-script-build.json
-│   │   │   │   │   │   │   │   │   ├─📄 dep-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   ├─📁 proc-macro2-0cc98f215cdf43e6/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-proc_macro2
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-proc_macro2
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-proc_macro2.json
-│   │   │   │   │   │   │   │   ├─📁 proc-macro2-3f6bfd3f3a0af538/
-│   │   │   │   │   │   │   │   │   ├─📄 run-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─⚙️ run-build-script-build-script-build.json
-│   │   │   │   │   │   │   │   ├─📁 proc-macro2-3f7ceba485c6a256/
-│   │   │   │   │   │   │   │   │   ├─📄 build-script-build-script-build
-│   │   │   │   │   │   │   │   │   ├─⚙️ build-script-build-script-build.json
-│   │   │   │   │   │   │   │   │   ├─📄 dep-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   ├─📁 proc-macro2-5fc8de295a2618ef/
-│   │   │   │   │   │   │   │   │   ├─📄 run-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─⚙️ run-build-script-build-script-build.json
-│   │   │   │   │   │   │   │   ├─📁 proc-macro2-f2970809f85ffd8d/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-proc_macro2
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-proc_macro2
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-proc_macro2.json
-│   │   │   │   │   │   │   │   ├─📁 quote-08fe68d2ef133dff/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-quote
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-quote
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-quote.json
-│   │   │   │   │   │   │   │   ├─📁 quote-1e5b25a302e504af/
-│   │   │   │   │   │   │   │   │   ├─📄 run-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─⚙️ run-build-script-build-script-build.json
-│   │   │   │   │   │   │   │   ├─📁 quote-4db98fda4e3e8c90/
-│   │   │   │   │   │   │   │   │   ├─📄 build-script-build-script-build
-│   │   │   │   │   │   │   │   │   ├─⚙️ build-script-build-script-build.json
-│   │   │   │   │   │   │   │   │   ├─📄 dep-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   ├─📁 quote-834229091e217adb/
-│   │   │   │   │   │   │   │   │   ├─📄 run-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─⚙️ run-build-script-build-script-build.json
-│   │   │   │   │   │   │   │   ├─📁 quote-db85b4505d3b59b4/
-│   │   │   │   │   │   │   │   │   ├─📄 build-script-build-script-build
-│   │   │   │   │   │   │   │   │   ├─⚙️ build-script-build-script-build.json
-│   │   │   │   │   │   │   │   │   ├─📄 dep-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   ├─📁 quote-e1310edfb0dde485/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-quote
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-quote
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-quote.json
-│   │   │   │   │   │   │   │   ├─📁 regex-3bff445ba75c8a99/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-regex
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-regex
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-regex.json
-│   │   │   │   │   │   │   │   ├─📁 regex-automata-6ed70b961feff40f/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-regex_automata
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-regex_automata
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-regex_automata.json
-│   │   │   │   │   │   │   │   ├─📁 regex-syntax-8c8235050ada066a/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-regex_syntax
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-regex_syntax
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-regex_syntax.json
-│   │   │   │   │   │   │   │   ├─📁 rs2mermaid-d5db5d4150d6926c/
-│   │   │   │   │   │   │   │   │   ├─📄 bin-rs2mermaid
-│   │   │   │   │   │   │   │   │   ├─⚙️ bin-rs2mermaid.json
-│   │   │   │   │   │   │   │   │   ├─📄 dep-bin-rs2mermaid
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   └─📄 output-bin-rs2mermaid
-│   │   │   │   │   │   │   │   ├─📁 ryu-979f73fa326b529e/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-ryu
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-ryu
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-ryu.json
-│   │   │   │   │   │   │   │   ├─📁 serde_core-2add151975791089/
-│   │   │   │   │   │   │   │   │   ├─📄 run-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─⚙️ run-build-script-build-script-build.json
-│   │   │   │   │   │   │   │   ├─📁 serde_core-d8b205b9e1edcc04/
-│   │   │   │   │   │   │   │   │   ├─📄 build-script-build-script-build
-│   │   │   │   │   │   │   │   │   ├─⚙️ build-script-build-script-build.json
-│   │   │   │   │   │   │   │   │   ├─📄 dep-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   ├─📁 serde_core-f35112678c813c23/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-serde_core
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-serde_core
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-serde_core.json
-│   │   │   │   │   │   │   │   ├─📁 serde_derive-9d8ea5f14a50b161/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-serde_derive
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-serde_derive
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-serde_derive.json
-│   │   │   │   │   │   │   │   ├─📁 serde_json-542d5f65ab1fe3d2/
-│   │   │   │   │   │   │   │   │   ├─📄 run-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─⚙️ run-build-script-build-script-build.json
-│   │   │   │   │   │   │   │   ├─📁 serde_json-cd09d9fd672feb0c/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-serde_json
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-serde_json
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-serde_json.json
-│   │   │   │   │   │   │   │   ├─📁 serde_json-e24d7aac78a6b599/
-│   │   │   │   │   │   │   │   │   ├─📄 build-script-build-script-build
-│   │   │   │   │   │   │   │   │   ├─⚙️ build-script-build-script-build.json
-│   │   │   │   │   │   │   │   │   ├─📄 dep-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   ├─📁 serde-9b5e7898eae8a61d/
-│   │   │   │   │   │   │   │   │   ├─📄 build-script-build-script-build
-│   │   │   │   │   │   │   │   │   ├─⚙️ build-script-build-script-build.json
-│   │   │   │   │   │   │   │   │   ├─📄 dep-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   ├─📁 serde-a09402850eab3e9f/
-│   │   │   │   │   │   │   │   │   ├─📄 run-build-script-build-script-build
-│   │   │   │   │   │   │   │   │   └─⚙️ run-build-script-build-script-build.json
-│   │   │   │   │   │   │   │   ├─📁 serde-e50b8c532ba90678/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-serde
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-serde
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-serde.json
-│   │   │   │   │   │   │   │   ├─📁 syn-7a0ed048e552aa97/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-syn
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-syn
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-syn.json
-│   │   │   │   │   │   │   │   ├─📁 syn-cf90768d9f340590/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-syn
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-syn
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-syn.json
-│   │   │   │   │   │   │   │   ├─📁 unicode-ident-19b220dae47f18b6/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-unicode_ident
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-unicode_ident
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-unicode_ident.json
-│   │   │   │   │   │   │   │   ├─📁 unicode-ident-e7ba1b33bcf7d9d2/
-│   │   │   │   │   │   │   │   │   ├─📄 dep-lib-unicode_ident
-│   │   │   │   │   │   │   │   │   ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │   │   ├─📄 lib-unicode_ident
-│   │   │   │   │   │   │   │   │   └─⚙️ lib-unicode_ident.json
-│   │   │   │   │   │   │   │   └─📁 windows-link-be3738c26f2ca167/
-│   │   │   │   │   │   │   │       ├─📄 dep-lib-windows_link
-│   │   │   │   │   │   │   │       ├─📄 invoked.timestamp
-│   │   │   │   │   │   │   │       ├─📄 lib-windows_link
-│   │   │   │   │   │   │   │       └─⚙️ lib-windows_link.json
-│   │   │   │   │   │   │   ├─📁 deps/
-│   │   │   │   │   │   │   │   ├─📄 aho_corasick-e2b2eba27ede2389.d
-│   │   │   │   │   │   │   │   ├─📄 autocfg-110bdd5999cc8351.d
-│   │   │   │   │   │   │   │   ├─📄 chrono-f9189be15da30350.d
-│   │   │   │   │   │   │   │   ├─📄 itoa-9a1612c132340039.d
-│   │   │   │   │   │   │   │   ├─📄 libaho_corasick-e2b2eba27ede2389.rlib
-│   │   │   │   │   │   │   │   ├─📄 libaho_corasick-e2b2eba27ede2389.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libautocfg-110bdd5999cc8351.rlib
-│   │   │   │   │   │   │   │   ├─📄 libautocfg-110bdd5999cc8351.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libchrono-f9189be15da30350.rlib
-│   │   │   │   │   │   │   │   ├─📄 libchrono-f9189be15da30350.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libitoa-9a1612c132340039.rlib
-│   │   │   │   │   │   │   │   ├─📄 libitoa-9a1612c132340039.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libmemchr-f5170a6b46119bba.rlib
-│   │   │   │   │   │   │   │   ├─📄 libmemchr-f5170a6b46119bba.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libnum_traits-1197391293a90219.rlib
-│   │   │   │   │   │   │   │   ├─📄 libnum_traits-1197391293a90219.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libproc_macro2-0cc98f215cdf43e6.rlib
-│   │   │   │   │   │   │   │   ├─📄 libproc_macro2-0cc98f215cdf43e6.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libproc_macro2-f2970809f85ffd8d.rlib
-│   │   │   │   │   │   │   │   ├─📄 libproc_macro2-f2970809f85ffd8d.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libquote-08fe68d2ef133dff.rlib
-│   │   │   │   │   │   │   │   ├─📄 libquote-08fe68d2ef133dff.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libquote-e1310edfb0dde485.rlib
-│   │   │   │   │   │   │   │   ├─📄 libquote-e1310edfb0dde485.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libregex_automata-6ed70b961feff40f.rlib
-│   │   │   │   │   │   │   │   ├─📄 libregex_automata-6ed70b961feff40f.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libregex_syntax-8c8235050ada066a.rlib
-│   │   │   │   │   │   │   │   ├─📄 libregex_syntax-8c8235050ada066a.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libregex-3bff445ba75c8a99.rlib
-│   │   │   │   │   │   │   │   ├─📄 libregex-3bff445ba75c8a99.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libryu-979f73fa326b529e.rlib
-│   │   │   │   │   │   │   │   ├─📄 libryu-979f73fa326b529e.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libserde_core-f35112678c813c23.rlib
-│   │   │   │   │   │   │   │   ├─📄 libserde_core-f35112678c813c23.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libserde_json-cd09d9fd672feb0c.rlib
-│   │   │   │   │   │   │   │   ├─📄 libserde_json-cd09d9fd672feb0c.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libserde-e50b8c532ba90678.rlib
-│   │   │   │   │   │   │   │   ├─📄 libserde-e50b8c532ba90678.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libsyn-7a0ed048e552aa97.rlib
-│   │   │   │   │   │   │   │   ├─📄 libsyn-7a0ed048e552aa97.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libsyn-cf90768d9f340590.rlib
-│   │   │   │   │   │   │   │   ├─📄 libsyn-cf90768d9f340590.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libunicode_ident-19b220dae47f18b6.rlib
-│   │   │   │   │   │   │   │   ├─📄 libunicode_ident-19b220dae47f18b6.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libunicode_ident-e7ba1b33bcf7d9d2.rlib
-│   │   │   │   │   │   │   │   ├─📄 libunicode_ident-e7ba1b33bcf7d9d2.rmeta
-│   │   │   │   │   │   │   │   ├─📄 libwindows_link-be3738c26f2ca167.rlib
-│   │   │   │   │   │   │   │   ├─📄 libwindows_link-be3738c26f2ca167.rmeta
-│   │   │   │   │   │   │   │   ├─📄 memchr-f5170a6b46119bba.d
-│   │   │   │   │   │   │   │   ├─📄 num_traits-1197391293a90219.d
-│   │   │   │   │   │   │   │   ├─📄 proc_macro2-0cc98f215cdf43e6.d
-│   │   │   │   │   │   │   │   ├─📄 proc_macro2-f2970809f85ffd8d.d
-│   │   │   │   │   │   │   │   ├─📄 quote-08fe68d2ef133dff.d
-│   │   │   │   │   │   │   │   ├─📄 quote-e1310edfb0dde485.d
-│   │   │   │   │   │   │   │   ├─📄 regex_automata-6ed70b961feff40f.d
-│   │   │   │   │   │   │   │   ├─📄 regex_syntax-8c8235050ada066a.d
-│   │   │   │   │   │   │   │   ├─📄 regex-3bff445ba75c8a99.d
-│   │   │   │   │   │   │   │   ├─📄 rs2mermaid.d
-│   │   │   │   │   │   │   │   ├─📄 rs2mermaid.exe
-│   │   │   │   │   │   │   │   ├─📄 rs2mermaid.pdb
-│   │   │   │   │   │   │   │   ├─📄 ryu-979f73fa326b529e.d
-│   │   │   │   │   │   │   │   ├─📄 serde_core-f35112678c813c23.d
-│   │   │   │   │   │   │   │   ├─📄 serde_derive-9d8ea5f14a50b161.d
-│   │   │   │   │   │   │   │   ├─📄 serde_derive-9d8ea5f14a50b161.dll
-│   │   │   │   │   │   │   │   ├─📄 serde_derive-9d8ea5f14a50b161.dll.exp
-│   │   │   │   │   │   │   │   ├─📄 serde_derive-9d8ea5f14a50b161.dll.lib
-│   │   │   │   │   │   │   │   ├─📄 serde_derive-9d8ea5f14a50b161.pdb
-│   │   │   │   │   │   │   │   ├─📄 serde_json-cd09d9fd672feb0c.d
-│   │   │   │   │   │   │   │   ├─📄 serde-e50b8c532ba90678.d
-│   │   │   │   │   │   │   │   ├─📄 syn-7a0ed048e552aa97.d
-│   │   │   │   │   │   │   │   ├─📄 syn-cf90768d9f340590.d
-│   │   │   │   │   │   │   │   ├─📄 unicode_ident-19b220dae47f18b6.d
-│   │   │   │   │   │   │   │   ├─📄 unicode_ident-e7ba1b33bcf7d9d2.d
-│   │   │   │   │   │   │   │   └─📄 windows_link-be3738c26f2ca167.d
-│   │   │   │   │   │   │   ├─📁 examples/
-│   │   │   │   │   │   │   ├─📁 incremental/
-│   │   │   │   │   │   │   ├─📄 .cargo-lock
-│   │   │   │   │   │   │   ├─📄 rs2mermaid.d
-│   │   │   │   │   │   │   ├─📄 rs2mermaid.exe
-│   │   │   │   │   │   │   └─📄 rs2mermaid.pdb
-│   │   │   │   │   │   ├─⚙️ .rustc_info.json
-│   │   │   │   │   │   └─📄 CACHEDIR.TAG
 │   │   │   │   │   ├─📄 Cargo.lock
 │   │   │   │   │   ├─📄 Cargo.toml
 │   │   │   │   │   └─📝 README.md
@@ -1630,45 +1480,6 @@
 │   │   │   │   │   ├─📝 README.md
 │   │   │   │   │   └─🐍 run_analysis.py
 │   │   │   │   ├─📁 typescript_tools/
-│   │   │   │   │   ├─📁 analysis_output/
-│   │   │   │   │   │   ├─⚙️ analysis_results.json
-│   │   │   │   │   │   ├─⚡ cli_commands.sh
-│   │   │   │   │   │   ├─📄 paths.config.ts_ensureDirectories.mmd
-│   │   │   │   │   │   ├─📄 paths.config.ts_getAnalysisOutputDir.mmd
-│   │   │   │   │   │   ├─📄 paths.config.ts_getConfigSummary.mmd
-│   │   │   │   │   │   ├─📄 paths.config.ts_getDefaultOutputDir.mmd
-│   │   │   │   │   │   ├─📄 system_flow.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Builder_build.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Builder_extractParams.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Builder_handleCall.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Builder_handleIf.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Builder_handleLoop.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Builder_handleReturn.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Builder_visitBlock.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Builder_visitNode.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Classifier_classify.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Classifier_getResult.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_convertConnectionsToFlows.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_generateCLI.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_getAllFiles.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_getArg.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Graph_add.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Graph_formatEdge.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Graph_formatNode.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Graph_link.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Graph_toMermaid.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_GraphNode_sanitizeId.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_main.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_parseImports.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_processFile.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Stitcher_addScript.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Stitcher_analyzeBranches.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Stitcher_checkCandidates.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Stitcher_findProvider.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Stitcher_generateSystemFlow.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Stitcher_resolveConnections.mmd
-│   │   │   │   │   │   ├─📄 ts2mermaid.ts_Stitcher_sanitizeId.mmd
-│   │   │   │   │   │   └─📄 ts2mermaid.ts_visit.mmd
 │   │   │   │   │   ├─⚙️ package-lock.json
 │   │   │   │   │   ├─⚙️ package.json
 │   │   │   │   │   ├─📘 paths.config.ts
@@ -1681,7 +1492,8 @@
 │   │   │   │   ├─🐍 aiva_external_executor.py
 │   │   │   │   ├─🐍 aiva_internal_classifier.py
 │   │   │   │   ├─🐍 aiva_internal_executor.py
-│   │   │   │   └─📝 README.md
+│   │   │   │   ├─📝 README.md
+│   │   │   │   └─🐍 system_self_explorer.py
 │   │   │   ├─📁 service_backbone/
 │   │   │   │   ├─📁 adapters/
 │   │   │   │   │   ├─🐍 __init__.py
@@ -1696,6 +1508,7 @@
 │   │   │   │   │   ├─🐍 enhanced_unified_caller.py
 │   │   │   │   │   ├─📝 README.md
 │   │   │   │   │   ├─🐍 scan_endpoints.py
+│   │   │   │   │   ├─🐍 sse.py
 │   │   │   │   │   └─🐍 unified_function_caller.py
 │   │   │   │   ├─📁 authz/
 │   │   │   │   │   ├─🐍 __init__.py
@@ -1705,10 +1518,14 @@
 │   │   │   │   │   └─📝 README.md
 │   │   │   │   ├─📁 coordination/
 │   │   │   │   │   ├─🐍 __init__.py
+│   │   │   │   │   ├─📄 ┌─────────────────────────────────────┐.txt
 │   │   │   │   │   ├─🐍 ai_controller.py
 │   │   │   │   │   ├─🐍 ai_manager.py
 │   │   │   │   │   ├─🐍 core_service_coordinator.py
-│   │   │   │   │   └─📝 README.md
+│   │   │   │   │   ├─📄 flowchart TB.mmd
+│   │   │   │   │   ├─📝 README.md
+│   │   │   │   │   ├─📝 REPAIR_DETAILED_COMPARISON.md
+│   │   │   │   │   └─📝 REPAIR_SUMMARY.md
 │   │   │   │   ├─📁 messaging/
 │   │   │   │   │   ├─🐍 __init__.py
 │   │   │   │   │   ├─🐍 message_broker.py
@@ -1746,7 +1563,8 @@
 │   │   │   │   ├─🐍 __init__.py
 │   │   │   │   ├─🐍 context_manager.py
 │   │   │   │   ├─🐍 dispatcher_base.py
-│   │   │   │   └─📝 README.md
+│   │   │   │   ├─📝 README.md
+│   │   │   │   └─📝 REPAIR_REPORT.md
 │   │   │   ├─📁 task_planning/
 │   │   │   │   ├─📁 commander/
 │   │   │   │   │   ├─🐍 __init__.py
@@ -1784,15 +1602,13 @@
 │   │   │   │   ├─🐍 dispatcher.py
 │   │   │   │   ├─🐍 mode_manager.py
 │   │   │   │   ├─📝 README.md
+│   │   │   │   ├─🐍 strategy_profiles.py
 │   │   │   │   └─🐍 unified_executor.py
 │   │   │   ├─🐍 __init__.py
 │   │   │   ├─🐍 ai_executor_interface.py
-│   │   │   ├─📝 AIVA_CORE_COMPLETE_ARCHITECTURE_ANALYSIS.md
-│   │   │   ├─📝 ATTACK_COORDINATOR_ISSUES.md
-│   │   │   ├─📝 CLEANUP_VERIFICATION_REPORT_2026_01_31.md
-│   │   │   ├─📝 ISSUES_REPORT_20260118.md
 │   │   │   └─📝 README.md
 │   │   ├─📁 data/
+│   │   │   ├─📁 commander/
 │   │   │   └─📄 capability_registry.db
 │   │   ├─📁 requirements/
 │   │   │   ├─📄 ai.txt
@@ -1814,25 +1630,26 @@
 │   │   ├─📄 capability_registry.db
 │   │   ├─🐍 main.py
 │   │   ├─🐍 models.py
-│   │   ├─📄 pytest.ini
 │   │   ├─📝 README.md
 │   │   ├─📄 requirements.txt
 │   │   ├─🐍 session_state_manager.py
 │   │   └─🐍 startup_guide.py
+│   ├─📁 dashboard/
+│   │   ├─📁 pages/
+│   │   │   ├─🐍 __init__.py
+│   │   │   ├─🐍 1_🎯_掃描控制台.py
+│   │   │   ├─🐍 2_📊_即時監控.py
+│   │   │   ├─🐍 3_🔍_結果分析.py
+│   │   │   └─🐍 4_📜_歷史記錄.py
+│   │   ├─🐍 __init__.py
+│   │   ├─🐍 api_client.py
+│   │   ├─🐍 config.py
+│   │   └─🐍 streamlit_app.py
 │   ├─📁 data/
 │   │   └─📄 capability_registry.db
 │   ├─📁 features/
-│   │   ├─📁 base/
-│   │   │   ├─🐍 __init__.py
-│   │   │   ├─🐍 feature_registry.py
-│   │   │   ├─🐍 integration_helper.py
-│   │   │   └─🐍 result_schema.py
-│   │   ├─📁 common/
-│   │   │   └─📁 testers/
 │   │   ├─📁 features_ready/
-│   │   │   ├─📁 function_crypto/
-│   │   │   │   └─🐍 command_handler.py
-│   │   │   └─📁 function_sqli/
+│   │   │   └─📁 function_crypto/
 │   │   │       └─🐍 command_handler.py
 │   │   ├─📁 function_authn_go/
 │   │   │   ├─📁 analysis_output/
@@ -1850,7 +1667,6 @@
 │   │   │   │   ├─🔷 config.go
 │   │   │   │   └─🔷 engine.go
 │   │   │   ├─🐍 __init__.py
-│   │   │   ├─🐍 authn_manager.py
 │   │   │   ├─🐍 authn_wrapper.py
 │   │   │   ├─📄 Dockerfile
 │   │   │   ├─📄 go.mod
@@ -1866,6 +1682,7 @@
 │   │   │   ├─🐍 finding_helper.py
 │   │   │   ├─🐍 price_manipulation_scanner.py
 │   │   │   ├─🐍 race_condition_scanner.py
+│   │   │   ├─📝 README.md
 │   │   │   └─🐍 workflow_bypass_scanner.py
 │   │   ├─📁 function_crypto/
 │   │   │   ├─📁 rust_core/
@@ -1884,7 +1701,8 @@
 │   │   │   ├─⚡ batch_verify.ps1
 │   │   │   ├─⚙️ clap_analysis.json
 │   │   │   ├─📝 clap_cli_reference.md
-│   │   │   └─⚡ cli_commands.sh
+│   │   │   ├─⚡ cli_commands.sh
+│   │   │   └─📝 README.md
 │   │   ├─📁 function_exploit/
 │   │   │   ├─📁 executor/
 │   │   │   │   ├─🐍 attack_executor.py
@@ -1893,14 +1711,17 @@
 │   │   │   │   └─🐍 payload_generator.py
 │   │   │   ├─📁 validators/
 │   │   │   │   └─🐍 attack_validator.py
-│   │   │   └─🐍 exploit_manager.py
+│   │   │   ├─🐍 __init__.py
+│   │   │   ├─🐍 exploit_manager.py
+│   │   │   └─📝 README.md
 │   │   ├─📁 function_forensic/
 │   │   │   ├─📁 external_tools/
 │   │   │   ├─📁 legacy/
 │   │   │   │   └─🐍 forensic_tools_original.py
 │   │   │   ├─🐍 __init__.py
 │   │   │   ├─🐍 manager.py
-│   │   │   └─🐍 models.py
+│   │   │   ├─🐍 models.py
+│   │   │   └─📝 README.md
 │   │   ├─📁 function_idor/
 │   │   │   ├─📁 config/
 │   │   │   │   └─🐍 idor_config.py
@@ -1913,6 +1734,7 @@
 │   │   │   │   └─🐍 vertical_escalation_tester.py
 │   │   │   ├─🐍 __init__.py
 │   │   │   ├─📄 Dockerfile
+│   │   │   ├─📝 README.md
 │   │   │   ├─🐍 resource_id_extractor.py
 │   │   │   └─🐍 smart_idor_detector.py
 │   │   ├─📁 function_info_leak/
@@ -1941,7 +1763,6 @@
 │   │   │   │   └─🐍 privilege_escalation.py
 │   │   │   ├─🐍 __init__.py
 │   │   │   ├─📄 Dockerfile
-│   │   │   ├─🐍 postex_manager.py
 │   │   │   ├─📄 pyproject.toml
 │   │   │   └─📝 README.md
 │   │   ├─📁 function_reverse_engineering/
@@ -1949,20 +1770,23 @@
 │   │   │   │   └─🐍 reverse_engineering_original.py
 │   │   │   ├─🐍 __init__.py
 │   │   │   ├─🐍 manager.py
-│   │   │   └─🐍 models.py
+│   │   │   ├─🐍 models.py
+│   │   │   └─📝 README.md
 │   │   ├─📁 function_social_engineering/
 │   │   │   ├─📁 legacy/
 │   │   │   │   └─🐍 phising_attack_original.py
 │   │   │   ├─🐍 __init__.py
 │   │   │   ├─🐍 manager.py
-│   │   │   └─🐍 models.py
+│   │   │   ├─🐍 models.py
+│   │   │   └─📝 README.md
 │   │   ├─📁 function_sqli/
 │   │   │   ├─📁 config/
 │   │   │   │   └─🐍 sqli_config.py
-│   │   │   ├─📁 detector/
-│   │   │   │   └─🐍 sqli_detector.py
+│   │   │   ├─📁 data/
+│   │   │   │   └─📄 capability_registry.db
 │   │   │   ├─📁 engines/
 │   │   │   │   ├─🐍 __init__.py
+│   │   │   │   ├─🐍 base_detector.py
 │   │   │   │   ├─🐍 boolean_detection_engine.py
 │   │   │   │   ├─🐍 error_detection_engine.py
 │   │   │   │   ├─🐍 hackingtool_engine.py
@@ -1981,11 +1805,14 @@
 │   │   │   ├─🐍 hackingtool_config.py
 │   │   │   ├─🐍 hackingtool_manager.py
 │   │   │   ├─🐍 hackingtool_sql_cli.py
+│   │   │   ├─📝 OOB_INTERACTSH_PLAN.md
 │   │   │   ├─🐍 payload_wrapper_encoder.py
+│   │   │   ├─📝 README.md
 │   │   │   ├─🐍 result_binder_publisher.py
 │   │   │   ├─🐍 smart_detection_manager.py
 │   │   │   ├─🐍 task_queue.py
-│   │   │   └─🐍 telemetry.py
+│   │   │   ├─🐍 telemetry.py
+│   │   │   └─🐍 verify_refactor_v2.py
 │   │   ├─📁 function_ssrf/
 │   │   │   ├─📁 config/
 │   │   │   │   └─🐍 ssrf_config.py
@@ -1998,6 +1825,7 @@
 │   │   │   ├─🐍 internal_address_detector.py
 │   │   │   ├─🐍 oast_dispatcher.py
 │   │   │   ├─🐍 param_semantics_analyzer.py
+│   │   │   ├─📝 README.md
 │   │   │   ├─🐍 result_publisher.py
 │   │   │   └─🐍 smart_ssrf_detector.py
 │   │   ├─📁 function_steganography/
@@ -2010,7 +1838,8 @@
 │   │   │   │   └─🐍 steganography_original.py
 │   │   │   ├─🐍 __init__.py
 │   │   │   ├─🐍 manager.py
-│   │   │   └─🐍 models.py
+│   │   │   ├─🐍 models.py
+│   │   │   └─📝 README.md
 │   │   ├─📁 function_web_scanner/
 │   │   │   ├─📁 config/
 │   │   │   │   └─⚙️ scanner_config.json
@@ -2028,15 +1857,15 @@
 │   │   │   │   ├─📄 directories.txt
 │   │   │   │   └─📄 subdomains.txt
 │   │   │   ├─🐍 __init__.py
-│   │   │   ├─📝 README.md
-│   │   │   └─🐍 scanner_manager.py
+│   │   │   └─📝 README.md
 │   │   ├─📁 function_wordlist_generator/
 │   │   │   ├─📁 legacy/
 │   │   │   │   └─🐍 wordlist_generator_original.py
 │   │   │   ├─🐍 __init__.py
 │   │   │   ├─🐍 handler.py
 │   │   │   ├─🐍 manager.py
-│   │   │   └─🐍 models.py
+│   │   │   ├─🐍 models.py
+│   │   │   └─📝 README.md
 │   │   ├─📁 function_xss/
 │   │   │   ├─📁 engines/
 │   │   │   │   └─🐍 hackingtool_engine.py
@@ -2052,7 +1881,10 @@
 │   │   │   ├─🐍 dom_xss_detector.py
 │   │   │   ├─🐍 hackingtool_config.py
 │   │   │   ├─🐍 payload_generator.py
+│   │   │   ├─⚙️ payloads.json
+│   │   │   ├─📝 README.md
 │   │   │   ├─🐍 result_publisher.py
+│   │   │   ├─🐍 scanner.py
 │   │   │   ├─🐍 stored_detector.py
 │   │   │   ├─🐍 task_queue.py
 │   │   │   └─🐍 traditional_detector.py
@@ -2062,13 +1894,6 @@
 │   │   ├─🐍 smart_detection_manager.py
 │   │   └─🐍 validate_handlers.py
 │   ├─📁 integration/
-│   │   ├─📁 alembic/
-│   │   │   ├─📁 versions/
-│   │   │   │   ├─📁 image/
-│   │   │   │   │   └─📁 001_initial_schema/
-│   │   │   │   │       └─📄 1766628073892.png
-│   │   │   │   └─🐍 001_initial_schema.py
-│   │   │   └─🐍 env.py
 │   │   ├─📁 capability/
 │   │   │   ├─📁 adapters/
 │   │   │   │   ├─🐍 __init__.py
@@ -2089,9 +1914,7 @@
 │   │   │   ├─🐍 function_recon.py
 │   │   │   ├─🐍 lifecycle_cli.py
 │   │   │   ├─🐍 lifecycle.py
-│   │   │   ├─🐍 minimal_manifest.py
 │   │   │   ├─🐍 models.py
-│   │   │   ├─🐍 payload_generator.py
 │   │   │   ├─📝 README.md
 │   │   │   ├─🐍 register_standardized_capabilities.py
 │   │   │   ├─🐍 registry.py
@@ -2123,7 +1946,8 @@
 │   │   │   │   └─📁 typescript/
 │   │   │   ├─📁 experiences/
 │   │   │   │   ├─📁 exports/
-│   │   │   │   └─📄 phase0.jsonl
+│   │   │   │   ├─📄 phase0.jsonl
+│   │   │   │   └─📄 two_phase_scan.jsonl
 │   │   │   ├─📁 internal_exploration/
 │   │   │   │   ├─📁 analysis_history/
 │   │   │   │   │   ├─📁 external/
@@ -2148,19 +1972,50 @@
 │   │   │   │   │   │   │   └─⚙️ rust_engine.json
 │   │   │   │   │   │   ├─📁 typescript/
 │   │   │   │   │   │   │   └─⚙️ typescript_engine.json
-│   │   │   │   │   │   ├─⚙️ classification_data.json
-│   │   │   │   │   │   └─📝 classification_summary.md
+│   │   │   │   │   │   └─⚙️ classification_data.json
 │   │   │   │   │   ├─📁 go/
+│   │   │   │   │   │   ├─⚙️ analysis_results.json
+│   │   │   │   │   │   ├─⚡ cli_commands.sh
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Builder_BuildFunction.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Builder_buildStmt.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Builder_inspectBlock.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Builder_inspectExpr.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Builder_inspectStmt.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Classifier_Classify.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Classifier_GetResult.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_extractStructFields.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_formatEdge.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_formatNode.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_formatType.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_GenerateCLI.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_getFunctionName.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Graph_Add.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Graph_Link.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Graph_ToMermaid.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_main.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_NewBuilder.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_NewClassifier.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_NewGraph.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_NewStitcher.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_processFile.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_sanitizeID.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_sanitizeText.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Stitcher_AddScript.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Stitcher_AnalyzeBranches.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Stitcher_findProviderInPackage.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Stitcher_GenerateSystemFlow.mmd
+│   │   │   │   │   │   ├─📄 go2mermaid.go_Stitcher_ResolveConnections.mmd
+│   │   │   │   │   │   ├─📄 paths_config.go_GetPathsConfig.mmd
+│   │   │   │   │   │   ├─📄 paths_config.go_PathsConfig_EnsureDirectories.mmd
+│   │   │   │   │   │   ├─📄 paths_config.go_PathsConfig_GetAnalysisOutputDir.mmd
+│   │   │   │   │   │   ├─📄 paths_config.go_PathsConfig_GetDefaultOutputDir.mmd
+│   │   │   │   │   │   └─📄 system_flow.mmd
 │   │   │   │   │   ├─📁 internal/
-│   │   │   │   │   │   ├─⚙️ classification_data.json
-│   │   │   │   │   │   ├─📝 classification_summary.md
-│   │   │   │   │   │   ├─📝 complete_flow_details.md
-│   │   │   │   │   │   └─📝 multi_path_analysis.md
+│   │   │   │   │   │   └─⚙️ classification_data.json
 │   │   │   │   │   ├─📁 python/
 │   │   │   │   │   ├─📁 rust/
 │   │   │   │   │   │   ├─⚙️ analysis_results.json
 │   │   │   │   │   │   ├─⚙️ clap_analysis.json
-│   │   │   │   │   │   ├─📝 clap_cli_reference.md
 │   │   │   │   │   │   ├─⚡ cli_commands.sh
 │   │   │   │   │   │   ├─📄 main_Builder_new.mmd
 │   │   │   │   │   │   ├─📄 main_Builder_process_fn.mmd
@@ -2211,15 +2066,48 @@
 │   │   │   │   │   │   ├─📄 paths_config_PathsConfig_print_summary.mmd
 │   │   │   │   │   │   └─📄 system_flow.mmd
 │   │   │   │   │   └─📁 typescript/
+│   │   │   │   │       ├─⚙️ analysis_results.json
+│   │   │   │   │       ├─⚡ cli_commands.sh
+│   │   │   │   │       ├─📄 paths.config.ts_ensureDirectories.mmd
+│   │   │   │   │       ├─📄 paths.config.ts_getAnalysisOutputDir.mmd
+│   │   │   │   │       ├─📄 paths.config.ts_getConfigSummary.mmd
+│   │   │   │   │       ├─📄 paths.config.ts_getDefaultOutputDir.mmd
+│   │   │   │   │       ├─📄 system_flow.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Builder_build.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Builder_extractParams.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Builder_handleCall.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Builder_handleIf.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Builder_handleLoop.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Builder_handleReturn.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Builder_visitBlock.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Builder_visitNode.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Classifier_classify.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Classifier_getResult.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_convertConnectionsToFlows.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_generateCLI.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_getAllFiles.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_getArg.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Graph_add.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Graph_formatEdge.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Graph_formatNode.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Graph_link.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Graph_toMermaid.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_GraphNode_sanitizeId.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_main.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_parseImports.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_processFile.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Stitcher_addScript.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Stitcher_analyzeBranches.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Stitcher_checkCandidates.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Stitcher_findProvider.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Stitcher_generateSystemFlow.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Stitcher_resolveConnections.mmd
+│   │   │   │   │       ├─📄 ts2mermaid.ts_Stitcher_sanitizeId.mmd
+│   │   │   │   │       └─📄 ts2mermaid.ts_visit.mmd
 │   │   │   │   ├─📁 self_healing/
 │   │   │   │   ├─⚙️ classification_data.json
-│   │   │   │   ├─📝 classification_summary.md
-│   │   │   │   ├─📝 complete_flow_details.md
-│   │   │   │   ├─📝 EXECUTOR_VALIDATION_REPORT.md
 │   │   │   │   ├─⚙️ external_classification.json
-│   │   │   │   ├─📝 external_executor_validation_report.md
 │   │   │   │   ├─⚙️ internal_classification.json
-│   │   │   │   ├─📝 multi_path_analysis.md
 │   │   │   │   └─🐍 paths_config.py
 │   │   │   ├─📁 logs/
 │   │   │   ├─📁 models/
@@ -2255,9 +2143,7 @@
 │   │   └─⚙️ sync_report_20251206_180900.json
 │   ├─📁 scan/
 │   │   ├─📁 analysis_output/
-│   │   │   ├─📁 python/
-│   │   │   │   └─📝 data_flow_summary.md
-│   │   │   └─📝 data_flow_summary.md
+│   │   │   └─📁 python/
 │   │   ├─📁 coordinators/
 │   │   │   ├─🐍 __init__.py
 │   │   │   └─🐍 multi_engine_coordinator.py
@@ -2391,16 +2277,10 @@
 │   │   │   ├─📝 README.md
 │   │   │   └─⚙️ tsconfig.json
 │   │   ├─🐍 __init__.py
-│   │   ├─📝 README.md
-│   │   └─📝 SCAN_ENGINE_ENHANCEMENT_REPORT.md
+│   │   └─📝 README.md
 │   ├─🐍 __init__.py
 │   ├─🐍 _fix_all_readmes.py
-│   ├─📝 ARCHITECTURE_ANALYSIS_2026.md
-│   ├─📝 ARCHITECTURE_ANALYSIS.md
-│   ├─📝 IMPORT_ISSUES_REPORT_2026_02_02.md
-│   ├─📝 README.md
-│   ├─📝 SERVICES_ANALYSIS_REPORT.md
-│   └─📝 SERVICES_CURRENT_STATUS_REPORT.md
+│   └─📝 README.md
 ├─📁 target/
 │   ├─📁 debug/
 │   │   ├─📁 .fingerprint/
@@ -2748,6 +2628,7 @@
 │   └─📄 CACHEDIR.TAG
 ├─📁 tests/
 │   ├─🐍 test_attack_coordinator_simple.py
+│   ├─🐍 test_cli_architecture.py
 │   ├─🐍 test_direct_import.py
 │   ├─🐍 verify_attack_coordinator.py
 │   ├─🐍 verify_dispatcher.py
@@ -2791,45 +2672,15 @@
 ├─📄 .env.local
 ├─📄 .gitignore
 ├─📄 .pylintrc
-├─⚡ 分類外部模組.bat
-├─⚡ 外部模組選單.bat
-├─⚡ 快速執行能力.bat
-├─📝 兩個入口點連接修復報告.md
-├─⚡ 執行外部模組.bat
-├─⚡ 執行Flow.bat
-├─⚡ 啟動外部能力選單.bat
-├─⚡ 啟動能力選單.bat
-├─⚡ 啟動統一執行器.bat
-├─⚡ 啟動AIVA.ps1
-├─⚡ 啟動AIVA系統.bat
-├─⚡ 預覽Flow.bat
-├─🐍 add_toc_to_docs.py
-├─📝 AI_MODULES_CAPABILITY_CHECK.md
 ├─📄 AIVA.code-workspace
-├─🐍 analyze_removal_impact.py
 ├─📄 Cargo.lock
 ├─📄 Cargo.toml
 ├─📝 CHANGELOG.md
-├─🐍 clean_encoding.py
-├─📝 CLI_AI_INTEGRATION_IMPLEMENTATION.md
-├─📝 CLI_vs_DirectImport_對比.md
-├─🐍 debug_paths.py
-├─📝 DOCUMENTATION_REORGANIZATION_PLAN.md
-├─🐍 fix_all_encoding.py
-├─🐍 fix_encoding.py
-├─📄 flow_analysis_result.txt
-├─📝 function_xss_operable_classification.md
 ├─📄 pyproject.toml
 ├─⚙️ pyrightconfig.json
 ├─📝 README.md
-├─⚡ reorganize_docs.ps1
-├─⚡ reorganize_guides.ps1
-├─📄 requirements.txt
-├─⚡ start_aiva_core.ps1
-├─🐍 verify_step_0_1.py
-├─🐍 verify_step_2_3_4.py
-├─🐍 verify_step_3.py
-└─🐍 verify_step3_enhancement.py
+├─📄 requirements-dashboard.txt
+└─📄 requirements.txt
 
 
 ═══════════════════════════════════════════════════════════════════════════════

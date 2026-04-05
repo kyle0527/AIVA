@@ -1,7 +1,7 @@
 # API 統一函數調用模組
 
 > **路徑**: `service_backbone/api/`  
-> **狀態**: ✅ 正常 | **文件數**: 6 | **最後更新**: 2026-01-21  
+> **狀態**: ✅ 正常 | **Python 文件數**: 5 | **最後更新**: 2026-04-05  
 > **父模組**: [Service Backbone](../README.md)
 
 ## 概述
@@ -21,27 +21,9 @@
 - `create_app()` - 應用工廠函數
 - `start_server()` - 伺服器啟動函數
 
-### scan_endpoints.py
-- 掃描相關 API 端點定義
-- Phase0/Phase1 掃描控制
-
-### unified_function_caller.py
-- `FunctionCallResult` - 函數調用結果結構
-- `ModuleEndpoint` - 模組端點配置
-- `UnifiedFunctionCaller` - 統一函數調用器
-  - 動態發現和調用能力
-  - 統一的錯誤處理
-  - 結果封裝
-
-**注意**: 實際檔案名為 `unified_function_caller.py` (不是 `enhanced_unified_api.py`)
-
-### enhanced_unified_caller.py
-- `FunctionCallResult` - 增強版調用結果
-- `ModuleEndpoint` - 增強版端點配置
-- `EnhancedUnifiedFunctionCaller` - 增強版統一函數調用器
-  - 支援重試機制
-  - 支援超時控制
-  - 支援批量調用
+### sse.py
+- Server-Sent Events 長連接傳輸端點
+- 用於實時更新 AI 處理狀態
 
 ### __init__.py
 - 模組初始化和導出

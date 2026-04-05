@@ -1,7 +1,7 @@
 # Orchestration 編排模組
 
 > **路徑**: `services/core/aiva_core/core_capabilities/orchestration`  
-> **狀態**: ✅ 正常 | **文件數**: 1 | **最後更新**: 2026-01-07
+> **狀態**: ✅ 正常 | **Python 文件數**: 1 | **最後更新**: 2026-04-05
 
 ## 概述
 

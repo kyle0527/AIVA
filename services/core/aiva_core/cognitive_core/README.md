@@ -1,8 +1,8 @@
 # 🧠 Cognitive Core - 認知核心
 
 > **路徑**: `cognitive_core/`  
-> **狀態**: ✅ Production Ready | **最後更新**: 2026-01-21  
-> **子模組**: 7 個 | **總文件數**: 58 | **Python 文件**: 48 | **Bug Bounty 決策引擎**: ✅ 已整合  
+> **狀態**: ✅ Production Ready | **最後更新**: 2026-04-05  
+> **子模組**: 6 個 | **總 Python 文件**: 49 | **Bug Bounty 決策引擎**: ✅ 已整合  
 > **5M 神經網路**: ✅ v2.1 去語意化完成 | **嵌入式安全知識**: ✅ v1.0.0 完成  
 > **父模組**: [AIVA Core](../README.md)
 
@@ -25,17 +25,16 @@
 
 ### 子模組結構
 
-| 子模組 | 功能 | 文件數 | 狀態 | 文檔 |
+| 子模組 | 功能 | Python文件數 | 狀態 | 文檔 |
 |--------|------|--------|------|------|
-| **decision/** | Bug Bounty 決策支援、執行編排 | 7 | ✅ Production | [README](decision/README.md) |
-| **embedded_knowledge/** | 嵌入式安全知識庫 (v1.0.0) | 8 | ✅ Production | [README](embedded_knowledge/README.md) |
+| **decision/** | Bug Bounty 決策支援、執行編排 | 6 | ✅ Production | [README](decision/README.md) |
+| **embedded_knowledge/** | 嵌入式安全知識庫 (v1.0.0) | 6 | ✅ Production | [README](embedded_knowledge/README.md) |
 | **neural/** | 5M 神經網路核心、權重管理 | 5 | ✅ Production | [README](neural/README.md) |
 | **rag/** | 檢索增強生成、向量存儲、經驗同步 ⭐ | 7 | ✅ Production | [README](rag/README.md) |
 | **learning_system/** | 統一經驗學習系統（含 knowledge/ 子模組）⭐ | 18 | ✅ Production | [README](learning_system/README.md) |
-| **anti_hallucination/** | 反幻覺驗證機制 | 3 | ✅ Production | [README](anti_hallucination/README.md) |
-| **external_knowledge/** | 外部知識文檔 (Markdown) | 4 | 📖 Reference | - |
+| **external_knowledge/** | 外部知識文檔 (Markdown) | 0 | 📖 Reference | - |
 
-**總計**: 48 個 Python 文件 + 4 個 Markdown 文檔 + 6 個 README
+**總計**: 49 個 Python 文件 + 4 個 Markdown 文檔
 
 ### 與其他模組的整合
 

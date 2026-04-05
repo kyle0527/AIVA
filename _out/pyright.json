@@ -1,0 +1,2862 @@
+{
+    "version": "1.1.408",
+    "time": "1775370866480",
+    "generalDiagnostics": [
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "\"UTC\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 37,
+                    "character": 31
+                },
+                "end": {
+                    "line": 37,
+                    "character": 34
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "warning",
+            "message": "Import \"aiva_common.metrics\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 44,
+                    "character": 9
+                },
+                "end": {
+                    "line": 44,
+                    "character": 28
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "No parameter named \"service_name\"",
+            "range": {
+                "start": {
+                    "line": 105,
+                    "character": 20
+                },
+                "end": {
+                    "line": 105,
+                    "character": 32
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "No parameter named \"enable_prometheus\"",
+            "range": {
+                "start": {
+                    "line": 106,
+                    "character": 20
+                },
+                "end": {
+                    "line": 106,
+                    "character": 37
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"register_metric\" for class \"MonitoringLogHandler\"\n??Attribute \"register_metric\" is unknown",
+            "range": {
+                "start": {
+                    "line": 144,
+                    "character": 31
+                },
+                "end": {
+                    "line": 144,
+                    "character": 46
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"register_metric\" for class \"MonitoringLogHandler\"\n??Attribute \"register_metric\" is unknown",
+            "range": {
+                "start": {
+                    "line": 151,
+                    "character": 31
+                },
+                "end": {
+                    "line": 151,
+                    "character": 46
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"register_metric\" for class \"MonitoringLogHandler\"\n??Attribute \"register_metric\" is unknown",
+            "range": {
+                "start": {
+                    "line": 158,
+                    "character": 31
+                },
+                "end": {
+                    "line": 158,
+                    "character": 46
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"register_metric\" for class \"MonitoringLogHandler\"\n??Attribute \"register_metric\" is unknown",
+            "range": {
+                "start": {
+                    "line": 165,
+                    "character": 31
+                },
+                "end": {
+                    "line": 165,
+                    "character": 46
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"register_metric\" for class \"MonitoringLogHandler\"\n??Attribute \"register_metric\" is unknown",
+            "range": {
+                "start": {
+                    "line": 173,
+                    "character": 35
+                },
+                "end": {
+                    "line": 173,
+                    "character": 50
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"_metrics\" for class \"MonitoringLogHandler\"\n??Attribute \"_metrics\" is unknown",
+            "range": {
+                "start": {
+                    "line": 179,
+                    "character": 63
+                },
+                "end": {
+                    "line": 179,
+                    "character": 71
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"record_metric\" for class \"MonitoringLogHandler\"\n??Attribute \"record_metric\" is unknown",
+            "range": {
+                "start": {
+                    "line": 195,
+                    "character": 35
+                },
+                "end": {
+                    "line": 195,
+                    "character": 48
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"record_metric\" for class \"MonitoringLogHandler\"\n??Attribute \"record_metric\" is unknown",
+            "range": {
+                "start": {
+                    "line": 204,
+                    "character": 35
+                },
+                "end": {
+                    "line": 204,
+                    "character": 48
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"record_metric\" for class \"MonitoringLogHandler\"\n??Attribute \"record_metric\" is unknown",
+            "range": {
+                "start": {
+                    "line": 212,
+                    "character": 35
+                },
+                "end": {
+                    "line": 212,
+                    "character": 48
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"record_metric\" for class \"MonitoringLogHandler\"\n??Attribute \"record_metric\" is unknown",
+            "range": {
+                "start": {
+                    "line": 224,
+                    "character": 35
+                },
+                "end": {
+                    "line": 224,
+                    "character": 48
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"record_metric\" for class \"MonitoringLogHandler\"\n??Attribute \"record_metric\" is unknown",
+            "range": {
+                "start": {
+                    "line": 234,
+                    "character": 39
+                },
+                "end": {
+                    "line": 234,
+                    "character": 52
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"export_prometheus\" for class \"MonitoringLogHandler\"\n??Attribute \"export_prometheus\" is unknown",
+            "range": {
+                "start": {
+                    "line": 369,
+                    "character": 42
+                },
+                "end": {
+                    "line": 369,
+                    "character": 59
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\ai_executor_interface.py",
+            "severity": "warning",
+            "message": "Import \"aiva_core.internal_exploration.unified_executor_controller\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 72,
+                    "character": 17
+                },
+                "end": {
+                    "line": 72,
+                    "character": 75
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\ai_executor_interface.py",
+            "severity": "error",
+            "message": "\"execute_capability\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 115,
+                    "character": 38
+                },
+                "end": {
+                    "line": 115,
+                    "character": 56
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\ai_executor_interface.py",
+            "severity": "error",
+            "message": "\"list_capabilities\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 226,
+                    "character": 32
+                },
+                "end": {
+                    "line": 226,
+                    "character": 49
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\decision\\skill_graph.py",
+            "severity": "error",
+            "message": "\"UTC\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 7,
+                    "character": 21
+                },
+                "end": {
+                    "line": 7,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\internal_loop_connector.py",
+            "severity": "error",
+            "message": "No parameter named \"target_path\"",
+            "range": {
+                "start": {
+                    "line": 545,
+                    "character": 16
+                },
+                "end": {
+                    "line": 545,
+                    "character": 27
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\internal_loop_connector.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"classify_all_flows\" for class \"AIVAFlowClassifier\"\n??Attribute \"classify_all_flows\" is unknown",
+            "range": {
+                "start": {
+                    "line": 549,
+                    "character": 75
+                },
+                "end": {
+                    "line": 549,
+                    "character": 93
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\internal_loop_connector.py",
+            "severity": "error",
+            "message": "\"ExternalModuleClassifier\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 566,
+                    "character": 72
+                },
+                "end": {
+                    "line": 566,
+                    "character": 96
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\event_listener.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"subscribe_sync\" for class \"MessageBroker\"\n??Attribute \"subscribe_sync\" is unknown",
+            "range": {
+                "start": {
+                    "line": 102,
+                    "character": 24
+                },
+                "end": {
+                    "line": 102,
+                    "character": 38
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\event_listener.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"disconnect_sync\" for class \"MessageBroker\"\n??Attribute \"disconnect_sync\" is unknown",
+            "range": {
+                "start": {
+                    "line": 133,
+                    "character": 24
+                },
+                "end": {
+                    "line": 133,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\event_listener.py",
+            "severity": "error",
+            "message": "Type \"dict[str, Any]\" is not assignable to declared type \"FindingPayload\"\n??\"dict[str, Any]\" is not assignable to \"FindingPayload\"",
+            "range": {
+                "start": {
+                    "line": 176,
+                    "character": 38
+                },
+                "end": {
+                    "line": 176,
+                    "character": 53
+                }
+            },
+            "rule": "reportAssignmentType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\event_listener.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"location\" for class \"FindingPayload\"\n??Attribute \"location\" is unknown",
+            "range": {
+                "start": {
+                    "line": 183,
+                    "character": 35
+                },
+                "end": {
+                    "line": 183,
+                    "character": 43
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\event_listener.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"location\" for class \"FindingPayload\"\n??Attribute \"location\" is unknown",
+            "range": {
+                "start": {
+                    "line": 185,
+                    "character": 38
+                },
+                "end": {
+                    "line": 185,
+                    "character": 46
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\event_listener.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"location\" for class \"FindingPayload\"\n??Attribute \"location\" is unknown",
+            "range": {
+                "start": {
+                    "line": 186,
+                    "character": 41
+                },
+                "end": {
+                    "line": 186,
+                    "character": 49
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\event_listener.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"status_code\" for class \"str\"\n??Attribute \"status_code\" is unknown",
+            "range": {
+                "start": {
+                    "line": 190,
+                    "character": 61
+                },
+                "end": {
+                    "line": 190,
+                    "character": 72
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\event_listener.py",
+            "severity": "error",
+            "message": "\"status_code\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 190,
+                    "character": 61
+                },
+                "end": {
+                    "line": 190,
+                    "character": 72
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\event_listener.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"discovered_at\" for class \"FindingPayload\"\n??Attribute \"discovered_at\" is unknown",
+            "range": {
+                "start": {
+                    "line": 195,
+                    "character": 34
+                },
+                "end": {
+                    "line": 195,
+                    "character": 47
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\event_listener.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"process_external_finding\" for class \"ExternalLoopConnector\"\n??Attribute \"process_external_finding\" is unknown",
+            "range": {
+                "start": {
+                    "line": 219,
+                    "character": 27
+                },
+                "end": {
+                    "line": 219,
+                    "character": 51
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\experience_manager.py",
+            "severity": "error",
+            "message": "Variable not allowed in type expression",
+            "range": {
+                "start": {
+                    "line": 192,
+                    "character": 45
+                },
+                "end": {
+                    "line": 192,
+                    "character": 66
+                }
+            },
+            "rule": "reportInvalidTypeForm"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\experience_manager.py",
+            "severity": "error",
+            "message": "No parameter named \"rag_engine\"",
+            "range": {
+                "start": {
+                    "line": 227,
+                    "character": 16
+                },
+                "end": {
+                    "line": 227,
+                    "character": 26
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\experience_manager.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"unified_manager\" for class \"ExperienceManager*\"\n??Attribute \"unified_manager\" is unknown",
+            "range": {
+                "start": {
+                    "line": 296,
+                    "character": 21
+                },
+                "end": {
+                    "line": 296,
+                    "character": 36
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\experience_manager.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"unified_manager\" for class \"ExperienceManager*\"\n??Attribute \"unified_manager\" is unknown",
+            "range": {
+                "start": {
+                    "line": 308,
+                    "character": 20
+                },
+                "end": {
+                    "line": 308,
+                    "character": 35
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\experience_manager.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"unified_manager\" for class \"ExperienceManager*\"\n??Attribute \"unified_manager\" is unknown",
+            "range": {
+                "start": {
+                    "line": 323,
+                    "character": 25
+                },
+                "end": {
+                    "line": 323,
+                    "character": 40
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\learning\\model_trainer.py",
+            "severity": "error",
+            "message": "\"UTC\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 5,
+                    "character": 21
+                },
+                "end": {
+                    "line": 5,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\learning\\model_trainer.py",
+            "severity": "error",
+            "message": "Argument of type \"Literal[0]\" cannot be assigned to parameter \"zero_division\" of type \"str\" in function \"precision_score\"\n??\"Literal[0]\" is not assignable to \"str\"",
+            "range": {
+                "start": {
+                    "line": 1044,
+                    "character": 65
+                },
+                "end": {
+                    "line": 1044,
+                    "character": 66
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\learning\\model_trainer.py",
+            "severity": "error",
+            "message": "Argument of type \"Literal[0]\" cannot be assigned to parameter \"zero_division\" of type \"str\" in function \"recall_score\"\n??\"Literal[0]\" is not assignable to \"str\"",
+            "range": {
+                "start": {
+                    "line": 1046,
+                    "character": 83
+                },
+                "end": {
+                    "line": 1046,
+                    "character": 84
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\learning\\model_trainer.py",
+            "severity": "error",
+            "message": "Argument of type \"Literal[0]\" cannot be assigned to parameter \"zero_division\" of type \"str\" in function \"f1_score\"\n??\"Literal[0]\" is not assignable to \"str\"",
+            "range": {
+                "start": {
+                    "line": 1047,
+                    "character": 75
+                },
+                "end": {
+                    "line": 1047,
+                    "character": 76
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\rag_trigger.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"trigger_rag_search\" for class \"SelfOptimizationTrigger*\"\n??Attribute \"trigger_rag_search\" is unknown",
+            "range": {
+                "start": {
+                    "line": 771,
+                    "character": 37
+                },
+                "end": {
+                    "line": 771,
+                    "character": 55
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\rag_trigger.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"trigger_rag_search\" for class \"SelfOptimizationTrigger*\"\n??Attribute \"trigger_rag_search\" is unknown",
+            "range": {
+                "start": {
+                    "line": 812,
+                    "character": 37
+                },
+                "end": {
+                    "line": 812,
+                    "character": 55
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\learning_system\\tracing\\unified_tracer.py",
+            "severity": "error",
+            "message": "\"UTC\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 7,
+                    "character": 21
+                },
+                "end": {
+                    "line": 7,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\rag\\sync_experiences.py",
+            "severity": "error",
+            "message": "\"argparse\" is not defined",
+            "range": {
+                "start": {
+                    "line": 262,
+                    "character": 13
+                },
+                "end": {
+                    "line": 262,
+                    "character": 21
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\rag\\unified_vector_store.py",
+            "severity": "warning",
+            "message": "Import \"aiva_embedding\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 149,
+                    "character": 21
+                },
+                "end": {
+                    "line": 149,
+                    "character": 35
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\rag\\vector_store.py",
+            "severity": "warning",
+            "message": "Import \"aiva_embedding\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 122,
+                    "character": 21
+                },
+                "end": {
+                    "line": 122,
+                    "character": 35
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\dialog\\ai_menu.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"handle_show_history\" for class \"AIVAIntelligentMenu*\"\n??Attribute \"handle_show_history\" is unknown",
+            "range": {
+                "start": {
+                    "line": 751,
+                    "character": 31
+                },
+                "end": {
+                    "line": 751,
+                    "character": 50
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\dialog\\assistant.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"execute_phase0\" for class \"MultiEngineCoordinator\"\n??Attribute \"execute_phase0\" is unknown",
+            "range": {
+                "start": {
+                    "line": 475,
+                    "character": 37
+                },
+                "end": {
+                    "line": 475,
+                    "character": 51
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\dialog\\assistant.py",
+            "severity": "error",
+            "message": "Argument missing for parameter \"max_depth\"",
+            "range": {
+                "start": {
+                    "line": 479,
+                    "character": 25
+                },
+                "end": {
+                    "line": 481,
+                    "character": 13
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\dialog\\assistant.py",
+            "severity": "error",
+            "message": "Argument missing for parameter \"max_depth\"",
+            "range": {
+                "start": {
+                    "line": 483,
+                    "character": 25
+                },
+                "end": {
+                    "line": 485,
+                    "character": 13
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\dialog\\assistant.py",
+            "severity": "error",
+            "message": "Argument missing for parameter \"max_depth\"",
+            "range": {
+                "start": {
+                    "line": 487,
+                    "character": 25
+                },
+                "end": {
+                    "line": 489,
+                    "character": 13
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\ingestion\\scan_module_interface.py",
+            "severity": "error",
+            "message": "Object of type \"None\" cannot be called",
+            "range": {
+                "start": {
+                    "line": 38,
+                    "character": 40
+                },
+                "end": {
+                    "line": 38,
+                    "character": 64
+                }
+            },
+            "rule": "reportOptionalCall"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\ingestion\\scan_module_interface.py",
+            "severity": "error",
+            "message": "No parameter named \"timeout\"",
+            "range": {
+                "start": {
+                    "line": 568,
+                    "character": 20
+                },
+                "end": {
+                    "line": 568,
+                    "character": 27
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\ingestion\\scan_module_interface.py",
+            "severity": "error",
+            "message": "\"timeout\" is not defined",
+            "range": {
+                "start": {
+                    "line": 646,
+                    "character": 64
+                },
+                "end": {
+                    "line": 646,
+                    "character": 71
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\processing\\scan_result_processor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"target_url\" for class \"Phase0CompletedPayload\"\n??Attribute \"target_url\" is unknown",
+            "range": {
+                "start": {
+                    "line": 472,
+                    "character": 29
+                },
+                "end": {
+                    "line": 472,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\processing\\scan_result_processor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"server\" for class \"Fingerprints\"\n??Attribute \"server\" is unknown",
+            "range": {
+                "start": {
+                    "line": 575,
+                    "character": 68
+                },
+                "end": {
+                    "line": 575,
+                    "character": 74
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\processing\\scan_result_processor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"server\" for class \"Fingerprints\"\n??Attribute \"server\" is unknown",
+            "range": {
+                "start": {
+                    "line": 576,
+                    "character": 62
+                },
+                "end": {
+                    "line": 576,
+                    "character": 68
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\processing\\scan_result_processor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"powered_by\" for class \"Fingerprints\"\n??Attribute \"powered_by\" is unknown",
+            "range": {
+                "start": {
+                    "line": 577,
+                    "character": 72
+                },
+                "end": {
+                    "line": 577,
+                    "character": 82
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\processing\\scan_result_processor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"powered_by\" for class \"Fingerprints\"\n??Attribute \"powered_by\" is unknown",
+            "range": {
+                "start": {
+                    "line": 578,
+                    "character": 68
+                },
+                "end": {
+                    "line": 578,
+                    "character": 78
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\analyze_results.py",
+            "severity": "warning",
+            "message": "Import \"core_analyzer\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 20,
+                    "character": 9
+                },
+                "end": {
+                    "line": 20,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\core_analyzer.py",
+            "severity": "warning",
+            "message": "Import \"python_tools.aiva_flow_analyzer\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 51,
+                    "character": 9
+                },
+                "end": {
+                    "line": 51,
+                    "character": 40
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\core_analyzer.py",
+            "severity": "warning",
+            "message": "Import \"analyze_dataflow_breakpoints\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 52,
+                    "character": 9
+                },
+                "end": {
+                    "line": 52,
+                    "character": 37
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\core_analyzer.py",
+            "severity": "warning",
+            "message": "Import \"analyze_missing_function_connections\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 53,
+                    "character": 9
+                },
+                "end": {
+                    "line": 53,
+                    "character": 45
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\core_analyzer.py",
+            "severity": "warning",
+            "message": "Import \"practical_analyzer\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 54,
+                    "character": 9
+                },
+                "end": {
+                    "line": 54,
+                    "character": 27
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\run_analysis.py",
+            "severity": "warning",
+            "message": "Import \"core_analyzer\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 41,
+                    "character": 9
+                },
+                "end": {
+                    "line": 41,
+                    "character": 22
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\run_analysis.py",
+            "severity": "warning",
+            "message": "Import \"analyze_dataflow_breakpoints\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 42,
+                    "character": 9
+                },
+                "end": {
+                    "line": 42,
+                    "character": 37
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\run_analysis.py",
+            "severity": "warning",
+            "message": "Import \"analyze_missing_function_connections\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 43,
+                    "character": 9
+                },
+                "end": {
+                    "line": 43,
+                    "character": 45
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\run_analysis.py",
+            "severity": "warning",
+            "message": "Import \"practical_analyzer\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 44,
+                    "character": 9
+                },
+                "end": {
+                    "line": 44,
+                    "character": 27
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\run_analysis.py",
+            "severity": "warning",
+            "message": "Import \"analyze_connection_recommendations\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 45,
+                    "character": 9
+                },
+                "end": {
+                    "line": 45,
+                    "character": 43
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\run_analysis.py",
+            "severity": "error",
+            "message": "\"USE_INTEGRATED_PATHS\" is not defined",
+            "range": {
+                "start": {
+                    "line": 69,
+                    "character": 11
+                },
+                "end": {
+                    "line": 69,
+                    "character": 31
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\run_analysis.py",
+            "severity": "error",
+            "message": "\"SELF_HEALING_DIR\" is not defined",
+            "range": {
+                "start": {
+                    "line": 69,
+                    "character": 36
+                },
+                "end": {
+                    "line": 69,
+                    "character": 52
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\run_analysis.py",
+            "severity": "error",
+            "message": "\"ensure_directories\" is not defined",
+            "range": {
+                "start": {
+                    "line": 70,
+                    "character": 12
+                },
+                "end": {
+                    "line": 70,
+                    "character": 30
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\run_analysis.py",
+            "severity": "error",
+            "message": "\"SELF_HEALING_DIR\" is not defined",
+            "range": {
+                "start": {
+                    "line": 71,
+                    "character": 19
+                },
+                "end": {
+                    "line": 71,
+                    "character": 35
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\ai_service.py",
+            "severity": "error",
+            "message": "Operator \"-\" not supported for types \"datetime\" and \"datetime | None\"\n??Operator \"-\" not supported for types \"datetime\" and \"None\"",
+            "range": {
+                "start": {
+                    "line": 70,
+                    "character": 17
+                },
+                "end": {
+                    "line": 70,
+                    "character": 49
+                }
+            },
+            "rule": "reportOperatorIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\ai_service.py",
+            "severity": "error",
+            "message": "\"Path\" is not defined",
+            "range": {
+                "start": {
+                    "line": 90,
+                    "character": 18
+                },
+                "end": {
+                    "line": 90,
+                    "character": 22
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\ai_service.py",
+            "severity": "error",
+            "message": "\"sys\" is not defined",
+            "range": {
+                "start": {
+                    "line": 92,
+                    "character": 12
+                },
+                "end": {
+                    "line": 92,
+                    "character": 15
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\ai_service.py",
+            "severity": "error",
+            "message": "Object of type \"None\" cannot be used as iterable value",
+            "range": {
+                "start": {
+                    "line": 110,
+                    "character": 24
+                },
+                "end": {
+                    "line": 110,
+                    "character": 38
+                }
+            },
+            "rule": "reportOptionalIterable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\ai_service.py",
+            "severity": "error",
+            "message": "Argument missing for parameter \"max_depth\"",
+            "range": {
+                "start": {
+                    "line": 149,
+                    "character": 31
+                },
+                "end": {
+                    "line": 152,
+                    "character": 17
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\ai_service.py",
+            "severity": "error",
+            "message": "\"AIVADialogAssistant\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 181,
+                    "character": 79
+                },
+                "end": {
+                    "line": 181,
+                    "character": 98
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\ai_service.py",
+            "severity": "warning",
+            "message": "Import \"aiva_common.command_center\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 182,
+                    "character": 13
+                },
+                "end": {
+                    "line": 182,
+                    "character": 39
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\ai_service.py",
+            "severity": "warning",
+            "message": "Import \"aiva_common.models\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 225,
+                    "character": 29
+                },
+                "end": {
+                    "line": 225,
+                    "character": 47
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\ai_service.py",
+            "severity": "error",
+            "message": "\"argparse\" is not defined",
+            "range": {
+                "start": {
+                    "line": 276,
+                    "character": 13
+                },
+                "end": {
+                    "line": 276,
+                    "character": 21
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\ai_service.py",
+            "severity": "error",
+            "message": "\"argparse\" is not defined",
+            "range": {
+                "start": {
+                    "line": 278,
+                    "character": 24
+                },
+                "end": {
+                    "line": 278,
+                    "character": 32
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\sse.py",
+            "severity": "warning",
+            "message": "Import \"sse_starlette.sse\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 29,
+                    "character": 9
+                },
+                "end": {
+                    "line": 29,
+                    "character": 26
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\__init__.py",
+            "severity": "warning",
+            "message": "\"CoreServiceCoordinator\" is specified in __all__ but is not present in module",
+            "range": {
+                "start": {
+                    "line": 11,
+                    "character": 4
+                },
+                "end": {
+                    "line": 11,
+                    "character": 28
+                }
+            },
+            "rule": "reportUnsupportedDunderAll"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\__init__.py",
+            "severity": "warning",
+            "message": "\"AIController\" is specified in __all__ but is not present in module",
+            "range": {
+                "start": {
+                    "line": 12,
+                    "character": 4
+                },
+                "end": {
+                    "line": 12,
+                    "character": 18
+                }
+            },
+            "rule": "reportUnsupportedDunderAll"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\ai_controller.py",
+            "severity": "warning",
+            "message": "Import \".plugins.ai_summary_plugin\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 31,
+                    "character": 9
+                },
+                "end": {
+                    "line": 31,
+                    "character": 35
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\messaging\\message_broker.py",
+            "severity": "error",
+            "message": "Type \"RPCClient\" is not assignable to return type \"RPCClient\"\n??\"aiva_core.service_backbone.messaging.message_broker.MessageBroker.RPCClient\" is not assignable to \"aiva_core.service_backbone.messaging.message_broker.RPCClient\"",
+            "range": {
+                "start": {
+                    "line": 270,
+                    "character": 19
+                },
+                "end": {
+                    "line": 272,
+                    "character": 16
+                }
+            },
+            "rule": "reportReturnType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\messaging\\message_broker.py",
+            "severity": "error",
+            "message": "Type \"RPCClient\" is not assignable to return type \"RPCClient\"\n??\"aiva_core.service_backbone.messaging.message_broker.MessageBroker.RPCClient\" is not assignable to \"aiva_core.service_backbone.messaging.message_broker.RPCClient\"",
+            "range": {
+                "start": {
+                    "line": 282,
+                    "character": 23
+                },
+                "end": {
+                    "line": 284,
+                    "character": 20
+                }
+            },
+            "rule": "reportReturnType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\messaging\\message_broker.py",
+            "severity": "error",
+            "message": "Argument of type \"AbstractChannel | None\" cannot be assigned to parameter \"channel\" of type \"AbstractChannel\" in function \"__init__\"\n??Type \"AbstractChannel | None\" is not assignable to type \"AbstractChannel\"\n????\"None\" is not assignable to \"AbstractChannel\"",
+            "range": {
+                "start": {
+                    "line": 289,
+                    "character": 20
+                },
+                "end": {
+                    "line": 289,
+                    "character": 32
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\messaging\\task_dispatcher.py",
+            "severity": "error",
+            "message": "\"UTC\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 7,
+                    "character": 21
+                },
+                "end": {
+                    "line": 7,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\messaging\\task_dispatcher.py",
+            "severity": "error",
+            "message": "No parameter named \"metadata\"",
+            "range": {
+                "start": {
+                    "line": 225,
+                    "character": 12
+                },
+                "end": {
+                    "line": 225,
+                    "character": 20
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\diagnose.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"available_engines\" for class \"MultiEngineCoordinator\"\n??Attribute \"available_engines\" is unknown",
+            "range": {
+                "start": {
+                    "line": 42,
+                    "character": 50
+                },
+                "end": {
+                    "line": 42,
+                    "character": 67
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\diagnose.py",
+            "severity": "warning",
+            "message": "Import \"services.scan.engines.python_engine.core_crawling_engine.http_client_hi\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 128,
+                    "character": 13
+                },
+                "end": {
+                    "line": 128,
+                    "character": 84
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\diagnose.py",
+            "severity": "warning",
+            "message": "Import \"services.scan.engines.python_engine.authentication_manager\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 129,
+                    "character": 13
+                },
+                "end": {
+                    "line": 129,
+                    "character": 71
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\diagnose.py",
+            "severity": "warning",
+            "message": "Import \"services.scan.engines.python_engine.header_configuration\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 130,
+                    "character": 13
+                },
+                "end": {
+                    "line": 130,
+                    "character": 69
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\monitoring.py",
+            "severity": "error",
+            "message": "Expression of type \"None\" cannot be assigned to parameter of type \"dict[str, str]\"\n??\"None\" is not assignable to \"dict[str, str]\"",
+            "range": {
+                "start": {
+                    "line": 51,
+                    "character": 67
+                },
+                "end": {
+                    "line": 51,
+                    "character": 71
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\monitoring.py",
+            "severity": "error",
+            "message": "Expression of type \"None\" cannot be assigned to parameter of type \"dict[str, str]\"\n??\"None\" is not assignable to \"dict[str, str]\"",
+            "range": {
+                "start": {
+                    "line": 61,
+                    "character": 68
+                },
+                "end": {
+                    "line": 61,
+                    "character": 72
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\monitoring.py",
+            "severity": "error",
+            "message": "Expression of type \"None\" cannot be assigned to parameter of type \"dict[str, str]\"\n??\"None\" is not assignable to \"dict[str, str]\"",
+            "range": {
+                "start": {
+                    "line": 66,
+                    "character": 74
+                },
+                "end": {
+                    "line": 66,
+                    "character": 78
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\monitoring.py",
+            "severity": "error",
+            "message": "Expression of type \"None\" cannot be assigned to parameter of type \"dict[str, str]\"\n??\"None\" is not assignable to \"dict[str, str]\"",
+            "range": {
+                "start": {
+                    "line": 71,
+                    "character": 60
+                },
+                "end": {
+                    "line": 71,
+                    "character": 64
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\command_repository.py",
+            "severity": "error",
+            "message": "\"UTC\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 10,
+                    "character": 42
+                },
+                "end": {
+                    "line": 10,
+                    "character": 45
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\command_repository.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"engine\" for class \"StorageBackend\"\n??Attribute \"engine\" is unknown",
+            "range": {
+                "start": {
+                    "line": 39,
+                    "character": 45
+                },
+                "end": {
+                    "line": 39,
+                    "character": 51
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\command_repository.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"SessionLocal\" for class \"StorageBackend\"\n??Attribute \"SessionLocal\" is unknown",
+            "range": {
+                "start": {
+                    "line": 98,
+                    "character": 31
+                },
+                "end": {
+                    "line": 98,
+                    "character": 43
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\command_repository.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"SessionLocal\" for class \"StorageBackend\"\n??Attribute \"SessionLocal\" is unknown",
+            "range": {
+                "start": {
+                    "line": 178,
+                    "character": 31
+                },
+                "end": {
+                    "line": 178,
+                    "character": 43
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\command_repository.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"SessionLocal\" for class \"StorageBackend\"\n??Attribute \"SessionLocal\" is unknown",
+            "range": {
+                "start": {
+                    "line": 270,
+                    "character": 31
+                },
+                "end": {
+                    "line": 270,
+                    "character": 43
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\command_repository.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"SessionLocal\" for class \"StorageBackend\"\n??Attribute \"SessionLocal\" is unknown",
+            "range": {
+                "start": {
+                    "line": 362,
+                    "character": 31
+                },
+                "end": {
+                    "line": 362,
+                    "character": 43
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\command_repository.py",
+            "severity": "error",
+            "message": "Argument of type \"Function[Any]\" cannot be assigned to parameter \"type_\" of type \"_TypeEngineArgument[Any]\" in function \"__init__\"\n??Type \"Function[Any]\" is not assignable to type \"_TypeEngineArgument[Any]\"\n????Type \"Function[Any]\" is not assignable to type \"type[TypeEngine[Any]]\"\n????\"Function[Any]\" is not assignable to \"TypeEngine[Any]\"",
+            "range": {
+                "start": {
+                    "line": 372,
+                    "character": 61
+                },
+                "end": {
+                    "line": 372,
+                    "character": 75
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\command_repository.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"SessionLocal\" for class \"StorageBackend\"\n??Attribute \"SessionLocal\" is unknown",
+            "range": {
+                "start": {
+                    "line": 419,
+                    "character": 31
+                },
+                "end": {
+                    "line": 419,
+                    "character": 43
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\system\\__init__.py",
+            "severity": "warning",
+            "message": "Import \".resource_watchdog\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 2,
+                    "character": 5
+                },
+                "end": {
+                    "line": 2,
+                    "character": 23
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\utils\\__init__.py",
+            "severity": "warning",
+            "message": "Import \".config\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 6,
+                    "character": 5
+                },
+                "end": {
+                    "line": 6,
+                    "character": 12
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\utils\\__init__.py",
+            "severity": "warning",
+            "message": "Import \".ai_identifier\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 7,
+                    "character": 5
+                },
+                "end": {
+                    "line": 7,
+                    "character": 19
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\command_builder.py",
+            "severity": "warning",
+            "message": "Import \"services.integration.capability.minimal_manifest\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 34,
+                    "character": 5
+                },
+                "end": {
+                    "line": 34,
+                    "character": 53
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\__init__.py",
+            "severity": "error",
+            "message": "Argument missing for parameter \"knowledge_base\"",
+            "range": {
+                "start": {
+                    "line": 93,
+                    "character": 25
+                },
+                "end": {
+                    "line": 93,
+                    "character": 36
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"build_attack_plan\" for class \"PlanBuilder\"\n??Attribute \"build_attack_plan\" is unknown",
+            "range": {
+                "start": {
+                    "line": 161,
+                    "character": 47
+                },
+                "end": {
+                    "line": 161,
+                    "character": 64
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"make_decision\" for class \"StrategyEngine\"\n??Attribute \"make_decision\" is unknown",
+            "range": {
+                "start": {
+                    "line": 164,
+                    "character": 50
+                },
+                "end": {
+                    "line": 164,
+                    "character": 63
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"assess_risk\" for class \"StrategyEngine\"\n??Attribute \"assess_risk\" is unknown",
+            "range": {
+                "start": {
+                    "line": 167,
+                    "character": 50
+                },
+                "end": {
+                    "line": 167,
+                    "character": 61
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"execute_exploit\" for class \"AttackCoordinator\"\n??Attribute \"execute_exploit\" is unknown",
+            "range": {
+                "start": {
+                    "line": 174,
+                    "character": 53
+                },
+                "end": {
+                    "line": 174,
+                    "character": 68
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"analyze_code\" for class \"AttackCoordinator\"\n??Attribute \"analyze_code\" is unknown",
+            "range": {
+                "start": {
+                    "line": 177,
+                    "character": 53
+                },
+                "end": {
+                    "line": 177,
+                    "character": 65
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\__init__.py",
+            "severity": "error",
+            "message": "\"dict[str, Any]\" is not awaitable\n??\"dict[str, Any]\" is incompatible with protocol \"Awaitable[_T_co@Awaitable]\"\n????\"__await__\" is not present",
+            "range": {
+                "start": {
+                    "line": 187,
+                    "character": 29
+                },
+                "end": {
+                    "line": 187,
+                    "character": 81
+                }
+            },
+            "rule": "reportGeneralTypeIssues"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"query_capabilities\" for class \"CapabilityManager\"\n??Attribute \"query_capabilities\" is unknown",
+            "range": {
+                "start": {
+                    "line": 197,
+                    "character": 47
+                },
+                "end": {
+                    "line": 197,
+                    "character": 65
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\__init__.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"delegate_task\" for class \"StrategyEngine\"\n??Attribute \"delegate_task\" is unknown",
+            "range": {
+                "start": {
+                    "line": 204,
+                    "character": 50
+                },
+                "end": {
+                    "line": 204,
+                    "character": 63
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\attack_coordinator.py",
+            "severity": "warning",
+            "message": "Import \"services.features.function_sqli.detector.sqli_detector\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 52,
+                    "character": 5
+                },
+                "end": {
+                    "line": 52,
+                    "character": 59
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\capability_manager.py",
+            "severity": "error",
+            "message": "\"list_capabilities\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 43,
+                    "character": 48
+                },
+                "end": {
+                    "line": 43,
+                    "character": 65
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\capability_manager.py",
+            "severity": "error",
+            "message": "\"execute\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 93,
+                    "character": 48
+                },
+                "end": {
+                    "line": 93,
+                    "character": 55
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\capability_manager.py",
+            "severity": "error",
+            "message": "\"get_capability_info\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 121,
+                    "character": 44
+                },
+                "end": {
+                    "line": 121,
+                    "character": 63
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\capability_manager.py",
+            "severity": "error",
+            "message": "\"print_menu\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 144,
+                    "character": 40
+                },
+                "end": {
+                    "line": 144,
+                    "character": 50
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\learning_adapter.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"experience_manager\" for class \"LearningAdapter*\"\n??Attribute \"experience_manager\" is unknown",
+            "range": {
+                "start": {
+                    "line": 52,
+                    "character": 13
+                },
+                "end": {
+                    "line": 52,
+                    "character": 31
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\learning_adapter.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"rag_engine\" for class \"LearningAdapter*\"\n??Attribute \"rag_engine\" is unknown",
+            "range": {
+                "start": {
+                    "line": 55,
+                    "character": 13
+                },
+                "end": {
+                    "line": 55,
+                    "character": 23
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\learning_adapter.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"experience_manager\" for class \"LearningAdapter*\"\n??Attribute \"experience_manager\" is unknown",
+            "range": {
+                "start": {
+                    "line": 78,
+                    "character": 29
+                },
+                "end": {
+                    "line": 78,
+                    "character": 47
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\learning_adapter.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"model_trainer\" for class \"LearningAdapter*\"\n??Attribute \"model_trainer\" is unknown",
+            "range": {
+                "start": {
+                    "line": 104,
+                    "character": 28
+                },
+                "end": {
+                    "line": 104,
+                    "character": 41
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\learning_adapter.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"rag_engine\" for class \"LearningAdapter*\"\n??Attribute \"rag_engine\" is unknown",
+            "range": {
+                "start": {
+                    "line": 131,
+                    "character": 29
+                },
+                "end": {
+                    "line": 131,
+                    "character": 39
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\learning_adapter.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"unified_executor\" for class \"LearningAdapter*\"\n??Attribute \"unified_executor\" is unknown",
+            "range": {
+                "start": {
+                    "line": 165,
+                    "character": 22
+                },
+                "end": {
+                    "line": 165,
+                    "character": 38
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\learning_adapter.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"unified_executor\" for class \"LearningAdapter*\"\n??Attribute \"unified_executor\" is unknown",
+            "range": {
+                "start": {
+                    "line": 176,
+                    "character": 24
+                },
+                "end": {
+                    "line": 176,
+                    "character": 40
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\learning_adapter.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"rag_engine\" for class \"LearningAdapter*\"\n??Attribute \"rag_engine\" is unknown",
+            "range": {
+                "start": {
+                    "line": 184,
+                    "character": 36
+                },
+                "end": {
+                    "line": 184,
+                    "character": 46
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\learning_adapter.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"experience_manager\" for class \"LearningAdapter*\"\n??Attribute \"experience_manager\" is unknown",
+            "range": {
+                "start": {
+                    "line": 185,
+                    "character": 37
+                },
+                "end": {
+                    "line": 185,
+                    "character": 55
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\learning_adapter.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"rag_engine\" for class \"LearningAdapter*\"\n??Attribute \"rag_engine\" is unknown",
+            "range": {
+                "start": {
+                    "line": 194,
+                    "character": 13
+                },
+                "end": {
+                    "line": 194,
+                    "character": 23
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\learning_adapter.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"experience_manager\" for class \"LearningAdapter*\"\n??Attribute \"experience_manager\" is unknown",
+            "range": {
+                "start": {
+                    "line": 199,
+                    "character": 27
+                },
+                "end": {
+                    "line": 199,
+                    "character": 45
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\strategy_engine.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"_get_feedback_driven_adjustments\" for class \"StrategyEngine*\"\n??Attribute \"_get_feedback_driven_adjustments\" is unknown",
+            "range": {
+                "start": {
+                    "line": 68,
+                    "character": 40
+                },
+                "end": {
+                    "line": 68,
+                    "character": 72
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\strategy_engine.py",
+            "severity": "error",
+            "message": "Expected 3 positional arguments",
+            "range": {
+                "start": {
+                    "line": 76,
+                    "character": 50
+                },
+                "end": {
+                    "line": 76,
+                    "character": 70
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\strategy_engine.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"decision_engine\" for class \"StrategyEngine*\"\n??Attribute \"decision_engine\" is unknown",
+            "range": {
+                "start": {
+                    "line": 86,
+                    "character": 35
+                },
+                "end": {
+                    "line": 86,
+                    "character": 50
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\commander\\strategy_engine.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"experience_manager\" for class \"StrategyEngine*\"\n??Attribute \"experience_manager\" is unknown",
+            "range": {
+                "start": {
+                    "line": 278,
+                    "character": 35
+                },
+                "end": {
+                    "line": 278,
+                    "character": 53
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\executor\\execution_status_monitor.py",
+            "severity": "error",
+            "message": "\"UTC\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 3,
+                    "character": 21
+                },
+                "end": {
+                    "line": 3,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\executor\\plan_executor.py",
+            "severity": "error",
+            "message": "\"UTC\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 12,
+                    "character": 21
+                },
+                "end": {
+                    "line": 12,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\executor\\task_queue_manager.py",
+            "severity": "error",
+            "message": "\"UTC\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 1,
+                    "character": 21
+                },
+                "end": {
+                    "line": 1,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\persistence\\__init__.py",
+            "severity": "warning",
+            "message": "Import \".task_storage\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 11,
+                    "character": 5
+                },
+                "end": {
+                    "line": 11,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\persistence\\__init__.py",
+            "severity": "warning",
+            "message": "Import \".task_manager\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 12,
+                    "character": 5
+                },
+                "end": {
+                    "line": 12,
+                    "character": 18
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\planner\\plan_comparator.py",
+            "severity": "error",
+            "message": "\"UTC\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 5,
+                    "character": 21
+                },
+                "end": {
+                    "line": 5,
+                    "character": 24
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\planner\\tool_selector.py",
+            "severity": "error",
+            "message": "Arguments missing for parameters \"command_id\", \"trace_id\"",
+            "range": {
+                "start": {
+                    "line": 283,
+                    "character": 14
+                },
+                "end": {
+                    "line": 293,
+                    "character": 9
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "\"UTC\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 19,
+                    "character": 31
+                },
+                "end": {
+                    "line": 19,
+                    "character": 34
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "\"get_broker\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 239,
+                    "character": 57
+                },
+                "end": {
+                    "line": 239,
+                    "character": 67
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "\"CLICommand\" is not defined",
+            "range": {
+                "start": {
+                    "line": 266,
+                    "character": 31
+                },
+                "end": {
+                    "line": 266,
+                    "character": 41
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "\"CLICommand\" is not defined",
+            "range": {
+                "start": {
+                    "line": 310,
+                    "character": 31
+                },
+                "end": {
+                    "line": 310,
+                    "character": 41
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "warning",
+            "message": "Import \"..cognitive_core.schemas\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 328,
+                    "character": 13
+                },
+                "end": {
+                    "line": 328,
+                    "character": 37
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "\"result\" is not defined",
+            "range": {
+                "start": {
+                    "line": 410,
+                    "character": 34
+                },
+                "end": {
+                    "line": 410,
+                    "character": 40
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "\"result\" is not defined",
+            "range": {
+                "start": {
+                    "line": 411,
+                    "character": 30
+                },
+                "end": {
+                    "line": 411,
+                    "character": 36
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "\"result\" is not defined",
+            "range": {
+                "start": {
+                    "line": 412,
+                    "character": 30
+                },
+                "end": {
+                    "line": 412,
+                    "character": 36
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "\"json\" is not defined",
+            "range": {
+                "start": {
+                    "line": 453,
+                    "character": 23
+                },
+                "end": {
+                    "line": 453,
+                    "character": 27
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "\"json\" is not defined",
+            "range": {
+                "start": {
+                    "line": 458,
+                    "character": 15
+                },
+                "end": {
+                    "line": 458,
+                    "character": 19
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "\"CLICommand\" is not defined",
+            "range": {
+                "start": {
+                    "line": 473,
+                    "character": 22
+                },
+                "end": {
+                    "line": 473,
+                    "character": 32
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"add\" for class \"ExperienceManager\"\n??Attribute \"add\" is unknown",
+            "range": {
+                "start": {
+                    "line": 516,
+                    "character": 38
+                },
+                "end": {
+                    "line": 516,
+                    "character": 41
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"experience_buffer\" for class \"ExperienceManager\"\n??Attribute \"experience_buffer\" is unknown",
+            "range": {
+                "start": {
+                    "line": 519,
+                    "character": 50
+                },
+                "end": {
+                    "line": 519,
+                    "character": 67
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"learn_from_execution\" for class \"ContinuousLearningEngine\"\n??Attribute \"learn_from_execution\" is unknown",
+            "range": {
+                "start": {
+                    "line": 609,
+                    "character": 70
+                },
+                "end": {
+                    "line": 609,
+                    "character": 90
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"attack_intensity\" for class \"AttackStrategyProfile\"\n??Attribute \"attack_intensity\" is unknown",
+            "range": {
+                "start": {
+                    "line": 874,
+                    "character": 94
+                },
+                "end": {
+                    "line": 874,
+                    "character": 110
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Argument missing for parameter \"target_info\"",
+            "range": {
+                "start": {
+                    "line": 877,
+                    "character": 28
+                },
+                "end": {
+                    "line": 880,
+                    "character": 9
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "No parameter named \"target\"",
+            "range": {
+                "start": {
+                    "line": 878,
+                    "character": 12
+                },
+                "end": {
+                    "line": 878,
+                    "character": 18
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"attack_intensity\" for class \"AttackStrategyProfile\"\n??Attribute \"attack_intensity\" is unknown",
+            "range": {
+                "start": {
+                    "line": 892,
+                    "character": 46
+                },
+                "end": {
+                    "line": 892,
+                    "character": 62
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"risk_level\" for class \"AttackStrategyProfile\"\n??Attribute \"risk_level\" is unknown",
+            "range": {
+                "start": {
+                    "line": 898,
+                    "character": 47
+                },
+                "end": {
+                    "line": 898,
+                    "character": 57
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"ai_commander\" for class \"UnifiedAttackExecutor*\"\n??Attribute \"ai_commander\" is unknown",
+            "range": {
+                "start": {
+                    "line": 906,
+                    "character": 37
+                },
+                "end": {
+                    "line": 906,
+                    "character": 49
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"attack_intensity\" for class \"AttackStrategyProfile\"\n??Attribute \"attack_intensity\" is unknown",
+            "range": {
+                "start": {
+                    "line": 923,
+                    "character": 61
+                },
+                "end": {
+                    "line": 923,
+                    "character": 77
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"attack_intensity\" for class \"AttackStrategyProfile\"\n??Attribute \"attack_intensity\" is unknown",
+            "range": {
+                "start": {
+                    "line": 934,
+                    "character": 28
+                },
+                "end": {
+                    "line": 934,
+                    "character": 44
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"attack_intensity\" for class \"AttackStrategyProfile\"\n??Attribute \"attack_intensity\" is unknown",
+            "range": {
+                "start": {
+                    "line": 941,
+                    "character": 30
+                },
+                "end": {
+                    "line": 941,
+                    "character": 46
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"attack_intensity\" for class \"AttackStrategyProfile\"\n??Attribute \"attack_intensity\" is unknown",
+            "range": {
+                "start": {
+                    "line": 968,
+                    "character": 53
+                },
+                "end": {
+                    "line": 968,
+                    "character": 69
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"plan_executor\" for class \"UnifiedAttackExecutor*\"\n??Attribute \"plan_executor\" is unknown",
+            "range": {
+                "start": {
+                    "line": 979,
+                    "character": 32
+                },
+                "end": {
+                    "line": 979,
+                    "character": 45
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Argument missing for parameter \"trace_id\"",
+            "range": {
+                "start": {
+                    "line": 1199,
+                    "character": 23
+                },
+                "end": {
+                    "line": 1202,
+                    "character": 17
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "\"list[StrategyOptimization]\" is not awaitable\n??\"list[StrategyOptimization]\" is incompatible with protocol \"Awaitable[_T_co@Awaitable]\"\n????\"__await__\" is not present",
+            "range": {
+                "start": {
+                    "line": 1360,
+                    "character": 34
+                },
+                "end": {
+                    "line": 1360,
+                    "character": 80
+                }
+            },
+            "rule": "reportGeneralTypeIssues"
+        },
+        {
+            "file": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\unified_executor.py",
+            "severity": "error",
+            "message": "Cannot access attribute \"update_strategy_config\" for class \"RAGEngine\"\n??Attribute \"update_strategy_config\" is unknown",
+            "range": {
+                "start": {
+                    "line": 1382,
+                    "character": 34
+                },
+                "end": {
+                    "line": 1382,
+                    "character": 56
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        }
+    ],
+    "summary": {
+        "filesAnalyzed": 160,
+        "errorCount": 147,
+        "warningCount": 31,
+        "informationCount": 0,
+        "timeInSec": 37.944
+    }
+}
+

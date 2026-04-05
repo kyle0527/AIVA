@@ -1,8 +1,8 @@
 # 🎯 Core Capabilities - 核心能力模組
 
 > **路徑**: `core_capabilities/`  
-> **狀態**: ✅ Production Ready | **最後更新**: 2026-01-21  
-> **子模組**: 8 個 | **總文件數**: 21 | **Python 文件**: 21 | **Bug Bounty 整合**: ✅ 已完成  
+> **狀態**: ✅ Production Ready | **最後更新**: 2026-04-05  
+> **子模組**: 8 個 | **總文件數**: 23 | **Python 文件**: 23 | **Bug Bounty 整合**: ✅ 已完成  
 > **父模組**: [AIVA Core](../README.md)
 
 ## 概述
@@ -106,6 +106,7 @@ if self.decision_agent:
 |------|------|------|----------|
 | **capability_registry.py** | 530 | **能力註冊表代理**，SOT 原則實現（v2.1 去語意化整合） | ✅ Production |
 | **multilang_coordinator.py** | 630 | 多語言 AI 協調器，gRPC 統一架構（已修復） | ✅ Production |
+| **risk_policy_manager.py** | 300 | 風險評估與策略管理 | ✅ Production |
 | **task_context.py** | 295 | 標準任務參數包，統一通信接口 | ✅ Production |
 | **__init__.py** | 33 | 模組初始化和導出 | ✅ Production |
 
@@ -386,14 +387,11 @@ core_capabilities/
 │   ├── scan_module_interface.py  # ✅ 掃描模組介面 (311 行)
 │   └── __init__.py               # 模組初始化 (10 行)
 │
-├── 📁 manifests/                 # Manifest 執行器 (1 檔案，181 行)
-│   └── flow_executor.py          # ✅ Flow 執行器 (181 行)
-│
 └── 📁 output/                    # 輸出轉換 (2 檔案，37 行)
     ├── to_functions.py           # 輸出轉函數調用 (22 行)
     └── __init__.py               # 模組初始化 (15 行)
 
-總計: 19 個 Python 檔案，6,480 行代碼
+總計: 23 個 Python 檔案
 ```
 
 ### 能力分類
@@ -638,65 +636,7 @@ print(f"IDOR 候選: {len(attack_surface.idor_candidates)}")
 
 ---
 
-### 3. 💼 BizLogic (業務邏輯測試)
 
-#### `worker.py` - 業務邏輯測試 Worker
-**功能**: 執行業務邏輯漏洞測試
-```python
-from core_capabilities.bizlogic import (
-    PriceManipulationTester,
-    RaceConditionTester,
-    WorkflowBypassTester
-)
-
-# 價格操控測試
-price_tester = PriceManipulationTester()
-findings = await price_tester.test(
-    api_endpoint="/api/checkout",
-    product_id="12345"
-)
-
-# 競態條件測試
-race_tester = RaceConditionTester()
-findings = await race_tester.test(
-    api_endpoint="/api/coupon/apply",
-    concurrent_requests=100
-)
-
-# 流程繞過測試
-workflow_tester = WorkflowBypassTester()
-findings = await workflow_tester.test(
-    workflow_steps=["login", "verify_email", "purchase"],
-    skip_step="verify_email"
-)
-```
-
-**測試類型**:
-- **價格操控** - 修改商品價格、折扣濫用
-- **競態條件** - 並發請求導致的邏輯錯誤
-- **流程繞過** - 跳過必要的驗證步驟
-- **權限提升** - 越權訪問敏感功能
-- **數量限制** - 繞過購買數量限制
-
-#### `finding_helper.py` - 漏洞發現輔助
-**功能**: 協助組織和報告發現的漏洞
-```python
-from core_capabilities.bizlogic import FindingHelper
-
-helper = FindingHelper()
-
-# 創建漏洞報告
-finding = helper.create_finding(
-    title="價格操控漏洞",
-    severity="HIGH",
-    description="可透過修改請求參數將商品價格改為 0.01 元",
-    evidence={
-        "request": "POST /api/checkout",
-        "payload": {"price": 0.01},
-        "response": {"success": True}
-    }
-)
-```
 
 ---
 

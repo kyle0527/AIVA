@@ -1,18 +1,18 @@
 ================================================================================
 AIVA 專案程式碼樹狀架構圖（終極整合版 - 含中文檔名說明）
 ================================================================================
-生成日期: 2026年03月11日 03:33:28
+生成日期: 2026年04月05日 13:00:17
 專案路徑: C:\D\fold7\AIVA-git
 
 📊 程式碼統計
 ────────────────────────────────────────────────────────────────────────────────
-總檔案數: 673
-總程式碼行數: 200362
+總檔案數: 674
+總程式碼行數: 201322
 
 💻 語言分布:
-   • .py: 603 檔案, 179100 行 (89.4%)
+   • .py: 604 檔案, 179740 行 (89.3%)
    • .rs: 22 檔案, 8874 行 (4.4%)
-   • .go: 26 檔案, 6048 行 (3%)
+   • .go: 26 檔案, 6368 行 (3.2%)
    • .ts: 20 檔案, 5816 行 (2.9%)
    • .sql: 2 檔案, 524 行 (0.3%)
 
@@ -162,9 +162,9 @@ AIVA-git
     │   │               ├─internal_exploration
     │   │               └─scan_analysis
     │   └─validation
-    │       ├─驗證功能.py
     │       ├─test_ai_integration.py
-    │       └─test_external_learning_integration.py
+    │       ├─test_external_learning_integration.py
+    │       └─驗證功能.py
     ├─_dev_tools
     │   ├─common
     │   │   ├─automation
@@ -875,6 +875,7 @@ AIVA-git
     │   │   │   │   └─payload_generator.py
     │   │   │   ├─validators
     │   │   │   │   └─attack_validator.py
+    │   │   │   ├─__init__.py
     │   │   │   └─exploit_manager.py
     │   │   ├─function_forensic
     │   │   │   ├─external_tools

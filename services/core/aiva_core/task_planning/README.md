@@ -1,8 +1,8 @@
 # 📋 Task Planning - 任務規劃系統
 
 > **路徑**: `task_planning/`  
-> **狀態**: ✅ Production Ready | **最後更新**: 2026-01-21  
-> **子模組**: 4 個 | **總文件數**: 28 | **Bug Bounty 整合**: ✅ 已完成  
+> **狀態**: ✅ Production Ready | **最後更新**: 2026-04-05  
+> **子模組**: 3 個 | **總文件數**: 30 | **Bug Bounty 整合**: ✅ 已完成  
 > **父模組**: [AIVA Core](../README.md)
 
 ## 概述
@@ -27,8 +27,7 @@
 |--------|------|--------|------|
 | [commander/](commander/README.md) | AI 指揮協調器、Bug Bounty 決策整合 | 9 | [README](commander/README.md) |
 | [executor/](executor/README.md) | 計劃執行器、任務執行、狀態監控 | 7 | [README](executor/README.md) |
-| [planner/](planner/README.md) | 執行計劃生成、任務生成、工具選擇 | 9 | [README](planner/README.md) |
-| persistence/ | 任務狀態持久化、斷點續傳 (P0-3) | 2 | - |
+| [planner/](planner/README.md) | 執行計劃生成、任務生成、工具選擇 | 8 | [README](planner/README.md) |
 
 ---
 
@@ -42,7 +41,7 @@
 - `dispatcher.py` - 任務規劃發送器，跨模組通信，整合 internal_exploration
 - `__init__.py` - 模組初始化
 
-> **注意**: `mode_manager.py` 已棄用，攻擊強度現由 `target_sensitivity` (0.0-1.0) 參數控制。
+> **注意**: `mode_manager.py` 已被徹底歸檔移除，攻擊強度現完全由 `target_sensitivity` (0.0-1.0) 參數控制。
 
 ---
 
@@ -142,11 +141,11 @@ Task Planning 是 AIVA 的任務規劃和執行系統，負責將高層次目標
 
 | 子模組 | 檔案數 | 代碼行數 | 說明 | 文檔 |
 |--------|--------|---------|------|------|
-| **commander** | 8 | 2,029 | AI 指揮協調器，策略決策 | [README](commander/README.md) |
-| **executor** | 6 | 2,134 | 任務執行器，計劃執行 | [README](executor/README.md) |
+| **commander** | 9 | 2,029 | AI 指揮協調器，策略決策 | [README](commander/README.md) |
+| **executor** | 7 | 2,134 | 任務執行器，計劃執行 | [README](executor/README.md) |
 | **planner** | 8 | 1,869 | 任務規劃器，計劃生成 | [README](planner/README.md) |
 | **其他** | 6 | 1,976 | 統一執行器等根目錄模組 | - |
-| **總計** | **28** | **8,008** | - | - |
+| **總計** | **30** | **8,008** | - | - |
 
 ---
 
@@ -353,39 +352,7 @@ TaskContext 用於標準化 AI Commander → UnifiedExecutor → Core Capabiliti
 
 ---
 
-### 5. Coordinators - 協調器
 
-**位置**: `task_planning/coordinators/`
-
-**核心組件**：
-- `multi_scanner_coordinator.py` - 多掃描器協調（350+ 行）
-
-**主要功能**：
-```python
-from aiva_core.task_planning.coordinators import MultiScannerCoordinator
-
-# 初始化協調器
-coordinator = MultiScannerCoordinator(
-    scanners=["network_scanner", "web_scanner", "api_scanner"]
-)
-
-# 協調多個掃描器
-results = await coordinator.coordinate_scan(
-    target="https://example.com",
-    scan_types=["full", "quick", "focused"]
-)
-
-# 結果合併和去重
-merged_findings = coordinator.merge_findings(results)
-```
-
-**特性**：
-- ✅ 多掃描器協調
-- ✅ 結果合併和去重
-- ✅ 衝突解決
-- ✅ 優先級調度
-
----
 
 ## 🔄 完整工作流程
 
@@ -482,4 +449,4 @@ async def adaptive_execution(planner, executor, initial_plan):
 
 ---
 
-**最後更新**: 2025-12-01 | **維護者**: AIVA Team
+**最後更新**: 2026-04-05 | **維護者**: AIVA Team

@@ -1,7 +1,7 @@
 # Storage 存儲模組
 
 > **路徑**: `services/core/aiva_core/service_backbone/storage`  
-> **狀態**: ✅ 正常 | **文件數**: 7 | **最後更新**: 2026-01-07
+> **狀態**: ✅ 正常 | **Python 文件數**: 6 | **最後更新**: 2026-04-05
 
 ## 概述
 

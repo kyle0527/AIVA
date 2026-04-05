@@ -1,7 +1,7 @@
 # Neural 神經網路核心模組
 
 > **路徑**: `cognitive_core/neural`  
-> **狀態**: ✅ 正常 | **文件數**: 5 | **最後更新**: 2026-01-07
+> **狀態**: ✅ 正常 | **Python 文件數**: 5 | **最後更新**: 2026-04-05
 
 ## 概述
 
@@ -34,12 +34,9 @@
   - 使用真實的 PyTorch 神經網路
 - `RealBioNeuronRAGAgent` - 真實 AI 的 RAG 代理
 
-### ai_model_manager.py
+### aiva_embedding.py
 
-- `AIModelManager` - AI 模型管理器
-  - 協調 RealDecisionEngine 和訓練系統
-  - 管理 ScalableBioNet 和經驗管理
-  - 模型初始化和版本控制
+- 提供處理高維向量與語義 Embedding 的功能組件
 
 ### __init__.py
 

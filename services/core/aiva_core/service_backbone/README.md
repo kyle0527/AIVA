@@ -1,8 +1,8 @@
 # 🏗️ Service Backbone - 服務骨幹
 
 > **路徑**: `service_backbone/`  
-> **狀態**: ✅ 正常 | **最後更新**: 2026-01-21  
-> **子模組**: 9 個 | **總文件數**: 37  
+> **狀態**: ✅ 正常 | **最後更新**: 2026-04-05  
+> **子模組**: 9 個 | **Python 文件數**: 38  
 > **父模組**: [AIVA Core](../README.md)
 
 ## 概述
@@ -26,19 +26,18 @@
 | 子模組 | 功能 | 文件數 | 文檔 |
 |--------|------|--------|------|
 | [adapters/](adapters/README.md) | 協議適配器 | 2 | [README](adapters/README.md) |
-| [api/](api/README.md) | FastAPI 應用、統一函數調用、AI 服務 ⭐ | 6 | [README](api/README.md) |
+| [api/](api/README.md) | FastAPI 應用、統一函數調用、AI 服務 ⭐ | 5 | [README](api/README.md) |
 | [authz/](authz/README.md) | 權限矩陣、權限映射、矩陣可視化 | 4 | [README](authz/README.md) |
 | [coordination/](coordination/README.md) | 核心服務協調器、AI 控制器、組件管理 ⭐ | 4 | [README](coordination/README.md) |
 | [messaging/](messaging/README.md) | RabbitMQ 消息代理、結果收集、任務分發 | 4 | [README](messaging/README.md) |
 | [performance/](performance/README.md) | 監控指標收集、並行處理、健康檢查、診斷 ⭐ | 6 | [README](performance/README.md) |
 | [state/](state/README.md) | 會話狀態管理器 | 2 | [README](state/README.md) |
-| [storage/](storage/README.md) | 存儲管理器、後端實現、命令存儲 | 7 | [README](storage/README.md) |
-| [utils/](utils/README.md) | 日誌格式化、系統修復 ⭐ | 3 | [README](utils/README.md) |
+| [storage/](storage/README.md) | 存儲管理器、後端實現、命令存儲 | 6 | [README](storage/README.md) |
+| [utils/](utils/README.md) | 系統修復 ⭐ | 2 | [README](utils/README.md) |
 
 ### 根目錄組件
 
 - `context_manager.py` - 上下文管理器，分布式上下文和會話管理
-- `dispatcher_base.py` - 基礎發送器，所有模組 dispatcher 的基礎類
 - `__init__.py` - 模組初始化
 
 ---
@@ -50,7 +49,6 @@
 | `AIService` | api/ai_service.py | AI 持續運行服務 ⭐ 新增 |
 | `AIComponentManager` | coordination/ai_manager.py | AI 組件管理器 ⭐ 新增 |
 | `ContextManager` | context_manager.py | 分布式上下文和會話管理 |
-| `BaseDispatcher` | dispatcher_base.py | 所有 dispatcher 的抽象基類 |
 | `MessageBroker` | messaging/message_broker.py | RabbitMQ 消息代理 |
 | `SessionStateManager` | state/session_state_manager.py | 會話狀態管理器 |
 | `StorageManager` | storage/storage_manager.py | 存儲管理器 |
@@ -148,19 +146,18 @@ service_backbone/
 │   ├── authz_mapper.py           # 權限映射器
 │   └── matrix_visualizer.py      # 矩陣可視化
 │
-├── 📁 api/                       # API 網關 (3 檔案)
-│   ├── app.py                    # ✅ FastAPI 應用
-│   └── enhanced_unified_api.py   # 增強統一 API
+├── 📁 api/                       # API 網關 (5 檔案)
+│   └── app.py                    # ✅ FastAPI 應用
 │
-├── 📁 adapters/                  # 協議適配器 (1 檔案)
+├── 📁 adapters/                  # 協議適配器 (2 檔案)
 │   └── protocol_adapter.py       # 協議適配器
 │
-├── 📁 utils/                     # 工具類 (1 檔案)
-│   └── logging_formatter.py      # 日誌格式化
+├── 📁 utils/                     # 工具類 (2 檔案)
+│   └── repair_tool.py            # ⭐ 系統修復
 │
 └── context_manager.py            # ✅ 上下文管理器
 
-總計: 29 個 Python 檔案
+總計: 38 個 Python 檔案
 ```
 
 ### 服務架構

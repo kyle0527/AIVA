@@ -1,7 +1,7 @@
 # Decision 決策支援模組
 
 > **路徑**: `cognitive_core/decision`  
-> **狀態**: ✅ 正常 | **文件數**: 5 | **最後更新**: 2026-01-07  
+> **狀態**: ✅ 正常 | **Python 文件數**: 6 | **最後更新**: 2026-04-05  
 > **Bug Bounty 決策引擎**: ✅ v4.4.0 完全整合
 
 ## 概述
@@ -55,20 +55,13 @@
 
 ## 傳統決策組件
 
-### execution_planner.py
+### scan_execution_planner.py
 
 - `ScanStrategy` - 掃描策略枚舉 (INITIAL_DEEP, INFORMED, MULTI_ENGINE, TARGETED)
 - `ExecutionStep` - 執行步驟，包含能力、模組、命令類型和參數
 - `ExecutionPlan` - 執行計畫，包含目標、策略和步驟列表
 - `NextPhaseDecision` - 下一階段決策
-- `ExecutionPlanner` - 執行計畫生成器，支持首次深入掃描和知情掃描
-
-### execution_orchestrator.py ⚠️ DEPRECATED
-
-- `ExecutionResult` - 執行結果（CLI 架構）
-- `ExecutionOrchestrator` - 執行編排器
-  - **已廢棄**: 請使用 `PlanExecutor` 代替
-  - 使用本地 CLI 架構 (subprocess)，已不推薦
+- `ScanExecutionPlanner` - 執行計畫生成器，支持首次深入掃描和知情掃描
 
 ### skill_graph.py
 

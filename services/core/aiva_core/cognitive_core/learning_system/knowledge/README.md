@@ -1,5 +1,7 @@
 # Module Knowledge Manager - 使用說明
 
+> **路徑**: `cognitive_core/learning_system/knowledge`  
+> **狀態**: ✅ 正常 | **Python 文件數**: 1 | **最後更新**: 2026-04-05
 ## 📚 完整學習系統架構
 
 ```

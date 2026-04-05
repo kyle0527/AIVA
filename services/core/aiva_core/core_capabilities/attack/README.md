@@ -1,7 +1,7 @@
 # Attack 攻擊模組
 
 > **路徑**: `services/core/aiva_core/core_capabilities/attack`  
-> **狀態**: ✅ 正常 | **文件數**: 4 | **最後更新**: 2026-01-07
+> **狀態**: ✅ 正常 | **Python 文件數**: 3 | **最後更新**: 2026-04-05
 
 ## 概述
 
@@ -24,14 +24,6 @@
   - 選擇合適的 Exploit 策略
   - 編排 Features 模組執行測試
   - 從 Integration 收集和分析結果
-
-### custom_exploits_example.py ⚠️ 範例代碼
-- `TimeBasedSQLiExploit` - 時間盲注 SQL 注入利用示例
-- `MongoDBInjectionExploit` - MongoDB 注入利用示例
-- `Jinja2SSTIExploit` - Jinja2 SSTI 模板注入示例
-- `CustomAuthBypassExploit` - 認證繞過利用示例
-
-**注意**: 此檔案為範例代碼，建議移動至 `examples/` 目錄或在生產環境部署時排除。
 
 ## 架構流程
 

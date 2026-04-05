@@ -1,0 +1,241 @@
+\services\core\aiva_core\__init__.py:38 - "UTC" is unknown import symbol
+\services\core\aiva_core\__init__.py:106 - No parameter named "service_name"
+\services\core\aiva_core\__init__.py:107 - No parameter named "enable_prometheus"
+\services\core\aiva_core\__init__.py:145 - Cannot access attribute "register_metric" for class "MonitoringLogHandler"
+??Attribute "register_metric" is unknown
+\services\core\aiva_core\__init__.py:152 - Cannot access attribute "register_metric" for class "MonitoringLogHandler"
+??Attribute "register_metric" is unknown
+\services\core\aiva_core\__init__.py:159 - Cannot access attribute "register_metric" for class "MonitoringLogHandler"
+??Attribute "register_metric" is unknown
+\services\core\aiva_core\__init__.py:166 - Cannot access attribute "register_metric" for class "MonitoringLogHandler"
+??Attribute "register_metric" is unknown
+\services\core\aiva_core\__init__.py:174 - Cannot access attribute "register_metric" for class "MonitoringLogHandler"
+??Attribute "register_metric" is unknown
+\services\core\aiva_core\__init__.py:180 - Cannot access attribute "_metrics" for class "MonitoringLogHandler"
+??Attribute "_metrics" is unknown
+\services\core\aiva_core\__init__.py:196 - Cannot access attribute "record_metric" for class "MonitoringLogHandler"
+??Attribute "record_metric" is unknown
+\services\core\aiva_core\__init__.py:205 - Cannot access attribute "record_metric" for class "MonitoringLogHandler"
+??Attribute "record_metric" is unknown
+\services\core\aiva_core\__init__.py:213 - Cannot access attribute "record_metric" for class "MonitoringLogHandler"
+??Attribute "record_metric" is unknown
+\services\core\aiva_core\__init__.py:225 - Cannot access attribute "record_metric" for class "MonitoringLogHandler"
+??Attribute "record_metric" is unknown
+\services\core\aiva_core\__init__.py:235 - Cannot access attribute "record_metric" for class "MonitoringLogHandler"
+??Attribute "record_metric" is unknown
+\services\core\aiva_core\__init__.py:370 - Cannot access attribute "export_prometheus" for class "MonitoringLogHandler"
+??Attribute "export_prometheus" is unknown
+\services\core\aiva_core\ai_executor_interface.py:116 - "execute_capability" is not a known attribute of "None"
+\services\core\aiva_core\ai_executor_interface.py:227 - "list_capabilities" is not a known attribute of "None"
+\services\core\aiva_core\cognitive_core\decision\skill_graph.py:8 - "UTC" is unknown import symbol
+\services\core\aiva_core\cognitive_core\internal_loop_connector.py:546 - No parameter named "target_path"
+\services\core\aiva_core\cognitive_core\internal_loop_connector.py:550 - Cannot access attribute "classify_all_flows" for class "AIVAFlowClassifier"
+??Attribute "classify_all_flows" is unknown
+\services\core\aiva_core\cognitive_core\internal_loop_connector.py:567 - "ExternalModuleClassifier" is unknown import symbol
+\services\core\aiva_core\cognitive_core\learning_system\event_listener.py:103 - Cannot access attribute "subscribe_sync" for class "MessageBroker"
+??Attribute "subscribe_sync" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\event_listener.py:134 - Cannot access attribute "disconnect_sync" for class "MessageBroker"
+??Attribute "disconnect_sync" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\event_listener.py:177 - Type "dict[str, Any]" is not assignable to declared type "FindingPayload"
+??"dict[str, Any]" is not assignable to "FindingPayload"
+\services\core\aiva_core\cognitive_core\learning_system\event_listener.py:184 - Cannot access attribute "location" for class "FindingPayload"
+??Attribute "location" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\event_listener.py:186 - Cannot access attribute "location" for class "FindingPayload"
+??Attribute "location" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\event_listener.py:187 - Cannot access attribute "location" for class "FindingPayload"
+??Attribute "location" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\event_listener.py:191 - Cannot access attribute "status_code" for class "str"
+??Attribute "status_code" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\event_listener.py:191 - "status_code" is not a known attribute of "None"
+\services\core\aiva_core\cognitive_core\learning_system\event_listener.py:196 - Cannot access attribute "discovered_at" for class "FindingPayload"
+??Attribute "discovered_at" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\event_listener.py:220 - Cannot access attribute "process_external_finding" for class "ExternalLoopConnector"
+??Attribute "process_external_finding" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\experience_manager.py:193 - Variable not allowed in type expression
+\services\core\aiva_core\cognitive_core\learning_system\experience_manager.py:228 - No parameter named "rag_engine"
+\services\core\aiva_core\cognitive_core\learning_system\experience_manager.py:297 - Cannot access attribute "unified_manager" for class "ExperienceManager*"
+??Attribute "unified_manager" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\experience_manager.py:309 - Cannot access attribute "unified_manager" for class "ExperienceManager*"
+??Attribute "unified_manager" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\experience_manager.py:324 - Cannot access attribute "unified_manager" for class "ExperienceManager*"
+??Attribute "unified_manager" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\learning\model_trainer.py:6 - "UTC" is unknown import symbol
+\services\core\aiva_core\cognitive_core\learning_system\learning\model_trainer.py:1045 - Argument of type "Literal[0]" cannot be assigned to parameter "zero_division" of type "str" in function "precision_score"
+??"Literal[0]" is not assignable to "str"
+\services\core\aiva_core\cognitive_core\learning_system\learning\model_trainer.py:1047 - Argument of type "Literal[0]" cannot be assigned to parameter "zero_division" of type "str" in function "recall_score"
+??"Literal[0]" is not assignable to "str"
+\services\core\aiva_core\cognitive_core\learning_system\learning\model_trainer.py:1048 - Argument of type "Literal[0]" cannot be assigned to parameter "zero_division" of type "str" in function "f1_score"
+??"Literal[0]" is not assignable to "str"
+\services\core\aiva_core\cognitive_core\learning_system\rag_trigger.py:772 - Cannot access attribute "trigger_rag_search" for class "SelfOptimizationTrigger*"
+??Attribute "trigger_rag_search" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\rag_trigger.py:813 - Cannot access attribute "trigger_rag_search" for class "SelfOptimizationTrigger*"
+??Attribute "trigger_rag_search" is unknown
+\services\core\aiva_core\cognitive_core\learning_system\tracing\unified_tracer.py:8 - "UTC" is unknown import symbol
+\services\core\aiva_core\cognitive_core\rag\sync_experiences.py:263 - "argparse" is not defined
+\services\core\aiva_core\core_capabilities\dialog\ai_menu.py:752 - Cannot access attribute "handle_show_history" for class "AIVAIntelligentMenu*"
+??Attribute "handle_show_history" is unknown
+\services\core\aiva_core\core_capabilities\dialog\assistant.py:476 - Cannot access attribute "execute_phase0" for class "MultiEngineCoordinator"
+??Attribute "execute_phase0" is unknown
+\services\core\aiva_core\core_capabilities\dialog\assistant.py:480 - Argument missing for parameter "max_depth"
+\services\core\aiva_core\core_capabilities\dialog\assistant.py:484 - Argument missing for parameter "max_depth"
+\services\core\aiva_core\core_capabilities\dialog\assistant.py:488 - Argument missing for parameter "max_depth"
+\services\core\aiva_core\core_capabilities\ingestion\scan_module_interface.py:39 - Object of type "None" cannot be called
+\services\core\aiva_core\core_capabilities\ingestion\scan_module_interface.py:569 - No parameter named "timeout"
+\services\core\aiva_core\core_capabilities\ingestion\scan_module_interface.py:647 - "timeout" is not defined
+\services\core\aiva_core\core_capabilities\processing\scan_result_processor.py:473 - Cannot access attribute "target_url" for class "Phase0CompletedPayload"
+??Attribute "target_url" is unknown
+\services\core\aiva_core\core_capabilities\processing\scan_result_processor.py:576 - Cannot access attribute "server" for class "Fingerprints"
+??Attribute "server" is unknown
+\services\core\aiva_core\core_capabilities\processing\scan_result_processor.py:577 - Cannot access attribute "server" for class "Fingerprints"
+??Attribute "server" is unknown
+\services\core\aiva_core\core_capabilities\processing\scan_result_processor.py:578 - Cannot access attribute "powered_by" for class "Fingerprints"
+??Attribute "powered_by" is unknown
+\services\core\aiva_core\core_capabilities\processing\scan_result_processor.py:579 - Cannot access attribute "powered_by" for class "Fingerprints"
+??Attribute "powered_by" is unknown
+\services\core\aiva_core\internal_exploration\self_healing\run_analysis.py:70 - "USE_INTEGRATED_PATHS" is not defined
+\services\core\aiva_core\internal_exploration\self_healing\run_analysis.py:70 - "SELF_HEALING_DIR" is not defined
+\services\core\aiva_core\internal_exploration\self_healing\run_analysis.py:71 - "ensure_directories" is not defined
+\services\core\aiva_core\internal_exploration\self_healing\run_analysis.py:72 - "SELF_HEALING_DIR" is not defined
+\services\core\aiva_core\service_backbone\api\ai_service.py:71 - Operator "-" not supported for types "datetime" and "datetime | None"
+??Operator "-" not supported for types "datetime" and "None"
+\services\core\aiva_core\service_backbone\api\ai_service.py:91 - "Path" is not defined
+\services\core\aiva_core\service_backbone\api\ai_service.py:93 - "sys" is not defined
+\services\core\aiva_core\service_backbone\api\ai_service.py:111 - Object of type "None" cannot be used as iterable value
+\services\core\aiva_core\service_backbone\api\ai_service.py:150 - Argument missing for parameter "max_depth"
+\services\core\aiva_core\service_backbone\api\ai_service.py:182 - "AIVADialogAssistant" is unknown import symbol
+\services\core\aiva_core\service_backbone\api\ai_service.py:277 - "argparse" is not defined
+\services\core\aiva_core\service_backbone\api\ai_service.py:279 - "argparse" is not defined
+\services\core\aiva_core\service_backbone\messaging\message_broker.py:271 - Type "RPCClient" is not assignable to return type "RPCClient"
+??"aiva_core.service_backbone.messaging.message_broker.MessageBroker.RPCClient" is not assignable to "aiva_core.service_backbone.messaging.message_broker.RPCClient"
+\services\core\aiva_core\service_backbone\messaging\message_broker.py:283 - Type "RPCClient" is not assignable to return type "RPCClient"
+??"aiva_core.service_backbone.messaging.message_broker.MessageBroker.RPCClient" is not assignable to "aiva_core.service_backbone.messaging.message_broker.RPCClient"
+\services\core\aiva_core\service_backbone\messaging\message_broker.py:290 - Argument of type "AbstractChannel | None" cannot be assigned to parameter "channel" of type "AbstractChannel" in function "__init__"
+??Type "AbstractChannel | None" is not assignable to type "AbstractChannel"
+????"None" is not assignable to "AbstractChannel"
+\services\core\aiva_core\service_backbone\messaging\task_dispatcher.py:8 - "UTC" is unknown import symbol
+\services\core\aiva_core\service_backbone\messaging\task_dispatcher.py:226 - No parameter named "metadata"
+\services\core\aiva_core\service_backbone\performance\diagnose.py:43 - Cannot access attribute "available_engines" for class "MultiEngineCoordinator"
+??Attribute "available_engines" is unknown
+\services\core\aiva_core\service_backbone\performance\monitoring.py:52 - Expression of type "None" cannot be assigned to parameter of type "dict[str, str]"
+??"None" is not assignable to "dict[str, str]"
+\services\core\aiva_core\service_backbone\performance\monitoring.py:62 - Expression of type "None" cannot be assigned to parameter of type "dict[str, str]"
+??"None" is not assignable to "dict[str, str]"
+\services\core\aiva_core\service_backbone\performance\monitoring.py:67 - Expression of type "None" cannot be assigned to parameter of type "dict[str, str]"
+??"None" is not assignable to "dict[str, str]"
+\services\core\aiva_core\service_backbone\performance\monitoring.py:72 - Expression of type "None" cannot be assigned to parameter of type "dict[str, str]"
+??"None" is not assignable to "dict[str, str]"
+\services\core\aiva_core\service_backbone\storage\command_repository.py:11 - "UTC" is unknown import symbol
+\services\core\aiva_core\service_backbone\storage\command_repository.py:40 - Cannot access attribute "engine" for class "StorageBackend"
+??Attribute "engine" is unknown
+\services\core\aiva_core\service_backbone\storage\command_repository.py:99 - Cannot access attribute "SessionLocal" for class "StorageBackend"
+??Attribute "SessionLocal" is unknown
+\services\core\aiva_core\service_backbone\storage\command_repository.py:179 - Cannot access attribute "SessionLocal" for class "StorageBackend"
+??Attribute "SessionLocal" is unknown
+\services\core\aiva_core\service_backbone\storage\command_repository.py:271 - Cannot access attribute "SessionLocal" for class "StorageBackend"
+??Attribute "SessionLocal" is unknown
+\services\core\aiva_core\service_backbone\storage\command_repository.py:363 - Cannot access attribute "SessionLocal" for class "StorageBackend"
+??Attribute "SessionLocal" is unknown
+\services\core\aiva_core\service_backbone\storage\command_repository.py:373 - Argument of type "Function[Any]" cannot be assigned to parameter "type_" of type "_TypeEngineArgument[Any]" in function "__init__"
+??Type "Function[Any]" is not assignable to type "_TypeEngineArgument[Any]"
+????Type "Function[Any]" is not assignable to type "type[TypeEngine[Any]]"
+????"Function[Any]" is not assignable to "TypeEngine[Any]"
+\services\core\aiva_core\service_backbone\storage\command_repository.py:420 - Cannot access attribute "SessionLocal" for class "StorageBackend"
+??Attribute "SessionLocal" is unknown
+\services\core\aiva_core\task_planning\commander\__init__.py:94 - Argument missing for parameter "knowledge_base"
+\services\core\aiva_core\task_planning\commander\__init__.py:162 - Cannot access attribute "build_attack_plan" for class "PlanBuilder"
+??Attribute "build_attack_plan" is unknown
+\services\core\aiva_core\task_planning\commander\__init__.py:165 - Cannot access attribute "make_decision" for class "StrategyEngine"
+??Attribute "make_decision" is unknown
+\services\core\aiva_core\task_planning\commander\__init__.py:168 - Cannot access attribute "assess_risk" for class "StrategyEngine"
+??Attribute "assess_risk" is unknown
+\services\core\aiva_core\task_planning\commander\__init__.py:175 - Cannot access attribute "execute_exploit" for class "AttackCoordinator"
+??Attribute "execute_exploit" is unknown
+\services\core\aiva_core\task_planning\commander\__init__.py:178 - Cannot access attribute "analyze_code" for class "AttackCoordinator"
+??Attribute "analyze_code" is unknown
+\services\core\aiva_core\task_planning\commander\__init__.py:188 - "dict[str, Any]" is not awaitable
+??"dict[str, Any]" is incompatible with protocol "Awaitable[_T_co@Awaitable]"
+????"__await__" is not present
+\services\core\aiva_core\task_planning\commander\__init__.py:198 - Cannot access attribute "query_capabilities" for class "CapabilityManager"
+??Attribute "query_capabilities" is unknown
+\services\core\aiva_core\task_planning\commander\__init__.py:205 - Cannot access attribute "delegate_task" for class "StrategyEngine"
+??Attribute "delegate_task" is unknown
+\services\core\aiva_core\task_planning\commander\capability_manager.py:44 - "list_capabilities" is not a known attribute of "None"
+\services\core\aiva_core\task_planning\commander\capability_manager.py:94 - "execute" is not a known attribute of "None"
+\services\core\aiva_core\task_planning\commander\capability_manager.py:122 - "get_capability_info" is not a known attribute of "None"
+\services\core\aiva_core\task_planning\commander\capability_manager.py:145 - "print_menu" is not a known attribute of "None"
+\services\core\aiva_core\task_planning\commander\learning_adapter.py:53 - Cannot access attribute "experience_manager" for class "LearningAdapter*"
+??Attribute "experience_manager" is unknown
+\services\core\aiva_core\task_planning\commander\learning_adapter.py:56 - Cannot access attribute "rag_engine" for class "LearningAdapter*"
+??Attribute "rag_engine" is unknown
+\services\core\aiva_core\task_planning\commander\learning_adapter.py:79 - Cannot access attribute "experience_manager" for class "LearningAdapter*"
+??Attribute "experience_manager" is unknown
+\services\core\aiva_core\task_planning\commander\learning_adapter.py:105 - Cannot access attribute "model_trainer" for class "LearningAdapter*"
+??Attribute "model_trainer" is unknown
+\services\core\aiva_core\task_planning\commander\learning_adapter.py:132 - Cannot access attribute "rag_engine" for class "LearningAdapter*"
+??Attribute "rag_engine" is unknown
+\services\core\aiva_core\task_planning\commander\learning_adapter.py:166 - Cannot access attribute "unified_executor" for class "LearningAdapter*"
+??Attribute "unified_executor" is unknown
+\services\core\aiva_core\task_planning\commander\learning_adapter.py:177 - Cannot access attribute "unified_executor" for class "LearningAdapter*"
+??Attribute "unified_executor" is unknown
+\services\core\aiva_core\task_planning\commander\learning_adapter.py:185 - Cannot access attribute "rag_engine" for class "LearningAdapter*"
+??Attribute "rag_engine" is unknown
+\services\core\aiva_core\task_planning\commander\learning_adapter.py:186 - Cannot access attribute "experience_manager" for class "LearningAdapter*"
+??Attribute "experience_manager" is unknown
+\services\core\aiva_core\task_planning\commander\learning_adapter.py:195 - Cannot access attribute "rag_engine" for class "LearningAdapter*"
+??Attribute "rag_engine" is unknown
+\services\core\aiva_core\task_planning\commander\learning_adapter.py:200 - Cannot access attribute "experience_manager" for class "LearningAdapter*"
+??Attribute "experience_manager" is unknown
+\services\core\aiva_core\task_planning\commander\strategy_engine.py:69 - Cannot access attribute "_get_feedback_driven_adjustments" for class "StrategyEngine*"
+??Attribute "_get_feedback_driven_adjustments" is unknown
+\services\core\aiva_core\task_planning\commander\strategy_engine.py:77 - Expected 3 positional arguments
+\services\core\aiva_core\task_planning\commander\strategy_engine.py:87 - Cannot access attribute "decision_engine" for class "StrategyEngine*"
+??Attribute "decision_engine" is unknown
+\services\core\aiva_core\task_planning\commander\strategy_engine.py:279 - Cannot access attribute "experience_manager" for class "StrategyEngine*"
+??Attribute "experience_manager" is unknown
+\services\core\aiva_core\task_planning\executor\execution_status_monitor.py:4 - "UTC" is unknown import symbol
+\services\core\aiva_core\task_planning\executor\plan_executor.py:13 - "UTC" is unknown import symbol
+\services\core\aiva_core\task_planning\executor\task_queue_manager.py:2 - "UTC" is unknown import symbol
+\services\core\aiva_core\task_planning\planner\plan_comparator.py:6 - "UTC" is unknown import symbol
+\services\core\aiva_core\task_planning\planner\tool_selector.py:284 - Arguments missing for parameters "command_id", "trace_id"
+\services\core\aiva_core\task_planning\unified_executor.py:20 - "UTC" is unknown import symbol
+\services\core\aiva_core\task_planning\unified_executor.py:240 - "get_broker" is unknown import symbol
+\services\core\aiva_core\task_planning\unified_executor.py:267 - "CLICommand" is not defined
+\services\core\aiva_core\task_planning\unified_executor.py:311 - "CLICommand" is not defined
+\services\core\aiva_core\task_planning\unified_executor.py:411 - "result" is not defined
+\services\core\aiva_core\task_planning\unified_executor.py:412 - "result" is not defined
+\services\core\aiva_core\task_planning\unified_executor.py:413 - "result" is not defined
+\services\core\aiva_core\task_planning\unified_executor.py:454 - "json" is not defined
+\services\core\aiva_core\task_planning\unified_executor.py:459 - "json" is not defined
+\services\core\aiva_core\task_planning\unified_executor.py:474 - "CLICommand" is not defined
+\services\core\aiva_core\task_planning\unified_executor.py:517 - Cannot access attribute "add" for class "ExperienceManager"
+??Attribute "add" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:520 - Cannot access attribute "experience_buffer" for class "ExperienceManager"
+??Attribute "experience_buffer" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:610 - Cannot access attribute "learn_from_execution" for class "ContinuousLearningEngine"
+??Attribute "learn_from_execution" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:875 - Cannot access attribute "attack_intensity" for class "AttackStrategyProfile"
+??Attribute "attack_intensity" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:878 - Argument missing for parameter "target_info"
+\services\core\aiva_core\task_planning\unified_executor.py:879 - No parameter named "target"
+\services\core\aiva_core\task_planning\unified_executor.py:893 - Cannot access attribute "attack_intensity" for class "AttackStrategyProfile"
+??Attribute "attack_intensity" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:899 - Cannot access attribute "risk_level" for class "AttackStrategyProfile"
+??Attribute "risk_level" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:907 - Cannot access attribute "ai_commander" for class "UnifiedAttackExecutor*"
+??Attribute "ai_commander" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:924 - Cannot access attribute "attack_intensity" for class "AttackStrategyProfile"
+??Attribute "attack_intensity" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:935 - Cannot access attribute "attack_intensity" for class "AttackStrategyProfile"
+??Attribute "attack_intensity" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:942 - Cannot access attribute "attack_intensity" for class "AttackStrategyProfile"
+??Attribute "attack_intensity" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:969 - Cannot access attribute "attack_intensity" for class "AttackStrategyProfile"
+??Attribute "attack_intensity" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:980 - Cannot access attribute "plan_executor" for class "UnifiedAttackExecutor*"
+??Attribute "plan_executor" is unknown
+\services\core\aiva_core\task_planning\unified_executor.py:1200 - Argument missing for parameter "trace_id"
+\services\core\aiva_core\task_planning\unified_executor.py:1361 - "list[StrategyOptimization]" is not awaitable
+??"list[StrategyOptimization]" is incompatible with protocol "Awaitable[_T_co@Awaitable]"
+????"__await__" is not present
+\services\core\aiva_core\task_planning\unified_executor.py:1383 - Cannot access attribute "update_strategy_config" for class "RAGEngine"
+??Attribute "update_strategy_config" is unknown

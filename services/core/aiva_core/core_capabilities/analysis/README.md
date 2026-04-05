@@ -1,7 +1,7 @@
 # Analysis 分析模組
 
 > **路徑**: `core_capabilities/analysis/`  
-> **狀態**: ✅ 正常 | **文件數**: 4 | **最後更新**: 2026-01-21  
+> **狀態**: ✅ 正常 | **Python 文件數**: 4 | **最後更新**: 2026-04-05  
 > **父模組**: [Core Capabilities](../README.md)
 
 ## 概述

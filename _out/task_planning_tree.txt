@@ -1,0 +1,73 @@
+列出磁碟區 OS 的資料夾 PATH
+磁碟區序號為 AA21-0736
+C:\D\FOLD7\AIVA-GIT\SERVICES\CORE\AIVA_CORE\TASK_PLANNING
+|   command_builder.py
+|   command_router.py
+|   dispatcher.py
+|   mode_manager.py
+|   README.md
+|   strategy_profiles.py
+|   unified_executor.py
+|   __init__.py
+|   
++---commander
+|   |   attack_coordinator.py
+|   |   capability_manager.py
+|   |   capability_matcher.py
+|   |   learning_adapter.py
+|   |   plan_builder.py
+|   |   policy_manager.py
+|   |   README.md
+|   |   strategy_engine.py
+|   |   types.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           attack_coordinator.cpython-313.pyc
+|           capability_manager.cpython-313.pyc
+|           plan_builder.cpython-313.pyc
+|           policy_manager.cpython-313.pyc
+|           strategy_engine.cpython-313.pyc
+|           types.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---executor
+|   |   attack_plan_mapper.py
+|   |   execution_status_monitor.py
+|   |   plan_executor.py
+|   |   README.md
+|   |   task_executor.py
+|   |   task_queue_manager.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           execution_status_monitor.cpython-313.pyc
+|           task_queue_manager.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---persistence
+|       __init__.py
+|       
++---planner
+|   |   ast_parser.py
+|   |   plan_comparator.py
+|   |   README.md
+|   |   task_converter.py
+|   |   task_execution_planner.py
+|   |   task_generator.py
+|   |   tool_selector.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           ast_parser.cpython-313.pyc
+|           task_converter.cpython-313.pyc
+|           task_execution_planner.cpython-313.pyc
+|           task_generator.cpython-313.pyc
+|           tool_selector.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
+\---__pycache__
+        command_router.cpython-313.pyc
+        unified_executor.cpython-313.pyc
+        __init__.cpython-313.pyc
+        
