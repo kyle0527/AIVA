@@ -25,7 +25,7 @@ class DirectoryResult:
     content_length: int
     content_type: str
     redirect_url: str = None
-    severity: Severity = Severity.INFO
+    severity: Severity = Severity.LOW
 
 
 class DirectoryBruteforcer:
@@ -147,7 +147,7 @@ class DirectoryBruteforcer:
         if response.status_code in [401, 403]:
             return Severity.MEDIUM
         
-        return Severity.INFO
+        return Severity.LOW
     
     def _get_default_wordlist(self) -> str:
         """獲取默認字典路徑"""

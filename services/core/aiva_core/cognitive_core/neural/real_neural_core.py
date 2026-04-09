@@ -9,16 +9,35 @@
 - 可持久化的權重儲存
 """
 
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import torch.nn.functional as F
-import numpy as np
 import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 import json
 import time
+
+logger = logging.getLogger(__name__)
+
+try:
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    import torch.nn.functional as F
+    import numpy as np
+
+    # AIVA 自研 Embedding 層 - 使用 all-MiniLM-L6-v2 的權重但架構自主可控
+    from .aiva_embedding import AIVAEmbedding
+
+    # Check if nn.Module is available, if not, use object
+    BaseClass = nn.Module
+except ImportError as e:
+    logger.warning(f"Failed to load torch/numpy modules: {e}. Falling back to rule-based mode.")
+    torch = None
+    nn = None
+    optim = None
+    F = None
+    np = None
+    AIVAEmbedding = None
+    BaseClass = object
 
 # aiva_common 強制依賴 - 必須正確安裝
 from aiva_common.enums.common import Severity, Confidence
@@ -27,12 +46,8 @@ from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity,
 
 MODULE_NAME = "real_neural_core"
 
-# AIVA 自研 Embedding 層 - 使用 all-MiniLM-L6-v2 的權重但架構自主可控
-from .aiva_embedding import AIVAEmbedding
 
-logger = logging.getLogger(__name__)
-
-class RealAICore(nn.Module):
+class RealAICore(BaseClass):
     """真實的AI核心 - 使用5M特化神經網路模型"""
     
     def __init__(self, 
