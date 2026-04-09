@@ -2,33 +2,19 @@
 
 ## 📁 目錄
 
-- [📂 目錄結構](#目錄結構)
-  - [01_completed_projects](#01_completed_projects)
-  - [02_deprecated_code](#02_deprecated_code)
-  - [03_historical_reports](#03_historical_reports)
-  - [04_scripts_completed](#04_scripts_completed)
-  - [05_backups](#05_backups)
-  - [06_documentation_archive](#06_documentation_archive)
-  - [07_configuration_archive](#07_configuration_archive)
-  - [08_tool_archive](#08_tool_archive)
+- [📂 目前目錄結構](#目前目錄結構)
   - [09_integration_archive](#09_integration_archive)
+  - [services](#services)
 - [📝 使用說明](#使用說明)
 
 ---
 
 此目錄包含 AIVA 專案的歷史文件、已完成項目和棄用代碼的歸檔。
 
-## 目錄結構
+## 目前目錄結構
 
-- **01_completed_projects/**: 已完成的項目和功能
-- **02_deprecated_code/**: 已棄用的代碼和組件
-- **03_historical_reports/**: 歷史報告和分析文件
-- **04_scripts_completed/**: 已完成的腳本和工具
-- **05_backups/**: 重要文件的備份
-- **06_documentation_archive/**: 歸檔的文件檔案
-- **07_configuration_archive/**: 歸檔的配置文件
-- **08_tool_archive/**: 歸檔的工具和實用程序
-- **09_integration_archive/**: 集成相關的歷史文件
+- **09_integration_archive/**: 集成相關的歷史文件（廢棄的 Manager 類別、Alembic 遷移）
+- **services/reports/2026-02/**: 2026-02 服務架構分析與報告
 
 ## 使用說明
 
@@ -37,9 +23,8 @@
 3. 保持清晰的命名約定
 4. 定期清理和組織歸檔內容
 
-更新時間: 2026-02-11
-**檢查日期**: 2026年2月11日
-**狀態**: ✅ 目錄結構已驗證，9個子目錄均存在
+更新時間: 2026-04-09
+**狀態**: ✅ 已清理過時檔案（2026-04-09）
 
 ---
 
@@ -53,3 +38,23 @@
   - `postex_manager.py` (請使用 PostExDetector)
   - `authn_manager.py` (請直接調用 Go 引擎)
 - 詳見: [09_integration_archive/ARCHIVE_INDEX.md](09_integration_archive/ARCHIVE_INDEX.md)
+
+### 2026-04-09: 歸檔清理
+刪除以下已無殘餘價值的目錄（共 266 個檔案，約 5.9MB）：
+- `03_historical_reports/` — CLI 診斷、備份分析、舊版測試報告（2026-01/02）
+- `docs/` — Mock 移除報告、修復報告（2026-01，已完成動作記錄）
+- `06_documentation_archive/` — 舊版 CLI 文件（2026-01/02）
+- `07_documentation_archive/` — 舊版 CLI 指南（2026-01）
+- `docs_20260310/` — 2026-03-10 已過期的架構/技術文件（含 9 個 Nov-2025 JSON 測試輸出）
+- `guides_20260310/` — 2026-03-10 已過期的指南
+- `cognitive_core_cleanup_20260405/` — April 2026 清理歸檔的廢棄 Python 程式碼
+- `core_capabilities_cleanup_20260405/` — 同上
+- `service_backbone_cleanup_20260405/` — 同上
+- `base_feature_infrastructure/` — 已被取代的基礎設施程式碼
+- `validation/` — 舊版驗證腳本（已歸檔）
+- `services/core/aiva_core/fixed_issues/` — 已修復的 issue 記錄
+- `services/core/aiva_core/cleanup_reports/` — 已完成的清理報告
+- `services/core/aiva_core/reports/` — 舊版 issue 報告（2026-01）
+- `services/core/aiva_core/task_planning/` — 廢棄的 mode_manager.py
+- `services/reports/2026-02/classification_results/analysis_results/` — 重複資料
+- `services/reports/2026-02/classification_results/internal_exploration/` — 重複資料
