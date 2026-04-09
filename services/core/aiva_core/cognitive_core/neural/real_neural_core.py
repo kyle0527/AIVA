@@ -241,7 +241,7 @@ class RealAICore(BaseClass):
         """
         try:
             filepath = self._validate_weight_filepath(filepath)
-            checkpoint = torch.load(filepath, map_location='cpu')
+            checkpoint = torch.load(filepath, map_location='cpu', weights_only=True)
             state_dict = self._extract_state_dict(checkpoint)
             
             # 嘗試載入權重，失敗則進行 key 映射

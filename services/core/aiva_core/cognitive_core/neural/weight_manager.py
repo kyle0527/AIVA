@@ -49,8 +49,7 @@ class AIWeightManager:
     def __init__(self, 
                  base_dir: Union[str, Path] = "weights",
                  backup_enabled: bool = True,
-                 max_backups: int = 5,
-                 use_weights_only: bool = True):
+                 max_backups: int = 5):
         """
         初始化權重管理器
         
@@ -58,14 +57,12 @@ class AIWeightManager:
             base_dir: 權重檔案基礎目錄
             backup_enabled: 是否啟用自動備份
             max_backups: 最大備份數量
-            use_weights_only: 是否使用weights_only=True安全模式
         """
         self.base_dir = Path(base_dir)
         self.base_dir.mkdir(exist_ok=True)
         
         self.backup_enabled = backup_enabled
         self.max_backups = max_backups
-        self.use_weights_only = use_weights_only
         
         # 創建子目錄
         self.weights_dir = self.base_dir / "models"
@@ -192,13 +189,9 @@ class AIWeightManager:
             
             # 載入權重 (安全模式)
             logger.info(f"載入權重: {filepath}")
-            
-            if self.use_weights_only:
-                # 使用weights_only=True安全模式 (PyTorch 2.6+推薦)
-                checkpoint = torch.load(filepath, map_location=device, weights_only=True)
-            else:
-                # 傳統模式 (向後相容)
-                checkpoint = torch.load(filepath, map_location=device)
+
+            # 始終使用 weights_only=True 安全模式 (PyTorch 2.0+ 推薦，防止任意代碼執行)
+            checkpoint = torch.load(filepath, map_location=device, weights_only=True)
             
             # 驗證模型架構相容性
             self._verify_model_compatibility(model, checkpoint.get('model_architecture', {}))

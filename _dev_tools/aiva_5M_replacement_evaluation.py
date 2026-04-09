@@ -43,7 +43,7 @@ class AIVA5MReplacementEvaluator:
             if Path(model_file).exists():
                 try:
                     print(f"   載入 {model_file}...")
-                    data = torch.load(model_file, map_location='cpu')
+                    data = torch.load(model_file, map_location='cpu', weights_only=True)
                     
                     if isinstance(data, dict) and 'model_state_dict' in data:
                         state_dict = data['model_state_dict']
