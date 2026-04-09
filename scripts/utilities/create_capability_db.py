@@ -7,6 +7,7 @@ Usage:
 """
 
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -29,23 +30,40 @@ DATABASE_URL = os.getenv(
 )
 
 
+def _validate_db_name(db_name: str) -> str:
+    """Validate database name to prevent SQL injection in DDL statements.
+
+    Only alphanumeric characters, underscores, and hyphens are allowed.
+    Raises ValueError if the name is invalid.
+    """
+    if not re.fullmatch(r"[A-Za-z0-9_-]+", db_name):
+        raise ValueError(
+            f"Invalid database name '{db_name}': only letters, digits, underscores, "
+            "and hyphens are permitted."
+        )
+    return db_name
+
+
 def create_database_if_not_exists():
     """創建數據庫 (如果不存在)"""
     # 連接到 postgres 默認數據庫
     default_url = DATABASE_URL.rsplit("/", 1)[0] + "/postgres"
     engine = create_engine(default_url, isolation_level="AUTOCOMMIT")
-    
-    db_name = DATABASE_URL.split("/")[-1]
-    
+
+    db_name = _validate_db_name(DATABASE_URL.split("/")[-1])
+
     with engine.connect() as conn:
-        # 檢查數據庫是否存在
+        # 檢查數據庫是否存在 — use a bind parameter to prevent SQL injection
         result = conn.execute(
-            text(f"SELECT 1 FROM pg_database WHERE datname = '{db_name}'")
+            text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
+            {"db_name": db_name},
         )
-        
+
         if not result.fetchone():
             logger.info(f"Creating database: {db_name}")
-            conn.execute(text(f"CREATE DATABASE {db_name}"))
+            # DDL statements do not support bind parameters in PostgreSQL;
+            # db_name has already been validated against a strict allowlist above.
+            conn.execute(text(f"CREATE DATABASE {db_name}"))  # noqa: S608
             logger.info(f"Database '{db_name}' created successfully")
         else:
             logger.info(f"Database '{db_name}' already exists")

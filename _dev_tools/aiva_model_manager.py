@@ -133,7 +133,7 @@ class AIVAModelManager:
         file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
         
         # 載入 PyTorch 模型
-        data = torch.load(file_path, map_location='cpu')
+        data = torch.load(file_path, map_location='cpu', weights_only=True)
         load_time_ms = (time.time() - start_time) * 1000
         
         # 分析模型結構
@@ -240,7 +240,7 @@ class AIVAModelManager:
             logger.info(f"📥 正在載入模型: {model_name}")
             
             # 載入模型數據
-            data = torch.load(model_info.file_path, map_location='cpu')
+            data = torch.load(model_info.file_path, map_location='cpu', weights_only=True)
             
             # 提取權重
             if model_info.model_type == ModelType.STRUCTURED:

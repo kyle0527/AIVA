@@ -82,7 +82,7 @@ class RealScalableBioNet:
         try:
             if Path(self.weights_path).exists():
                 # 載入已存在的權重
-                checkpoint = torch.load(self.weights_path, map_location=self.device)
+                checkpoint = torch.load(self.weights_path, map_location=self.device, weights_only=True)
                 
                 # 檢查權重文件完整性
                 if checkpoint and isinstance(checkpoint, dict):
