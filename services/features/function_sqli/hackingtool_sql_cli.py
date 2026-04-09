@@ -19,7 +19,6 @@ from pathlib import Path
 from typing import Dict, Any
 
 # 添加 AIVA 路徑
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from aiva_common.utils.logging import get_logger
 from services.features.function_sqli.hackingtool_manager import sql_tool_manager

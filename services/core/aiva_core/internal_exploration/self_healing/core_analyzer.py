@@ -22,7 +22,6 @@ import sys
 # 導入統一路徑配置
 try:
     parent_parent = Path(__file__).parent.parent.parent.parent.parent
-    sys.path.insert(0, str(parent_parent))
     from aiva_common.config.paths import (
         SELF_HEALING_DIR,
         ensure_directories
@@ -47,8 +46,6 @@ except ImportError:
     # 本地測試時
     import sys
     parent_dir = Path(__file__).parent.parent
-    sys.path.insert(0, str(parent_dir))
-    sys.path.insert(0, str(Path(__file__).parent))
     from python_tools.aiva_flow_analyzer import AIVAFlowAnalyzer
     from analyze_dataflow_breakpoints import DataFlowBreakpointAnalyzer
     from analyze_missing_function_connections import MissingConnectionAnalyzer

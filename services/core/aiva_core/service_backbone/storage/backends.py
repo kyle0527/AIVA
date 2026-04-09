@@ -46,7 +46,6 @@ import sys
 
 # 添加services路徑到Python path (現實路徑優於虛擬環境)
 services_path = Path(__file__).parent.parent.parent.parent
-sys.path.insert(0, str(services_path))
 
 # 設置必要環境變數（不自創，使用現有配置）
 if "RABBITMQ_URL" not in os.environ:

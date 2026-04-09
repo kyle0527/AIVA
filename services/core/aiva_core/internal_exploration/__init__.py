@@ -69,22 +69,14 @@ __status__ = "Production"
 from .self_healing import CoreAnalyzer, AnalysisReport
 
 # 自我修復分析器
-try:
-    from .self_healing import (
-        DataFlowBreakpointAnalyzer,
-        MissingConnectionAnalyzer,
-        PracticalAnalyzer,
-    )
-except ImportError as e:
-    import warnings
-    warnings.warn(f"自我修復分析器導入失敗: {e}")
+from .self_healing import (
+    DataFlowBreakpointAnalyzer,
+    MissingConnectionAnalyzer,
+    PracticalAnalyzer,
+)
 
 # 基礎流程分析器（保留在主模組）
-try:
-    from .python_tools.aiva_flow_analyzer import AIVAFlowAnalyzer
-except ImportError as e:
-    import warnings
-    warnings.warn(f"流程分析器導入失敗: {e}")
+from .python_tools.aiva_flow_analyzer import AIVAFlowAnalyzer
 
 __all__ = [
     # 核心（推薦使用）

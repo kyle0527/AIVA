@@ -14,16 +14,8 @@ SQL 注入檢測模組，支援六種檢測引擎:
 模組版本: 3.0.0
 """
 
-# 安全導入：避免缺失檔案導致模組無法使用
-try:
-    from .command_handler import SQLiCommandHandler
-except (ImportError, NameError):
-    SQLiCommandHandler = None
-
-try:
-    from .detector.sqli_detector import SqliDetector
-except (ImportError, NameError):
-    SqliDetector = None
+from .command_handler import SQLiCommandHandler
+from .detector.sqli_detector import SqliDetector
 
 __all__ = [
     "SQLiCommandHandler",

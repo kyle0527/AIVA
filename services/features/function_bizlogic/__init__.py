@@ -24,12 +24,6 @@ from .race_condition_scanner import RaceConditionScanner
 # 導入整合工具
 from .integration_tools.bizlogic_tools import BizLogicManager
 
-# 安全導入命令處理器
-try:
-    from .command_handler import BizLogicCommandHandler
-except ImportError:
-    BizLogicCommandHandler = None
-
 __version__ = "3.0.0"
 __status__ = "production"
 __architecture__ = "manager-based"
@@ -40,5 +34,4 @@ __all__ = [
     "WorkflowBypassScanner", 
     "RaceConditionScanner",
     "BizLogicManager",
-    "BizLogicCommandHandler",
 ]
