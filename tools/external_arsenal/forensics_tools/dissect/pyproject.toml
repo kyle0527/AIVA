@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=77.0.0", "setuptools_scm[toml]>=6.4.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dissect"
+description = "Dissect is a digital forensics & incident response framework and toolset that allows you to quickly access and analyse forensic artefacts from various disk and file formats, developed by Fox-IT (part of NCC Group)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE", "COPYRIGHT"]
+authors = [
+  {name = "Dissect Team", email = "dissect@fox-it.com"}
+]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Topic :: Internet :: Log Analysis",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "Topic :: Security",
+  "Topic :: Utilities",
+]
+dependencies = [
+    "dissect.apfs==1.0.1",
+    "dissect.archive==1.8",
+    "dissect.btrfs==1.9",
+    "dissect.cim==3.13",
+    "dissect.clfs==1.11",
+    "dissect.cramfs==1.1",
+    "dissect.cstruct==4.7",
+    "dissect.database==1.0",
+    "dissect.etl==3.14",
+    "dissect.eventlog==3.11",
+    "dissect.evidence==3.12",
+    "dissect.executable==1.11",
+    "dissect.extfs==3.15",
+    "dissect.fat==3.13",
+    "dissect.ffs==3.12",
+    "dissect.fve==4.5",
+    "dissect.hypervisor==3.20",
+    "dissect.jffs==1.6",
+    "dissect.ntfs==3.15",
+    "dissect.ole==3.12",
+    "dissect.qnxfs==1.2",
+    "dissect.regf==3.14",
+    "dissect.shellitem==3.13",
+    "dissect.squashfs==1.11",
+    "dissect.target[full]==3.24",
+    "dissect.thumbcache==1.11",
+    "dissect.util==3.23",
+    "dissect.vmfs==3.13",
+    "dissect.volume==3.17",
+    "dissect.xfs==3.13",
+]
+dynamic = ["version"]
+
+[project.urls]
+homepage = "https://dissect.tools"
+documentation = "https://docs.dissect.tools"
+repository = "https://github.com/fox-it/dissect"
+
+[tool.setuptools.packages.find]
+include = ["dissect.*"]
+
+[tool.setuptools_scm]

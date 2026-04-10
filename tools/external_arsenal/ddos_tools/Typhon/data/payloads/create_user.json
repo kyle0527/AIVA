@@ -1,0 +1,9 @@
+{
+  "username": "testuser123",
+  "email": "test.user@example.com",
+  "password": "aVeryComplexPassword!@#",
+  "preferences": {
+    "theme": "dark",
+    "notifications": true
+  }
+}

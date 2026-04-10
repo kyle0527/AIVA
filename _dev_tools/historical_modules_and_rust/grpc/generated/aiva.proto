@@ -1,0 +1,151 @@
+// AIVA gRPC Protocol Buffers 定義 - 自動生成
+// ============================================
+//
+// AIVA跨語言Schema統一定義 - 以手動維護版本為準
+//
+// ⚠️  此配置已同步手動維護的Schema定義，確保單一事實原則
+// 📅 最後更新: 2025-10-30T00:00:00.000000
+// 🔄 Schema 版本: 1.1.0
+//
+// 基於 core_schema_sot.yaml 生成，與所有語言 Schema 保持一致
+
+syntax = "proto3";
+
+package aiva.v1;
+
+option go_package = "github.com/kyle0527/AIVA/services/aiva_common_go/grpc/generated";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+// ==================== 基礎訊息類型 ====================
+
+// 訊息標頭
+message MessageHeader {
+  string message_id = 1;
+  string trace_id = 2;
+  string correlation_id = 3;
+  string source_module = 4;
+  google.protobuf.Timestamp timestamp = 5;
+  string version = 6;
+}
+
+// 統一 API 請求
+message AIVARequest {
+  string request_id = 1;
+  string task = 2;
+  google.protobuf.Struct parameters = 3;
+  double timeout = 4;
+  string trace_id = 5;
+  google.protobuf.Struct metadata = 6;
+}
+
+// 統一 API 響應
+message AIVAResponse {
+  string request_id = 1;
+  bool success = 2;
+  google.protobuf.Struct result = 3;
+  string error_code = 4;
+  string error_message = 5;
+  google.protobuf.Timestamp timestamp = 6;
+  double duration = 7;
+}
+
+// 目標資訊
+message Target {
+  string url = 1;
+  string host = 2;
+  int32 port = 3;
+  string protocol = 4;
+  string path = 5;
+  google.protobuf.Struct metadata = 6;
+}
+
+// 風險級別枚舉
+enum RiskLevel {
+  RISK_LEVEL_UNSPECIFIED = 0;
+  RISK_LEVEL_CRITICAL = 1;
+  RISK_LEVEL_HIGH = 2;
+  RISK_LEVEL_MEDIUM = 3;
+  RISK_LEVEL_LOW = 4;
+  RISK_LEVEL_INFO = 5;
+}
+
+// 任務狀態枚舉
+enum TaskStatus {
+  TASK_STATUS_UNSPECIFIED = 0;
+  TASK_STATUS_PENDING = 1;
+  TASK_STATUS_RUNNING = 2;
+  TASK_STATUS_COMPLETED = 3;
+  TASK_STATUS_FAILED = 4;
+  TASK_STATUS_CANCELLED = 5;
+}
+
+// 漏洞發現
+message FindingPayload {
+  string finding_id = 1;
+  string vulnerability_type = 2;
+  string title = 3;
+  string description = 4;
+  RiskLevel risk_level = 5;
+  double confidence = 6;
+  Target target = 7;
+  repeated string evidence = 8;
+  repeated string recommendations = 9;
+  google.protobuf.Timestamp discovered_at = 10;
+}
+
+// 任務配置
+message TaskConfig {
+  string task_id = 1;
+  string task_type = 2;
+  Target target = 3;
+  google.protobuf.Struct parameters = 4;
+  int32 timeout = 5;
+  int32 priority = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+// 任務結果
+message TaskResult {
+  string task_id = 1;
+  TaskStatus status = 2;
+  repeated FindingPayload findings = 3;
+  string error = 4;
+  google.protobuf.Timestamp started_at = 5;
+  google.protobuf.Timestamp completed_at = 6;
+  double duration = 7;
+  google.protobuf.Struct metadata = 8;
+}
+
+// ==================== gRPC 服務定義 ====================
+
+// 任務管理服務
+service TaskService {
+  // 創建新任務
+  rpc CreateTask(TaskConfig) returns (AIVAResponse);
+  
+  // 獲取任務狀態
+  rpc GetTaskStatus(AIVARequest) returns (TaskResult);
+  
+  // 取消任務
+  rpc CancelTask(AIVARequest) returns (AIVAResponse);
+  
+  // 串流任務進度
+  rpc StreamTaskProgress(AIVARequest) returns (stream AIVAResponse);
+}
+
+// 跨語言通信服務
+service CrossLanguageService {
+  // 執行跨語言任務
+  rpc ExecuteTask(AIVARequest) returns (AIVAResponse);
+  
+  // 健康檢查
+  rpc HealthCheck(AIVARequest) returns (AIVAResponse);
+  
+  // 獲取服務資訊
+  rpc GetServiceInfo(AIVARequest) returns (AIVAResponse);
+  
+  // 雙向串流通信
+  rpc BidirectionalStream(stream AIVARequest) returns (stream AIVAResponse);
+}

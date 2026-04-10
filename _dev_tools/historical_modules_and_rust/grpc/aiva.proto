@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package aiva;
+
+// AIVA 統一通信協議定義
+// ========================
+
+// 基本請求消息
+message AIVARequest {
+    string request_id = 1;
+    string task = 2;
+    map<string, string> parameters = 3;
+    string trace_id = 4;
+    int32 timeout = 5;
+}
+
+// 基本響應消息  
+message AIVAResponse {
+    string request_id = 1;
+    bool success = 2;
+    map<string, string> result = 3;
+    string error = 4;
+    string timestamp = 5;
+}
+
+// 任務配置
+message TaskConfig {
+    string task_id = 1;
+    string task_type = 2;
+    Target target = 3;
+    map<string, string> parameters = 4;
+    int32 priority = 5;
+    int32 timeout = 6;
+}
+
+// 目標定義
+message Target {
+    string url = 1;
+    string host = 2;
+    int32 port = 3;
+}
+
+// 任務狀態響應
+message TaskStatusResponse {
+    string task_id = 1;
+    string status = 2;
+    string message = 3;
+    string timestamp = 4;
+}
+
+// 任務服務定義
+service TaskService {
+    // 創建任務
+    rpc CreateTask(TaskConfig) returns (AIVAResponse);
+    
+    // 獲取任務狀態
+    rpc GetTaskStatus(AIVARequest) returns (TaskStatusResponse);
+    
+    // 取消任務
+    rpc CancelTask(AIVARequest) returns (AIVAResponse);
+    
+    // 流式任務進度
+    rpc StreamTaskProgress(AIVARequest) returns (stream AIVAResponse);
+}
+
+// 跨語言服務定義
+service CrossLanguageService {
+    // 執行任務
+    rpc ExecuteTask(AIVARequest) returns (AIVAResponse);
+    
+    // 健康檢查
+    rpc HealthCheck(AIVARequest) returns (AIVAResponse);
+    
+    // 獲取服務資訊
+    rpc GetServiceInfo(AIVARequest) returns (AIVAResponse);
+    
+    // 雙向串流通信
+    rpc BidirectionalStream(stream AIVARequest) returns (stream AIVAResponse);
+}
