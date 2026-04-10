@@ -1,3 +1,4 @@
+import shlex
 """
 HackingTool SQL 注入工具配置
 整合 HackingTool 的 SQL 注入工具到 AIVA function_sqli 模組中
@@ -356,12 +357,20 @@ class HackingToolSQLIntegrator:
         
         try:
             for cmd in config.install_commands:
+                cwd = None
+                if cmd.startswith("cd "):
+                    parts = cmd.split(" && ", 1)
+                    if len(parts) == 2:
+                        cwd = parts[0][3:].strip()
+                        cmd = parts[1]
+
+                cmd_list = shlex.split(cmd)
                 result = subprocess.run(
-                    cmd,
-                    shell=True,
+                    cmd_list,
                     capture_output=True,
                     text=True,
-                    timeout=config.timeout_seconds
+                    timeout=config.timeout_seconds,
+                    cwd=cwd
                 )
                 
                 if result.returncode != 0:
@@ -390,15 +399,25 @@ class HackingToolSQLIntegrator:
             return {"success": False, "error": "No run commands defined"}
         
         try:
-            # 格式化命令
-            cmd = config.run_commands[0].format(target=target, **kwargs)
+            cmd_template = config.run_commands[0]
+
+            # 處理 cd 邏輯，避免使用 shell=True 的 &&
+            cwd = None
+            if cmd_template.startswith("cd "):
+                parts = cmd_template.split(" && ", 1)
+                if len(parts) == 2:
+                    cwd = parts[0][3:].strip()
+                    cmd_template = parts[1]
+
+            cmd = cmd_template.format(target=target, **kwargs)
+            cmd_list = shlex.split(cmd)
             
             result = subprocess.run(
-                cmd,
-                shell=True,
+                cmd_list,
                 capture_output=True,
                 text=True,
-                timeout=config.timeout_seconds
+                timeout=config.timeout_seconds,
+                cwd=cwd
             )
             
             response = APIResponse(

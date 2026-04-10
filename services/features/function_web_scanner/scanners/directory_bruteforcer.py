@@ -31,7 +31,7 @@ class DirectoryResult:
 class DirectoryBruteforcer:
     """目錄暴力破解器"""
     
-    def __init__(self, wordlist_path: str = None, threads: int = 10):
+    def __init__(self, wordlist_path: str = None, threads: int = 10, verify_ssl: bool = True):
         """
         初始化目錄暴力破解器
         
@@ -41,6 +41,7 @@ class DirectoryBruteforcer:
         """
         self.wordlist_path = wordlist_path or self._get_default_wordlist()
         self.threads = threads
+        self.verify_ssl = verify_ssl
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -99,7 +100,7 @@ class DirectoryBruteforcer:
                 url,
                 allow_redirects=False,
                 timeout=5,
-                verify=False
+                verify=self.verify_ssl
             )
             
             # Filter interesting responses

@@ -1,3 +1,5 @@
+import ast
+import operator
 """Permission Matrix - 權限矩陣數據結構與分析
 
 提供權限矩陣的數據結構、存儲、查詢與分析功能。
@@ -193,8 +195,65 @@ class PermissionMatrix:
             條件是否滿足
         """
         try:
-            # 簡單的條件評估（生產環境應使用更安全的方式）
-            return eval(condition, {"__builtins__": {}}, context)
+            # 支援的運算符
+            operators = {
+                ast.Eq: operator.eq, ast.NotEq: operator.ne,
+                ast.Gt: operator.gt, ast.Lt: operator.lt,
+                ast.GtE: operator.ge, ast.LtE: operator.le,
+                ast.And: operator.and_, ast.Or: operator.or_,
+                ast.Not: operator.not_,
+                ast.In: lambda a, b: operator.contains(b, a),
+                ast.NotIn: lambda a, b: not operator.contains(b, a),
+                ast.Is: operator.is_, ast.IsNot: operator.is_not,
+            }
+
+            def _eval(node):
+                if isinstance(node, ast.Constant):
+                    return node.value
+                elif isinstance(node, ast.Name):
+                    if node.id in context:
+                        return context[node.id]
+                    if node.id == 'True': return True
+                    if node.id == 'False': return False
+                    if node.id == 'None': return None
+                    raise ValueError(f"Variable '{node.id}' not found in context")
+                elif isinstance(node, ast.Attribute):
+                    value = _eval(node.value)
+                    if isinstance(value, dict) and node.attr in value:
+                        return value[node.attr]
+                    if hasattr(value, node.attr):
+                        return getattr(value, node.attr)
+                    return None
+                elif isinstance(node, ast.BoolOp):
+                    if isinstance(node.op, ast.And):
+                        return all(_eval(v) for v in node.values)
+                    elif isinstance(node.op, ast.Or):
+                        return any(_eval(v) for v in node.values)
+                elif isinstance(node, ast.Compare):
+                    left = _eval(node.left)
+                    for op, comparator in zip(node.ops, node.comparators):
+                        right = _eval(comparator)
+                        if not operators[type(op)](left, right):
+                            return False
+                        left = right
+                    return True
+                elif isinstance(node, ast.UnaryOp):
+                    operand = _eval(node.operand)
+                    return operators[type(node.op)](operand)
+                elif isinstance(node, ast.Dict):
+                     return {_eval(k): _eval(v) for k, v in zip(node.keys, node.values)}
+                elif isinstance(node, ast.List):
+                     return [_eval(v) for v in node.elts]
+                elif isinstance(node, ast.Tuple):
+                     return tuple(_eval(v) for v in node.elts)
+                elif isinstance(node, ast.Set):
+                     return set(_eval(v) for v in node.elts)
+                else:
+                    raise TypeError(f"Unsupported AST node: {type(node)}")
+
+            tree = ast.parse(condition, mode='eval')
+            return bool(_eval(tree.body))
+
         except Exception as e:
             logger.error(
                 "condition_evaluation_failed", condition=condition, error=str(e)
