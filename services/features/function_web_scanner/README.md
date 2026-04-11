@@ -23,6 +23,7 @@
 
 ```
 function_web_scanner/
+├── command_handler.py               # 核心命令處理器 (WebScannerCommandHandler)
 ├── integration_tools/
 │   ├── __init__.py                  # 匯出 WebAttackManager 等核心類別
 │   └── web_tools.py                 # 全部核心實作（1,100+ 行）
@@ -238,6 +239,8 @@ Socket 連線掃描 19 個常用埠：`21 22 23 25 53 80 110 143 443 465 587 993
 ## 📝 更新日誌
 
 ### v2.0.0 (2026-03-17)
+- ✅ 移除舊版 `BaseCapability` 和 `CapabilityRegistry` 依賴
+- ✅ 新增 `WebScannerCommandHandler` 完全支援 `aiva_common` `v2.0` 命令系統
 - ✅ 新增 `WebVulnerabilityScanner` 別名（修正 import 錯誤）
 - ✅ 新增 `SubdomainResult`、`DirectoryScanResult` dataclass（修正 import 缺失）
 - ✅ 實作 `_enumerate_search_engines()`（Bing/DuckDuckGo/RapidDNS）
