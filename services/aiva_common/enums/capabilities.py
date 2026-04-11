@@ -430,6 +430,14 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "default_timeout": 60,
         "risk_level": "info",
     },
+    ForensicCapability.STEGANOGRAPHY_EXTRACT.value: {
+        "name": "隱寫術提取",
+        "description": "提取圖片中的隱藏資訊",
+        "required_params": [CapabilityParameter.OUTPUT_PATH],  # 圖片路徑
+        "optional_params": [CapabilityParameter.PASSWORD],
+        "default_timeout": 60,
+        "risk_level": "info",
+    },
 }
 
 
