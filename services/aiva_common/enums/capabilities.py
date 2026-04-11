@@ -425,7 +425,7 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
     ForensicCapability.STEGANOGRAPHY_DETECT.value: {
         "name": "隱寫術檢測",
         "description": "檢測圖片中的隱藏資訊",
-        "required_params": [CapabilityParameter.OUTPUT_PATH],  # 圖片路徑
+        "required_params": [CapabilityParameter.TARGET_URL],  # 圖片路徑 (TARGET_URL can act as TARGET_PATH in this common enum)
         "optional_params": [],
         "default_timeout": 60,
         "risk_level": "info",
@@ -433,7 +433,7 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
     ForensicCapability.STEGANOGRAPHY_EXTRACT.value: {
         "name": "隱寫術提取",
         "description": "提取圖片中的隱藏資訊",
-        "required_params": [CapabilityParameter.OUTPUT_PATH],  # 圖片路徑
+        "required_params": [CapabilityParameter.TARGET_URL, CapabilityParameter.OUTPUT_PATH],  # 圖片路徑、輸出路徑
         "optional_params": [CapabilityParameter.PASSWORD],
         "default_timeout": 60,
         "risk_level": "info",
