@@ -34,6 +34,24 @@ from services.features.function_web_scanner.scanners import (
     PortScanner,
     WebCrawler,
 )
+from services.features.function_web_scanner.command_handler import WebScannerCommandHandler
+
+def register_web_scanner_handler_to_command_center():
+    """註冊 Web Scanner 命令處理器到系統命令中心
+
+    使用方式:
+        import services.features.function_web_scanner as function_web_scanner
+        function_web_scanner.register_web_scanner_handler_to_command_center()
+    """
+    from aiva_common.core.command_center import get_command_center
+
+    command_center = get_command_center()
+    handler = WebScannerCommandHandler()
+    command_center.register_module("features.web_scanner", handler)
+
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info("✅ Web Scanner 命令處理器已註冊到 AI 命令中心")
 
 __all__ = [
     "WebAttackManager",
@@ -45,6 +63,8 @@ __all__ = [
     "TechDetector",
     "PortScanner",
     "WebCrawler",
+    "WebScannerCommandHandler",
+    "register_web_scanner_handler_to_command_center",
 ]
 
 __version__ = "1.3.0"
