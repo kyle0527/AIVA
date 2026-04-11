@@ -102,6 +102,7 @@ with contextlib.suppress(ImportError):
         EnhancedFindingPayload,
         EnhancedVulnerability,
         ExecutionError,
+        ExternalToolFinding,
         FeedbackEventPayload,
         FindingEvidence,
         FindingImpact,
@@ -379,6 +380,8 @@ __all__ = [
     "PostExResultPayload",
     "SensitiveMatch",
     "JavaScriptAnalysisResult",
+    # 外部武器庫工具執行結果 (v2.2.0 新增)
+    "ExternalToolFinding",
     "CVSSv3Metrics",
     "CVEReference",
     "CWEReference",
