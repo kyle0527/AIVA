@@ -283,6 +283,14 @@ class SteganographyManager:
             批量處理結果
         """
         try:
+            operations = []
+            for img in carrier_images:
+                operations.append({
+                    "cover_image": img,
+                    "secret_file": secret_file,
+                    "output_path": f"{output_dir}/{img}",
+                    "password": password
+                })
             result = await self.stegx_engine.batch_hide(operations)
             return result
         except Exception as e:
