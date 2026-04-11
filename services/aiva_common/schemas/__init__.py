@@ -283,6 +283,7 @@ from .findings import (
     AIVerificationRequest,
     AIVerificationResult,
     CodeLevelRootCause,
+    ExternalToolFinding,
     FindingEvidence,
     FindingImpact,
     FindingPayload,
@@ -544,6 +545,7 @@ __all__ = [
     "Vulnerability",
     "Target",
     "FindingTarget",  # 別名
+    "ExternalToolFinding",
     "FindingEvidence",
     "FindingImpact",
     "FindingRecommendation",

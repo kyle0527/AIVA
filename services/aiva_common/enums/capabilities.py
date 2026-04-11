@@ -91,6 +91,13 @@ class AttackCapability(str, Enum):
     CORS_MISCONFIGURATION = "cors_misconfiguration"
     CLICKJACKING = "clickjacking"
     SUBDOMAIN_TAKEOVER = "subdomain_takeover"
+    
+    # === 阻斷服務攻擊 ===
+    DOS_ATTACK = "dos_attack"
+    DDOS_ATTACK = "ddos_attack"
+    
+    # === NoSQL 攻擊 ===
+    NOSQL_INJECTION = "nosql_injection"
 
 
 class ScanCapability(str, Enum):
@@ -295,6 +302,24 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "required_params": [CapabilityParameter.TARGET_URL],
         "optional_params": [CapabilityParameter.COOKIE, CapabilityParameter.TIMEOUT],
         "default_timeout": 60,
+        "risk_level": "high",
+    },
+    AttackCapability.NOSQL_INJECTION.value: {
+        "name": "NoSQL 注入攻擊",
+        "description": "檢測並利用 NoSQL 注入漏洞",
+        "required_params": [CapabilityParameter.TARGET_URL],
+        "optional_params": [CapabilityParameter.COOKIE, CapabilityParameter.TIMEOUT],
+        "default_timeout": 60,
+        "risk_level": "high",
+    },
+    
+    # DDOS / DOS
+    AttackCapability.DDOS_ATTACK.value: {
+        "name": "DDoS 阻斷服務壓力測試",
+        "description": "分散式阻斷服務壓力測試",
+        "required_params": [CapabilityParameter.TARGET_URL],
+        "optional_params": [CapabilityParameter.THREADS, CapabilityParameter.TIMEOUT],
+        "default_timeout": 300,
         "risk_level": "high",
     },
     

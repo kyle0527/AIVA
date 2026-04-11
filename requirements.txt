@@ -97,6 +97,7 @@ streamlit>=1.28.0               # Dashboard UI framework
 # python-docx>=0.8.11           # DOCX → Markdown conversion (install if needed)
 # selenium>=4.10.0              # Browser automation (bug bounty reporting)
 # chromadb>=0.4.0               # Vector DB for RAG (planned)
+chromadb>=0.4.15                # Vector DB for RAG Knowledge payload ingestion
 # prometheus-client>=0.20       # Metrics export (enable via ENABLE_PROM)
 
 # ══════════════════════════════════════════════

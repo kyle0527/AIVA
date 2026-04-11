@@ -246,6 +246,7 @@ class ModuleName(str, Enum):
     REMEDIATION = "RemediationModule"
     BIZLOGIC = "BizLogicModule"
     COMMON = "CommonModule"
+    EXTERNAL_ARSENAL = "ExternalArsenalModule"  # 新增：管理 XSStrike, MHDDoS 等第三方開源武器庫
 
 
 class Topic(str, Enum):
@@ -271,6 +272,11 @@ class Topic(str, Enum):
     FUNCTION_IDOR_TASK = "tasks.function.idor"
     TASK_FUNCTION_CLIENT_AUTH_BYPASS = "tasks.function.client_auth_bypass"
     RESULTS_FUNCTION_COMPLETED = "results.function.completed"
+
+    # External Arsenal Topics (新增外部引擎調用)
+    TASK_EXTERNAL_ARSENAL_EXECUTE = "tasks.external_arsenal.execute"
+    RESULTS_EXTERNAL_ARSENAL_COMPLETED = "results.external_arsenal.completed"
+    RESULTS_EXTERNAL_ARSENAL_FAILED = "results.external_arsenal.failed"
 
     # AI Training Topics
     TASK_AI_TRAINING_START = "tasks.ai.training.start"

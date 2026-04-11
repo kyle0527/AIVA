@@ -187,6 +187,33 @@ class JavaScriptAnalysisResult(BaseModel):
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
+# ==================== 外部武器庫執行結果 ====================
+
+
+class ExternalToolFinding(BaseModel):
+    """外部開源工具執行結果 - 用於包裝 XSStrike, MHDDoS, sqlmap 等實體武器的輸出"""
+
+    tool_name: str = Field(description="外部工具名稱, 例如 XSStrike, sqlmap")
+    execution_id: str = Field(description="執行批次 ID")
+    target_url: str = Field(description="掃描目標 URL")
+    
+    # 執行狀態
+    return_code: int = Field(description="進程回傳碼")
+    execution_time_seconds: float = Field(description="執行時間 (秒)")
+    is_success: bool = Field(description="是否成功執行完成")
+    
+    # 原始輸出
+    raw_stdout: str | None = Field(default=None, description="原始標準輸出")
+    raw_stderr: str | None = Field(default=None, description="原始標準錯誤輸出")
+    parsed_json_output: dict[str, Any] | None = Field(default=None, description="若工具原生支援 JSON 輸出則保存於此")
+    
+    # AI 轉換輔助欄位
+    identified_vulnerabilities: list[str] = Field(default_factory=list, description="初步從 String 匹配出的潛在漏洞關鍵字")
+    tool_specific_metrics: dict[str, Any] = Field(default_factory=dict, description="特定工具附加數據 (如截獲封包數, 成功 Payload)")
+    
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
 # ==================== 漏洞關聯分析 ====================
 
 

@@ -370,6 +370,19 @@ class RAGEngine:
 
         return context
 
+    # 外部武器庫 payload collection 對應表
+    _ARSENAL_COLLECTION_MAP: dict[str, str] = {
+        "xss": "knowledge_xss_payloads",
+        "xss_reflected": "knowledge_xss_payloads",
+        "xss_stored": "knowledge_xss_payloads",
+        "xss_dom": "knowledge_xss_payloads",
+        "sqli": "knowledge_sqli_payloads",
+        "sql_injection": "knowledge_sqli_payloads",
+        "sql_injection_blind": "knowledge_sqli_payloads",
+        "sql_injection_union": "knowledge_sqli_payloads",
+        "sql_injection_time_based": "knowledge_sqli_payloads",
+    }
+
     async def get_relevant_payloads(
         self,
         vulnerability_type: str,
@@ -378,42 +391,93 @@ class RAGEngine:
     ) -> list[dict[str, Any]]:
         """獲取相關有效載荷
 
+        優先從外部武器庫的專屬 ChromaDB collection 語義檢索；
+        若找不到對應 collection，則降級到既有知識庫搜尋。
+
         Args:
-            vulnerability_type: 漏洞類型
-            target_info: 目標信息
+            vulnerability_type: 漏洞類型 (如 "xss", "sql_injection")
+            target_info: 目標信息 (technology, framework, version 等)
             top_k: 返回數量
 
         Returns:
-            有效載荷列表
+            有效載荷列表，每項包含 payload / relevance_score / metadata / source
         """
-        # 構建查詢
         target_desc = " ".join(
-            [
+            filter(None, [
                 target_info.get("technology", ""),
                 target_info.get("framework", ""),
                 target_info.get("version", ""),
+            ])
+        )
+        query = f"{vulnerability_type} {target_desc}".strip()
+
+        # 查找是否有對應的外部武器庫 collection
+        vuln_key = vulnerability_type.lower().replace("-", "_").replace(" ", "_")
+        arsenal_collection = self._ARSENAL_COLLECTION_MAP.get(vuln_key)
+
+        arsenal_results: list[dict[str, Any]] = []
+        if arsenal_collection:
+            try:
+                import chromadb
+                from pathlib import Path
+
+                # 外部武器庫 ChromaDB 路徑（由 _dev_tools/ingest_payloads_to_rag.py 寫入）
+                db_path = Path(__file__).resolve().parents[7] / "data" / "chroma"
+                if db_path.exists():
+                    client = chromadb.PersistentClient(path=str(db_path))
+                    existing = {c.name for c in client.list_collections()}
+                    if arsenal_collection in existing:
+                        collection = client.get_collection(name=arsenal_collection)
+                        raw = collection.query(
+                            query_texts=[query],
+                            n_results=min(top_k, collection.count()),
+                        )
+                        ids = (raw.get("ids") or [[]])[0]
+                        docs = (raw.get("documents") or [[]])[0]
+                        dists = (raw.get("distances") or [[]])[0]
+                        metas = (raw.get("metadatas") or [[]])[0]
+
+                        for i, doc_id in enumerate(ids):
+                            dist = dists[i] if i < len(dists) else 1.0
+                            score = round(1.0 / (1.0 + dist), 4)
+                            arsenal_results.append({
+                                "payload": docs[i] if i < len(docs) else "",
+                                "relevance_score": score,
+                                "metadata": {
+                                    **(metas[i] if i < len(metas) else {}),
+                                    "doc_id": doc_id,
+                                },
+                                "source": "external_arsenal",
+                            })
+                        logger.info(
+                            f"Arsenal RAG: retrieved {len(arsenal_results)} payloads "
+                            f"from '{arsenal_collection}' for '{vulnerability_type}'"
+                        )
+            except Exception as e:
+                logger.warning(f"Arsenal payload retrieval failed, falling back: {e}")
+
+        # 降級：從既有知識庫搜索
+        kb_results: list[dict[str, Any]] = []
+        if not arsenal_results:
+            payloads = await self.knowledge_base.search(
+                query=f"payload {query}",
+                top_k=top_k,
+            )
+            kb_results = [
+                {
+                    "payload": entry.get("content", ""),
+                    "relevance_score": entry.get("relevance_score", 0.0),
+                    "metadata": entry.get("metadata", {}),
+                    "source": "knowledge_base",
+                }
+                for entry in payloads
             ]
+
+        results = arsenal_results or kb_results
+        logger.info(
+            f"get_relevant_payloads: {len(results)} payloads for '{vulnerability_type}' "
+            f"(source: {'arsenal' if arsenal_results else 'knowledge_base'})"
         )
-        query = f"{vulnerability_type} {target_desc}"
-
-        # 檢索相關載荷
-        payloads = await self.knowledge_base.search(
-            query=f"payload {query}",
-            top_k=top_k,
-        )
-
-        # 按相關性排序（知識庫返回的已經是按相關性排序）
-        results = [
-            {
-                "payload": entry.get("content", ""),
-                "relevance_score": entry.get("relevance_score", 0.0),
-                "metadata": entry.get("metadata", {}),
-            }
-            for entry in payloads
-        ]
-
-        logger.info(f"Retrieved {len(results)} payloads for {vulnerability_type}")
-
         return results
 
     def learn_from_experience(self, sample: ExperienceSample) -> None:
