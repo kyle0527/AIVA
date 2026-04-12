@@ -34,12 +34,13 @@ class TechDetector:
     _VUE_VERSION_PATTERN = re.compile(r'vue[.-](\d+\.[\d.]+)')
     _BOOTSTRAP_VERSION_PATTERN = re.compile(r'bootstrap[.-](\d+\.[\d.]+)')
 
-    def __init__(self):
+    def __init__(self, verify_ssl: bool = True):
         """初始化技術檢測器"""
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         })
+        self.verify_ssl = verify_ssl
         self._load_fingerprints()
         logger.info("技術檢測器初始化完成")
     
@@ -56,7 +57,7 @@ class TechDetector:
         technologies = set()
         
         try:
-            response = self.session.get(url, timeout=10, verify=False)
+            response = self.session.get(url, timeout=10, verify=self.verify_ssl)
             
             # 1. HTTP Headers
             technologies.update(self._analyze_headers(response.headers))

@@ -1,3 +1,4 @@
+import shlex
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -742,7 +743,7 @@ class MultiLangExecutor:
             for kwarg_name, cli_flag in param_mapping.items():
                 value = kwargs.get(kwarg_name, '')
                 if value:
-                    cmd += f" {cli_flag} '{value}'"
+                    cmd += f" {cli_flag} {shlex.quote(str(value))}"
         else:
             # analyzer 的輔助函數
             source_file = cap.get('source_file', '')
@@ -757,7 +758,8 @@ class MultiLangExecutor:
         
         # 實際執行
         try:
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+            cmd_list = shlex.split(cmd)
+            result = subprocess.run(cmd_list, capture_output=True, text=True)
             print(result.stdout)
             if result.stderr:
                 # Rust 的 warning 也會在 stderr，但不是錯誤
@@ -792,7 +794,7 @@ class MultiLangExecutor:
             param_name = param['name']
             value = kwargs.get(param_name, '')
             if value:
-                cmd += f" -{param_name}=\"{value}\""
+                cmd += f" -{param_name}={shlex.quote(str(value))}"
         
         print(f"\n[執行] Go 能力: {func_name}")
         print(f"[指令] {cmd}\n")
@@ -803,7 +805,8 @@ class MultiLangExecutor:
         
         # 實際執行
         try:
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+            cmd_list = shlex.split(cmd)
+            result = subprocess.run(cmd_list, capture_output=True, text=True)
             print(result.stdout)
             if result.stderr:
                 print(f"[警告] {result.stderr}")
@@ -834,7 +837,7 @@ class MultiLangExecutor:
         # 添加參數（從 kwargs 直接獲取）
         for kwarg_name, value in kwargs.items():
             if value:
-                cmd += f" --{kwarg_name}=\"{value}\""
+                cmd += f" --{kwarg_name}={shlex.quote(str(value))}"
         
         print(f"\n[執行] TypeScript 能力: {func_name}")
         print(f"[指令] {cmd}\n")
@@ -845,7 +848,8 @@ class MultiLangExecutor:
         
         # 實際執行
         try:
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=str(ts_engine_path))
+            cmd_list = shlex.split(cmd)
+            result = subprocess.run(cmd_list, capture_output=True, text=True, cwd=str(ts_engine_path))
             print(result.stdout)
             if result.stderr:
                 print(f"[警告] {result.stderr}")
