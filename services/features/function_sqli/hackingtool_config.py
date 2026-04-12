@@ -12,6 +12,7 @@ from enum import Enum
 import subprocess
 import shutil
 from pathlib import Path
+import shlex
 
 from aiva_common.enums import ProgrammingLanguage, Severity, Confidence
 from aiva_common.schemas import APIResponse
@@ -356,9 +357,10 @@ class HackingToolSQLIntegrator:
         
         try:
             for cmd in config.install_commands:
+                cmd_list = shlex.split(cmd)
                 result = subprocess.run(
-                    cmd,
-                    shell=True,
+                    cmd_list,
+                    shell=False,
                     capture_output=True,
                     text=True,
                     timeout=config.timeout_seconds
@@ -391,11 +393,17 @@ class HackingToolSQLIntegrator:
         
         try:
             # 格式化命令
-            cmd = config.run_commands[0].format(target=target, **kwargs)
-            
+            cmd_template = config.run_commands[0]
+            # Use shlex.quote to prevent injection and format using string replace instead of .format() to avoid globals exposure
+            safe_target = shlex.quote(target)
+            cmd = cmd_template.replace("{target}", safe_target)
+            for k, v in kwargs.items():
+                cmd = cmd.replace(f"{{{k}}}", shlex.quote(str(v)))
+
+            cmd_list = shlex.split(cmd)
             result = subprocess.run(
-                cmd,
-                shell=True,
+                cmd_list,
+                shell=False,
                 capture_output=True,
                 text=True,
                 timeout=config.timeout_seconds
