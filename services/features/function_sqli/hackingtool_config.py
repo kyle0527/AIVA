@@ -13,6 +13,7 @@ from enum import Enum
 import subprocess
 import shutil
 from pathlib import Path
+import shlex
 
 from aiva_common.enums import ProgrammingLanguage, Severity, Confidence
 from aiva_common.schemas import APIResponse
@@ -357,16 +358,10 @@ class HackingToolSQLIntegrator:
         
         try:
             for cmd in config.install_commands:
-                cwd = None
-                if cmd.startswith("cd "):
-                    parts = cmd.split(" && ", 1)
-                    if len(parts) == 2:
-                        cwd = parts[0][3:].strip()
-                        cmd = parts[1]
-
                 cmd_list = shlex.split(cmd)
                 result = subprocess.run(
                     cmd_list,
+                    shell=False,
                     capture_output=True,
                     text=True,
                     timeout=config.timeout_seconds,

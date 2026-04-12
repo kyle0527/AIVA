@@ -35,14 +35,20 @@ class TechDetector:
     _BOOTSTRAP_VERSION_PATTERN = re.compile(r'bootstrap[.-](\d+\.[\d.]+)')
 
     def __init__(self, verify_ssl: bool = True):
-        """初始化技術檢測器"""
+        """
+        初始化技術檢測器
+
+        Args:
+            verify_ssl: 是否驗證 SSL 憑證 (若目標使用自簽證書請設為 False)
+        """
+        self.verify_ssl = verify_ssl
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         })
         self.verify_ssl = verify_ssl
         self._load_fingerprints()
-        logger.info("技術檢測器初始化完成")
+        logger.info(f"技術檢測器初始化完成 (verify_ssl: {verify_ssl})")
     
     def detect(self, url: str) -> List[Technology]:
         """

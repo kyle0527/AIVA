@@ -182,4 +182,6 @@ class SubdomainScanner:
     
     def _get_default_wordlist(self) -> str:
         """獲取默認字典路徑"""
-        return "services/features/function_web_scanner/wordlists/subdomains.txt"
+        import os
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_dir, "wordlists", "subdomains.txt")

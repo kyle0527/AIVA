@@ -38,6 +38,7 @@ class DirectoryBruteforcer:
         Args:
             wordlist_path: 目錄字典文件路徑
             threads: 並發線程數
+            verify_ssl: 是否驗證 SSL 憑證 (若目標使用自簽證書請設為 False)
         """
         self.wordlist_path = wordlist_path or self._get_default_wordlist()
         self.threads = threads
@@ -46,7 +47,7 @@ class DirectoryBruteforcer:
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         })
-        logger.info(f"目錄暴力破解器初始化 (threads: {threads})")
+        logger.info(f"目錄暴力破解器初始化 (threads: {threads}, verify_ssl: {verify_ssl})")
     
     def scan(self, base_url: str, extensions: List[str] = None) -> List[DirectoryResult]:
         """
@@ -152,4 +153,6 @@ class DirectoryBruteforcer:
     
     def _get_default_wordlist(self) -> str:
         """獲取默認字典路徑"""
-        return "services/features/function_web_scanner/wordlists/directories.txt"
+        import os
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_dir, "wordlists", "directories.txt")

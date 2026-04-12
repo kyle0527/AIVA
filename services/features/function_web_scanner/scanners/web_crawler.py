@@ -38,6 +38,7 @@ class WebCrawler:
         Args:
             max_depth: 最大爬取深度
             max_pages: 最大爬取頁面數
+            verify_ssl: 是否驗證 SSL 憑證 (若目標使用自簽證書請設為 False)
         """
         self.max_depth = max_depth
         self.max_pages = max_pages
@@ -47,7 +48,7 @@ class WebCrawler:
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         })
-        logger.info(f"Web 爬蟲初始化 (depth: {max_depth}, pages: {max_pages})")
+        logger.info(f"Web 爬蟲初始化 (depth: {max_depth}, pages: {max_pages}, verify_ssl: {verify_ssl})")
     
     def crawl(self, start_url: str) -> List[CrawlResult]:
         """
