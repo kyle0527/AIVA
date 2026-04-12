@@ -9,6 +9,7 @@ import asyncio
 import logging
 import os
 import subprocess
+import webbrowser
 from dataclasses import dataclass, asdict
 from datetime import datetime
 from typing import Dict, List, Optional, Any
@@ -238,8 +239,15 @@ class BulkExtractor(ForensicTool):
         """GUI Mode implementation"""
         console.print(Panel(Text(self.name, justify="center"), style=PURPLE_STYLE))
         console.print("[bold magenta]Cloning repository and attempting to run GUI...[/]")
-        os.system("sudo git clone https://github.com/simsong/bulk_extractor.git")
-        os.system("ls src/ && cd .. && cd java_gui && ./BEViewer")
+        try:
+            subprocess.run(["sudo", "git", "clone", "https://github.com/simsong/bulk_extractor.git"], check=True)
+            # Original: ls src/ && cd .. && cd java_gui && ./BEViewer
+            # We assume 'ls src/' was to check something in the cloned repo
+            subprocess.run(["ls", "src/"], cwd="bulk_extractor", check=True)
+            subprocess.run(["./BEViewer"], cwd="bulk_extractor/java_gui", check=True)
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+            console.print(f"[red]Error during execution: {e}[/red]")
+
         console.print(
             "[magenta]If you get an error after clone go to /java_gui/src/ and compile the .jar file && run ./BEViewer[/]")
         console.print(
@@ -248,10 +256,18 @@ class BulkExtractor(ForensicTool):
     def cli_mode(self):
         """CLI Mode implementation"""
         console.print(Panel(Text(self.name + " - CLI Mode", justify="center"), style=PURPLE_STYLE))
-        os.system("sudo apt install bulk-extractor")
-        console.print("[magenta]Showing bulk_extractor help and options:[/]")
-        os.system("bulk_extractor -h")
-        os.system('echo "bulk_extractor [options] imagefile" | boxes -d headline | lolcat')
+        try:
+            subprocess.run(["sudo", "apt", "install", "-y", "bulk-extractor"], check=True)
+            console.print("[magenta]Showing bulk_extractor help and options:[/]")
+            subprocess.run(["bulk_extractor", "-h"], check=True)
+
+            # Safe pipeline for 'echo ... | boxes -d headline | lolcat'
+            p1 = subprocess.Popen(["echo", "bulk_extractor [options] imagefile"], stdout=subprocess.PIPE)
+            p2 = subprocess.Popen(["boxes", "-d", "headline"], stdin=p1.stdout, stdout=subprocess.PIPE)
+            p3 = subprocess.Popen(["lolcat"], stdin=p2.stdout)
+            p3.wait()
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+            console.print(f"[red]Error: {e}[/red]")
 
     def custom_run(self):
         """Custom run with mode selection"""
@@ -306,15 +322,7 @@ class Toolsley(ForensicTool):
         console.print(f"[blue]Visit: {self.project_url}[/blue]")
 
         # Cross-platform URL opening
-        import platform
-        system = platform.system().lower()
-
-        if system == "windows":
-            os.system(f"start {self.project_url}")
-        elif system == "darwin":
-            os.system(f"open {self.project_url}")
-        else:
-            os.system(f"xdg-open {self.project_url}")
+        webbrowser.open(self.project_url)
 
 
 class ForensicManager:
