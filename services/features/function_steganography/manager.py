@@ -196,7 +196,7 @@ class SteganographyManager:
         self,
         stego_image: str,
         output_file: str,
-        password: str
+        password: Optional[str] = None
     ) -> ExtractResult:
         """使用 StegX 引擎提取隱藏文件
         

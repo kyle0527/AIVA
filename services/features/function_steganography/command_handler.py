@@ -37,6 +37,13 @@ class SteganographyCommandHandler(CommandHandler):
         start_time = time.time()
 
         try:
+            # 1. 驗證命令類型
+            if command.command_type != CommandType.FEATURE_STEGANOGRAPHY:
+                raise ValueError(
+                    f"不支持的命令類型: {command.command_type}, "
+                    f"預期: {CommandType.FEATURE_STEGANOGRAPHY}"
+                )
+
             # 2. 提取參數
             payload = command.payload or {}
             operation = payload.get("operation")
