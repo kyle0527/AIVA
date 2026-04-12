@@ -14,11 +14,9 @@ SQL 注入檢測模組，支援六種檢測引擎:
 模組版本: 3.0.0
 """
 
-from .command_handler import SQLiCommandHandler
 from .detector.sqli_detector import SqliDetector
 
 __all__ = [
-    "SQLiCommandHandler",
     "SqliDetector",
 ]
 

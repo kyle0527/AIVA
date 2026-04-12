@@ -171,6 +171,10 @@ class PayloadWrapperEncoder(PayloadTamperMixin):
     def __init__(self, task: FunctionTaskPayload) -> None:
         self._task = task
 
+    @property
+    def task(self) -> FunctionTaskPayload:
+        return self._task
+
     def encode(self, payload: str) -> EncodedPayload:
         """將 payload 編碼為目標請求格式"""
         target = self._task.target
