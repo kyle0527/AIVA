@@ -17,7 +17,6 @@ SQL 注入檢測模組，支援六種檢測引擎:
 from .detector.sqli_detector import SqliDetector
 
 __all__ = [
-
     "SqliDetector",
 ]
 
