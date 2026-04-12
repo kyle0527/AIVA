@@ -101,7 +101,7 @@ class DirectoryBruteforcer:
                 url,
                 allow_redirects=False,
                 timeout=5,
-                    verify=self.verify_ssl
+                verify=self.verify_ssl
             )
             
             # Filter interesting responses

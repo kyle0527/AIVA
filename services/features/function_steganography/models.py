@@ -136,6 +136,10 @@ class ExtractResult:
     # Statistics
     extracted_size: int = 0
     
+    # Verification
+    verified: bool = False
+    checksum: Optional[str] = None
+
     error: Optional[str] = None
     timestamp: datetime = field(default_factory=datetime.now)
 
@@ -232,14 +236,6 @@ class EnhancedSteganographyDetector:
     def _is_supported_format(self, file_path: Path) -> bool:
         """檢查是否為支援的格式"""
         return file_path.suffix.lower() in self.supported_formats
-    extracted_size: int = 0
-    
-    # Verification
-    verified: bool = False
-    checksum: Optional[str] = None
-    
-    error: Optional[str] = None
-    timestamp: datetime = field(default_factory=datetime.now)
 
 
 @dataclass

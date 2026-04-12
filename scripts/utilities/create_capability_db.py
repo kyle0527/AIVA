@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 # 數據庫 URL (使用環境變量或默認值)
 DATABASE_URL = os.getenv(
     "AIVA_CAPABILITY_DB_URL",
-    "postgresql://aiva_user:aiva_password@localhost:5432/aiva_capabilities"
+    "postgresql://aiva_user@localhost:5432/aiva_capabilities"
 )
 
 

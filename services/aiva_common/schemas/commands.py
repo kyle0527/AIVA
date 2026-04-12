@@ -109,6 +109,9 @@ class CommandType(str, Enum):
     FEATURE_PHISHING_CAMPAIGN = "feature_phishing_campaign"  # 釣魚攻擊活動
     FEATURE_OSINT_COLLECT = "feature_osint_collect"  # OSINT 資訊收集
 
+    # Steganography 命令
+    FEATURE_STEGANOGRAPHY = "feature_steganography"  # 隱寫術操作
+
     # Integration 模組命令
     INTEGRATION_COORDINATE = "integration_coordinate"  # 協調多個功能測試
     INTEGRATION_REPORT = "integration_report"          # 生成報告

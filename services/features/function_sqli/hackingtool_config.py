@@ -1,3 +1,4 @@
+import shlex
 """
 HackingTool SQL 注入工具配置
 整合 HackingTool 的 SQL 注入工具到 AIVA function_sqli 模組中
@@ -363,7 +364,8 @@ class HackingToolSQLIntegrator:
                     shell=False,
                     capture_output=True,
                     text=True,
-                    timeout=config.timeout_seconds
+                    timeout=config.timeout_seconds,
+                    cwd=cwd
                 )
                 
                 if result.returncode != 0:
@@ -392,21 +394,25 @@ class HackingToolSQLIntegrator:
             return {"success": False, "error": "No run commands defined"}
         
         try:
-            # 格式化命令
             cmd_template = config.run_commands[0]
-            # Use shlex.quote to prevent injection and format using string replace instead of .format() to avoid globals exposure
-            safe_target = shlex.quote(target)
-            cmd = cmd_template.replace("{target}", safe_target)
-            for k, v in kwargs.items():
-                cmd = cmd.replace(f"{{{k}}}", shlex.quote(str(v)))
 
+            # 處理 cd 邏輯，避免使用 shell=True 的 &&
+            cwd = None
+            if cmd_template.startswith("cd "):
+                parts = cmd_template.split(" && ", 1)
+                if len(parts) == 2:
+                    cwd = parts[0][3:].strip()
+                    cmd_template = parts[1]
+
+            cmd = cmd_template.format(target=target, **kwargs)
             cmd_list = shlex.split(cmd)
+            
             result = subprocess.run(
                 cmd_list,
-                shell=False,
                 capture_output=True,
                 text=True,
-                timeout=config.timeout_seconds
+                timeout=config.timeout_seconds,
+                cwd=cwd
             )
             
             response = APIResponse(

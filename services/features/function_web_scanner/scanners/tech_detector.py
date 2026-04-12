@@ -46,6 +46,7 @@ class TechDetector:
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         })
+        self.verify_ssl = verify_ssl
         self._load_fingerprints()
         logger.info(f"技術檢測器初始化完成 (verify_ssl: {verify_ssl})")
     

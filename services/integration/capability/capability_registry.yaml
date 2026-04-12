@@ -145,6 +145,8 @@ capabilities:
     requires_authorization: false
     tags: ["steganography", "hiding", "extraction", "detection", "steghide"]
     capabilities:
+      - "steganography_detect"
+      - "steganography_extract"
       - "data_embed"
       - "data_extract"
       - "hidden_data_detection"

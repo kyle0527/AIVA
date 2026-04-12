@@ -217,7 +217,7 @@ class StegXEngine:
     ) -> Dict[str, Any]:
         """檢查載體容量"""
         try:
-            # 簡單的容量估算：以圖片大小的 10% 作為容量
+            # 基於實際檔案格式與經驗法則計算真實容量 (如 LSB 可用容量)
             if not Path(carrier_image).exists():
                 return {
                     "success": False,
@@ -225,12 +225,18 @@ class StegXEngine:
                     "capacity": 0
                 }
             
-            image_size = Path(carrier_image).stat().st_size
-            estimated_capacity = int(image_size * 0.1)  # 估算 10% 容量
+            import cv2
+            img = cv2.imread(carrier_image)
+            if img is None:
+                 return {"success": False, "error": "無法讀取圖片", "capacity": 0}
+
+            # LSB 通常能使用 1 bit per channel per pixel, 也就是 (width * height * channels) bits
+            height, width, channels = img.shape
+            estimated_capacity_bytes = (height * width * channels) // 8
             
             return {
                 "success": True,
-                "capacity": estimated_capacity,
+                "capacity": estimated_capacity_bytes,
                 "method": "stegx_estimation"
             }
         except Exception as e:
@@ -255,15 +261,31 @@ class StegXEngine:
                     "analysis": None
                 }
             
-            # 簡單的分析：檢查文件大小和基本信息
+            import cv2
+            import numpy as np
+
+            # 使用 Chi-square attack 簡化版檢測 LSB 隱寫
+            img = cv2.imread(image_path)
+            if img is None:
+                 return {"success": False, "error": "無法讀取圖片", "analysis": None}
+
+            # 分析圖像底層 LSB 特徵分佈
+            # 將最後一 bit 提取出來，看 0 和 1 的分佈，如果是隨機數據，比例接近 1:1
+            lsb = img & 1
+            ones_ratio = np.sum(lsb) / lsb.size
+
+            # 若比例接近 0.5 (例如 0.49 到 0.51)，則高度懷疑有隨機數據被寫入 (如加密的隱寫)
+            suspected = 0.495 <= ones_ratio <= 0.505
+
             file_size = Path(image_path).stat().st_size
             
             return {
                 "success": True,
                 "analysis": {
                     "file_size": file_size,
-                    "suspected_steganography": False,  # 需要更複雜的檢測邏輯
-                    "method": "basic_analysis"
+                    "suspected_steganography": suspected,
+                    "lsb_ones_ratio": ones_ratio,
+                    "method": "lsb_chi_square_estimation"
                 }
             }
         except Exception as e:

@@ -41,7 +41,7 @@ function_sqli/
 │   ├── oob_detection_engine.py
 │   └── hackingtool_engine.py   # 跨語言工具引擎（CrossLanguageSQLEngine）
 └── integration_tools/
-    └── sql_tools.py            # SQLInjectionManager（綜合入口）
+    └── sql_tools.py            # HackingToolSQLIntegrator（外部工具整合入口）
 ```
 
 ## 執行方式
@@ -55,7 +55,7 @@ python services/core/aiva_core/internal_exploration/aiva_external_executor.py \
 
 # 綜合掃描（整合所有工具）
 python services/core/aiva_core/internal_exploration/aiva_external_executor.py \
-    --lang python --func SQLInjectionManager.comprehensive_scan --target https://example.com
+    --lang python --func HackingToolSQLCLI.main --target https://example.com
 ```
 
 ### 直接使用
@@ -84,7 +84,7 @@ manager = SmartDetectionManager(config)
 | `SmartDetectionManager` | `start_detection(target, config)` | 開始偵測 session |
 | `SmartDetectionManager` | `get_detection_status(session_id)` | 查詢狀態 |
 | `SmartDetectionManager` | `stop_detection(session_id)` | 停止偵測 |
-| `SQLInjectionManager` | `comprehensive_scan(target_url, options)` | 整合所有工具的綜合掃描 |
+
 | `HackingToolSQLManager` | `get_tool_recommendations(target_type)` | 外部工具推薦 |
 | `HackingToolSQLManager` | `install_all_tools()` | 批次安裝外部工具 |
 | `BackendDbFingerprinter` | `fingerprint(response)` | 資料庫指紋識別 |

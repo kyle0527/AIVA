@@ -38,10 +38,7 @@ from rich.prompt import Prompt, Confirm
 from rich.table import Table
 from rich.text import Text
 
-# 本地導入 - 已更新為 Features 模組路徑
-from aiva_common.schemas import APIResponse
 from aiva_common.enums import Severity
-# BaseCapability 待更新為 Features 專用 Base
 
 console = Console()
 logger = logging.getLogger(__name__)
@@ -981,113 +978,4 @@ class XSSManager:
         }
         
         return summary
-
-
-# 注意: BaseCapability 和 CapabilityRegistry 不屬於 aiva_common v2.0 規範
-# 功能模組應通過 CommandHandler 接口集成,而非 Capability 系統
-# 
-# class XSSCapability(BaseCapability):
-#     """XSS 攻擊能力"""
-#     
-#     def __init__(self):
-#         super().__init__()
-#         self.name = "xss_attack_tools"
-#         self.version = "1.0.0"
-#         self.description = "專業 XSS 攻擊工具集，整合 AIVA 現有功能與 HackingTool 工具"
-#         self.dependencies = ["aiohttp", "requests", "beautifulsoup4", "rich"]
-#         self.manager = XSSManager()
-#     
-#     async def initialize(self) -> bool:
-#         """初始化能力"""
-#         try:
-#             console.print("[yellow]初始化 XSS 攻擊工具集...[/yellow]")
-#             return True
-#         except Exception as e:
-#             logger.error(f"初始化失敗: {e}")
-#             return False
-#     
-#     async def execute(self, command: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
-#         """執行命令"""
-#         try:
-#             if command == "comprehensive_scan":
-#                 target_url = parameters.get('target_url')
-#                 if not target_url:
-#                     return {"success": False, "error": "Missing target_url parameter"}
-#                 
-#                 results = await self.manager.comprehensive_scan(target_url, parameters.get('options', {}))
-#                 return {"success": True, "data": results}
-#             
-#             elif command == "dalfox_scan":
-#                 target_url = parameters.get('target_url')
-#                 if not target_url:
-#                     return {"success": False, "error": "Missing target_url parameter"}
-#                 
-#                 target = self.manager._parse_target(target_url, parameters.get('options', {}))
-#                 vulns = await self.manager.dalfox.scan_target(target, parameters.get('dalfox_options', {}))
-#                 return {"success": True, "data": [asdict(v) for v in vulns]}
-#             
-#             elif command == "dom_scan":
-#                 target_url = parameters.get('target_url')
-#                 if not target_url:
-#                     return {"success": False, "error": "Missing target_url parameter"}
-#                 
-#                 target = self.manager._parse_target(target_url, parameters.get('options', {}))
-#                 vulns = await self.manager.dom_detector.scan_dom_xss(target)
-#                 return {"success": True, "data": [asdict(v) for v in vulns]}
-#             
-#             elif command == "stored_scan":
-#                 target_url = parameters.get('target_url')
-#                 if not target_url:
-#                     return {"success": False, "error": "Missing target_url parameter"}
-#                 
-#                 target = self.manager._parse_target(target_url, parameters.get('options', {}))
-#                 vulns = await self.manager.stored_detector.scan_stored_xss(target)
-#                 return {"success": True, "data": [asdict(v) for v in vulns]}
-#             
-#             elif command == "blind_scan":
-#                 target_url = parameters.get('target_url')
-#                 if not target_url:
-#                     return {"success": False, "error": "Missing target_url parameter"}
-#                 
-#                 callback_server = parameters.get('callback_server')
-#                 if callback_server:
-#                     self.manager.blind_detector.callback_server = callback_server
-#                 
-#                 target = self.manager._parse_target(target_url, parameters.get('options', {}))
-#                 vulns = await self.manager.blind_detector.scan_blind_xss(target)
-#                 return {"success": True, "data": [asdict(v) for v in vulns]}
-#             
-#             elif command == "generate_payloads":
-#                 xss_type = parameters.get('xss_type', 'basic_reflected')
-#                 context = parameters.get('context', 'html_context')
-#                 waf_bypass = parameters.get('waf_bypass', False)
-#                 
-#                 payloads = self.manager.payload_generator.generate_payloads(xss_type, context, waf_bypass)
-#                 return {"success": True, "data": {"payloads": payloads}}
-#             
-#             elif command == "install_dalfox":
-#                 success = await self.manager.dalfox.install_dalfox()
-#                 return {"success": success, "message": "Dalfox installation completed" if success else "Dalfox installation failed"}
-#             
-#             else:
-#                 return {"success": False, "error": f"Unknown command: {command}"}
-#                 
-#         except Exception as e:
-#             logger.error(f"命令執行失敗: {e}")
-#             return {"success": False, "error": str(e)}
-#     
-#     async def cleanup(self) -> bool:
-#         """清理資源"""
-#         try:
-#             self.manager.scan_results.clear()
-#             return True
-#         except Exception as e:
-#             logger.error(f"清理失敗: {e}")
-#             return False
-
-
-# 註冊能力 - 已棄用,改用 aiva_common CommandHandler 接口
-# CapabilityRegistry.register("xss_attack_tools", XSSCapability)
-
-
 

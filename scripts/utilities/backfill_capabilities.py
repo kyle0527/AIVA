@@ -1,3 +1,4 @@
+import os
 """能力元數據回填腳本 (Day 5)
 
 從 ChromaDB 讀取現有能力數據，轉換並批量寫入 PostgreSQL
@@ -53,7 +54,7 @@ logger = get_logger(__name__)
 
 # 資料庫配置（開發環境）
 # TODO: 正式發佈前改用環境變數 os.getenv("AIVA_CAPABILITY_DB_URL")
-DB_URL = "postgresql://aiva_user:aiva_password@localhost:5432/aiva_capabilities"
+DB_URL = os.getenv("AIVA_CAPABILITY_DB_URL", "postgresql://aiva_user@localhost:5432/aiva_capabilities")
 CHROMA_PERSIST_DIR = project_root / "data" / "vector_db" / "chroma"
 
 
