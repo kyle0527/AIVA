@@ -31,7 +31,7 @@ class CrawlResult:
 class WebCrawler:
     """Web 爬蟲"""
     
-    def __init__(self, max_depth: int = 3, max_pages: int = 100):
+    def __init__(self, max_depth: int = 3, max_pages: int = 100, verify_ssl: bool = True):
         """
         初始化爬蟲
         
@@ -41,6 +41,7 @@ class WebCrawler:
         """
         self.max_depth = max_depth
         self.max_pages = max_pages
+        self.verify_ssl = verify_ssl
         self.visited = set()
         self.session = requests.Session()
         self.session.headers.update({
@@ -91,7 +92,7 @@ class WebCrawler:
     def _crawl_page(self, url: str) -> CrawlResult:
         """爬取單個頁面"""
         try:
-            response = self.session.get(url, timeout=10, verify=False)
+            response = self.session.get(url, timeout=10, verify=self.verify_ssl)
             
             if response.status_code != 200:
                 return None

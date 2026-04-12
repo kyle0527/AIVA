@@ -8,6 +8,7 @@ Steganography Module
 """
 
 from .manager import SteganographyManager
+from .command_handler import SteganographyCommandHandler
 from .models import (
     # Enums
     SteganographyMethod,
@@ -25,6 +26,7 @@ from .models import (
 
 __all__ = [
     "SteganographyManager",
+    "SteganographyCommandHandler",
     "SteganographyMethod",
     "CarrierType",
     "ImageFormat",
@@ -36,5 +38,5 @@ __all__ = [
     "DetectionResult",
 ]
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __risk_level__ = "L1"

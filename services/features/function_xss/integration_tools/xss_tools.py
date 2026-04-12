@@ -38,7 +38,6 @@ from rich.prompt import Prompt, Confirm
 from rich.table import Table
 from rich.text import Text
 
-# 本地導入 - 已更新為 Features 模組路徑
 from aiva_common.enums import Severity
 
 console = Console()

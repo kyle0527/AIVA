@@ -1,6 +1,6 @@
 # function_steganography - 隱寫術分析模組
 
-> **版本**: v1.0.0 | **狀態**: ✅ 引擎完成 | **語言**: Python | **能力登錄**: ⬜ 待登錄（對應 `steganography_detect`）
+> **版本**: v1.0.1 | **狀態**: ✅ 引擎完成 | **語言**: Python | **能力登錄**: ✅ 已登錄（對應 `steganography_detect`, `steganography_extract`）
 
 ## 模組概述
 
@@ -16,19 +16,18 @@
 | AI 模型訓練 | ✅ 完成 | 自訂訓練資料 |
 | 綜合偵測 | ✅ 完成 | EnhancedSteganographyDetector |
 
-> ⚠️ `legacy/` 目錄內的舊版程式碼（`steganography_original.py`）已廢棄，**請勿使用**。
+> ℹ️ 舊版的 `legacy/` 目錄已於 v1.0.1 移除以符合重構規範。
 
 ## 架構
 
 ```
 function_steganography/
-├── manager.py          # 主入口（SteganographyManager）
-├── models.py           # 資料模型（EnhancedSteganographyDetector）
-├── engines/
-│   ├── stegx_engine.py       # StegX 嵌入/提取引擎
-│   └── ai_steg_engine.py     # AI 隱寫偵測引擎
-└── legacy/             # ⛔ 廢棄，勿使用
-    └── steganography_original.py
+├── manager.py            # 主入口（SteganographyManager）
+├── command_handler.py    # 統一命令處理器（SteganographyCommandHandler）
+├── models.py             # 資料模型（EnhancedSteganographyDetector）
+└── engines/
+    ├── stegx_engine.py       # StegX 嵌入/提取引擎
+    └── ai_steg_engine.py     # AI 隱寫偵測引擎
 ```
 
 ## 執行方式
@@ -72,5 +71,4 @@ manager.stegx_extract_file("stego.png", "extracted.txt", password="pass")
 
 ## 待完成工作
 
-- 將 `steganography_detect` / `steganography_extract` 補全至 `CAPABILITY_CONFIGS`
-- 刪除 `legacy/` 目錄
+- (暫無，核心整合已完成)
