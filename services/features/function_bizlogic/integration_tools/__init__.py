@@ -9,9 +9,9 @@ BizLogic Integration Tools - 業務邏輯漏洞檢測整合工具
 
 from .bizlogic_tools import (
     BizLogicManager,
+    BizLogicScanOptions,
     BizLogicTarget,
     BizLogicVulnerability,
-    BizLogicScanOptions,
 )
 
 __all__ = [

@@ -17,8 +17,8 @@ from .security import (
     SecurityRole,
     SecuritySubject,
     TokenService,
-    get_security_manager,
     create_security_manager,
+    get_security_manager,
 )
 from .security_config import (
     SECURITY_CONFIG_EXAMPLE,

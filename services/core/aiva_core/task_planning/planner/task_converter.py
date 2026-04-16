@@ -14,13 +14,13 @@ import logging
 from typing import Any
 from uuid import uuid4
 
-from aiva_common.enums.common import TaskStatus
 from aiva_common.core.error_handling import (
     AIVAError,
     ErrorSeverity,
     ErrorType,
     create_error_context,
 )
+from aiva_common.enums.common import TaskStatus
 
 from .ast_parser import AttackFlowGraph, AttackFlowNode, NodeType
 

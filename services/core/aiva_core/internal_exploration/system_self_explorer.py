@@ -12,10 +12,9 @@ SystemSelfExplorer - 系統自我探索器
 符合規範: aiva_common README.md (Pydantic v2, 類型提示, 開箱即用)
 """
 
-from pathlib import Path
-from typing import Dict, List, Optional
-import json
 from dataclasses import dataclass, field
+import json
+from pathlib import Path
 
 from aiva_common.utils import get_logger
 
@@ -39,7 +38,7 @@ class AttackCapability:
     """
     capability_type: str
     module_name: str
-    flow_ids: List[int] = field(default_factory=list)
+    flow_ids: list[int] = field(default_factory=list)
     language: str = "Python"
     flow_count: int = 0
     description: str = ""
@@ -59,7 +58,7 @@ class EngineInfo:
     engine_name: str
     language: str
     module_count: int = 0
-    capabilities: List[str] = field(default_factory=list)
+    capabilities: list[str] = field(default_factory=list)
     description: str = ""
 
 
@@ -80,7 +79,7 @@ class SystemSelfExplorer:
         print(engines.keys())  # ["python_engine", "rust_engine", ...]
     """
     
-    def __init__(self, classification_path: Optional[Path] = None):
+    def __init__(self, classification_path: Path | None = None):
         """初始化系統探索器
         
         Args:
@@ -89,9 +88,9 @@ class SystemSelfExplorer:
         """
         self._initialized = False
         self._classification_path = classification_path
-        self._classification_data: Dict = {}
-        self._attacks_cache: Optional[Dict[str, AttackCapability]] = None
-        self._engines_cache: Optional[Dict[str, EngineInfo]] = None
+        self._classification_data: dict = {}
+        self._attacks_cache: dict[str, AttackCapability] | None = None
+        self._engines_cache: dict[str, EngineInfo] | None = None
     
     def initialize(self) -> None:
         """初始化探索器，加載分類數據"""
@@ -115,7 +114,7 @@ class SystemSelfExplorer:
         
         # 加載分類數據
         try:
-            with open(self._classification_path, "r", encoding="utf-8") as f:
+            with open(self._classification_path, encoding="utf-8") as f:
                 self._classification_data = json.load(f)
             
             logger.info(f"   ✓ 分類文件已加載: {self._classification_path.name}")
@@ -141,7 +140,7 @@ class SystemSelfExplorer:
             logger.error(f"   ✗ 加載分類數據失敗: {e}")
             raise
     
-    def get_available_attacks(self) -> Dict[str, AttackCapability]:
+    def get_available_attacks(self) -> dict[str, AttackCapability]:
         """獲取所有可用的攻擊能力
         
         Returns:
@@ -170,7 +169,7 @@ class SystemSelfExplorer:
             return self._attacks_cache
         
         logger.debug("🔍 正在解析攻擊能力...")
-        attacks: Dict[str, AttackCapability] = {}
+        attacks: dict[str, AttackCapability] = {}
         
         modules = self._classification_data.get("modules", {})
         
@@ -209,7 +208,7 @@ class SystemSelfExplorer:
         logger.debug(f"✅ 解析完成: {len(attacks)} 種攻擊能力")
         return attacks
     
-    def get_available_engines(self) -> Dict[str, EngineInfo]:
+    def get_available_engines(self) -> dict[str, EngineInfo]:
         """獲取所有可用的引擎
         
         Returns:
@@ -237,7 +236,7 @@ class SystemSelfExplorer:
             return self._engines_cache
         
         logger.debug("🔍 正在解析引擎信息...")
-        engines: Dict[str, EngineInfo] = {}
+        engines: dict[str, EngineInfo] = {}
         
         modules = self._classification_data.get("modules", {})
         
@@ -274,7 +273,7 @@ class SystemSelfExplorer:
         logger.debug(f"✅ 解析完成: {len(engines)} 個引擎")
         return engines
     
-    def get_capability_details(self, capability_type: str) -> Optional[AttackCapability]:
+    def get_capability_details(self, capability_type: str) -> AttackCapability | None:
         """獲取特定能力的詳細信息
         
         Args:
@@ -286,7 +285,7 @@ class SystemSelfExplorer:
         attacks = self.get_available_attacks()
         return attacks.get(capability_type)
     
-    def get_engine_details(self, engine_name: str) -> Optional[EngineInfo]:
+    def get_engine_details(self, engine_name: str) -> EngineInfo | None:
         """獲取特定引擎的詳細信息
         
         Args:
@@ -298,7 +297,7 @@ class SystemSelfExplorer:
         engines = self.get_available_engines()
         return engines.get(engine_name)
     
-    def get_classification_metadata(self) -> Dict:
+    def get_classification_metadata(self) -> dict:
         """獲取分類數據的元信息
         
         Returns:
@@ -312,7 +311,7 @@ class SystemSelfExplorer:
 
 # ==================== 便利函數 ====================
 
-def quick_explore() -> Dict:
+def quick_explore() -> dict:
     """快速探索系統能力 (便利函數)
     
     Returns:

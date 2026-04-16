@@ -50,7 +50,6 @@ from .academic import (
 # from .ai import (
 #     # AI 相關枚舉暫時註釋，需要時再啟用
 # )
-
 # ==================== 通用枚舉 ====================
 # ==================== 資產管理 ====================
 from .assets import (
@@ -106,17 +105,41 @@ from .business import (
     TaskType,
     TransactionType,
 )
+
+# ==================== 預定義能力選單系統 ====================
+# 5M Decision Engine 專用 - 無 NLU/LLM 依賴
+from .capabilities import (
+    CAPABILITY_CONFIGS,
+    AnalysisCapability,
+    AttackCapability,
+    CapabilityParameter,
+    ExploitCapability,
+    ForensicCapability,
+    ReconCapability,
+    ReportCapability,
+    ScanCapability,
+    get_all_capabilities,
+    get_capability_config,
+    get_required_params,
+    validate_capability_params,
+)
+from .capability_executor import (
+    CapabilityExecutor,
+    CapabilityInfo,
+    ExecutionResult,
+    InteractiveCapabilityMenu,
+)
 from .common import (
-    AlertSeverity,     # 告警嚴重程度
+    AlertSeverity,  # 告警嚴重程度
     AlertType,
     AsyncTaskStatus,
     Confidence,
-    CVSSSeverity,      # 新的 CVSS v4.0 官方標準
+    CVSSSeverity,  # 新的 CVSS v4.0 官方標準
     DataFormat,
     EncodingType,
     ErrorCategory,
     HttpMethod,
-    HTTPStatusClass,   # 新的 RFC 7231 官方術語
+    HTTPStatusClass,  # 新的 RFC 7231 官方術語
     HttpStatusCodeRange,  # 向後相容別名
     LogLevel,
     NetworkProtocol,
@@ -128,8 +151,8 @@ from .common import (
     RiskLevel,
     ScanStatus,
     ScanStrategy,
-    ServiceType,       # 新增: 服務類型枚舉
-    Severity,          # 向後相容別名
+    ServiceType,  # 新增: 服務類型枚舉
+    Severity,  # 向後相容別名
     StoppingReason,
     TaskStatus,
     TaskType,
@@ -142,12 +165,10 @@ from .common import (
 # from .data_models import (
 #     # 數據模型相關枚舉暫時註釋
 # )
-
 # ==================== 基礎設施和網絡 ====================
 # from .infrastructure import (
 #     # 基礎設施相關枚舉暫時註釋
 # )
-
 # ==================== 模組相關 ====================
 from .modules import (
     CodeQualityMetric,
@@ -163,12 +184,10 @@ from .modules import (
 # from .operations import (
 #     # 運維相關枚舉暫時註釋
 # )
-
 # ==================== 滲透測試系統 ====================
 # from .pentest import (
 #     # 滲透測試相關枚舉暫時註釋
 # )
-
 # ==================== 安全測試 ====================
 from .security import (
     AccessDecision,
@@ -178,14 +197,14 @@ from .security import (
     AttackTechnique,
     CVSSMetric,
     CWECategory,
-    ExploitType,
     Exploitability,
+    ExploitType,
     IntelSource,
     IOCType,
     Location,
     LowValueVulnerabilityType,
-    PersistenceType,
     Permission,
+    PersistenceType,
     PostExTestType,
     RemediationType,
     SecurityPattern,
@@ -195,36 +214,10 @@ from .security import (
     VulnerabilityType,
 )
 
-# ==================== 預定義能力選單系統 ====================
-# 5M Decision Engine 專用 - 無 NLU/LLM 依賴
-from .capabilities import (
-    AttackCapability,
-    ScanCapability,
-    ReconCapability,
-    AnalysisCapability,
-    ForensicCapability,
-    ExploitCapability,
-    ReportCapability,
-    CapabilityParameter,
-    CAPABILITY_CONFIGS,
-    get_capability_config,
-    get_required_params,
-    get_all_capabilities,
-    validate_capability_params,
-)
-
-from .capability_executor import (
-    CapabilityExecutor,
-    ExecutionResult,
-    CapabilityInfo,
-    InteractiveCapabilityMenu,
-)
-
 # ==================== 用戶界面和用戶體驗 ====================
 # from .ui_ux import (
 #     # UI/UX 相關枚舉暫時註釋
 # )
-
 # ==================== Web API 標準 ====================
 from .web_api_standards import (
     HTTPStatusCode,

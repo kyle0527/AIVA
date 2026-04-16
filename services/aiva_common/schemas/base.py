@@ -4,7 +4,7 @@
 此模組包含所有基礎的資料模型，這些模型會被其他 Schema 模組所繼承或引用。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 # 前向聲明用於避免循環導入
 from typing import TYPE_CHECKING
@@ -24,17 +24,17 @@ class MessageHeader(BaseModel):
     trace_id: str
     correlation_id: str | None = None
     source_module: ModuleName
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     version: str = "1.0"
 
 
 class APIResponse(BaseModel):
     """標準API響應格式 - 統一所有API端點的響應結構"""
-    
+
     success: bool = Field(description="請求是否成功")
     message: str = Field(description="響應消息")
     data: dict | list | None = Field(None, description="響應數據")
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="響應時間戳")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC), description="響應時間戳")
     trace_id: str | None = Field(None, description="追蹤ID")
     errors: list[str] | None = Field(None, description="錯誤列表")
     metadata: dict | None = Field(None, description="額外的元數據")
@@ -106,7 +106,7 @@ class ExecutionError(BaseModel):
     message: str
     payload: str | None = None
     vector: str | None = None
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     attempts: int = 1
 
 
@@ -156,7 +156,7 @@ class Task(BaseModel):
     max_execution_time: int = Field(default=300, description="最大執行時間（秒）")
 
     # 時間戳記
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     started_at: datetime | None = Field(default=None, description="開始執行時間")
     completed_at: datetime | None = Field(default=None, description="完成時間")
 

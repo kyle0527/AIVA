@@ -4,14 +4,11 @@ DNS Rebinding Detector for SSRF
 """
 
 import asyncio
-import socket
-import time
 from dataclasses import dataclass
-from typing import List, Optional
-
-import httpx
+import socket
 
 from aiva_common.utils import get_logger
+import httpx
 
 logger = get_logger(__name__)
 
@@ -53,7 +50,7 @@ class DnsRebindingDetector:
         self,
         target_internal_ip: str = "127.0.0.1",
         attacker_ip: str = "1.2.3.4"
-    ) -> List[DnsRebindingVector]:
+    ) -> list[DnsRebindingVector]:
         """
         生成 DNS rebinding 測試向量
         
@@ -147,7 +144,7 @@ class DnsRebindingDetector:
     async def test_rebinding(
         self,
         vector: DnsRebindingVector,
-        client: Optional[httpx.AsyncClient] = None
+        client: httpx.AsyncClient | None = None
     ) -> bool:
         """
         測試 DNS rebinding 是否成功
@@ -217,7 +214,7 @@ class DnsRebindingDetector:
             if close_client:
                 await client.aclose()
     
-    def _resolve_domain(self, domain: str) -> List[str]:
+    def _resolve_domain(self, domain: str) -> list[str]:
         """
         解析域名為 IP 列表
         
@@ -248,7 +245,7 @@ class DnsRebindingDetector:
         self,
         rebinding_url: str,
         internal_path: str = "/",
-        client: Optional[httpx.AsyncClient] = None
+        client: httpx.AsyncClient | None = None
     ) -> bool:
         """
         驗證通過 DNS rebinding 是否能訪問內部服務
@@ -302,8 +299,8 @@ class DnsRebindingDetector:
     
     def generate_payloads(
         self,
-        internal_targets: Optional[List[str]] = None
-    ) -> List[str]:
+        internal_targets: list[str] | None = None
+    ) -> list[str]:
         """
         生成用於 SSRF 測試的 DNS rebinding payloads
         

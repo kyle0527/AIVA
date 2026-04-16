@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 import re
 
+
 @dataclass
 class DomDetectionResult:
     """Represents a DOM based trigger that was identified."""

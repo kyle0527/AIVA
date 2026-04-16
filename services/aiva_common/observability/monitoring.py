@@ -2,7 +2,7 @@
 AIVA Monitoring and Logging System
 AIVA 監控和日誌系統
 
-實施 TODO 項目 12: 建立監控和日誌系統
+
 - 分佈式追蹤和鏈路監控
 - 效能指標收集和監控
 - 統一日誌聚合和查詢

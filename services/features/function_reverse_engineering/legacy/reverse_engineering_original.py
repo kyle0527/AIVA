@@ -1,14 +1,11 @@
-# coding=utf-8
 import subprocess
 
-from core import HackingTool
-from core import HackingToolsCollection
-
+from core import HackingTool, HackingToolsCollection
 from rich.console import Console
-from rich.theme import Theme
-from rich.table import Table
 from rich.panel import Panel
 from rich.prompt import Prompt
+from rich.table import Table
+from rich.theme import Theme
 
 _theme = Theme({"purple": "#7B61FF"})
 console = Console(theme=_theme)

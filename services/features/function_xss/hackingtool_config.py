@@ -4,10 +4,8 @@ HackingTool XSS 工具配置模組
 """
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Any
 import json
-import asyncio
-
+from typing import Any
 
 # 通用正則表達式常數
 PAYLOAD_PATTERN = r'"payload":\s*".*?"'
@@ -26,25 +24,25 @@ class XSSToolConfig:
     language: str
     priority: int
     timeout: int
-    install_commands: List[str]
+    install_commands: list[str]
     run_pattern: str
-    result_patterns: List[str]
+    result_patterns: list[str]
     project_url: str
     description: str
-    supported_modes: List[str]
-    requirements: List[str]
-    binary_path: Optional[str] = None
-    config_path: Optional[str] = None
+    supported_modes: list[str]
+    requirements: list[str]
+    binary_path: str | None = None
+    config_path: str | None = None
 
 
 class HackingToolXSSConfig:
     """HackingTool XSS 工具整合配置管理器"""
     
     def __init__(self):
-        self.tools: Dict[str, XSSToolConfig] = self._initialize_tools()
+        self.tools: dict[str, XSSToolConfig] = self._initialize_tools()
         self.priority_order = self._calculate_priority_order()
     
-    def _initialize_tools(self) -> Dict[str, XSSToolConfig]:
+    def _initialize_tools(self) -> dict[str, XSSToolConfig]:
         """初始化所有 XSS 工具配置"""
         return {
             # Go 語言工具 - 最高優先級
@@ -216,7 +214,7 @@ class HackingToolXSSConfig:
             )
         }
     
-    def _calculate_priority_order(self) -> List[str]:
+    def _calculate_priority_order(self) -> list[str]:
         """計算工具執行優先順序"""
         sorted_tools = sorted(
             self.tools.items(),
@@ -224,31 +222,31 @@ class HackingToolXSSConfig:
         )
         return [tool_name for tool_name, _ in sorted_tools]
     
-    def get_tool_config(self, tool_name: str) -> Optional[XSSToolConfig]:
+    def get_tool_config(self, tool_name: str) -> XSSToolConfig | None:
         """獲取特定工具配置"""
         return self.tools.get(tool_name)
     
-    def get_tools_by_language(self, language: str) -> List[XSSToolConfig]:
+    def get_tools_by_language(self, language: str) -> list[XSSToolConfig]:
         """按語言獲取工具列表"""
         return [
             tool for tool in self.tools.values()
             if tool.language.lower() == language.lower()
         ]
     
-    def get_high_priority_tools(self, limit: int = 3) -> List[XSSToolConfig]:
+    def get_high_priority_tools(self, limit: int = 3) -> list[XSSToolConfig]:
         """獲取高優先級工具"""
         return [
             self.tools[tool_name] for tool_name in self.priority_order[:limit]
         ]
     
-    def get_tools_by_mode(self, mode: str) -> List[XSSToolConfig]:
+    def get_tools_by_mode(self, mode: str) -> list[XSSToolConfig]:
         """按支援模式獲取工具"""
         return [
             tool for tool in self.tools.values()
             if mode in tool.supported_modes
         ]
     
-    def validate_tool_requirements(self, tool_name: str) -> Dict[str, Any]:
+    def validate_tool_requirements(self, tool_name: str) -> dict[str, Any]:
         """驗證工具依賴需求"""
         tool = self.get_tool_config(tool_name)
         if not tool:
@@ -296,7 +294,7 @@ class HackingToolXSSConfig:
             print(f"Failed to export config: {e}")
             return False
     
-    def get_execution_plan(self, target_url: str, mode: str = "comprehensive") -> List[Dict[str, Any]]:
+    def get_execution_plan(self, target_url: str, mode: str = "comprehensive") -> list[dict[str, Any]]:
         """生成執行計劃"""
         if mode == "fast":
             tools = self.get_high_priority_tools(2)

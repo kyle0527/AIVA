@@ -14,22 +14,18 @@ HackingTool Adapter for AIVA Integration
 - 🔗 URL 整合：整合專案 URL 到 AIVA 生態系統
 """
 
-import re
-from typing import List, Optional, Dict, Any
-from pathlib import Path
-from datetime import datetime
 from dataclasses import dataclass
+import re
 
 from aiva_common.enums import ProgrammingLanguage
 from aiva_common.utils.logging import get_logger
-from aiva_common.utils.ids import new_id
 
 from ..models import (
     CapabilityRecord,
-    CapabilityType,
     CapabilityStatus,
+    CapabilityType,
     InputParameter,
-    OutputParameter
+    OutputParameter,
 )
 
 logger = get_logger(__name__)
@@ -40,11 +36,11 @@ class HackingToolDefinition:
     """HackingTool 原始定義"""
     title: str
     description: str
-    install_commands: List[str]
-    run_commands: List[str]
-    uninstall_commands: Optional[List[str]] = None
+    install_commands: list[str]
+    run_commands: list[str]
+    uninstall_commands: list[str] | None = None
     project_url: str = ""
-    options: Optional[List[tuple]] = None
+    options: list[tuple] | None = None
     category: str = ""
 
     def __post_init__(self):
@@ -152,7 +148,7 @@ class AIVAToolAdapter:
 
         return main_command
 
-    def generate_tags(self, tool_def: HackingToolDefinition) -> List[str]:
+    def generate_tags(self, tool_def: HackingToolDefinition) -> list[str]:
         """基於工具信息生成標籤"""
         tags = []
 
@@ -182,7 +178,7 @@ class AIVAToolAdapter:
         # 去重並返回
         return list(set(tags))
 
-    def parse_dependencies(self, tool_def: HackingToolDefinition) -> List[str]:
+    def parse_dependencies(self, tool_def: HackingToolDefinition) -> list[str]:
         """解析工具依賴"""
         dependencies = []
 
@@ -213,7 +209,7 @@ class AIVAToolAdapter:
 
         return list(set(dependencies))
 
-    def create_input_parameters(self, tool_def: HackingToolDefinition) -> List[InputParameter]:
+    def create_input_parameters(self, tool_def: HackingToolDefinition) -> list[InputParameter]:
         """創建輸入參數定義"""
         parameters = []
 
@@ -270,7 +266,7 @@ class AIVAToolAdapter:
 
         return parameters
 
-    def create_output_parameters(self) -> List[OutputParameter]:
+    def create_output_parameters(self) -> list[OutputParameter]:
         """創建輸出參數定義"""
         return [
             OutputParameter(
@@ -359,7 +355,7 @@ class AIVAToolAdapter:
         logger.info(f"✅ 轉換完成: {capability_id} ({language.value})")
         return capability
 
-    def batch_convert_tools(self, tools: List[HackingToolDefinition]) -> List[CapabilityRecord]:
+    def batch_convert_tools(self, tools: list[HackingToolDefinition]) -> list[CapabilityRecord]:
         """批量轉換工具列表"""
         capabilities = []
 

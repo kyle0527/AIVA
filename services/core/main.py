@@ -40,15 +40,12 @@ AIVA 系统对外入口（安全防护層）
   3. 直接調用: 測試環境 → app.py (8000) 直接訪問
 """
 
+import logging
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
 import httpx
-from typing import Optional
-import logging
-import asyncio
-import sys
-from pathlib import Path
+from pydantic import BaseModel, Field
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -127,7 +124,7 @@ class ScanResponse(BaseModel):
     status: str
     message: str
     target: str
-    estimated_time: Optional[int] = None
+    estimated_time: int | None = None
 
 
 # ============================================================================

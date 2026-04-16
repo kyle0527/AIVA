@@ -13,16 +13,18 @@ Unified Smart Detection Manager
 """
 
 import asyncio
-import httpx
+from collections.abc import Awaitable, Callable
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
-from typing import Optional, Dict, Any, Callable, Awaitable
 from enum import Enum
+from typing import Any
 
-from .timeout_manager import AdaptiveTimeoutManager, TimeoutConfig
-from .rate_limiter import SmartRateLimiter, RateLimitConfig
-from .metrics_collector import MetricsCollector, DetectionPhase, DetectionMetrics
+import httpx
+
 from ..utils.logging import get_logger
+from .metrics_collector import DetectionMetrics, DetectionPhase, MetricsCollector
+from .rate_limiter import RateLimitConfig, SmartRateLimiter
+from .timeout_manager import AdaptiveTimeoutManager, TimeoutConfig
 
 logger = get_logger(__name__)
 
@@ -39,27 +41,27 @@ class StopCondition(str, Enum):
 @dataclass
 class DetectionConfig:
     """檢測配置"""
-    
+
     # 超時配置
-    timeout_config: Optional[TimeoutConfig] = None
-    
+    timeout_config: TimeoutConfig | None = None
+
     # 速率限制配置
-    rate_limit_config: Optional[RateLimitConfig] = None
-    
+    rate_limit_config: RateLimitConfig | None = None
+
     # 早期停止配置
     max_consecutive_errors: int = 10  # 連續錯誤數閾值
     max_error_rate: float = 0.5  # 錯誤率閾值 (0-1)
     max_timeout_rate: float = 0.3  # 超時率閾值 (0-1)
     stop_on_first_vulnerability: bool = False  # 發現首個漏洞後停止
     progress_stall_threshold: int = 50  # 進度停滯閾值(請求數)
-    
+
     # 並發控制
     max_concurrent_requests: int = 10  # 最大並發請求數
-    
+
     # HTTP 配置
     follow_redirects: bool = True
     verify_ssl: bool = True
-    default_headers: Optional[Dict[str, str]] = None
+    default_headers: dict[str, str] | None = None
 
 
 class UnifiedSmartDetectionManager:
@@ -95,13 +97,13 @@ class UnifiedSmartDetectionManager:
     metrics = manager.get_metrics()
     ```
     """
-    
+
     def __init__(
         self,
         detection_id: str,
         detection_type: str,
         target_url: str,
-        config: Optional[DetectionConfig] = None
+        config: DetectionConfig | None = None
     ):
         """
         初始化統一智能檢測管理器
@@ -116,7 +118,7 @@ class UnifiedSmartDetectionManager:
         self.detection_type = detection_type
         self.target_url = target_url
         self.config = config or DetectionConfig()
-        
+
         # 初始化子組件
         self.timeout_manager = AdaptiveTimeoutManager(
             self.config.timeout_config or TimeoutConfig()
@@ -125,21 +127,21 @@ class UnifiedSmartDetectionManager:
             self.config.rate_limit_config or RateLimitConfig()
         )
         self.metrics = MetricsCollector(detection_id, detection_type, target_url)
-        
+
         # 並發控制
         self._semaphore = asyncio.Semaphore(self.config.max_concurrent_requests)
-        
+
         # 早期停止狀態
         self._should_stop = False
-        self._stop_reason: Optional[StopCondition] = None
+        self._stop_reason: StopCondition | None = None
         self._consecutive_errors = 0
         self._last_progress_requests = 0
-        
+
         logger.info(
             f"UnifiedSmartDetectionManager initialized: "
             f"id={detection_id}, type={detection_type}, target={target_url}"
         )
-    
+
     @asynccontextmanager
     async def start_detection(self):
         """
@@ -154,7 +156,7 @@ class UnifiedSmartDetectionManager:
         """
         logger.info(f"Starting detection: {self.detection_id}")
         self.metrics.start_phase(DetectionPhase.INITIALIZATION)
-        
+
         try:
             yield self
         finally:
@@ -166,13 +168,13 @@ class UnifiedSmartDetectionManager:
                 f"requests={final_metrics.total_requests}, "
                 f"vulnerabilities={final_metrics.vulnerabilities_found}"
             )
-    
+
     async def execute_smart_request(
         self,
         request_func: Callable[[], Awaitable[httpx.Response]],
-        payload_info: Optional[str] = None,
+        payload_info: str | None = None,
         retries: int = 3
-    ) -> Optional[httpx.Response]:
+    ) -> httpx.Response | None:
         """
         智能請求執行
         
@@ -195,12 +197,12 @@ class UnifiedSmartDetectionManager:
         if not self.should_continue_testing():
             logger.debug(f"Skipping request due to stop condition: {self._stop_reason}")
             return None
-        
+
         # 並發控制
         async with self._semaphore:
             # 速率限制
             await self.rate_limiter.acquire()
-            
+
             # 重試邏輯
             for attempt in range(retries):
                 try:
@@ -209,7 +211,7 @@ class UnifiedSmartDetectionManager:
                         request_func(),
                         task_name=f"{self.detection_type}_request"
                     )
-                    
+
                     # 記錄成功
                     self.metrics.record_request(
                         success=True,
@@ -217,27 +219,27 @@ class UnifiedSmartDetectionManager:
                     )
                     self.rate_limiter.record_success()
                     self._consecutive_errors = 0  # 重置連續錯誤計數
-                    
+
                     # 處理 429 (Too Many Requests)
                     if response.status_code == 429:
                         self.rate_limiter.record_429_error()
                         logger.warning("Received 429 response, adjusting rate limit")
                         await asyncio.sleep(5)  # 額外等待
                         continue
-                    
+
                     return response
-                
+
                 except TimeoutError:
                     self.metrics.record_timeout()
                     self._check_timeout_rate()
-                    
+
                     if attempt < retries - 1:
                         logger.warning(f"Request timeout, retrying ({attempt + 1}/{retries})")
                         await asyncio.sleep(2 ** attempt)  # 指數退避
                     else:
                         logger.error(f"Request failed after {retries} timeout attempts")
                         return None
-                
+
                 except httpx.HTTPError as e:
                     self.metrics.record_request(
                         success=False,
@@ -246,7 +248,7 @@ class UnifiedSmartDetectionManager:
                     )
                     self._consecutive_errors += 1
                     self._check_error_rate()
-                    
+
                     if attempt < retries - 1:
                         logger.warning(
                             f"HTTP error: {e}, retrying ({attempt + 1}/{retries})"
@@ -255,7 +257,7 @@ class UnifiedSmartDetectionManager:
                     else:
                         logger.error(f"Request failed after {retries} attempts: {e}")
                         return None
-                
+
                 except Exception as e:
                     logger.exception(f"Unexpected error in execute_smart_request: {e}")
                     self.metrics.record_request(
@@ -264,9 +266,9 @@ class UnifiedSmartDetectionManager:
                         error_type="unexpected_error"
                     )
                     return None
-        
+
         return None
-    
+
     def should_continue_testing(self) -> bool:
         """
         檢查是否應該繼續測試
@@ -278,7 +280,7 @@ class UnifiedSmartDetectionManager:
         """
         if self._should_stop:
             return False
-        
+
         # 檢查進度停滯
         current_requests = self.metrics.metrics.total_requests
         if current_requests - self._last_progress_requests > self.config.progress_stall_threshold:
@@ -286,23 +288,23 @@ class UnifiedSmartDetectionManager:
                 self._trigger_stop(StopCondition.PROGRESS_STALLED)
                 return False
             self._last_progress_requests = current_requests
-        
+
         return True
-    
+
     def _check_error_rate(self) -> None:
         """檢查錯誤率是否過高"""
         # 連續錯誤檢查
         if self._consecutive_errors >= self.config.max_consecutive_errors:
             self._trigger_stop(StopCondition.MAX_ERRORS)
             return
-        
+
         # 總體錯誤率檢查
         total = self.metrics.metrics.total_requests
         if total > 20:  # 至少20個請求後才檢查
             error_rate = self.metrics.metrics.failed_requests / total
             if error_rate > self.config.max_error_rate:
                 self._trigger_stop(StopCondition.MAX_ERRORS)
-    
+
     def _check_timeout_rate(self) -> None:
         """檢查超時率是否過高"""
         total = self.metrics.metrics.total_requests
@@ -310,7 +312,7 @@ class UnifiedSmartDetectionManager:
             timeout_rate = self.metrics.metrics.timeout_requests / total
             if timeout_rate > self.config.max_timeout_rate:
                 self._trigger_stop(StopCondition.MAX_TIMEOUTS)
-    
+
     def _trigger_stop(self, reason: StopCondition) -> None:
         """
         觸發早期停止
@@ -321,14 +323,14 @@ class UnifiedSmartDetectionManager:
         self._should_stop = True
         self._stop_reason = reason
         self.metrics.mark_early_stopped(reason.value)
-        
+
         logger.warning(
             f"Early stop triggered: {reason.value}, "
             f"requests={self.metrics.metrics.total_requests}, "
             f"errors={self.metrics.metrics.failed_requests}, "
             f"timeouts={self.metrics.metrics.timeout_requests}"
         )
-    
+
     def report_vulnerability_found(self, is_false_positive: bool = False) -> None:
         """
         報告發現漏洞
@@ -337,7 +339,7 @@ class UnifiedSmartDetectionManager:
             is_false_positive: 是否為誤報
         """
         self.metrics.record_vulnerability(is_false_positive)
-        
+
         # 如果配置了發現首個漏洞後停止
         if (
             not is_false_positive
@@ -345,12 +347,12 @@ class UnifiedSmartDetectionManager:
             and self.metrics.metrics.vulnerabilities_found == 1
         ):
             self._trigger_stop(StopCondition.VULNERABILITY_FOUND)
-    
+
     def update_progress(
         self,
         current: int,
         total: int,
-        phase: Optional[DetectionPhase] = None
+        phase: DetectionPhase | None = None
     ) -> None:
         """
         更新進度
@@ -362,18 +364,18 @@ class UnifiedSmartDetectionManager:
         """
         if phase:
             self.metrics.start_phase(phase)
-        
+
         percentage = (current / total * 100) if total > 0 else 0.0
-        
+
         # 估算剩餘時間
         if current > 0 and self.metrics.metrics.avg_request_time > 0:
             remaining_requests = total - current
             estimated_time = remaining_requests * self.metrics.metrics.avg_request_time
         else:
             estimated_time = None
-        
+
         self.metrics.update_progress(percentage, estimated_time)
-    
+
     def get_metrics(self) -> DetectionMetrics:
         """
         獲取當前指標
@@ -382,8 +384,8 @@ class UnifiedSmartDetectionManager:
             當前的檢測指標
         """
         return self.metrics.get_current_metrics()
-    
-    def get_stats(self) -> Dict[str, Any]:
+
+    def get_stats(self) -> dict[str, Any]:
         """
         獲取所有組件的統計信息
         
@@ -402,7 +404,7 @@ class UnifiedSmartDetectionManager:
             "timeout": self.timeout_manager.get_stats(),
             "rate_limiter": self.rate_limiter.get_stats(),
         }
-    
+
     def request_stop(self) -> None:
         """請求停止檢測（用戶取消）"""
         self._trigger_stop(StopCondition.USER_CANCELLED)

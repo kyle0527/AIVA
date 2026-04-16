@@ -19,11 +19,7 @@ Python 檢測器可直接導入：
 """
 
 # Python 檢測器導出（可選）
-from .python_engine import (
-    XXEDetector,
-    DeserializationDetector, 
-    PassiveAnalyzer
-)
+from .python_engine import DeserializationDetector, PassiveAnalyzer, XXEDetector
 
 __all__ = [
     "XXEDetector",

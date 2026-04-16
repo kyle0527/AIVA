@@ -1,22 +1,21 @@
 """
 Steganography 模組命令處理器
 """
-import time
-from typing import Any, Dict, Optional
 from datetime import datetime
+import time
+from typing import Any
 
 from aiva_common.core.command_center import CommandHandler
 from aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,
-    CommandStatus,
     CommandContext,
+    CommandStatus,
     CommandType,
 )
 from aiva_common.utils.logging import get_logger
 
 from .manager import SteganographyManager
-from .models import SteganographyMethod, CarrierType
 
 logger = get_logger(__name__)
 
@@ -32,7 +31,7 @@ class SteganographyCommandHandler(CommandHandler):
     async def handle_command(
         self,
         command: AICommand,
-        context: Optional[CommandContext] = None
+        context: CommandContext | None = None
     ) -> AICommandResult:
         start_time = time.time()
 
@@ -95,7 +94,7 @@ class SteganographyCommandHandler(CommandHandler):
                 error_details={"type": type(e).__name__, "message": str(e)}
             )
 
-    async def _execute_operation(self, operation: str, config: Dict[str, Any], context: Optional[CommandContext] = None) -> Dict[str, Any]:
+    async def _execute_operation(self, operation: str, config: dict[str, Any], context: CommandContext | None = None) -> dict[str, Any]:
         if operation == "detect_hidden_data":
             file_path = config.get("target_url") or config.get("file_path")
             if not file_path:

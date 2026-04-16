@@ -18,20 +18,27 @@ AIVA Attack Module
 from .attack_chain import AttackChain
 from .exploit_orchestrator import ExploitOrchestrator
 
+
 # 延遲導入函數 - 避免循環導入
 def get_attack_executor():
     """獲取 AttackExecutor"""
-    from services.features.function_exploit.executor.attack_executor import AttackExecutor
+    from services.features.function_exploit.executor.attack_executor import (
+        AttackExecutor,
+    )
     return AttackExecutor
 
 def get_attack_validator():
     """獲取 AttackValidator"""
-    from services.features.function_exploit.validators.attack_validator import AttackValidator
+    from services.features.function_exploit.validators.attack_validator import (
+        AttackValidator,
+    )
     return AttackValidator
 
 def get_payload_generator():
     """獲取 PayloadGenerator"""
-    from services.features.function_exploit.generators.payload_generator import PayloadGenerator
+    from services.features.function_exploit.generators.payload_generator import (
+        PayloadGenerator,
+    )
     return PayloadGenerator
 
 __all__ = [

@@ -4,8 +4,8 @@ AIVA UI 主題配置
 定義統一的顏色主題和視覺樣式
 """
 
-from rich.theme import Theme
 from rich import box
+from rich.theme import Theme
 
 # AIVA 品牌色彩方案
 COLORS = {

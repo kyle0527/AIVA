@@ -3,10 +3,10 @@
 """
 
 import asyncio
-import time
 import math
+import time
+
 import aiohttp
-from typing import Dict, List, Tuple
 from aiva_common.utils import get_logger
 
 from ..config import SqliConfig
@@ -54,7 +54,7 @@ class TimeDetectionEngine(BaseDetector):
         self.max_baseline_time = 3.0  # 如果基本回應就要 3 秒以上，時間盲注將毫無意義且充滿雜訊
 
     async def detect(
-        self, target_url: str, params: Dict[str, str], method: str = "GET"
+        self, target_url: str, params: dict[str, str], method: str = "GET"
     ) -> list[DetectionResult]:
         """執行高精準度時間檢測 (統計學雙重驗證模型)"""
         results: list[DetectionResult] = []
@@ -137,7 +137,7 @@ class TimeDetectionEngine(BaseDetector):
 
         return results
 
-    async def _establish_statistical_baseline(self) -> Tuple[float | None, float | None]:
+    async def _establish_statistical_baseline(self) -> tuple[float | None, float | None]:
         """建立極度精確的統計學基準線 (引入暖機與濾除離群值)"""
         times = []
         
@@ -191,7 +191,7 @@ class TimeDetectionEngine(BaseDetector):
             if status_code < 500 and status_code not in (403, 406):
                 return end_time - start_time
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             # 如果超時，代表極大可能 Payload 生效 (超過 aiohttp 預設等待)
             # 我們回傳一個極大的秒數作為代表
             return 999.0

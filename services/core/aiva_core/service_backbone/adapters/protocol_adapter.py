@@ -10,17 +10,17 @@
 
 from __future__ import annotations
 
-import json
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Dict
+import json
+from typing import TYPE_CHECKING, Any
 
-from aiva_common.utils import get_logger
 from aiva_common.core.error_handling import (
     AIVAError,
-    ErrorType,
     ErrorSeverity,
+    ErrorType,
     create_error_context,
 )
+from aiva_common.utils import get_logger
 
 if TYPE_CHECKING:
     import httpx
@@ -38,7 +38,7 @@ class ProtocolAdapter(ABC):
     """
     
     @abstractmethod
-    async def send_request(self, endpoint: str, data: Any) -> Dict[str, Any]:
+    async def send_request(self, endpoint: str, data: Any) -> dict[str, Any]:
         """發送請求
         
         Args:
@@ -48,10 +48,9 @@ class ProtocolAdapter(ABC):
         Returns:
             響應數據
         """
-        pass
     
     @abstractmethod
-    async def handle_response(self, response: Any) -> Dict[str, Any]:
+    async def handle_response(self, response: Any) -> dict[str, Any]:
         """處理響應
         
         Args:
@@ -60,7 +59,6 @@ class ProtocolAdapter(ABC):
         Returns:
             標準化響應數據
         """
-        pass
 
 
 class HttpProtocolAdapter(ProtocolAdapter):
@@ -78,7 +76,7 @@ class HttpProtocolAdapter(ProtocolAdapter):
         """
         self.client = client
     
-    async def send_request(self, endpoint: str, data: Any) -> Dict[str, Any]:
+    async def send_request(self, endpoint: str, data: Any) -> dict[str, Any]:
         """發送 HTTP 請求
         
         Args:
@@ -118,7 +116,7 @@ class HttpProtocolAdapter(ProtocolAdapter):
                 original_exception=e,
             ) from e
     
-    async def handle_response(self, response: httpx.Response) -> Dict[str, Any]:
+    async def handle_response(self, response: httpx.Response) -> dict[str, Any]:
         """處理 HTTP 響應
         
         Args:
@@ -163,7 +161,7 @@ class HttpProtocolAdapter(ProtocolAdapter):
                 original_exception=e,
             ) from e
     
-    def _adapt_request_data(self, internal_data: Any) -> Dict[str, Any]:
+    def _adapt_request_data(self, internal_data: Any) -> dict[str, Any]:
         """適配內部請求數據為 HTTP 格式
         
         Args:
@@ -180,7 +178,7 @@ class HttpProtocolAdapter(ProtocolAdapter):
         else:
             return {"data": internal_data}
     
-    def _adapt_response_data(self, http_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _adapt_response_data(self, http_data: dict[str, Any]) -> dict[str, Any]:
         """適配 HTTP 響應數據為內部格式
         
         Args:

@@ -10,10 +10,9 @@
 
 import logging
 import re
-from typing import Any, Dict, List, Optional
-from urllib.parse import urlparse
+from typing import Any
 
-from aiva_common.enums import ModuleName, Severity, Confidence
+from aiva_common.enums import Confidence, ModuleName, Severity
 
 from .base_coordinator import (
     BaseCoordinator,
@@ -86,7 +85,7 @@ class XSSCoordinator(BaseCoordinator):
     
     async def _analyze_payload_efficiency(
         self, result: FeatureResult
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """分析 XSS Payload 效率"""
         payload_stats = {}
         
@@ -125,7 +124,7 @@ class XSSCoordinator(BaseCoordinator):
     
     async def _identify_successful_patterns(
         self, result: FeatureResult
-    ) -> List[str]:
+    ) -> list[str]:
         """識別成功的 XSS 模式"""
         patterns = set()
         
@@ -148,7 +147,7 @@ class XSSCoordinator(BaseCoordinator):
     
     async def _generate_performance_recommendations(
         self, result: FeatureResult
-    ) -> Dict[str, int]:
+    ) -> dict[str, int]:
         """生成性能建議"""
         perf = result.performance
         recommendations = {}
@@ -170,8 +169,8 @@ class XSSCoordinator(BaseCoordinator):
         return recommendations
     
     async def _generate_strategy_adjustments(
-        self, result: FeatureResult, payload_efficiency: Dict[str, float]
-    ) -> Dict[str, Any]:
+        self, result: FeatureResult, payload_efficiency: dict[str, float]
+    ) -> dict[str, Any]:
         """生成策略調整建議"""
         adjustments = {}
         
@@ -205,7 +204,7 @@ class XSSCoordinator(BaseCoordinator):
     
     async def _calculate_priority_adjustments(
         self, result: FeatureResult
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """計算優先級調整"""
         adjustments = {}
         
@@ -273,7 +272,7 @@ class XSSCoordinator(BaseCoordinator):
     
     async def _verify_findings(
         self, result: FeatureResult
-    ) -> List[VerificationResult]:
+    ) -> list[VerificationResult]:
         """驗證 XSS 漏洞真實性"""
         verification_results = []
         

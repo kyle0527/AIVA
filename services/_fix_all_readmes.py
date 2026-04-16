@@ -3,11 +3,10 @@
 系統性修正所有 services README
 從最底層（Level 4）開始往上修正
 """
-import os
-import re
-from pathlib import Path
-from typing import List, Tuple
 from collections import defaultdict
+from pathlib import Path
+import re
+
 
 class ReadmeHierarchyFixer:
     def __init__(self, services_root: str):
@@ -39,10 +38,10 @@ class ReadmeHierarchyFixer:
             count = len(self.readmes_by_level[level])
             print(f"   Level {level}: {count} 個 README")
     
-    def check_and_fix_links(self, readme_path: Path) -> Tuple[bool, List[str]]:
+    def check_and_fix_links(self, readme_path: Path) -> tuple[bool, list[str]]:
         """檢查並修復單個 README 的連結"""
         try:
-            with open(readme_path, 'r', encoding='utf-8') as f:
+            with open(readme_path, encoding='utf-8') as f:
                 content = f.read()
             
             original_content = content

@@ -5,13 +5,13 @@ AIVA 自研 Embedding 層
 這樣可以完全掌控模型，不依賴外部庫
 """
 
+import logging
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from transformers import AutoModel, AutoTokenizer
-from typing import List, Union
-import numpy as np
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ class AIVAEmbedding(nn.Module):
         embedding_dim = self.transformer.config.hidden_size
         num_params = sum(p.numel() for p in self.transformer.parameters())
         
-        logger.info(f"✅ AIVA Embedding 模型初始化完成:")
+        logger.info("✅ AIVA Embedding 模型初始化完成:")
         logger.info(f"   - 預訓練權重: {model_name_or_path}")
         logger.info(f"   - 輸出維度: {embedding_dim}")
         logger.info(f"   - 參數量: {num_params:,} ({num_params/1e6:.1f}M)")
@@ -138,14 +138,14 @@ class AIVAEmbedding(nn.Module):
     
     def encode(
         self,
-        sentences: Union[str, List[str]],
+        sentences: str | list[str],
         batch_size: int = 32,
         show_progress_bar: bool = False,
         convert_to_numpy: bool = True,
         convert_to_tensor: bool = False,
         device: str | None = None,
         normalize_embeddings: bool = True
-    ) -> Union[np.ndarray, torch.Tensor]:
+    ) -> np.ndarray | torch.Tensor:
         """
         編碼句子為向量
         
@@ -212,8 +212,8 @@ class AIVAEmbedding(nn.Module):
     
     def similarity(
         self,
-        embeddings1: Union[torch.Tensor, np.ndarray],
-        embeddings2: Union[torch.Tensor, np.ndarray]
+        embeddings1: torch.Tensor | np.ndarray,
+        embeddings2: torch.Tensor | np.ndarray
     ) -> torch.Tensor:
         """
         計算向量相似度（餘弦相似度）
@@ -305,7 +305,7 @@ if __name__ == "__main__":
         "Server-side request forgery vulnerability"
     ]
     
-    print(f"\n測試句子:")
+    print("\n測試句子:")
     for i, sent in enumerate(sentences, 1):
         print(f"{i}. {sent}")
     
@@ -318,7 +318,7 @@ if __name__ == "__main__":
     # 測試相似度
     similarity = model.similarity(embeddings[[0]], embeddings)
     
-    print(f"\n第一個句子與所有句子的相似度:")
+    print("\n第一個句子與所有句子的相似度:")
     for i, sim in enumerate(similarity[0]):
         print(f"  與句子 {i+1} 的相似度: {sim:.4f}")
     

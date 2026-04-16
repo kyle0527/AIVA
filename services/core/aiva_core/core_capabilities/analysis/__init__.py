@@ -5,8 +5,8 @@ Analysis Module - 分析能力模組
 """
 
 from .analysis_engine import AIAnalysisEngine
-from .initial_surface import InitialAttackSurface
 from .bizlogic_scanner import TARGETS as BIZLOGIC_TARGETS
+from .initial_surface import InitialAttackSurface
 
 __all__ = [
     "AIAnalysisEngine",

@@ -5,8 +5,8 @@ AI Steganography Detection Engine
 """
 
 import logging
-from typing import Dict, Any, Optional
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ class AIStegDetectionEngine:
         self,
         image_path: str,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """使用 AI 檢測隱藏數據
         
         Args:
@@ -118,7 +118,7 @@ class AIStegDetectionEngine:
             logger.error(f"計算嵌入容量失敗: {e}")
             return 0
     
-    async def load_model(self, model_path: str) -> Dict[str, Any]:
+    async def load_model(self, model_path: str) -> dict[str, Any]:
         """載入 AI 檢測模型
         
         Args:
@@ -161,7 +161,7 @@ class AIStegDetectionEngine:
                 "model_loaded": False
             }
     
-    async def detect_steganography(self, image_path: str) -> Dict[str, Any]:
+    async def detect_steganography(self, image_path: str) -> dict[str, Any]:
         """檢測圖片中的隱寫術（別名）"""
         return await self.detect_hidden_data(image_path)
     
@@ -170,7 +170,7 @@ class AIStegDetectionEngine:
         directory: str,
         recursive: bool = True,
         extensions: list = None
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """批量掃描目錄中的圖片
         
         Args:
@@ -226,7 +226,7 @@ class AIStegDetectionEngine:
         training_data: str,
         model_output_path: str,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """訓練 AI 檢測模型
         
         Args:
@@ -244,7 +244,6 @@ class AIStegDetectionEngine:
                 raise FileNotFoundError(f"訓練數據目錄不存在: {training_data}")
 
             # Count images in training data to simulate dynamic metrics based on dataset size
-            import cv2
 
             training_path = Path(training_data)
             image_count = sum(1 for f in training_path.glob("**/*") if f.is_file() and f.suffix.lower() in ['.jpg', '.jpeg', '.png', '.bmp'])
@@ -289,7 +288,7 @@ class AIStegDetectionEngine:
                 "model_path": None
             }
     
-    async def adjust_threshold(self, new_threshold: float) -> Dict[str, Any]:
+    async def adjust_threshold(self, new_threshold: float) -> dict[str, Any]:
         """調整檢測閾值
         
         Args:

@@ -5,12 +5,11 @@ function_web_scanner.scanners.tech_detector
 識別 Web 應用的技術棧（框架、服務器、語言等）。
 """
 
-import re
-import requests
-from typing import Dict, List, Set
 from dataclasses import dataclass
+import re
 
 from aiva_common.utils import get_logger
+import requests
 
 logger = get_logger(__name__)
 
@@ -50,7 +49,7 @@ class TechDetector:
         self._load_fingerprints()
         logger.info(f"技術檢測器初始化完成 (verify_ssl: {verify_ssl})")
     
-    def detect(self, url: str) -> List[Technology]:
+    def detect(self, url: str) -> list[Technology]:
         """
         檢測 URL 使用的技術
         
@@ -156,7 +155,7 @@ class TechDetector:
             }
         }
     
-    def _analyze_headers(self, headers: Dict) -> Set[Technology]:
+    def _analyze_headers(self, headers: dict) -> set[Technology]:
         """分析 HTTP 標頭"""
         technologies = set()
         
@@ -180,7 +179,7 @@ class TechDetector:
         
         return technologies
     
-    def _analyze_html(self, html: str) -> Set[Technology]:
+    def _analyze_html(self, html: str) -> set[Technology]:
         """分析 HTML 內容"""
         technologies = set()
         
@@ -205,7 +204,7 @@ class TechDetector:
         
         return technologies
     
-    def _analyze_cookies(self, cookies: requests.cookies.RequestsCookieJar) -> Set[Technology]:
+    def _analyze_cookies(self, cookies: requests.cookies.RequestsCookieJar) -> set[Technology]:
         """分析 Cookies"""
         technologies = set()
         
@@ -223,7 +222,7 @@ class TechDetector:
         
         return technologies
     
-    def _analyze_meta_tags(self, html: str) -> Set[Technology]:
+    def _analyze_meta_tags(self, html: str) -> set[Technology]:
         """分析 Meta 標籤"""
         technologies = set()
         
@@ -249,7 +248,7 @@ class TechDetector:
         
         return technologies
     
-    def _analyze_scripts(self, html: str, base_url: str) -> Set[Technology]:
+    def _analyze_scripts(self, html: str, base_url: str) -> set[Technology]:
         """分析 JavaScript 文件"""
         technologies = set()
         

@@ -9,14 +9,14 @@
 # Context Management
 from services.core.aiva_core.service_backbone.context_manager import ContextManager
 
-# Messaging
-from services.core.aiva_core.service_backbone.messaging.message_broker import (
-    MessageBroker,
-)
-
 # Coordination
 from services.core.aiva_core.service_backbone.coordination.core_service_coordinator import (
     AIVACoreServiceCoordinator,
+)
+
+# Messaging
+from services.core.aiva_core.service_backbone.messaging.message_broker import (
+    MessageBroker,
 )
 
 __all__ = [

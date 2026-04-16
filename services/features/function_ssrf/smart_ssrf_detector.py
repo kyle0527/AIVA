@@ -12,14 +12,13 @@ import re
 import time
 from typing import Any
 
-import httpx
-
+from aiva_common.detection import DetectionPhase, UnifiedSmartDetectionManager
 from aiva_common.schemas import FunctionTaskPayload
 from aiva_common.utils import get_logger
-from aiva_common.detection import UnifiedSmartDetectionManager, DetectionPhase
-from .config.ssrf_config import SsrfConfig
+import httpx
 
-from .internal_address_detector import InternalAddressDetector, InternalAddressDetection
+from .config.ssrf_config import SsrfConfig
+from .internal_address_detector import InternalAddressDetection, InternalAddressDetector
 from .oast_dispatcher import OastDispatcher, OastEvent
 from .param_semantics_analyzer import (
     OAST_PLACEHOLDER,

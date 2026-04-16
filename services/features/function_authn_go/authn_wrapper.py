@@ -15,11 +15,11 @@ Usage:
     )
 """
 
-import json
-import subprocess
-from pathlib import Path
-from typing import Dict, List, Optional, Any
 from datetime import datetime
+import json
+from pathlib import Path
+import subprocess
+from typing import Any
 
 # 日誌
 try:
@@ -30,7 +30,7 @@ except ImportError:
     logger = logging.getLogger(__name__)
 
 
-def _find_go_binary() -> Optional[Path]:
+def _find_go_binary() -> Path | None:
     """尋找編譯好的 Go 二進制文件"""
     current_dir = Path(__file__).parent
     
@@ -72,8 +72,8 @@ def _check_go_availability() -> bool:
 
 def scan_authentication(
     target: str,
-    options: Optional[Dict[str, Any]] = None
-) -> Dict[str, Any]:
+    options: dict[str, Any] | None = None
+) -> dict[str, Any]:
     """
     執行認證漏洞掃描（同步接口）
     
@@ -227,7 +227,7 @@ def scan_authentication(
         raise
 
 
-def get_engine_info() -> Dict[str, Any]:
+def get_engine_info() -> dict[str, Any]:
     """
     獲取 Go 引擎信息
     

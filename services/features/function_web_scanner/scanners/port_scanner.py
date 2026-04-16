@@ -5,10 +5,9 @@ function_web_scanner.scanners.port_scanner
 快速掃描常見服務端口。
 """
 
-import socket
 import concurrent.futures
-from typing import List, Dict, Set
 from dataclasses import dataclass
+import socket
 
 from aiva_common.utils import get_logger
 
@@ -63,7 +62,7 @@ class PortScanner:
         self.threads = threads
         logger.info(f"端口掃描器初始化 (timeout: {timeout}s, threads: {threads})")
     
-    def scan(self, host: str, ports: List[int] = None) -> List[PortResult]:
+    def scan(self, host: str, ports: list[int] = None) -> list[PortResult]:
         """
         掃描端口
         
@@ -117,7 +116,7 @@ class PortScanner:
                 sock.close()
                 return None
         
-        except socket.timeout:
+        except TimeoutError:
             return None
         except Exception as e:
             logger.debug(f"端口掃描錯誤 {host}:{port} - {e}")

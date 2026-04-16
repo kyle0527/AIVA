@@ -6,23 +6,24 @@ For authorized security testing and educational purposes only
 """
 
 import asyncio
-import logging
-import os
-import subprocess
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime
+import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+import subprocess
+from typing import Any
 
 from rich.console import Console
 from rich.panel import Panel
-from rich.prompt import Prompt, Confirm, IntPrompt
+from rich.prompt import Confirm, Prompt
 from rich.table import Table
 from rich.theme import Theme
 
 # Local imports - 使用正確的導入路徑
-from .models import CapabilityRecord, CapabilityType, CapabilityStatus, BaseCapability, InputParameter
-from .registry import CapabilityRegistry
+from .models import (
+    BaseCapability,
+    InputParameter,
+)
 
 # Setup theme and console
 _theme = Theme({"purple": "#7B61FF"})
@@ -40,10 +41,10 @@ class ReverseEngineeringResult:
     duration: float
     success: bool
     output: str = ""
-    error_details: Optional[str] = None
-    target_file: Optional[str] = None
-    output_directory: Optional[str] = None
-    analysis_type: Optional[str] = None
+    error_details: str | None = None
+    target_file: str | None = None
+    output_directory: str | None = None
+    analysis_type: str | None = None
 
 
 class ReverseEngineeringTool:
@@ -62,7 +63,7 @@ class ReverseEngineeringTool:
         self.tags = []                  # 標籤列表（用於分類）
         self.inputs = []                # 輸入參數列表（InputParameter）
 
-    def custom_run(self) -> Optional[ReverseEngineeringResult]:
+    def custom_run(self) -> ReverseEngineeringResult | None:
         """Override in subclass for custom run behavior"""
         return None
 
@@ -535,7 +536,7 @@ class ReverseEngineeringCapability(BaseCapability):
             logger.error(f"Initialization failed: {e}")
             return False
 
-    async def execute(self, command: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, command: str, parameters: dict[str, Any]) -> dict[str, Any]:
         """Execute command - 使用標準化屬性"""
         try:
             if command == "interactive_menu":

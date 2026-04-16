@@ -9,12 +9,11 @@
 3. 函數A有出口(返回值)，函數C需要這個入口(參數)，但沒連上 → 潛在連接缺失
 """
 
-import json
 import ast
-from pathlib import Path
-from typing import Dict, List, Set, Tuple, Any, Optional
-from dataclasses import dataclass, field
 from collections import defaultdict
+from dataclasses import dataclass, field
+import json
+from pathlib import Path
 
 
 @dataclass
@@ -28,11 +27,11 @@ class FunctionSignature:
     has_return: bool = False
     return_type: str = "unknown"
     # 入口
-    parameters: List[str] = field(default_factory=list)
-    param_types: Dict[str, str] = field(default_factory=dict)
+    parameters: list[str] = field(default_factory=list)
+    param_types: dict[str, str] = field(default_factory=dict)
     # 調用情況
-    calls_functions: List[str] = field(default_factory=list)
-    called_by: List[str] = field(default_factory=list)
+    calls_functions: list[str] = field(default_factory=list)
+    called_by: list[str] = field(default_factory=list)
     # 連接狀態
     is_connected: bool = False
 
@@ -44,7 +43,7 @@ class MissingConnection:
     source_function: str
     source_file: str
     target_function: str
-    target_file: Optional[str]
+    target_file: str | None
     description: str
     confidence: str  # "high", "medium", "low"
     suggestion: str = ""
@@ -59,11 +58,11 @@ class MissingConnectionAnalyzer:
         self.analysis_data = self._load_analysis_results()
         
         # 函數簽名映射
-        self.function_signatures: Dict[str, FunctionSignature] = {}
-        self.functions_by_name: Dict[str, List[FunctionSignature]] = defaultdict(list)
+        self.function_signatures: dict[str, FunctionSignature] = {}
+        self.functions_by_name: dict[str, list[FunctionSignature]] = defaultdict(list)
         
         # 缺失連接
-        self.missing_connections: List[MissingConnection] = []
+        self.missing_connections: list[MissingConnection] = []
         
         # Python 內建函數和常用方法（更全面）
         self.builtins = {
@@ -80,7 +79,7 @@ class MissingConnectionAnalyzer:
             
             # 字符串方法
             'lower', 'upper', 'strip', 'lstrip', 'rstrip', 'split', 'rsplit',
-            'join', 'replace', 'format', 'format_map', 'startswith', 'endswith',
+            'join', 'replace', 'format_map', 'startswith', 'endswith',
             'find', 'rfind', 'index', 'rindex', 'count', 'capitalize', 'title',
             'swapcase', 'center', 'ljust', 'rjust', 'zfill', 'encode', 'decode',
             'isalpha', 'isdigit', 'isalnum', 'isspace', 'isupper', 'islower',
@@ -104,7 +103,7 @@ class MissingConnectionAnalyzer:
             'loads', 'dumps', 'load', 'dump',  # json
             'sleep', 'time',  # time
             'datetime', 'timedelta', 'now', 'today',  # datetime
-            'request', 'get', 'post', 'put', 'delete',  # requests
+            'request', 'post', 'put', 'delete',  # requests
             'parse', 'urlencode', 'quote', 'unquote',  # urllib
         }
         
@@ -117,13 +116,13 @@ class MissingConnectionAnalyzer:
             'csv', 'xml', 'sqlite3', 'pickle', 'io', 'shutil', 'tempfile',
         }
     
-    def _load_analysis_results(self) -> Dict:
+    def _load_analysis_results(self) -> dict:
         """載入分析結果"""
         json_path = self.results_path / "analysis_results.json"
         if not json_path.exists():
             raise FileNotFoundError(f"找不到分析結果: {json_path}")
         
-        with open(json_path, 'r', encoding='utf-8') as f:
+        with open(json_path, encoding='utf-8') as f:
             return json.load(f)
     
     def extract_function_signatures(self):
@@ -153,7 +152,7 @@ class MissingConnectionAnalyzer:
     def _analyze_file_functions(self, file_path: str):
         """分析單個文件的函數"""
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, encoding='utf-8') as f:
                 source = f.read()
             
             tree = ast.parse(source)
@@ -433,7 +432,7 @@ class MissingConnectionAnalyzer:
         
         return False
     
-    def _find_similar_functions(self, func_name: str) -> List[FunctionSignature]:
+    def _find_similar_functions(self, func_name: str) -> list[FunctionSignature]:
         """查找名稱相似的函數"""
         similar = []
         func_lower = func_name.lower()

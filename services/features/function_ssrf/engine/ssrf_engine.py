@@ -1,8 +1,12 @@
 from __future__ import annotations
-import asyncio, socket, ipaddress
+
+import asyncio
 from dataclasses import dataclass
-from typing import Optional, List
+import ipaddress
+import socket
+
 import httpx
+
 
 @dataclass
 class SSRFIssue:
@@ -10,8 +14,8 @@ class SSRFIssue:
     url: str
     description: str
     severity: str = "HIGH"
-    cwe: Optional[str] = None
-    evidence: Optional[str] = None
+    cwe: str | None = None
+    evidence: str | None = None
 
 class SSRFEngine:
     def __init__(self, *, timeout: float, max_redirects: int, allow_active: bool, safe_mode: bool):
@@ -45,7 +49,7 @@ class SSRFEngine:
             return False
 
     async def check_internal_access(self, url: str) -> list[SSRFIssue]:
-        issues: List[SSRFIssue] = []
+        issues: list[SSRFIssue] = []
         # Resolve host
         try:
             host = url.split("://", 1)[-1].split("/", 1)[0].split("@")[-1].split(":")[0]
@@ -86,7 +90,7 @@ class SSRFEngine:
         return issues
 
     async def check_cloud_metadata(self) -> list[SSRFIssue]:
-        issues: List[SSRFIssue] = []
+        issues: list[SSRFIssue] = []
         meta_targets = [
             ("AWS","http://169.254.169.254/latest/meta-data/"),
             ("GCP","http://metadata.google.internal/computeMetadata/v1/"),
@@ -125,7 +129,7 @@ class SSRFEngine:
         return issues
 
     async def check_file_protocol(self, url: str) -> list[SSRFIssue]:
-        issues: List[SSRFIssue] = []
+        issues: list[SSRFIssue] = []
         if url.lower().startswith("file://"):
             issues.append(SSRFIssue(
                 kind="SSRF_FILE_PROTOCOL",

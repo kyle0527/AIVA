@@ -6,32 +6,24 @@ Supporting both high-value and low-value findings for Bug Bounty hunters
 """
 
 import asyncio
+from dataclasses import asdict, dataclass
+from datetime import datetime
+from enum import Enum
 import json
 import logging
-import os
-import subprocess
-from dataclasses import dataclass, asdict
-from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
-from enum import Enum
-import base64
-import hashlib
-
-from rich.console import Console
-from rich.panel import Panel
-from rich.prompt import Prompt, Confirm, IntPrompt
-from rich.table import Table
-from rich.theme import Theme
-from rich.text import Text
-from rich.layout import Layout
-from rich.columns import Columns
-
-# Local imports - 使用正確的導入路徑
-from .registry import CapabilityRegistry
+from typing import Any
 
 # aiva_common 標準導入 - 遵循 SOT 原則
 from aiva_common.enums import Severity
+from rich.columns import Columns
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import IntPrompt, Prompt
+from rich.table import Table
+from rich.theme import Theme
+
+# Local imports - 使用正確的導入路徑
 
 # Setup theme and console
 _theme = Theme({"purple": "#7B61FF"})
@@ -108,7 +100,9 @@ class VulnerabilityCategory(Enum):
 # 原 bug_bounty_reporting.py 中的 VulnerabilityFinding 於 2024-12-19 移除
 # 請使用: from aiva_common.schemas.vulnerability_finding import VulnerabilityFinding
 
-from aiva_common.schemas.vulnerability_finding import VulnerabilityFinding as UnifiedVulnerabilityFinding
+from aiva_common.schemas.vulnerability_finding import (
+    VulnerabilityFinding as UnifiedVulnerabilityFinding,
+)
 
 
 @dataclass
@@ -130,9 +124,9 @@ class BugBountyFinding:
     target_url: str
     description: str
     impact: str
-    reproduction_steps: List[str]
-    poc_code: Optional[str] = None
-    screenshot_paths: Optional[List[str]] = None
+    reproduction_steps: list[str]
+    poc_code: str | None = None
+    screenshot_paths: list[str] | None = None
     discovered_by_tool: str = "Manual Testing"
     cvss_score: float = 0.0
     status: str = "New"  # New, Reported, Accepted, Duplicate, N/A
@@ -151,8 +145,8 @@ class BugBountyFinding:
 class BugBountyExtendedFinding:
     """Bug Bounty 專用的擴展發現模型 - 用於與 aiva_common 整合"""
     base_finding: UnifiedVulnerabilityFinding
-    poc_code: Optional[str] = None
-    screenshot_paths: Optional[List[str]] = None
+    poc_code: str | None = None
+    screenshot_paths: list[str] | None = None
     discovered_by_tool: str = ""
     cvss_score: float = 0.0
     status: str = "New"  # New, Reported, Accepted, Duplicate, N/A
@@ -338,7 +332,7 @@ curl -X GET "{url}" \\
 """
 
     @staticmethod
-    def generate_csrf_poc(target_url: str, action_url: str, parameters: Dict[str, str]) -> str:
+    def generate_csrf_poc(target_url: str, action_url: str, parameters: dict[str, str]) -> str:
         """生成 CSRF PoC"""
         form_fields = ""
         for name, value in parameters.items():
@@ -376,7 +370,7 @@ class BugBountyTracker:
     def __init__(self):
         self.findings_file = Path("reports/bug_bounty/findings.json")
         self.findings_file.parent.mkdir(parents=True, exist_ok=True)
-        self.findings: List[BugBountyFinding] = []
+        self.findings: list[BugBountyFinding] = []
         self.report_generator = BugBountyReportGenerator()
         self.poc_generator = PoCGenerator()
         self.load_findings()
@@ -385,7 +379,7 @@ class BugBountyTracker:
         """載入已保存的漏洞發現"""
         if self.findings_file.exists():
             try:
-                with open(self.findings_file, 'r', encoding='utf-8') as f:
+                with open(self.findings_file, encoding='utf-8') as f:
                     data = json.load(f)
                     for item in data:
                         # Convert dict back to dataclass - 使用 aiva_common.Severity
@@ -423,11 +417,11 @@ class BugBountyTracker:
 
         return finding.id
 
-    def get_findings_by_severity(self, severity: Severity) -> List[BugBountyFinding]:
+    def get_findings_by_severity(self, severity: Severity) -> list[BugBountyFinding]:
         """按嚴重程度獲取漏洞"""
         return [f for f in self.findings if f.severity == severity]
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """獲取漏洞統計"""
         total_findings = len(self.findings)
         by_severity = {}
@@ -474,7 +468,7 @@ class BugBountyCapability:
             logger.error(f"Initialization failed: {e}")
             return False
 
-    async def execute(self, command: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, command: str, parameters: dict[str, Any]) -> dict[str, Any]:
         """執行命令"""
         try:
             if command == "interactive_menu":
@@ -756,7 +750,7 @@ class BugBountyCapability:
         if poc:
             self._save_and_display_poc(finding, poc)
 
-    def _select_finding_for_poc(self) -> Optional[BugBountyFinding]:
+    def _select_finding_for_poc(self) -> BugBountyFinding | None:
         """選擇漏洞進行 PoC 生成"""
         console.print("\n[cyan]選擇要生成 PoC 的漏洞:[/cyan]")
         for i, finding in enumerate(self.tracker.findings, 1):
@@ -769,7 +763,7 @@ class BugBountyCapability:
         except Exception:
             return None
 
-    def _generate_poc_by_type(self, finding: BugBountyFinding) -> Optional[str]:
+    def _generate_poc_by_type(self, finding: BugBountyFinding) -> str | None:
         """根據漏洞類型生成 PoC"""
         try:
             if "XSS" in finding.category.description or "Cross-Site Scripting" in finding.category.description:
@@ -860,7 +854,7 @@ class BugBountyCapability:
         for status, count in status_stats.items():
             console.print(f"• {status}: {count}")
 
-    def _handle_add_finding(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def _handle_add_finding(self, parameters: dict[str, Any]) -> dict[str, Any]:
         """處理添加漏洞發現 API 調用"""
         required_fields = ['title', 'severity', 'category', 'target_url', 'description', 'impact']
         for field in required_fields:
@@ -890,7 +884,7 @@ class BugBountyCapability:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    def _handle_list_findings(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def _handle_list_findings(self, parameters: dict[str, Any]) -> dict[str, Any]:
         """處理列出漏洞發現 API 調用"""
         findings_data = []
         for finding in self.tracker.findings:
@@ -907,7 +901,7 @@ class BugBountyCapability:
 
         return {"success": True, "data": {"findings": findings_data}}
 
-    def _handle_generate_poc(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def _handle_generate_poc(self, parameters: dict[str, Any]) -> dict[str, Any]:
         """處理生成 PoC API 調用"""
         finding_id = parameters.get('finding_id')
         if not finding_id:
@@ -943,7 +937,7 @@ class BugBountyCapability:
 
 
 # 提供工廠函數用於創建和獲取實例
-_capability_instance: Optional[BugBountyCapability] = None
+_capability_instance: BugBountyCapability | None = None
 
 
 def get_bug_bounty_capability() -> BugBountyCapability:

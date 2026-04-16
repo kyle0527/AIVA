@@ -2,12 +2,13 @@
 實現 AI 對話層，支援自然語言問答和一鍵執行
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from pathlib import Path
 import re
 from typing import Any
-from pathlib import Path
 
 from aiva_common.utils.logging import get_logger
+
 from services.integration.capability import CapabilityRegistry
 from services.integration.capability.registry import registry as global_registry
 
@@ -130,7 +131,9 @@ class AIVACommandProcessor:
     def _get_function_caller(self):
         """獲取 UnifiedFunctionCaller"""
         if self._function_caller is None:
-            from services.core.aiva_core.service_backbone.api.unified_function_caller import UnifiedFunctionCaller
+            from services.core.aiva_core.service_backbone.api.unified_function_caller import (
+                UnifiedFunctionCaller,
+            )
             self._function_caller = UnifiedFunctionCaller()
         return self._function_caller
 
@@ -179,7 +182,7 @@ class AIVACommandProcessor:
         self, user_input: str, user_id: str = "default"
     ) -> dict[str, Any]:
         """處理使用者指令並產生回應"""
-        timestamp = datetime.now(timezone.utc)
+        timestamp = datetime.now(UTC)
 
         # 記錄指令
         self._add_command_entry("user", user_input, user_id, timestamp)
@@ -464,7 +467,9 @@ class AIVACommandProcessor:
         注意: MultiEngineCoordinator 尚在開發中，如果導入失敗則回退到 RAG 搜索
         """
         try:
-            from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator  # type: ignore[import-not-found]
+            from services.scan.coordinators.multi_engine_coordinator import (
+                MultiEngineCoordinator,  # type: ignore[import-not-found]
+            )
         except ImportError:
             # MultiEngineCoordinator 尚未實現，拋出異常讓調用者使用 RAG 方式
             raise ImportError("MultiEngineCoordinator 尚未實現")

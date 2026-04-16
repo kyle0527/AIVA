@@ -11,14 +11,14 @@ AIVA Schema 自動生成模組
 # 基礎類型
 from .base_types import *
 
+# 發現結果
+from .findings import *
+
 # 訊息通訊
 from .messaging import *
 
 # 任務管理
 from .tasks import *
-
-# 發現結果
-from .findings import *
 
 __version__ = "1.1.0"
 __generated_at__ = "2025-11-03T20:34:58.050663"
@@ -26,24 +26,24 @@ __generated_at__ = "2025-11-03T20:34:58.050663"
 __all__ = [
     # 基礎類型
     "MessageHeader",
-    "Target", 
+    "Target",
     "Vulnerability",
-    
+
     # 訊息通訊
     "AivaMessage",
     "AIVARequest",
     "AIVAResponse",
-    
+
     # 任務管理
     "FunctionTaskPayload",
-    "FunctionTaskTarget", 
+    "FunctionTaskTarget",
     "FunctionTaskContext",
     "FunctionTaskTestConfig",
     "ScanTaskPayload",
-    
+
     # 發現結果
     "FindingPayload",
     "FindingEvidence",
-    "FindingImpact", 
+    "FindingImpact",
     "FindingRecommendation",
 ]

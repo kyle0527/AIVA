@@ -19,7 +19,7 @@ from .messaging import *
 __all__ = [
     # 從 common.py 匯出
     "APIResponse",
-    "MessageHeader", 
+    "MessageHeader",
     "Authentication",
     "RateLimit",
     "ScanScope",
@@ -33,7 +33,7 @@ __all__ = [
     # 從 messaging.py 匯出
     "AivaMessage",
     "AIVARequest",
-    "AIVAResponse", 
+    "AIVAResponse",
     "AIVAEvent",
     "AIVACommand",
 ]

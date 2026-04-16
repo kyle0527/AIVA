@@ -18,10 +18,10 @@ RAG 搜索範圍：
 - 提供搜索狀態和發現的相關資源
 """
 
-import logging
 from datetime import datetime
-from typing import Any, Optional
 from difflib import SequenceMatcher
+import logging
+from typing import Any
 
 try:
     import aiohttp
@@ -229,7 +229,7 @@ class RAGTrigger:
         historical_data: list[dict[str, Any]],
         knowledge_base_data: list[dict[str, Any]],
         search_mode: str = "hybrid",  # "internal", "external", "hybrid"
-    ) -> Optional[UnknownSituationAlert]:
+    ) -> UnknownSituationAlert | None:
         """如果需要，觸發 RAG 搜索（支持對內和對外）
         
         Args:
@@ -384,7 +384,7 @@ class RAGTrigger:
         
         # 1. 對內搜索 - 向量庫
         if search_mode in ["internal", "hybrid"]:
-            logger.info(f"🔍 [對內搜索] 搜索本地向量庫...")
+            logger.info("🔍 [對內搜索] 搜索本地向量庫...")
             internal_results = await self._search_internal_vector_store(query, current_data)
             results.extend(internal_results)
             
@@ -410,7 +410,7 @@ class RAGTrigger:
         # 2. 對外搜索 - 外部資源
         if search_mode in ["external", "hybrid"]:
             if self.enable_external_search:
-                logger.info(f"🔍 [對外搜索] 搜索外部資源...")
+                logger.info("🔍 [對外搜索] 搜索外部資源...")
                 external_results = await self._search_external_resources(query, current_data)
                 results.extend(external_results)
                 
@@ -515,22 +515,22 @@ class RAGTrigger:
         
         try:
             # 1. 搜索 CVE 數據庫
-            logger.info(f"🔍 [外部搜索 1/4] 搜索 CVE 數據庫...")
+            logger.info("🔍 [外部搜索 1/4] 搜索 CVE 數據庫...")
             cve_results = await self._search_cve_database(query, current_data)
             results.extend(cve_results)
             
             # 2. 搜索 Exploit-DB
-            logger.info(f"🔍 [外部搜索 2/4] 搜索 Exploit-DB...")
+            logger.info("🔍 [外部搜索 2/4] 搜索 Exploit-DB...")
             exploit_results = await self._search_exploit_db(query, current_data)
             results.extend(exploit_results)
             
             # 3. Google 搜索技術文章
-            logger.info(f"🔍 [外部搜索 3/4] Google 搜索...")
+            logger.info("🔍 [外部搜索 3/4] Google 搜索...")
             google_results = await self._search_google(query, current_data)
             results.extend(google_results)
             
             # 4. GitHub Security Advisory
-            logger.info(f"🔍 [外部搜索 4/4] 搜索 GitHub Security Advisory...")
+            logger.info("🔍 [外部搜索 4/4] 搜索 GitHub Security Advisory...")
             github_results = await self._search_github_advisory(query, current_data)
             results.extend(github_results)
             

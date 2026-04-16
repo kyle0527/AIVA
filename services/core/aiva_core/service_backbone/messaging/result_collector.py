@@ -5,13 +5,12 @@
 
 import asyncio
 from collections.abc import Callable
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 import json
 import logging
 from typing import Any
 
 from aio_pika.abc import AbstractIncomingMessage
-
 from aiva_common.schemas import (
     FindingPayload,
     ScanCompletedPayload,
@@ -301,7 +300,7 @@ class ResultCollector:
         """
         self.pending_results[result_id] = {
             "result": result,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
         logger.debug(f"Set pending result for {result_id}")
 
@@ -375,7 +374,7 @@ class ResultCollector:
                 event: len(handlers) for event, handlers in self.result_handlers.items()
             },
             "pending_results": len(self.pending_results),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         # 從儲存後端獲取額外統計

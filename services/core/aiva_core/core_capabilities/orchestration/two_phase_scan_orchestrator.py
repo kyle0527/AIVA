@@ -15,16 +15,15 @@
 
 import asyncio
 import json
-from typing import Any
 from uuid import uuid4
 
 from aiva_common.enums import Topic
 from aiva_common.messaging import AbstractBroker
 from aiva_common.schemas import (
-    Phase0StartPayload,
     Phase0CompletedPayload,
-    Phase1StartPayload,
+    Phase0StartPayload,
     Phase1CompletedPayload,
+    Phase1StartPayload,
 )
 from aiva_common.utils import get_logger
 
@@ -37,25 +36,21 @@ logger = get_logger(__name__)
 class TwoPhaseOrchestratorError(Exception):
     """兩階段編排器異常基類"""
 
-    pass
 
 
 class Phase0TimeoutError(TwoPhaseOrchestratorError):
     """Phase0 超時異常"""
 
-    pass
 
 
 class Phase1TimeoutError(TwoPhaseOrchestratorError):
     """Phase1 超時異常"""
 
-    pass
 
 
 class AIDecisionError(TwoPhaseOrchestratorError):
     """AI 決策異常"""
 
-    pass
 
 
 class TwoPhaseScanOrchestrator:

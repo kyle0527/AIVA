@@ -16,14 +16,13 @@ AIVA 系統修復工具
     repair.run_all_repairs()
 """
 
-import subprocess
-import sys
+from datetime import datetime
 import json
-import shutil
 import logging
 from pathlib import Path
-from datetime import datetime
-import re
+import shutil
+import subprocess
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -359,7 +358,7 @@ class AIVASystemRepair:
                 modules[module] = {'success': 0, 'failed': 0, 'warning': 0}
             modules[module][entry['result']] += 1
         
-        print(f"\n📋 模組修復狀態:")
+        print("\n📋 模組修復狀態:")
         for module, counts in modules.items():
             total = sum(counts.values())
             success_rate = (counts['success'] / max(total, 1)) * 100
@@ -376,7 +375,7 @@ class AIVASystemRepair:
         # 顯示仍需注意的問題
         failed_actions = [entry for entry in self.repair_log if entry['result'] == 'failed']
         if failed_actions:
-            print(f"\n⚠️ 仍需手動處理的問題:")
+            print("\n⚠️ 仍需手動處理的問題:")
             for entry in failed_actions[-5:]:  # 顯示最後 5 個失敗
                 print(f"   • {entry['module']} - {entry['action']}: {entry['details'][:50]}...")
     
@@ -404,7 +403,7 @@ class AIVASystemRepair:
         report = self.generate_repair_report()
         self.print_repair_summary(report)
         
-        print(f"\n✅ 系統修復完成！")
+        print("\n✅ 系統修復完成！")
         return report
 
 def main():

@@ -8,13 +8,14 @@
 - InputParameter, OutputParameter 從 models.py 引入
 """
 
+from aiva_common.enums import ProgrammingLanguage, TaskStatus
+
 from services.integration.capability.models import (
     CapabilityRecord,
     CapabilityType,
     InputParameter,
-    OutputParameter
+    OutputParameter,
 )
-from aiva_common.enums import ProgrammingLanguage, TaskStatus
 
 # ================================================
 # Reverse Engineering Tools Capabilities

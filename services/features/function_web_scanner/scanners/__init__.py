@@ -11,8 +11,8 @@ __all__ = [
     "WebCrawler"
 ]
 
-from .subdomain_scanner import SubdomainScanner
 from .directory_bruteforcer import DirectoryBruteforcer
-from .tech_detector import TechDetector
 from .port_scanner import PortScanner
+from .subdomain_scanner import SubdomainScanner
+from .tech_detector import TechDetector
 from .web_crawler import WebCrawler

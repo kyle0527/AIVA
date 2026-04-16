@@ -13,8 +13,8 @@ from typing import Any
 # aiva_common 統一錯誤處理
 from aiva_common.core.error_handling import (
     AIVAError,
-    ErrorType,
     ErrorSeverity,
+    ErrorType,
     create_error_context,
 )
 

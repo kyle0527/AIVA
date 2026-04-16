@@ -31,20 +31,20 @@ CLI 使用:
     python -m services.core.aiva_core.cognitive_core.ai_capability_query --classify
 """
 
-import asyncio
 import argparse
-import json
-import logging
-from typing import List, Dict, Any, Optional
-from pathlib import Path
+import asyncio
 from collections import Counter, defaultdict
 from datetime import datetime
+import json
+import logging
+from pathlib import Path
+from typing import Any
 
 try:
-    from rich.console import Console
-    from rich.table import Table
-    from rich.panel import Panel
     from rich import box
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.table import Table
     RICH_AVAILABLE = True
 except ImportError:
     RICH_AVAILABLE = False
@@ -52,7 +52,6 @@ except ImportError:
 from .internal_loop_connector import InternalLoopConnector
 from .rag.knowledge_base import KnowledgeBase
 from .rag.vector_store import VectorStore
-
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +98,7 @@ class AICapabilityQuery:
         >>> query_system.display_results(results)
     """
     
-    def __init__(self, persist_dir: Optional[Path] = None):
+    def __init__(self, persist_dir: Path | None = None):
         """初始化查詢系統
         
         Args:
@@ -141,7 +140,7 @@ class AICapabilityQuery:
             self._connector = InternalLoopConnector(rag_knowledge_base=self.kb)
         return self._connector
     
-    async def query(self, question: str, top_k: int = 5) -> List[Dict[str, Any]]:  # type: ignore[misc]
+    async def query(self, question: str, top_k: int = 5) -> list[dict[str, Any]]:  # type: ignore[misc]
         """查詢能力 - async保留供未來異步查詢擴展
         
         Args:
@@ -169,7 +168,7 @@ class AICapabilityQuery:
             logger.error(f"Query failed: {e}", exc_info=True)
             return []
     
-    def display_results(self, results: List[Dict[str, Any]], title: str = "查詢結果"):
+    def display_results(self, results: list[dict[str, Any]], title: str = "查詢結果"):
         """顯示查詢結果
         
         Args:
@@ -188,7 +187,7 @@ class AICapabilityQuery:
         else:
             self._display_results_plain(results, title)
     
-    def _display_results_rich(self, results: List[Dict[str, Any]], title: str):
+    def _display_results_rich(self, results: list[dict[str, Any]], title: str):
         """Rich UI 顯示"""
         table = Table(title=f"[bold cyan]{title}[/bold cyan]", box=box.ROUNDED)
         table.add_column("#", justify="center", style="cyan", width=4)
@@ -207,7 +206,7 @@ class AICapabilityQuery:
         
         console.print(table)
     
-    def _display_results_plain(self, results: List[Dict[str, Any]], title: str):
+    def _display_results_plain(self, results: list[dict[str, Any]], title: str):
         """純文本顯示"""
         print(f"\n{'=' * 60}")
         print(f"{title}")
@@ -220,7 +219,7 @@ class AICapabilityQuery:
             print(f"   Language: {meta.get('language', 'Unknown')}")
             print()
     
-    async def show_statistics(self) -> Dict[str, Any]:
+    async def show_statistics(self) -> dict[str, Any]:
         """顯示能力統計
         
         Returns:
@@ -261,7 +260,7 @@ class AICapabilityQuery:
             logger.error(f"Failed to get statistics: {e}", exc_info=True)
             return {"total": 0, "modules": {}, "languages": {}}
     
-    def _display_statistics_rich(self, stats: Dict[str, Any]):
+    def _display_statistics_rich(self, stats: dict[str, Any]):
         """Rich UI 顯示統計"""
         total = stats["total"]
         
@@ -301,7 +300,7 @@ class AICapabilityQuery:
         console.print()
         console.print(summary)
     
-    def _display_statistics_plain(self, stats: Dict[str, Any]):
+    def _display_statistics_plain(self, stats: dict[str, Any]):
         """純文本顯示統計"""
         total = stats["total"]
         
@@ -331,7 +330,7 @@ class AICapabilityQuery:
         self, 
         task: str, 
         max_capabilities: int = 10
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """獲取工作流推薦
         
         Args:
@@ -371,7 +370,7 @@ class AICapabilityQuery:
         logger.info(f"Recommended {len(workflow['capabilities'])} capabilities for '{task}'")
         return workflow
     
-    async def query_by_module(self, module: str, top_k: int = 10) -> List[Dict[str, Any]]:
+    async def query_by_module(self, module: str, top_k: int = 10) -> list[dict[str, Any]]:
         """按模組查詢能力
         
         Args:
@@ -392,7 +391,7 @@ class AICapabilityQuery:
         
         return filtered[:top_k]
     
-    async def query_by_language(self, language: str, top_k: int = 10) -> List[Dict[str, Any]]:
+    async def query_by_language(self, language: str, top_k: int = 10) -> list[dict[str, Any]]:
         """按語言查詢能力
         
         Args:
@@ -416,10 +415,10 @@ class AICapabilityQuery:
     async def query_with_filters(
         self,
         question: str,
-        aiva_module: Optional[str] = None,
-        entry_point: Optional[str] = None,
+        aiva_module: str | None = None,
+        entry_point: str | None = None,
         top_k: int = 10
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """帶過濾條件的查詢（六大模組支持）
         
         Args:
@@ -460,7 +459,7 @@ class AICapabilityQuery:
         
         return filtered[:top_k]
     
-    async def get_classification_report(self) -> Dict[str, Any]:
+    async def get_classification_report(self) -> dict[str, Any]:
         """生成完整的能力分類報告（六大模組）
         
         Returns:
@@ -530,7 +529,7 @@ class AICapabilityQuery:
             logger.error(f"Failed to generate classification report: {e}", exc_info=True)
             return self._empty_classification_report()
     
-    def _empty_classification_report(self) -> Dict[str, Any]:
+    def _empty_classification_report(self) -> dict[str, Any]:
         """返回空的分類報告"""
         return {
             "total": 0,
@@ -541,7 +540,7 @@ class AICapabilityQuery:
             "report_time": datetime.now().isoformat()
         }
     
-    def display_classification_report(self, report: Dict[str, Any]):
+    def display_classification_report(self, report: dict[str, Any]):
         """顯示分類報告
         
         Args:
@@ -552,7 +551,7 @@ class AICapabilityQuery:
         else:
             self._display_classification_report_plain(report)
     
-    def _display_classification_report_rich(self, report: Dict[str, Any]):
+    def _display_classification_report_rich(self, report: dict[str, Any]):
         """Rich UI 顯示分類報告"""
         console.print("\n[bold cyan]AIVA 能力分類報告[/bold cyan]")
         console.print(f"生成時間: {report['report_time']}\n")
@@ -602,7 +601,7 @@ class AICapabilityQuery:
             console.print(entry_table)
             console.print()
     
-    def _display_classification_report_plain(self, report: Dict[str, Any]):
+    def _display_classification_report_plain(self, report: dict[str, Any]):
         """純文本顯示分類報告"""
         print("\n" + "=" * 60)
         print("AIVA 能力分類報告")
@@ -638,7 +637,7 @@ class AICapabilityQuery:
                 print(f"{entry:30} {count:5} ({percentage:5.1f}%)")
             print()
     
-    def save_classification_report(self, report: Dict[str, Any], output_path: Path):
+    def save_classification_report(self, report: dict[str, Any], output_path: Path):
         """保存分類報告到 JSON 檔案
         
         Args:
@@ -663,7 +662,7 @@ class AICapabilityQuery:
                 print(f"✗ 保存失敗: {e}")
 
 
-async def quick_query(question: str, top_k: int = 5) -> List[Dict[str, Any]]:
+async def quick_query(question: str, top_k: int = 5) -> list[dict[str, Any]]:
     """快速查詢函數 (便捷接口)
     
     Args:

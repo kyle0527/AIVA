@@ -5,13 +5,12 @@ function_web_scanner.scanners.subdomain_scanner
 執行被動和主動子域名發現。
 """
 
-import dns.resolver
-import requests
-from typing import List, Dict, Set
 from dataclasses import dataclass
 
-from aiva_common.utils import get_logger
 from aiva_common.enums.common import Confidence
+from aiva_common.utils import get_logger
+import dns.resolver
+import requests
 
 logger = get_logger(__name__)
 
@@ -20,10 +19,10 @@ logger = get_logger(__name__)
 class Subdomain:
     """子域名結果"""
     subdomain: str
-    ip_addresses: List[str]
+    ip_addresses: list[str]
     source: str  # passive, bruteforce, dns_zone_transfer, etc.
     confidence: Confidence
-    additional_info: Dict
+    additional_info: dict
 
 
 class SubdomainScanner:
@@ -42,7 +41,7 @@ class SubdomainScanner:
         self.resolver.lifetime = 2
         logger.info(f"子域名掃描器初始化 (wordlist: {self.wordlist_path})")
     
-    def scan(self, domain: str, mode: str = "all") -> List[Subdomain]:
+    def scan(self, domain: str, mode: str = "all") -> list[Subdomain]:
         """
         掃描子域名
         
@@ -65,7 +64,7 @@ class SubdomainScanner:
         logger.info(f"發現 {len(subdomains)} 個子域名")
         return list(subdomains)
     
-    def _passive_discovery(self, domain: str) -> Set[Subdomain]:
+    def _passive_discovery(self, domain: str) -> set[Subdomain]:
         """被動子域名發現"""
         subdomains = set()
         
@@ -77,7 +76,7 @@ class SubdomainScanner:
         
         return subdomains
     
-    def _search_crtsh(self, domain: str) -> Set[Subdomain]:
+    def _search_crtsh(self, domain: str) -> set[Subdomain]:
         """從 crt.sh 搜索證書透明度日誌"""
         subdomains = set()
         
@@ -108,12 +107,12 @@ class SubdomainScanner:
         
         return subdomains
     
-    def _bruteforce_discovery(self, domain: str) -> Set[Subdomain]:
+    def _bruteforce_discovery(self, domain: str) -> set[Subdomain]:
         """暴力破解子域名"""
         subdomains = set()
         
         try:
-            with open(self.wordlist_path, 'r') as f:
+            with open(self.wordlist_path) as f:
                 wordlist = [line.strip() for line in f if line.strip()]
             
             for word in wordlist[:1000]:  # Limit for performance
@@ -136,7 +135,7 @@ class SubdomainScanner:
         
         return subdomains
     
-    def _dns_zone_transfer(self, domain: str) -> Set[Subdomain]:
+    def _dns_zone_transfer(self, domain: str) -> set[Subdomain]:
         """嘗試 DNS 區域傳輸"""
         subdomains = set()
         
@@ -172,7 +171,7 @@ class SubdomainScanner:
         
         return subdomains
     
-    def _resolve_domain(self, domain: str) -> List[str]:
+    def _resolve_domain(self, domain: str) -> list[str]:
         """解析域名獲取 IP 地址"""
         try:
             answers = self.resolver.resolve(domain, 'A')

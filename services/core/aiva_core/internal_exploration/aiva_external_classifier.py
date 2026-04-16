@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 AIVA External Module Multi-Language Classifier (v3.3)
 ======================================================
@@ -38,14 +37,12 @@ v3.2 - 多語言支援完善
 - internal_exploration/typescript_tools/            (TypeScript AST 分析)
 """
 
-import json
-import re
-import sys
-from pathlib import Path
-from typing import Dict, List, Any, Optional
+import argparse
 from collections import defaultdict
 from datetime import datetime
-import argparse
+import json
+from pathlib import Path
+from typing import Any
 
 # ==========================================
 # 路徑配置導入
@@ -55,10 +52,10 @@ try:
     PATHS_CONFIG_DIR = Path(__file__).resolve().parent.parent.parent.parent / "integration" / "data" / "internal_exploration"
     
     from services.integration.data.internal_exploration.paths_config import (
-        ExternalPaths,
-        CombinedPaths,
         DATA_ROOT,
         PROJECT_ROOT,
+        CombinedPaths,
+        ExternalPaths,
         ensure_all_dirs,
     )
     USING_NEW_PATHS = True
@@ -252,7 +249,7 @@ class MultiLanguageClassifier:
                 ],
             }
         
-    def scan_all_modules(self) -> List[tuple]:
+    def scan_all_modules(self) -> list[tuple]:
         """掃描所有外部模組的分析結果
         
         讀取 4 個語言的分析結果文件
@@ -312,7 +309,7 @@ class MultiLanguageClassifier:
         # 預設 Python
         return "Python"
     
-    def process_module(self, analysis_file: Path, language: str) -> Dict[str, Any]:
+    def process_module(self, analysis_file: Path, language: str) -> dict[str, Any]:
         """處理單個模組的分析結果
         
         Args:
@@ -325,7 +322,7 @@ class MultiLanguageClassifier:
             return {}
         
         try:
-            with open(analysis_file, 'r', encoding='utf-8') as f:
+            with open(analysis_file, encoding='utf-8') as f:
                 data = json.load(f)
             
             # 提取模組資訊（從文件名推斷）
@@ -386,7 +383,7 @@ class MultiLanguageClassifier:
             traceback.print_exc()
             return {}
     
-    def _normalize_flow(self, flow: Dict, module_name: str, module_info: Dict, language: str) -> Dict:
+    def _normalize_flow(self, flow: dict, module_name: str, module_info: dict, language: str) -> dict:
         """將不同語言的 flow 標準化為統一格式
         
         命名規則（按層級分類）：
@@ -471,7 +468,7 @@ class MultiLanguageClassifier:
         
         return normalized
     
-    def _is_operable_capability(self, flow: Dict, language: str) -> bool:
+    def _is_operable_capability(self, flow: dict, language: str) -> bool:
         """判斷能力是否可操作（基於原則.md 的判斷標準）
         
         根據5大原則判斷：
@@ -521,7 +518,7 @@ class MultiLanguageClassifier:
         
         return True
     
-    def _get_operability_reason(self, flow: Dict, language: str) -> str:
+    def _get_operability_reason(self, flow: dict, language: str) -> str:
         """獲取可操作性判斷的原因"""
         if language not in CAPABILITY_PRINCIPLES:
             return "未知語言，預設可操作"
@@ -552,7 +549,7 @@ class MultiLanguageClassifier:
         
         return "✅ 可操作 - 符合序列化原則"
 
-    def _extract_parameters(self, flow: Dict) -> Dict[str, Any]:
+    def _extract_parameters(self, flow: dict) -> dict[str, Any]:
         """提取流程的參數資訊（支援所有語言）
         
         從原始分析結果中提取參數，格式化為統一的參數描述
@@ -722,7 +719,7 @@ class MultiLanguageClassifier:
         # === 通用場景（fallback）===
         return f'[{module_name}] 安全檢測功能'
     
-    def _extract_entry_points_from_function_details(self, function_details, language: str) -> List[Dict]:
+    def _extract_entry_points_from_function_details(self, function_details, language: str) -> list[dict]:
         """從 function_details 提取有調用鏈的入口點
         
         function_details 結構: 
@@ -804,7 +801,7 @@ class MultiLanguageClassifier:
         
         return flows
     
-    def _convert_struct_to_flows(self, struct_definitions: List[Dict], function_details: Optional[List[Dict]] = None) -> List[Dict]:
+    def _convert_struct_to_flows(self, struct_definitions: list[dict], function_details: list[dict] | None = None) -> list[dict]:
         """將 Go struct 定義轉換為標準 flows 格式（用於 stdin JSON 微服務模式）
         
         對於使用 JSON stdin/stdout 模式的 Go 微服務，struct 欄位定義就是參數定義。
@@ -871,7 +868,7 @@ class MultiLanguageClassifier:
         
         return flows
     
-    def _convert_graphs_to_flows(self, graphs: List[Dict]) -> List[Dict]:
+    def _convert_graphs_to_flows(self, graphs: list[dict]) -> list[dict]:
         """轉換舊格式的 graphs 為標準 flows 格式（全部轉換，不過濾）
         
         Args:
@@ -945,7 +942,7 @@ class MultiLanguageClassifier:
         
         return flows
     
-    def _convert_flow_chains(self, flow_chains: List[List[str]], function_details: Optional[List[Dict]] = None) -> List[Dict]:
+    def _convert_flow_chains(self, flow_chains: list[list[str]], function_details: list[dict] | None = None) -> list[dict]:
         """轉換 flow_chains 為標準 flows 格式，並附加參數資訊
         
         Args:
@@ -1000,7 +997,7 @@ class MultiLanguageClassifier:
                 flows.append(flow_dict)
         return flows
     
-    def _infer_module_info(self, module_name: str) -> Dict[str, str]:
+    def _infer_module_info(self, module_name: str) -> dict[str, str]:
         """推斷模組信息"""
         for pattern, info in ATTACK_TYPE_PATTERNS.items():
             if pattern in module_name.lower():

@@ -4,23 +4,21 @@ HackingTool XSS 跨語言檢測引擎
 """
 
 import asyncio
+from dataclasses import dataclass
 import json
 import logging
-import os
+from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
 import time
-from dataclasses import dataclass, asdict
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Protocol, Union
-import re
+from typing import Any, Protocol
 
 from ..hackingtool_config import (
-    HackingToolXSSConfig, 
-    XSSToolConfig, 
+    HackingToolXSSConfig,
+    XSSToolConfig,
     get_xss_tools_config,
-    XSS_SCAN_MODES
 )
 
 
@@ -32,14 +30,14 @@ class XSSDetectionResult:
     target_url: str
     vulnerability_found: bool
     confidence: float
-    payloads: List[str]
+    payloads: list[str]
     execution_time: float
     raw_output: str
-    error_message: Optional[str] = None
-    severity: Optional[str] = None
-    context: Optional[str] = None
-    method: Optional[str] = None
-    parameter: Optional[str] = None
+    error_message: str | None = None
+    severity: str | None = None
+    context: str | None = None
+    method: str | None = None
+    parameter: str | None = None
 
 
 @dataclass
@@ -47,14 +45,14 @@ class LanguageEnvironment:
     """語言環境檢測結果"""
     language: str
     available: bool
-    version: Optional[str] = None
-    binary_path: Optional[str] = None
-    error_message: Optional[str] = None
+    version: str | None = None
+    binary_path: str | None = None
+    error_message: str | None = None
 
 
 class DetectionEngineProtocol(Protocol):
     """檢測引擎協議介面"""
-    async def detect(self, target_url: str, **kwargs) -> List[XSSDetectionResult]:
+    async def detect(self, target_url: str, **kwargs) -> list[XSSDetectionResult]:
         """執行 XSS 檢測"""
         ...
 
@@ -62,10 +60,10 @@ class DetectionEngineProtocol(Protocol):
 class CrossLanguageXSSEngine:
     """跨語言 XSS 檢測引擎"""
     
-    def __init__(self, config: Optional[HackingToolXSSConfig] = None):
+    def __init__(self, config: HackingToolXSSConfig | None = None):
         self.config = config or get_xss_tools_config()
         self.logger = logging.getLogger(__name__)
-        self.language_environments: Dict[str, LanguageEnvironment] = {}
+        self.language_environments: dict[str, LanguageEnvironment] = {}
         self.temp_dir = Path(tempfile.mkdtemp(prefix="aiva_xss_"))
         
     async def initialize(self) -> bool:
@@ -111,7 +109,7 @@ class CrossLanguageXSSEngine:
             self.logger.error(f"❌ XSS 引擎初始化失敗: {e}")
             raise  # ✅ 向上傳播異常,不返回 False
     
-    async def _validate_tool_availability(self) -> List[str]:
+    async def _validate_tool_availability(self) -> list[str]:
         """驗證工具可用性——降低複雜度
         
         Returns:
@@ -298,8 +296,8 @@ class CrossLanguageXSSEngine:
         target_url: str,
         mode: str = "comprehensive",
         max_concurrent: int = 3,
-        tools_filter: Optional[List[str]] = None
-    ) -> List[XSSDetectionResult]:
+        tools_filter: list[str] | None = None
+    ) -> list[XSSDetectionResult]:
         """執行 XSS 檢測"""
         if not target_url:
             raise ValueError("Target URL is required")
@@ -317,8 +315,8 @@ class CrossLanguageXSSEngine:
         self, 
         target_url: str, 
         mode: str, 
-        tools_filter: Optional[List[str]]
-    ) -> List[Dict[str, Any]]:
+        tools_filter: list[str] | None
+    ) -> list[dict[str, Any]]:
         """獲取可用的執行計劃"""
         execution_plan = self.config.get_execution_plan(target_url, mode)
         
@@ -343,10 +341,10 @@ class CrossLanguageXSSEngine:
     
     async def _execute_parallel_detection(
         self, 
-        available_tools: List[Dict[str, Any]], 
+        available_tools: list[dict[str, Any]], 
         target_url: str, 
         max_concurrent: int
-    ) -> List[XSSDetectionResult]:
+    ) -> list[XSSDetectionResult]:
         """並行執行檢測任務"""
         semaphore = asyncio.Semaphore(max_concurrent)
         tasks = []
@@ -370,10 +368,10 @@ class CrossLanguageXSSEngine:
     
     async def _execute_tool_detection(
         self,
-        execution_plan: Dict[str, Any],
+        execution_plan: dict[str, Any],
         target_url: str,
         semaphore: asyncio.Semaphore
-    ) -> Optional[XSSDetectionResult]:
+    ) -> XSSDetectionResult | None:
         """執行單一工具檢測"""
         async with semaphore:
             tool_name = execution_plan["tool_name"]
@@ -414,7 +412,7 @@ class CrossLanguageXSSEngine:
                 self.logger.info(f"{tool_name} completed in {execution_time:.2f}s")
                 return parsed_result
                 
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 execution_time = time.time() - start_time
                 error_msg = f"{tool_name} 執行超時"
                 self.logger.error(error_msg)
@@ -580,7 +578,7 @@ print(json.dumps(results))
             tool_config, target_url, regex_result, execution_time, stdout, stderr
         )
     
-    def _parse_json_output(self, stdout: str) -> Optional[Dict[str, Any]]:
+    def _parse_json_output(self, stdout: str) -> dict[str, Any] | None:
         """解析 JSON 格式輸出"""
         try:
             if stdout.strip().startswith('{') or stdout.strip().startswith('['):
@@ -593,7 +591,7 @@ print(json.dumps(results))
         self,
         tool_config: XSSToolConfig,
         target_url: str,
-        json_data: Dict[str, Any],
+        json_data: dict[str, Any],
         execution_time: float,
         stderr: str
     ) -> XSSDetectionResult:
@@ -623,7 +621,7 @@ print(json.dumps(results))
             error_message=stderr if stderr else None
         )
     
-    def _parse_regex_output(self, tool_config: XSSToolConfig, stdout: str) -> Dict[str, Any]:
+    def _parse_regex_output(self, tool_config: XSSToolConfig, stdout: str) -> dict[str, Any]:
         """使用正則表達式解析輸出"""
         result = {
             'vulnerability_found': False,
@@ -639,7 +637,7 @@ print(json.dumps(results))
         
         return result
     
-    def _process_regex_matches(self, pattern: str, matches: List[str], result: Dict[str, Any]) -> None:
+    def _process_regex_matches(self, pattern: str, matches: list[str], result: dict[str, Any]) -> None:
         """處理正則表達式匹配結果"""
         pattern_lower = pattern.lower()
         
@@ -663,7 +661,7 @@ print(json.dumps(results))
         self,
         tool_config: XSSToolConfig,
         target_url: str,
-        regex_result: Dict[str, Any],
+        regex_result: dict[str, Any],
         execution_time: float,
         stdout: str,
         stderr: str
@@ -684,8 +682,8 @@ print(json.dumps(results))
     
     async def _run_command(
         self, 
-        command: List[str], 
-        cwd: Optional[str] = None,
+        command: list[str], 
+        cwd: str | None = None,
         timeout_seconds: int = 300
     ) -> subprocess.CompletedProcess:
         """執行系統命令"""
@@ -708,17 +706,17 @@ print(json.dumps(results))
                 stdout=stdout.decode('utf-8', errors='ignore'),
                 stderr=stderr.decode('utf-8', errors='ignore')
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             process.kill()
             await process.wait()
-            raise asyncio.TimeoutError(f"Command timed out: {' '.join(command)}")
+            raise TimeoutError(f"Command timed out: {' '.join(command)}")
     
     def _is_language_available(self, language: str) -> bool:
         """檢查語言環境是否可用"""
         env = self.language_environments.get(language.lower())
         return env is not None and env.available
     
-    def get_available_tools(self) -> List[str]:
+    def get_available_tools(self) -> list[str]:
         """獲取可用工具列表"""
         available_tools = []
         for tool_name, tool_config in self.config.tools.items():
@@ -726,7 +724,7 @@ print(json.dumps(results))
                 available_tools.append(tool_name)
         return available_tools
     
-    def get_language_status(self) -> Dict[str, LanguageEnvironment]:
+    def get_language_status(self) -> dict[str, LanguageEnvironment]:
         """獲取語言環境狀態"""
         return self.language_environments.copy()
     
@@ -745,7 +743,7 @@ print(json.dumps(results))
 
 
 # 創建全域引擎實例
-_xss_engine_instance: Optional[CrossLanguageXSSEngine] = None
+_xss_engine_instance: CrossLanguageXSSEngine | None = None
 
 
 async def get_xss_engine() -> CrossLanguageXSSEngine:
@@ -761,8 +759,8 @@ async def get_xss_engine() -> CrossLanguageXSSEngine:
 async def detect_xss(
     target_url: str,
     mode: str = "fast",
-    tools: Optional[List[str]] = None
-) -> List[XSSDetectionResult]:
+    tools: list[str] | None = None
+) -> list[XSSDetectionResult]:
     """快速 XSS 檢測方法"""
     engine = await get_xss_engine()
     return await engine.detect(target_url, mode=mode, tools_filter=tools)

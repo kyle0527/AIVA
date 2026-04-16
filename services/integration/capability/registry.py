@@ -10,45 +10,25 @@ AIVA 能力註冊中心
 """
 
 import asyncio
-import logging
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Set
-from pathlib import Path
 import json
+import logging
+from pathlib import Path
 import sqlite3
-
+from typing import Any
 
 # 遵循 aiva_common 規範 - 修復 import 路徑
-from aiva_common.enums import (
-    Severity,
-    Confidence,
-    TaskStatus,
-    ModuleName,
-    Topic
-)
-from aiva_common.schemas import (
-    AivaMessage,
-    MessageHeader,
-    FunctionTaskPayload,
-    FindingPayload
-)
-
-
 from .models import (
-    CapabilityRecord,
     CapabilityEvidence,
+    CapabilityRecord,
     CapabilityScorecard,
-    CLITemplate,
-    ExecutionRequest,
-    ExecutionResult,
     CapabilityStatus,
     CapabilityType,
     InputParameter,
-    OutputParameter
+    OutputParameter,
 )
 
 # 設定結構化日誌
-import logging
 logger = logging.getLogger(__name__)
 
 # 定義程式語言枚舉
@@ -69,9 +49,9 @@ class CapabilityRegistry:
     
     def __init__(self, db_path: str = "data/capability_registry.db"):
         self.db_path = db_path
-        self._capabilities: Dict[str, CapabilityRecord] = {}
-        self._scorecards: Dict[str, CapabilityScorecard] = {}
-        self._evidence_cache: Dict[str, List[CapabilityEvidence]] = {}
+        self._capabilities: dict[str, CapabilityRecord] = {}
+        self._scorecards: dict[str, CapabilityScorecard] = {}
+        self._evidence_cache: dict[str, list[CapabilityEvidence]] = {}
         # 確保資料庫目錄存在
         db_dir = Path(self.db_path).parent
         db_dir.mkdir(parents=True, exist_ok=True)
@@ -288,9 +268,14 @@ class CapabilityRegistry:
     async def _sync_capability_to_vector_db(self, capability: CapabilityRecord) -> None:
         """將能力同步到向量數據庫（包含完整的 invocation_metadata）"""
         try:
-            from services.core.aiva_core.cognitive_core.rag.vector_store import VectorStore
-            from services.core.aiva_core.cognitive_core.internal_loop_connector import InternalLoopConnector
             from pathlib import Path
+
+            from services.core.aiva_core.cognitive_core.internal_loop_connector import (
+                InternalLoopConnector,
+            )
+            from services.core.aiva_core.cognitive_core.rag.vector_store import (
+                VectorStore,
+            )
             
             # 初始化向量存儲
             persist_dir = Path("data/vector_db/chroma")
@@ -345,7 +330,7 @@ class CapabilityRegistry:
                 f"同步能力到向量數據庫失敗: {capability.id} - {str(e)}"
             )
     
-    async def get_capability(self, capability_id: str) -> Optional[CapabilityRecord]:
+    async def get_capability(self, capability_id: str) -> CapabilityRecord | None:
         """獲取指定的能力記錄"""
         return await asyncio.to_thread(self._capabilities.get, capability_id)
     
@@ -354,9 +339,9 @@ class CapabilityRegistry:
         capability_id: str,
         success: bool,
         execution_time_ms: float,
-        error_message: Optional[str] = None,
-        trace_id: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None
+        error_message: str | None = None,
+        trace_id: str | None = None,
+        metadata: dict[str, Any] | None = None
     ) -> None:
         """
         記錄能力調用結果（反饋循環核心）
@@ -405,7 +390,7 @@ class CapabilityRegistry:
         self,
         capability_id: str,
         time_window_hours: int = 24
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         獲取能力調用統計（反饋循環核心）
         
@@ -470,12 +455,12 @@ class CapabilityRegistry:
     
     async def list_capabilities(
         self,
-        language: Optional[ProgrammingLanguage] = None,
-        capability_type: Optional[CapabilityType] = None,
-        status: Optional[CapabilityStatus] = None,
-        tags: Optional[List[str]] = None,
-        limit: Optional[int] = None
-    ) -> List[CapabilityRecord]:
+        language: ProgrammingLanguage | None = None,
+        capability_type: CapabilityType | None = None,
+        status: CapabilityStatus | None = None,
+        tags: list[str] | None = None,
+        limit: int | None = None
+    ) -> list[CapabilityRecord]:
         """
         列出符合條件的能力
         
@@ -518,7 +503,7 @@ class CapabilityRegistry:
         
         return await asyncio.to_thread(filter_capabilities)
     
-    async def discover_capabilities(self) -> Dict[str, Any]:
+    async def discover_capabilities(self) -> dict[str, Any]:
         """
         自動發現系統中的能力
         
@@ -624,7 +609,7 @@ class CapabilityRegistry:
                 logger.error(f"JSON 檔案不存在: {file_path}")
                 return None
             
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, encoding='utf-8') as f:
                 return json.load(f)
         
         try:
@@ -689,7 +674,7 @@ class CapabilityRegistry:
     async def load_capabilities_from_directory(
         self,
         directory_path: str | Path
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """批量載入目錄下的所有 capability.json 檔案
         
         v2.1 (2026-01-08): 新增方法
@@ -735,7 +720,7 @@ class CapabilityRegistry:
                     stats["loaded_success"] += 1
                     # 獲取能力 ID（從檔案讀取）
                     def read_json_file(fp=file_path):
-                        with open(fp, 'r', encoding='utf-8') as f:
+                        with open(fp, encoding='utf-8') as f:
                             return json.load(f)
                     data = await asyncio.to_thread(read_json_file)
                     cap_id = data.get('meta', {}).get('id', file_path.stem)
@@ -756,7 +741,7 @@ class CapabilityRegistry:
         
         return stats
     
-    async def _discover_python_capabilities(self) -> List[CapabilityRecord]:
+    async def _discover_python_capabilities(self) -> list[CapabilityRecord]:
         """發現 Python 模組中的能力"""
         discovered = []
         
@@ -776,7 +761,7 @@ class CapabilityRegistry:
         
         return discovered
     
-    async def _analyze_python_module(self, module_dir: Path) -> Optional[CapabilityRecord]:
+    async def _analyze_python_module(self, module_dir: Path) -> CapabilityRecord | None:
         """分析單個 Python 模組"""
         # 查找主要工作檔案
         worker_files = list(module_dir.glob("*worker.py"))
@@ -815,7 +800,7 @@ class CapabilityRegistry:
         
         return capability
     
-    async def _discover_go_capabilities(self) -> List[CapabilityRecord]:
+    async def _discover_go_capabilities(self) -> list[CapabilityRecord]:
         """發現 Go 服務中的能力"""
         discovered = []
         
@@ -835,7 +820,7 @@ class CapabilityRegistry:
         
         return discovered
     
-    async def _analyze_go_service(self, service_dir: Path) -> Optional[CapabilityRecord]:
+    async def _analyze_go_service(self, service_dir: Path) -> CapabilityRecord | None:
         """分析單個 Go 服務"""
         # 查找 main.go 或 cmd 目錄
         main_files = list(service_dir.glob("main.go"))
@@ -870,7 +855,7 @@ class CapabilityRegistry:
         
         return capability
     
-    async def _discover_rust_capabilities(self) -> List[CapabilityRecord]:
+    async def _discover_rust_capabilities(self) -> list[CapabilityRecord]:
         """發現 Rust 模組中的能力"""
         discovered = []
         
@@ -890,7 +875,7 @@ class CapabilityRegistry:
         
         return discovered
     
-    async def _analyze_rust_module(self, module_dir: Path) -> Optional[CapabilityRecord]:
+    async def _analyze_rust_module(self, module_dir: Path) -> CapabilityRecord | None:
         """分析單個 Rust 模組"""
         # 查找 Cargo.toml
         cargo_file = module_dir / "Cargo.toml"
@@ -922,7 +907,7 @@ class CapabilityRegistry:
         
         return capability
     
-    async def get_capability_stats(self) -> Dict[str, Any]:
+    async def get_capability_stats(self) -> dict[str, Any]:
         """獲取能力統計資訊"""
         def _compute_stats():
             return {
@@ -956,7 +941,7 @@ class CapabilityRegistry:
         
         return stats
     
-    async def search_capabilities(self, search_term: str) -> List[CapabilityRecord]:
+    async def search_capabilities(self, search_term: str) -> list[CapabilityRecord]:
         """
         根據搜索詞查找能力
         
@@ -999,7 +984,7 @@ class CapabilityRegistry:
         
         return await asyncio.to_thread(search)
     
-    async def get_capability_scorecard(self, capability_id: str) -> Optional[CapabilityScorecard]:
+    async def get_capability_scorecard(self, capability_id: str) -> CapabilityScorecard | None:
         """
         獲取能力評分卡
         

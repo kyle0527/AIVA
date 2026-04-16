@@ -19,9 +19,7 @@ New Usage (recommended):
 
 import sys
 import warnings
-import importlib.util
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 # Issue deprecation warning
 warnings.warn(
@@ -38,11 +36,13 @@ SchemaCodeGenerator = None  # type: ignore[assignment]
 try:
     dev_tools_path = Path(__file__).parent.parent.parent.parent / "_dev_tools" / "converters"
     sys.path.insert(0, str(dev_tools_path))
-    
-    from core.schema_codegen_tool import SchemaCodeGenerator as _SchemaCodeGenerator  # type: ignore[import-not-found]
+
+    from core.schema_codegen_tool import (
+        SchemaCodeGenerator as _SchemaCodeGenerator,  # type: ignore[import-not-found]
+    )
     SchemaCodeGenerator = _SchemaCodeGenerator
-    
-except ImportError as e:
+
+except ImportError:
     # Silently fail - the class will be None
     # This prevents static analysis errors while allowing runtime detection
     pass
@@ -54,12 +54,14 @@ def main():
     print("此檔案已移至 _dev_tools/converters/core/schema_codegen_tool.py")
     print("請使用新的位置執行")
     print()
-    
+
     # Try to delegate to the new location
     try:
         dev_tools_path = Path(__file__).parent.parent.parent.parent / "_dev_tools" / "converters"
         sys.path.insert(0, str(dev_tools_path))
-        from core.schema_codegen_tool import main as dev_main  # type: ignore[import-not-found]
+        from core.schema_codegen_tool import (
+            main as dev_main,  # type: ignore[import-not-found]
+        )
         dev_main()
     except ImportError:
         print("[ERROR] Cannot find implementation at _dev_tools/converters/core/")

@@ -4,10 +4,10 @@
 """
 
 from .sql_tools import (
-    SQLTarget,
+    SQLInjectionManager,
     SQLInjectionResult,
     SqlmapIntegration,
-    SQLInjectionManager,
+    SQLTarget,
 )
 
 __all__ = [

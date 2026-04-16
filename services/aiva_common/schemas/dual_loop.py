@@ -14,11 +14,11 @@
 - 輔助能力 (Utility): 編碼/解碼、加密/解密、數據轉換
 """
 
-from datetime import datetime, timezone
-from typing import Any, Literal, List, Dict
-from pydantic import BaseModel, Field, field_validator
+from datetime import UTC, datetime
 from enum import Enum
+from typing import Any, Literal
 
+from pydantic import BaseModel, Field, field_validator
 
 # ==================== 能力分類系統 ====================
 
@@ -39,7 +39,7 @@ class CapabilitySubCategory(str, Enum):
     VULN_SCAN = "vulnerability_scan"
     SERVICE_DETECT = "service_detection"
     WEB_CRAWL = "web_crawling"
-    
+
     # Attacking 子類別
     SQL_INJECTION = "sql_injection"
     XSS = "xss"
@@ -47,21 +47,21 @@ class CapabilitySubCategory(str, Enum):
     SSRF = "ssrf"
     BUSINESS_LOGIC = "business_logic"
     AUTH_BYPASS = "auth_bypass"
-    
+
     # Analysis 子類別
     DEVIATION_ANALYSIS = "deviation_analysis"
     RESULT_PARSING = "result_parsing"
     PATTERN_MATCHING = "pattern_matching"
-    
+
     # Utility 子類別
     ENCODING = "encoding"
     ENCRYPTION = "encryption"
     DATA_TRANSFORM = "data_transformation"
-    
+
     # Reporting 子類別
     REPORT_GEN = "report_generation"
     METRICS = "metrics"
-    
+
     # Integration 子類別
     COORDINATION = "coordination"
     ORCHESTRATION = "orchestration"
@@ -172,19 +172,19 @@ class InvocationInfo(BaseModel):
     - parameter_mapping: 參數映射關係
     """
     protocol: Literal["http", "grpc", "direct", "websocket", "unified_caller"] = Field(
-        ..., 
+        ...,
         description="調用協議"
     )
     endpoint: str = Field(..., description="調用端點 (URL 或 direct://module.function)")
     module_arg: str | None = Field(None, description="模組參數名")
     function_arg: str | None = Field(None, description="函數參數名")
     parameter_mapping: dict[str, str] = Field(
-        default_factory=dict, 
+        default_factory=dict,
         description="參數名映射 {external_name: internal_name}"
     )
     timeout_seconds: int = Field(default=30, description="超時時間（秒）", ge=1)
     retry_count: int = Field(default=0, description="重試次數", ge=0)
-    
+
 
 class ChangeType(str, Enum):
     """變更類型"""
@@ -206,7 +206,7 @@ class DataFlowPathNode(BaseModel):
     file_path: str = Field(..., description="檔案路徑")
     module_name: str = Field(..., description="模組名稱")
     is_async: bool = Field(default=False, description="是否為異步函數")
-    parameters: List[ParameterDefinition] = Field(default_factory=list, description="參數列表")
+    parameters: list[ParameterDefinition] = Field(default_factory=list, description="參數列表")
     line_number: int = Field(default=0, description="行號")
 
 
@@ -218,11 +218,11 @@ class CompleteDataFlow(BaseModel):
     flow_id: str = Field(..., description="數據流唯一標識")
     entry_point: str = Field(..., description="入口點函數簽名")
     exit_point: str | None = Field(None, description="出口點函數簽名")
-    path: List[DataFlowPathNode] = Field(..., description="完整調用路徑")
+    path: list[DataFlowPathNode] = Field(..., description="完整調用路徑")
     path_length: int = Field(..., description="路徑長度 (節點數)")
     crosses_files: bool = Field(default=False, description="是否跨檔案")
     file_count: int = Field(default=0, description="涉及的檔案數量")
-    
+
     @field_validator("path_length", mode="before")
     @classmethod
     def set_path_length(cls, v: Any, info) -> int:
@@ -241,9 +241,9 @@ class BrokenChainDiagnosis(BaseModel):
     caller_file: str = Field(..., description="調用方檔案路徑")
     missing_function: str = Field(..., description="缺失的被調用函數")
     line_number: int = Field(..., description="調用位置行號")
-    possible_causes: List[str] = Field(default_factory=list, description="可能原因")
+    possible_causes: list[str] = Field(default_factory=list, description="可能原因")
     severity: Literal["error", "warning", "info"] = Field(
-        default="warning", 
+        default="warning",
         description="嚴重程度"
     )
     auto_fix_suggestion: str | None = Field(None, description="自動修復建議")
@@ -255,32 +255,32 @@ class DataFlowAnalysisSnapshot(BaseModel):
     保存某一時刻的完整分析結果,支援增量更新
     """
     snapshot_id: str = Field(..., description="快照唯一標識")
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="分析時間")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC), description="分析時間")
     total_files_analyzed: int = Field(..., description="分析的檔案總數")
     total_functions_found: int = Field(..., description="發現的函數總數")
-    entry_points: List[str] = Field(..., description="所有入口點列表")
-    complete_flows: List[CompleteDataFlow] = Field(
-        default_factory=list, 
+    entry_points: list[str] = Field(..., description="所有入口點列表")
+    complete_flows: list[CompleteDataFlow] = Field(
+        default_factory=list,
         description="所有完整數據流"
     )
-    broken_chains: List[BrokenChainDiagnosis] = Field(
-        default_factory=list, 
+    broken_chains: list[BrokenChainDiagnosis] = Field(
+        default_factory=list,
         description="所有斷鏈診斷"
     )
-    file_hashes: Dict[str, str] = Field(
-        default_factory=dict, 
+    file_hashes: dict[str, str] = Field(
+        default_factory=dict,
         description="檔案哈希映射 (用於增量更新)"
     )
-    statistics: Dict[str, Any] = Field(
-        default_factory=dict, 
+    statistics: dict[str, Any] = Field(
+        default_factory=dict,
         description="統計資訊"
     )
-    
-    def get_flows_by_entry(self, entry_point: str) -> List[CompleteDataFlow]:
+
+    def get_flows_by_entry(self, entry_point: str) -> list[CompleteDataFlow]:
         """獲取特定入口點的所有數據流"""
         return [flow for flow in self.complete_flows if flow.entry_point == entry_point]
-    
-    def get_broken_chains_by_severity(self, severity: str) -> List[BrokenChainDiagnosis]:
+
+    def get_broken_chains_by_severity(self, severity: str) -> list[BrokenChainDiagnosis]:
         """按嚴重程度過濾斷鏈"""
         return [chain for chain in self.broken_chains if chain.severity == severity]
 
@@ -309,7 +309,7 @@ class ModuleCapability(BaseModel):
     - 使用方法（參數、返回值、範例）
     - 健康狀態（可用性、性能、錯誤率）
     """
-    
+
     # 基本信息
     capability_id: str = Field(..., description="能力唯一標識符")
     name: str = Field(..., description="能力名稱")
@@ -318,16 +318,16 @@ class ModuleCapability(BaseModel):
     language: str = Field(..., description="程式語言 (python, typescript, rust, go 等)")
     file_path: str | None = Field(None, description="檔案路徑")
     description: str | None = Field(None, description="能力描述")
-    
+
     # 能力分類
     category: CapabilityCategory = Field(..., description="能力類別")
     sub_category: CapabilitySubCategory | None = Field(None, description="能力子類別")
     complexity: CapabilityComplexity = Field(
-        default=CapabilityComplexity.MODERATE, 
+        default=CapabilityComplexity.MODERATE,
         description="能力複雜度"
     )
     tags: list[str] = Field(default_factory=list, description="標籤列表")
-    
+
     # 五大模組分類（cognitive_core 整合了 external_learning）
     aiva_module: str | None = Field(
         None,
@@ -341,49 +341,49 @@ class ModuleCapability(BaseModel):
         None,
         description="主要入口點: AICommander, CapabilityOrchestrator, app.py, ExternalLoopConnector, ScanResultProcessor, InternalLoopConnector"
     )
-    
+
     # 使用方法
     parameters: list[ParameterDefinition] = Field(
-        default_factory=list, 
+        default_factory=list,
         description="參數列表"
     )
     return_info: ReturnDefinition | None = Field(None, description="返回值信息")
     usage_examples: list[CapabilityUsageExample] = Field(
-        default_factory=list, 
+        default_factory=list,
         description="使用範例"
     )
-    
+
     # ✅ 新增：調用元數據
     invocation: InvocationInfo | None = Field(None, description="調用元數據（如何調用此能力）")
-    
+
     # 依賴信息
     dependencies: list[str] = Field(default_factory=list, description="依賴的其他能力")
     prerequisites: list[str] = Field(default_factory=list, description="前置條件")
-    
+
     # 健康狀態
     health_score: float = Field(
-        default=1.0, 
-        description="健康分數 (0-1)", 
-        ge=0, 
+        default=1.0,
+        description="健康分數 (0-1)",
+        ge=0,
         le=1
     )
     availability: float = Field(
-        default=1.0, 
-        description="可用性 (0-1)", 
-        ge=0, 
+        default=1.0,
+        description="可用性 (0-1)",
+        ge=0,
         le=1
     )
     avg_latency_ms: float | None = Field(None, description="平均延遲(毫秒)", ge=0)
     error_rate: float = Field(
-        default=0.0, 
-        description="錯誤率 (0-1)", 
-        ge=0, 
+        default=0.0,
+        description="錯誤率 (0-1)",
+        ge=0,
         le=1
     )
     last_used: datetime | None = Field(None, description="最後使用時間")
-    
+
     # ==================== ✅ v3.0 新增: 範圍管理 ====================
-    
+
     # 範圍分類
     scope: CapabilityScope = Field(
         default=CapabilityScope.CORE,
@@ -397,7 +397,7 @@ class ModuleCapability(BaseModel):
         default=CapabilityAccessLevel.L3_INTERNAL,
         description="訪問級別：L0_SYSTEM(系統)/L1_SERVICE(服務)/L2_MODULE(模組)/L3_INTERNAL(內部)"
     )
-    
+
     # 可用性條件
     available_in: list[str] = Field(
         default_factory=list,
@@ -407,7 +407,7 @@ class ModuleCapability(BaseModel):
         default_factory=list,
         description="依賴的服務列表，例如：['core/rag', 'scan', 'features']"
     )
-    
+
     # CLI 相關
     has_cli: bool = Field(
         default=False,
@@ -421,14 +421,14 @@ class ModuleCapability(BaseModel):
         default=CLIMaturityLevel.NONE,
         description="CLI 成熟度：NONE(無)/ALPHA(早期)/BETA(測試)/STABLE(穩定)"
     )
-    
+
     # 元數據
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), 
+        default_factory=lambda: datetime.now(UTC),
         description="創建時間"
     )
     updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), 
+        default_factory=lambda: datetime.now(UTC),
         description="更新時間"
     )
     version: str = Field(default="1.0.0", description="能力版本")
@@ -452,12 +452,12 @@ class InternalLoopSyncResult(BaseModel):
     summary: CapabilitySummary | None = Field(None, description="能力摘要")
     documents_added: int = Field(..., description="添加到 RAG 的文檔數", ge=0)
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="同步時間"
     )
     success: bool = Field(..., description="是否成功")
     error: str | None = Field(None, description="錯誤信息")
-    
+
     def calculate_summary(self) -> CapabilitySummary:
         """計算能力摘要"""
         by_category = {}
@@ -465,25 +465,25 @@ class InternalLoopSyncResult(BaseModel):
         healthy = 0
         unhealthy = 0
         total_health = 0.0
-        
+
         for cap in self.capabilities:
             # 按類別統計
             cat = cap.category.value
             by_category[cat] = by_category.get(cat, 0) + 1
-            
+
             # 按複雜度統計
             comp = str(cap.complexity.value)
             by_complexity[comp] = by_complexity.get(comp, 0) + 1
-            
+
             # 健康狀態統計
             if cap.health_score >= 0.7:
                 healthy += 1
             else:
                 unhealthy += 1
             total_health += cap.health_score
-        
+
         avg_health = total_health / len(self.capabilities) if self.capabilities else 0.0
-        
+
         return CapabilitySummary(
             total_capabilities=len(self.capabilities),
             by_category=by_category,
@@ -502,24 +502,24 @@ class SystemIssue(BaseModel):
     title: str = Field(..., description="問題標題")
     description: str = Field(..., description="問題描述")
     severity: Literal["critical", "high", "medium", "low"] = Field(
-        ..., 
+        ...,
         description="嚴重程度"
     )
     affected_capabilities: list[str] = Field(
-        default_factory=list, 
+        default_factory=list,
         description="受影響的能力ID列表"
     )
     root_cause: str | None = Field(None, description="根本原因")
     potential_solutions: list[str] = Field(
-        default_factory=list, 
+        default_factory=list,
         description="潛在解決方案"
     )
     status: Literal["open", "investigating", "resolved", "ignored"] = Field(
-        default="open", 
+        default="open",
         description="問題狀態"
     )
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="發現時間"
     )
     resolved_at: datetime | None = Field(None, description="解決時間")
@@ -547,7 +547,7 @@ class RAGQueryResult(BaseModel):
     total_found: int = Field(..., description="總找到結果數", ge=0)
     relevance_scores: list[float] = Field(..., description="相關性分數列表")
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="查詢時間"
     )
 
@@ -571,7 +571,7 @@ class ExecutionPlan(BaseModel):
     steps: list[ExecutionStep] = Field(..., description="計劃步驟")
     expected_duration: float | None = Field(None, description="預期總耗時(秒)", ge=0)
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="創建時間"
     )
     metadata: dict[str, Any] | None = Field(None, description="元數據")
@@ -583,7 +583,7 @@ class ExecutionTrace(BaseModel):
     step_id: str = Field(..., description="對應步驟ID")
     capability_id: str | None = Field(None, description="使用的能力ID")
     status: Literal["success", "failed", "skipped", "timeout"] = Field(
-        ..., 
+        ...,
         description="執行狀態"
     )
     duration: float = Field(..., description="實際耗時(秒)", ge=0)
@@ -608,32 +608,32 @@ class DeviationRecord(BaseModel):
         "logic_error"  # 邏輯錯誤
     ] = Field(..., description="偏差類型")
     severity: Literal["critical", "high", "medium", "low"] = Field(
-        ..., 
+        ...,
         description="嚴重程度"
     )
     score: float = Field(..., description="偏差分數", ge=0)
-    
+
     # 偏差詳情
     expected: dict[str, Any] | None = Field(None, description="預期結果")
     actual: dict[str, Any] | None = Field(None, description="實際結果")
     affected_steps: list[str] = Field(default_factory=list, description="受影響步驟")
     affected_capabilities: list[str] = Field(
-        default_factory=list, 
+        default_factory=list,
         description="受影響能力"
     )
-    
+
     # 原因分析
     root_cause: str | None = Field(None, description="根本原因")
     contributing_factors: list[str] = Field(
-        default_factory=list, 
+        default_factory=list,
         description="促成因素"
     )
-    
+
     # 改進建議
     recommendations: list[str] = Field(default_factory=list, description="改進建議")
-    
+
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="記錄時間"
     )
 
@@ -646,7 +646,7 @@ class DeviationAnalysisResult(BaseModel):
     is_significant: bool = Field(..., description="是否顯著（需要訓練）")
     significance_score: float = Field(..., description="顯著性分數", ge=0)
     analysis_timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="分析時間"
     )
 
@@ -660,11 +660,11 @@ class TrainingDataSample(BaseModel):
     trace: list[ExecutionTrace] = Field(..., description="執行軌跡")
     deviations: list[DeviationRecord] = Field(..., description="偏差記錄")
     outcome: Literal["success", "partial_success", "failure"] = Field(
-        ..., 
+        ...,
         description="結果"
     )
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="創建時間"
     )
 
@@ -679,7 +679,7 @@ class ModelTrainingResult(BaseModel):
     new_weights_version: str | None = Field(None, description="新權重版本號")
     improvements: dict[str, float] | None = Field(None, description="改進指標")
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="訓練時間"
     )
 
@@ -695,7 +695,7 @@ class ExternalLoopProcessResult(BaseModel):
     weights_updated: bool = Field(..., description="權重是否更新")
     new_weights_version: str | None = Field(None, description="新權重版本")
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="處理時間"
     )
     success: bool = Field(..., description="是否成功")
@@ -714,7 +714,7 @@ class DualLoopCommand(BaseModel):
         "search_solution",  # 搜索問題解法
         "get_usage_example",  # 獲取使用範例
         "report_issue",  # 報告問題
-        
+
         # 外閉環命令
         "process_execution_result",  # 處理執行結果
         "analyze_deviation",  # 分析偏差
@@ -723,7 +723,7 @@ class DualLoopCommand(BaseModel):
     ] = Field(..., description="命令類型")
     parameters: dict[str, Any] = Field(..., description="命令參數")
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="命令時間"
     )
     metadata: dict[str, Any] | None = Field(None, description="元數據")
@@ -737,6 +737,6 @@ class DualLoopCommandResult(BaseModel):
     error: str | None = Field(None, description="錯誤信息")
     execution_time: float = Field(..., description="執行耗時(秒)", ge=0)
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="完成時間"
     )

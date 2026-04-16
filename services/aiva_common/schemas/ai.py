@@ -7,7 +7,7 @@ AI 相關 Schema
 注意: 此檔案整合了原 ai_schemas.py 的內容
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
@@ -150,7 +150,7 @@ class AttackPlan(BaseModel):
     dependencies: dict[str, list[str]] = Field(default_factory=dict)
     context: dict[str, Any] = Field(default_factory=dict)
     target_info: dict[str, Any] = Field(default_factory=dict)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     created_by: str = "ai_planner"
     mitre_techniques: list[str] = Field(default_factory=list)
     mitre_tactics: list[str] = Field(default_factory=list)
@@ -178,7 +178,7 @@ class TraceRecord(BaseModel):
     status: str
     error_message: str | None = None
     execution_time_seconds: float = 0.0
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     environment_response: dict[str, Any] = Field(default_factory=dict)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -208,7 +208,7 @@ class PlanExecutionMetrics(BaseModel):
     goal_achieved: bool
     reward_score: float
     total_execution_time: float
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class PlanExecutionResult(BaseModel):
@@ -224,7 +224,7 @@ class PlanExecutionResult(BaseModel):
     anomalies: list[str] = Field(default_factory=list)
     recommendations: list[str] = Field(default_factory=list)
     status: str
-    completed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("status")
@@ -336,7 +336,7 @@ class AITrainingProgressPayload(BaseModel):
     model_metrics: dict[str, float] = Field(default_factory=dict)
     status: str = "running"
     metadata: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class RAGKnowledgeUpdatePayload(BaseModel):
@@ -395,7 +395,7 @@ class ExperienceSample(BaseModel):
     target_info: dict[str, Any] = Field(default_factory=dict, description="目標信息")
 
     # 時間信息
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     duration_ms: int | None = Field(default=None, ge=0, description="執行時長")
 
     # 質量標記
@@ -467,7 +467,7 @@ class EnhancedVulnerability(BaseModel):
     false_positive_probability: float = Field(ge=0.0, le=1.0, description="誤報概率")
 
     # 時間信息
-    discovered_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     last_verified_at: datetime | None = Field(default=None, description="最後驗證時間")
 
     # 元數據
@@ -593,7 +593,7 @@ class AITrainingCompletedPayload(BaseModel):
     model_metrics: dict[str, float] = Field(default_factory=dict)
     error_message: str | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
-    completed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class AIExperienceCreatedEvent(BaseModel):
@@ -608,7 +608,7 @@ class AIExperienceCreatedEvent(BaseModel):
     plan_summary: dict[str, Any] = Field(default_factory=dict)
     result_summary: dict[str, Any] = Field(default_factory=dict)
     metadata: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class AITraceCompletedEvent(BaseModel):
@@ -624,7 +624,7 @@ class AITraceCompletedEvent(BaseModel):
     final_success: bool
     plan_type: str
     metadata: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class AIModelUpdatedEvent(BaseModel):
@@ -641,7 +641,7 @@ class AIModelUpdatedEvent(BaseModel):
     checkpoint_path: str | None = None
     is_deployed: bool = False
     metadata: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class AIModelDeployCommand(BaseModel):
@@ -673,4 +673,4 @@ class RAGResponsePayload(BaseModel):
     avg_similarity: float | None = None
     enhanced_context: str | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))

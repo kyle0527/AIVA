@@ -6,10 +6,10 @@
 from .base_coordinator import (
     BaseCoordinator,
     BountyInfo,
+    CoordinatorFinding,
     CoreFeedback,
     ErrorInfo,
     FeatureResult,
-    CoordinatorFinding,
     OptimizationData,
     PerformanceMetrics,
     ReportData,

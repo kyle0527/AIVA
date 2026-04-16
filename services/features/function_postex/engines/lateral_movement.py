@@ -5,14 +5,13 @@ function_postex.engines.lateral_movement
 檢測和執行網路內部橫向移動技術。
 """
 
-import socket
-import subprocess
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
-from ipaddress import IPv4Network, IPv4Address
+from ipaddress import IPv4Network
+import socket
+from typing import Any
 
+from aiva_common.enums.common import Confidence, Severity
 from aiva_common.utils import get_logger
-from aiva_common.enums.common import Severity, Confidence
 
 logger = get_logger(__name__)
 
@@ -25,10 +24,10 @@ class LateralMovementVector:
     confidence: Confidence
     title: str
     description: str
-    evidence: Dict[str, Any]
+    evidence: dict[str, Any]
     recommendation: str
     technique: str  # smb, wmi, psexec, rdp, ssh, etc.
-    target_hosts: List[str]
+    target_hosts: list[str]
 
 
 class LateralMovementEngine:
@@ -44,7 +43,7 @@ class LateralMovementEngine:
         self.safe_mode = safe_mode
         logger.info(f"橫向移動引擎初始化 (SafeMode: {safe_mode})")
     
-    def scan_network(self, network: str = "192.168.1.0/24") -> List[LateralMovementVector]:
+    def scan_network(self, network: str = "192.168.1.0/24") -> list[LateralMovementVector]:
         """
         掃描網路尋找橫向移動機會
         
@@ -73,7 +72,7 @@ class LateralMovementEngine:
         
         return vectors
     
-    def _discover_hosts(self, network: IPv4Network) -> List[str]:
+    def _discover_hosts(self, network: IPv4Network) -> list[str]:
         """發現活躍主機"""
         alive_hosts = []
         
@@ -98,7 +97,7 @@ class LateralMovementEngine:
         except OSError:
             return False
     
-    def _check_smb_access(self, host: str) -> List[LateralMovementVector]:
+    def _check_smb_access(self, host: str) -> list[LateralMovementVector]:
         """檢查 SMB 訪問"""
         vectors = []
         
@@ -131,7 +130,7 @@ class LateralMovementEngine:
         
         return vectors
     
-    def _check_ssh_access(self, host: str) -> List[LateralMovementVector]:
+    def _check_ssh_access(self, host: str) -> list[LateralMovementVector]:
         """檢查 SSH 訪問"""
         vectors = []
         
@@ -163,7 +162,7 @@ class LateralMovementEngine:
         
         return vectors
     
-    def _check_rdp_access(self, host: str) -> List[LateralMovementVector]:
+    def _check_rdp_access(self, host: str) -> list[LateralMovementVector]:
         """檢查 RDP 訪問"""
         vectors = []
         
@@ -195,7 +194,7 @@ class LateralMovementEngine:
         
         return vectors
     
-    def _check_winrm_access(self, host: str) -> List[LateralMovementVector]:
+    def _check_winrm_access(self, host: str) -> list[LateralMovementVector]:
         """檢查 WinRM 訪問"""
         vectors = []
         

@@ -36,13 +36,12 @@ __version__ = "3.1.0-beta"
 __status__ = "Bug Bounty 特化完成"
 
 # ✅ 內部閉環連接器已實現
-from .internal_loop_connector import InternalLoopConnector
+# ✅ Bug Bounty 決策代理已導出
+from .decision.enhanced_decision_agent import EnhancedDecisionAgent
 
 # ✅ 外部閉環連接器已實現
 from .external_loop_connector import ExternalLoopConnector
-
-# ✅ Bug Bounty 決策代理已導出
-from .decision.enhanced_decision_agent import EnhancedDecisionAgent
+from .internal_loop_connector import InternalLoopConnector
 
 __all__ = [
     # ✅ 雙閉環連接器

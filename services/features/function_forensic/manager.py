@@ -2,23 +2,20 @@
 Forensic Manager
 """
 
-import os
 import asyncio
+from datetime import datetime
 import hashlib
 import logging
-from typing import List, Optional
-from datetime import datetime
+import os
 from pathlib import Path
-import aiofiles
 
 from .models import (
-    ForensicAnalysisType,
-    EvidenceType,
+    AnalysisResult,
     CaseInfo,
     EvidenceItem,
-    AnalysisConfig,
-    AnalysisResult,
-    TimelineEvent
+    EvidenceType,
+    ForensicAnalysisType,
+    TimelineEvent,
 )
 
 logger = logging.getLogger(__name__)
@@ -200,7 +197,7 @@ class ForensicManager:
                 error=str(e)
             )
     
-    async def _list_partitions(self, image_path: str) -> List[dict]:
+    async def _list_partitions(self, image_path: str) -> list[dict]:
         """使用 mmls 列出分區"""
         try:
             process = await asyncio.create_subprocess_exec(
@@ -227,7 +224,7 @@ class ForensicManager:
             logger.warning("mmls not found")
             return []
     
-    async def _list_files(self, image_path: str, offset: int = 0) -> List[dict]:
+    async def _list_files(self, image_path: str, offset: int = 0) -> list[dict]:
         """使用 fls 列出檔案"""
         try:
             process = await asyncio.create_subprocess_exec(
@@ -253,7 +250,7 @@ class ForensicManager:
             logger.warning("fls not found")
             return []
     
-    async def _carve_files(self, image_path: str) -> List[str]:
+    async def _carve_files(self, image_path: str) -> list[str]:
         """使用 foremost/scalpel 雕刻檔案"""
         try:
             output_dir = f"{image_path}_carved"
@@ -337,7 +334,7 @@ class ForensicManager:
                 error=str(e)
             )
     
-    async def _list_processes(self, dump_path: str) -> List[dict]:
+    async def _list_processes(self, dump_path: str) -> list[dict]:
         """使用 Volatility pslist 列出進程"""
         try:
             process = await asyncio.create_subprocess_exec(
@@ -362,7 +359,7 @@ class ForensicManager:
             logger.warning("Volatility 3 not found")
             return []
     
-    async def _list_network_connections(self, dump_path: str) -> List[dict]:
+    async def _list_network_connections(self, dump_path: str) -> list[dict]:
         """使用 Volatility netscan 列出網路連接"""
         try:
             process = await asyncio.create_subprocess_exec(
@@ -380,7 +377,7 @@ class ForensicManager:
         except FileNotFoundError:
             return []
     
-    async def _extract_command_history(self, dump_path: str) -> List[str]:
+    async def _extract_command_history(self, dump_path: str) -> list[str]:
         """使用 Volatility cmdline 提取命令"""
         try:
             process = await asyncio.create_subprocess_exec(
@@ -398,7 +395,7 @@ class ForensicManager:
         except FileNotFoundError:
             return []
     
-    async def _detect_injections(self, dump_path: str) -> List[dict]:
+    async def _detect_injections(self, dump_path: str) -> list[dict]:
         """使用 Volatility malfind 檢測注入"""
         try:
             process = await asyncio.create_subprocess_exec(
@@ -416,7 +413,7 @@ class ForensicManager:
         except FileNotFoundError:
             return []
     
-    async def _extract_credentials(self, dump_path: str) -> List[dict]:
+    async def _extract_credentials(self, dump_path: str) -> list[dict]:
         """使用 Volatility hashdump 提取密碼雜湊"""
         try:
             process = await asyncio.create_subprocess_exec(
@@ -437,7 +434,7 @@ class ForensicManager:
     async def generate_timeline(
         self,
         evidence_id: str
-    ) -> List[TimelineEvent]:
+    ) -> list[TimelineEvent]:
         """生成時間軸"""
         try:
             logger.info(f"Generating timeline for: {evidence_id}")
@@ -466,7 +463,7 @@ class ForensicManager:
             logger.error(f"Timeline generation failed: {str(e)}", exc_info=True)
             return []
     
-    async def _extract_filesystem_timeline(self, evidence_id: str) -> List[TimelineEvent]:
+    async def _extract_filesystem_timeline(self, evidence_id: str) -> list[TimelineEvent]:
         """從檔案系統提取時間軸"""
         try:
             image_path = f"./evidence/*/{evidence_id}.dd"
@@ -496,7 +493,7 @@ class ForensicManager:
             logger.warning("fls not found")
             return []
     
-    async def _extract_memory_timeline(self, evidence_id: str) -> List[TimelineEvent]:
+    async def _extract_memory_timeline(self, evidence_id: str) -> list[TimelineEvent]:
         """從記憶體提取時間軸"""
         try:
             dump_path = f"./evidence/*/{evidence_id}.mem"
@@ -524,7 +521,7 @@ class ForensicManager:
         except FileNotFoundError:
             return []
     
-    def _parse_system_logs(self, evidence_id: str) -> List[TimelineEvent]:
+    def _parse_system_logs(self, evidence_id: str) -> list[TimelineEvent]:
         """解析系統日誌"""
         # 這裡集成 evtx 解析器 (Windows Event Log) 或 syslog 解析器 (Linux)
         try:

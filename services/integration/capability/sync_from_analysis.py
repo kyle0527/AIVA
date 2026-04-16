@@ -19,20 +19,21 @@
 """
 
 import asyncio
-import json
-import sys
-from pathlib import Path
 from datetime import datetime
-from typing import List, Dict, Any
+import json
+from pathlib import Path
+import sys
+from typing import Any
 
-from aiva_common.utils.logging import get_logger
 from aiva_common.enums.modules import ProgrammingLanguage
-from services.integration.capability.registry import registry as global_registry
+from aiva_common.utils.logging import get_logger
+
 from services.integration.capability.models import (
     CapabilityRecord,
+    CapabilityStatus,
     CapabilityType,
-    CapabilityStatus
 )
+from services.integration.capability.registry import registry as global_registry
 
 logger = get_logger(__name__)
 
@@ -51,9 +52,9 @@ class CapabilitySyncer:
         self.registry = global_registry
         self.synced_count = 0
         self.failed_count = 0
-        self.errors: List[str] = []
+        self.errors: list[str] = []
     
-    async def sync_from_analysis_data(self, module: str = "core") -> Dict[str, Any]:
+    async def sync_from_analysis_data(self, module: str = "core") -> dict[str, Any]:
         """從 internal_exploration 同步能力到 Registry
         
         架構更新 (2026-01-04):
@@ -86,7 +87,7 @@ class CapabilitySyncer:
         
         logger.info(f"   讀取: {capabilities_file}")
         
-        with open(capabilities_file, 'r', encoding='utf-8') as f:
+        with open(capabilities_file, encoding='utf-8') as f:
             data = json.load(f)
         
         flows = data.get('flows', [])
@@ -113,12 +114,12 @@ class CapabilitySyncer:
                 self.errors.append(error_msg)
                 logger.warning(f"   {error_msg}")
         
-        logger.info(f"✅ 同步完成:")
+        logger.info("✅ 同步完成:")
         logger.info(f"   - 成功: {self.synced_count}")
         logger.info(f"   - 失敗: {self.failed_count}")
         
         if self.errors:
-            logger.info(f"   - 前 5 個錯誤:")
+            logger.info("   - 前 5 個錯誤:")
             for error in self.errors[:5]:
                 logger.info(f"     {error}")
         
@@ -128,7 +129,7 @@ class CapabilitySyncer:
             "errors": self.errors
         }
     
-    async def _sync_single_flow(self, flow: Dict[str, Any], module: str):
+    async def _sync_single_flow(self, flow: dict[str, Any], module: str):
         """同步單個流程到 Registry
         
         Args:
@@ -185,7 +186,7 @@ class CapabilitySyncer:
             last_probe=None,
             last_success=None,
             environment_vars={},
-            rag_trigger={k: 1.0 for k in classifications[:5]} if classifications else {},
+            rag_trigger=dict.fromkeys(classifications[:5], 1.0) if classifications else {},
             feature_signature=classifications[:3] if classifications else [],
             config={
                 "flow_id": flow_id,
@@ -205,7 +206,7 @@ class CapabilitySyncer:
         # 註冊到 Registry（會自動同步到 RAG）
         await self.registry.register_capability(capability)
     
-    def _determine_capability_type(self, classifications: List[str]) -> CapabilityType:
+    def _determine_capability_type(self, classifications: list[str]) -> CapabilityType:
         """根據分類確定能力類型
         
         CapabilityType 可用枚舉值:

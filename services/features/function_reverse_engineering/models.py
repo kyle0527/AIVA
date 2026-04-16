@@ -5,11 +5,10 @@ Reverse Engineering Module Data Models
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import List, Dict, Optional, Any
+from typing import Any
 
 # 使用 aiva_common 標準枚舉
 from aiva_common.enums import ThreatLevel
-
 
 # ==================== Enums ====================
 
@@ -54,15 +53,15 @@ class BinaryInfo:
     # Binary Metadata
     binary_type: BinaryType
     architecture: str  # x86, x64, ARM, etc.
-    entry_point: Optional[str] = None
+    entry_point: str | None = None
     
     # Additional Info
-    compiler: Optional[str] = None
-    packer: Optional[str] = None
+    compiler: str | None = None
+    packer: str | None = None
     is_stripped: bool = False
     is_packed: bool = False
     
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -79,14 +78,14 @@ class APKInfo:
     target_sdk: int = 0
     
     # Certificates
-    certificates: List[Dict[str, Any]] = field(default_factory=list)
+    certificates: list[dict[str, Any]] = field(default_factory=list)
     is_signed: bool = False
     
     # Permissions
-    permissions: List[str] = field(default_factory=list)
-    dangerous_permissions: List[str] = field(default_factory=list)
+    permissions: list[str] = field(default_factory=list)
+    dangerous_permissions: list[str] = field(default_factory=list)
     
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -100,7 +99,7 @@ class DecompileConfig:
     include_resources: bool = True
     export_gradle: bool = False
     
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -116,9 +115,9 @@ class DecompileResult:
     
     # Quality
     decompile_rate: float = 0.0
-    errors: List[str] = field(default_factory=list)
+    errors: list[str] = field(default_factory=list)
     
-    error: Optional[str] = None
+    error: str | None = None
     timestamp: datetime = field(default_factory=datetime.now)
 
 
@@ -133,13 +132,13 @@ class MalwareAnalysisResult:
     confidence: float = 0.0
     
     # Indicators
-    suspicious_apis: List[str] = field(default_factory=list)
-    suspicious_strings: List[str] = field(default_factory=list)
-    network_indicators: List[str] = field(default_factory=list)
+    suspicious_apis: list[str] = field(default_factory=list)
+    suspicious_strings: list[str] = field(default_factory=list)
+    network_indicators: list[str] = field(default_factory=list)
     
     # Behavior
-    behaviors: List[str] = field(default_factory=list)
-    capabilities: List[str] = field(default_factory=list)
+    behaviors: list[str] = field(default_factory=list)
+    capabilities: list[str] = field(default_factory=list)
     
     # Report
     report_file: str = ""
@@ -161,8 +160,8 @@ class CodeAnalysisResult:
     maintainability_index: float = 0.0
     
     # Issues
-    security_issues: List[Dict[str, Any]] = field(default_factory=list)
-    code_smells: List[Dict[str, Any]] = field(default_factory=list)
+    security_issues: list[dict[str, Any]] = field(default_factory=list)
+    code_smells: list[dict[str, Any]] = field(default_factory=list)
     
     timestamp: datetime = field(default_factory=datetime.now)
 

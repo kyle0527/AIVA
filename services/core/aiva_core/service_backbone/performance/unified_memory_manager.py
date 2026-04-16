@@ -5,12 +5,13 @@
 """
 
 import asyncio
+from collections.abc import Callable
 from contextlib import asynccontextmanager
 import gc
 import hashlib
 import logging
 import time
-from typing import Any, Callable
+from typing import Any
 import weakref
 
 # 統一的依賴管理
@@ -56,7 +57,7 @@ class UnifiedMemoryManager:
         # 系統記憶體管理
         self.gc_threshold_mb = gc_threshold_mb
         self.weak_refs = weakref.WeakSet()
-        self.component_pools: dict[type, 'ComponentPool'] = {}
+        self.component_pools: dict[type, ComponentPool] = {}
         
         # 統計資料
         self.stats = {

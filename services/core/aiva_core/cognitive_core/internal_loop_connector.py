@@ -19,52 +19,43 @@ internal_exploration (三階段分析管道) → InternalLoopConnector → RAG K
 ✅ 詳細的能力分類系統
 """
 
-from datetime import datetime, timezone
+from datetime import datetime
 
 # UTC 兼容性处理（Python 3.11+ 使用 UTC，较旧版本使用 timezone.utc）
 try:
     from datetime import UTC  # type: ignore
 except ImportError:
-    UTC = timezone.utc  # type: ignore
-from pathlib import Path
-from typing import Any, List, Dict, Optional
-from uuid import uuid4
-
-# ✅ 修復 1: 使用統一日誌
-from aiva_common.utils.logging import get_logger
+    UTC = UTC  # type: ignore
+from typing import Any
 
 # ✅ 修復 2: 引入 Pydantic 模型
 from aiva_common.schemas.dual_loop import (
-    ModuleCapability,
-    InternalLoopSyncResult,
-    CapabilitySummary,
+    CapabilityAccessLevel,
     CapabilityCategory,
-    CapabilitySubCategory,
     CapabilityComplexity,
-    ParameterDefinition,
-    ReturnDefinition,
-    CapabilityUsageExample,
-    InvocationInfo,
-    RAGQueryRequest,
-    RAGQueryResult,
-    SystemIssue,
     # ✅ v11.0: 新增範圍管理枚舉
     CapabilityScope,
+    CapabilitySubCategory,
+    CapabilityUsageExample,
     CapabilityVisibility,
-    CapabilityAccessLevel,
-    CLIMaturityLevel
+    CLIMaturityLevel,
+    InternalLoopSyncResult,
+    InvocationInfo,
+    ModuleCapability,
+    ParameterDefinition,
+    RAGQueryRequest,
+    RAGQueryResult,
+    ReturnDefinition,
+    SystemIssue,
 )
+
+# ✅ 修復 1: 使用統一日誌
+from aiva_common.utils.logging import get_logger
 
 # ✅ 修復 3: 引入 AICommand 架構（將在後續整合）
 # from aiva_common.ai import AICommand, AICommandResult
 
 # ✅ 修復 4: 使用統一錯誤處理
-from aiva_common.core.error_handling import (
-    AIVAError,
-    ErrorType,
-    ErrorSeverity,
-    create_error_context
-)
 
 logger = get_logger(__name__)
 
@@ -305,7 +296,7 @@ class CapabilityScopeClassifier:
             是否為真正的 CLI 文件
         """
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, encoding='utf-8') as f:
                 content = f.read(10000)  # 讀取前 10000 字元
             
             # CLI 框架特徵
@@ -539,7 +530,9 @@ class InternalLoopConnector:
         """運行內部分類器 (AI Core 內部模組)"""
         import asyncio
         try:
-            from ..internal_exploration.aiva_internal_classifier import AIVAFlowClassifier
+            from ..internal_exploration.aiva_internal_classifier import (
+                AIVAFlowClassifier,
+            )
             logger.info("📊 Running internal classifier (AI Core modules)...")
             
             internal_classifier = AIVAFlowClassifier(
@@ -564,7 +557,9 @@ class InternalLoopConnector:
         """運行外部分類器 (Features + Scan 模組)"""
         import asyncio
         try:
-            from ..internal_exploration.aiva_external_classifier import ExternalModuleClassifier
+            from ..internal_exploration.aiva_external_classifier import (
+                ExternalModuleClassifier,
+            )
             logger.info("📊 Running external classifier (Features/Scan modules)...")
             
             external_classifier = ExternalModuleClassifier(
@@ -672,7 +667,7 @@ class InternalLoopConnector:
         
         return result
     
-    def _load_capabilities_from_analysis_data(self, module: str = "core") -> List[ModuleCapability]:
+    def _load_capabilities_from_analysis_data(self, module: str = "core") -> list[ModuleCapability]:
         """從 Internal Exploration 統一數據源加載能力數據 (v12.0)
         
         ✅ 2026-01-04 重構：統一使用 data/internal_exploration/latest_classification.json
@@ -687,8 +682,8 @@ class InternalLoopConnector:
         capabilities = []
         
         try:
-            from pathlib import Path
             import json
+            from pathlib import Path
             
             # ✅ 新路徑：services/integration/data/internal_exploration/latest_classification.json
             project_root = Path(__file__).resolve().parent.parent.parent.parent.parent
@@ -836,7 +831,7 @@ class InternalLoopConnector:
         else:
             return CapabilityCategory.UTILITY
     
-    def _scan_flows_structured(self) -> List[ModuleCapability]:
+    def _scan_flows_structured(self) -> list[ModuleCapability]:
         """
         [AI 認知核心] 將 Flow 轉換為結構化能力物件 (Pydantic Model)
         
@@ -853,8 +848,9 @@ class InternalLoopConnector:
             List[ModuleCapability]: 結構化能力列表
         """
         try:
-            from ..internal_exploration.aiva_internal_executor import FlowExecutor
             from pathlib import Path
+
+            from ..internal_exploration.aiva_internal_executor import FlowExecutor
             
             # 自動讀取 latest_classification.json
             executor = FlowExecutor()

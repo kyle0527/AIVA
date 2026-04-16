@@ -4,7 +4,7 @@
 此模組定義了異步任務管理、重試策略、資源限制等相關的資料模型。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -75,7 +75,7 @@ class AsyncTaskResult(BaseModel):
     error_message: str | None = Field(default=None, description="錯誤信息")
     execution_time_ms: float = Field(ge=0, description="執行時間(毫秒)")
     start_time: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), description="開始時間"
+        default_factory=lambda: datetime.now(UTC), description="開始時間"
     )
     end_time: datetime | None = Field(default=None, description="結束時間")
     retry_count: int = Field(default=0, ge=0, description="重試次數")
@@ -129,7 +129,7 @@ class AsyncBatchResult(BaseModel):
     )
     batch_status: str = Field(description="批次狀態")
     start_time: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), description="開始時間"
+        default_factory=lambda: datetime.now(UTC), description="開始時間"
     )
     end_time: datetime | None = Field(default=None, description="結束時間")
     total_execution_time_ms: float = Field(

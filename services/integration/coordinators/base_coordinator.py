@@ -13,27 +13,21 @@
 - Severity, Confidence, VulnerabilityType: 標準枚舉類型
 """
 
-import asyncio
-import hashlib
-import logging
 from abc import ABC, abstractmethod
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set
-from uuid import uuid4
+from datetime import UTC, datetime
+import logging
+from typing import Any
 
-from pydantic import BaseModel, Field, validator
-
-# ============ 使用 aiva_common 標準合約 ============
-from aiva_common.schemas import APIResponse
-from aiva_common.schemas.vulnerability_finding import UnifiedVulnerabilityFinding
-from aiva_common.schemas.security.findings import Target, FindingEvidence
 from aiva_common.enums import (
-    Severity,
-    Confidence,
-    VulnerabilityType,
     ModuleName,
+    Severity,
     TaskStatus,
 )
+from aiva_common.schemas.security.findings import Target
+
+# ============ 使用 aiva_common 標準合約 ============
+from aiva_common.schemas.vulnerability_finding import UnifiedVulnerabilityFinding
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +44,7 @@ logger = logging.getLogger(__name__)
 class BountyInfo(BaseModel):
     """Bug Bounty 信息（Coordinator 特有擴展）"""
     eligible: bool = True
-    estimated_value: Optional[str] = None
+    estimated_value: str | None = None
     program_relevance: float = Field(ge=0.0, le=1.0, default=0.5)
     submission_ready: bool = False
 
@@ -68,10 +62,10 @@ class CoordinatorFinding(BaseModel):
     finding: UnifiedVulnerabilityFinding
     
     # Coordinator 特有擴展
-    bounty_info: Optional[BountyInfo] = None
+    bounty_info: BountyInfo | None = None
     false_positive_probability: float = Field(ge=0.0, le=1.0, default=0.0)
     verified: bool = False
-    verification_notes: Optional[str] = None
+    verification_notes: str | None = None
 
 
 class StatisticsData(BaseModel):
@@ -99,27 +93,27 @@ class ErrorInfo(BaseModel):
     code: str
     message: str
     recoverable: bool = True
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class FeatureResult(BaseModel):
     """Features 模組返回的完整結果"""
     task_id: str
     feature_module: ModuleName  # 使用標準枚舉
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     duration_ms: float
     
     status: TaskStatus  # 使用標準枚舉
     success: bool
     
     target: Target  # 使用 aiva_common 標準 Target
-    findings: List[CoordinatorFinding] = Field(default_factory=list)
+    findings: list[CoordinatorFinding] = Field(default_factory=list)
     statistics: StatisticsData
     performance: PerformanceMetrics
-    errors: List[ErrorInfo] = Field(default_factory=list)
+    errors: list[ErrorInfo] = Field(default_factory=list)
     
     # 元數據
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class OptimizationData(BaseModel):
@@ -128,25 +122,25 @@ class OptimizationData(BaseModel):
     feature_module: ModuleName  # 使用標準枚舉
     
     # Payload 效率分析
-    payload_efficiency: Dict[str, float] = Field(default_factory=dict)
-    successful_patterns: List[str] = Field(default_factory=list)
-    failed_patterns: List[str] = Field(default_factory=list)
+    payload_efficiency: dict[str, float] = Field(default_factory=dict)
+    successful_patterns: list[str] = Field(default_factory=list)
+    failed_patterns: list[str] = Field(default_factory=list)
     
     # 性能建議
-    recommended_concurrency: Optional[int] = None
-    recommended_timeout_ms: Optional[int] = None
-    recommended_rate_limit: Optional[int] = None
+    recommended_concurrency: int | None = None
+    recommended_timeout_ms: int | None = None
+    recommended_rate_limit: int | None = None
     
     # 策略調整
-    strategy_adjustments: Dict[str, Any] = Field(default_factory=dict)
-    priority_adjustments: Dict[str, float] = Field(default_factory=dict)
+    strategy_adjustments: dict[str, Any] = Field(default_factory=dict)
+    priority_adjustments: dict[str, float] = Field(default_factory=dict)
 
 
 class ReportData(BaseModel):
     """外循環報告數據"""
     task_id: str
     feature_module: ModuleName  # 使用標準枚舉
-    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     
     # 漏洞摘要
     total_findings: int = 0
@@ -162,11 +156,11 @@ class ReportData(BaseModel):
     false_positives: int = 0
     
     # 詳細發現（使用 Coordinator 擴展模型）
-    findings: List[CoordinatorFinding]
+    findings: list[CoordinatorFinding]
     
     # 合規性
-    owasp_coverage: Dict[str, int] = Field(default_factory=dict)
-    cwe_distribution: Dict[str, int] = Field(default_factory=dict)
+    owasp_coverage: dict[str, int] = Field(default_factory=dict)
+    cwe_distribution: dict[str, int] = Field(default_factory=dict)
 
 
 class VerificationResult(BaseModel):
@@ -175,8 +169,8 @@ class VerificationResult(BaseModel):
     verified: bool
     confidence: float = Field(ge=0.0, le=1.0)
     verification_method: str
-    notes: Optional[str] = None
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    notes: str | None = None
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class CoreFeedback(BaseModel):
@@ -193,11 +187,11 @@ class CoreFeedback(BaseModel):
     optimization_suggestions: OptimizationData
     
     # 下一步建議
-    recommended_next_actions: List[str] = Field(default_factory=list)
+    recommended_next_actions: list[str] = Field(default_factory=list)
     continue_testing: bool = True
     
     # 學習數據
-    learning_data: Dict[str, Any] = Field(default_factory=dict)
+    learning_data: dict[str, Any] = Field(default_factory=dict)
 
 
 # ============================================================================
@@ -218,9 +212,9 @@ class BaseCoordinator(ABC):
     
     def __init__(
         self,
-        mq_client: Optional[Any] = None,
-        db_client: Optional[Any] = None,
-        cache_client: Optional[Any] = None,
+        mq_client: Any | None = None,
+        db_client: Any | None = None,
+        cache_client: Any | None = None,
         feature_module: ModuleName = ModuleName.INTEGRATION
     ):
         """初始化協調器
@@ -237,11 +231,11 @@ class BaseCoordinator(ABC):
         self.feature_module = feature_module
         
         # 去重緩存（避免重複處理）
-        self._processed_tasks: Set[str] = set()
+        self._processed_tasks: set[str] = set()
         
         logger.info(f"Initialized {self.__class__.__name__} for {feature_module}")
     
-    async def collect_result(self, result_dict: Dict[str, Any]) -> Dict[str, Any]:
+    async def collect_result(self, result_dict: dict[str, Any]) -> dict[str, Any]:
         """收集並處理 Features 返回的結果
         
         Args:
@@ -312,7 +306,7 @@ class BaseCoordinator(ABC):
                 "task_id": result_dict.get("task_id", "unknown"),
             }
     
-    async def _validate_result(self, result_dict: Dict[str, Any]) -> FeatureResult:
+    async def _validate_result(self, result_dict: dict[str, Any]) -> FeatureResult:
         """驗證結果格式（使用 Pydantic）
         
         Args:
@@ -371,7 +365,6 @@ class BaseCoordinator(ABC):
         Returns:
             優化數據對象
         """
-        pass
     
     @abstractmethod
     async def _extract_report_data(self, result: FeatureResult) -> ReportData:
@@ -388,12 +381,11 @@ class BaseCoordinator(ABC):
         Returns:
             報告數據對象
         """
-        pass
     
     @abstractmethod
     async def _verify_findings(
         self, result: FeatureResult
-    ) -> List[VerificationResult]:
+    ) -> list[VerificationResult]:
         """驗證漏洞真實性（子類實現）
         
         檢查：
@@ -407,13 +399,12 @@ class BaseCoordinator(ABC):
         Returns:
             驗證結果列表
         """
-        pass
     
     async def _generate_feedback(
         self,
         result: FeatureResult,
         optimization_data: OptimizationData,
-        verification_results: List[VerificationResult],
+        verification_results: list[VerificationResult],
     ) -> CoreFeedback:
         """生成給 Core 的反饋
         
@@ -458,7 +449,7 @@ class BaseCoordinator(ABC):
     
     async def _generate_next_actions(
         self, result: FeatureResult, verified_count: int, high_value_count: int
-    ) -> List[str]:
+    ) -> list[str]:
         """生成下一步行動建議
         
         Args:
@@ -486,7 +477,7 @@ class BaseCoordinator(ABC):
         
         return actions
     
-    def _extract_learning_data(self, result: FeatureResult) -> Dict[str, Any]:
+    def _extract_learning_data(self, result: FeatureResult) -> dict[str, Any]:
         """提取機器學習訓練數據
         
         Args:
@@ -532,12 +523,9 @@ class BaseCoordinator(ABC):
     # Placeholder methods for storage (to be implemented with actual clients)
     async def _store_performance_metrics(self, result: FeatureResult) -> None:
         """存儲性能指標到時序數據庫"""
-        pass
     
     async def _store_full_result(self, result: FeatureResult) -> None:
         """存儲完整結果到文檔數據庫"""
-        pass
     
     async def _update_cache(self, result: FeatureResult) -> None:
         """更新緩存"""
-        pass

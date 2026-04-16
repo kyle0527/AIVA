@@ -21,6 +21,7 @@ DATABASE_URL = os.getenv("AIVA_DB_URL", f"sqlite:///{DATA_ROOT}/database/aiva.db
 DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/aiva_db"
 
 from urllib.parse import urlparse
+
 _db_url = urlparse(DATABASE_URL)
 POSTGRES_CONFIG = {
     "host": _db_url.hostname or "localhost",

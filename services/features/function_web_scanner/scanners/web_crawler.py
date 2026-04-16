@@ -5,14 +5,12 @@ Web 爬蟲
 爬取網站結構，發現隱藏頁面和參數。
 """
 
-import re
-import requests
-from urllib.parse import urljoin, urlparse, parse_qs
-from typing import Set, List, Dict
 from dataclasses import dataclass
-from bs4 import BeautifulSoup
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from aiva_common.utils import get_logger
+from bs4 import BeautifulSoup
+import requests
 
 logger = get_logger(__name__)
 
@@ -23,9 +21,9 @@ class CrawlResult:
     url: str
     status_code: int
     title: str = None
-    forms: List[Dict] = None
-    links: List[str] = None
-    parameters: Set[str] = None
+    forms: list[dict] = None
+    links: list[str] = None
+    parameters: set[str] = None
 
 
 class WebCrawler:
@@ -50,7 +48,7 @@ class WebCrawler:
         })
         logger.info(f"Web 爬蟲初始化 (depth: {max_depth}, pages: {max_pages}, verify_ssl: {verify_ssl})")
     
-    def crawl(self, start_url: str) -> List[CrawlResult]:
+    def crawl(self, start_url: str) -> list[CrawlResult]:
         """
         開始爬取
         
@@ -125,7 +123,7 @@ class WebCrawler:
             logger.debug(f"頁面爬取失敗 {url}: {e}")
             return None
     
-    def _extract_forms(self, soup: BeautifulSoup, base_url: str) -> List[Dict]:
+    def _extract_forms(self, soup: BeautifulSoup, base_url: str) -> list[dict]:
         """提取表單"""
         forms = []
         
@@ -147,7 +145,7 @@ class WebCrawler:
         
         return forms
     
-    def _extract_links(self, soup: BeautifulSoup, base_url: str) -> List[str]:
+    def _extract_links(self, soup: BeautifulSoup, base_url: str) -> list[str]:
         """提取鏈接"""
         links = []
         
@@ -159,7 +157,7 @@ class WebCrawler:
         
         return links
     
-    def _extract_parameters(self, url: str, soup: BeautifulSoup) -> Set[str]:
+    def _extract_parameters(self, url: str, soup: BeautifulSoup) -> set[str]:
         """提取參數名稱"""
         parameters = set()
         

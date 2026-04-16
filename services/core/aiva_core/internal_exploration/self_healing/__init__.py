@@ -27,11 +27,10 @@ Self-Healing - 自我修復子模組
 __version__ = "10.0.0"
 
 # 核心分析器
-from .core_analyzer import CoreAnalyzer, AnalysisReport
-
 # 各個獨立分析器
 from .analyze_dataflow_breakpoints import DataFlowBreakpointAnalyzer
 from .analyze_missing_function_connections import MissingConnectionAnalyzer
+from .core_analyzer import AnalysisReport, CoreAnalyzer
 from .practical_analyzer import PracticalAnalyzer
 
 __all__ = [

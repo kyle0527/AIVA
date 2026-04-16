@@ -5,23 +5,21 @@ Social Engineering Manager
 所有操作均需要 L2 授權 + AIVA_ALLOW_ATTACK=1 環境變數，僅限授權滲透測試使用。
 """
 
-import os
-import logging
-import socket
-from typing import List, Dict, Optional, Any
 from datetime import datetime
+import logging
+import os
+import socket
+from typing import Any
 
 from .models import (
+    AnalyticsData,
+    CampaignStatus,
+    CredentialData,
+    DeliveryMethod,
     PhishingConfig,
     PhishingResult,
-    CampaignConfig,
     TargetInfo,
-    CredentialData,
-    AnalyticsData,
-    PhishingType,
     TargetPlatform,
-    DeliveryMethod,
-    CampaignStatus
 )
 
 # 假設 RiskGuard 授權系統已經實現
@@ -45,8 +43,8 @@ class SocialEngineeringManager:
     
     def __init__(
         self,
-        authorization_token: Optional[str] = None,
-        environment: Optional[str] = None
+        authorization_token: str | None = None,
+        environment: str | None = None
     ):
         """
         初始化社交工程管理器
@@ -59,12 +57,12 @@ class SocialEngineeringManager:
         self.environment = environment or os.getenv("AIVA_ENVIRONMENT", "development")
 
         # 內存狀態儲存（campaign_id → campaign 狀態字典）
-        self._campaigns: Dict[str, Dict[str, Any]] = {}
+        self._campaigns: dict[str, dict[str, Any]] = {}
         # 憑證儲存（campaign_id → List[CredentialData]）
-        self._credentials: Dict[str, List[CredentialData]] = {}
+        self._credentials: dict[str, list[CredentialData]] = {}
 
         logger.info(
-            f"SocialEngineeringManager initialized",
+            "SocialEngineeringManager initialized",
             extra={
                 "environment": self.environment,
                 "auth_mode": "token" if authorization_token else "riskguard"
@@ -158,7 +156,7 @@ class SocialEngineeringManager:
         
         try:
             logger.info(
-                f"Launching phishing campaign",
+                "Launching phishing campaign",
                 extra={
                     "type": config.phishing_type.value,
                     "platform": config.target_platform.value,
@@ -199,7 +197,7 @@ class SocialEngineeringManager:
             )
 
             logger.info(
-                f"Phishing campaign launched successfully",
+                "Phishing campaign launched successfully",
                 extra={"campaign_id": campaign_id, "emails_sent": result.emails_sent},
             )
             return result
@@ -217,7 +215,7 @@ class SocialEngineeringManager:
         platform: TargetPlatform,
         delivery_method: DeliveryMethod = DeliveryMethod.NGROK,
         port: int = 8080,
-        custom_template: Optional[str] = None
+        custom_template: str | None = None
     ) -> PhishingResult:
         """
         啟動憑證竊取伺服器
@@ -251,7 +249,7 @@ class SocialEngineeringManager:
         
         try:
             logger.info(
-                f"Starting credential harvester",
+                "Starting credential harvester",
                 extra={
                     "platform": platform.value,
                     "delivery_method": delivery_method.value,
@@ -302,7 +300,7 @@ class SocialEngineeringManager:
             )
 
             logger.info(
-                f"Credential harvester started successfully",
+                "Credential harvester started successfully",
                 extra={"campaign_id": campaign_id, "public_url": public_url},
             )
             return result
@@ -318,8 +316,8 @@ class SocialEngineeringManager:
     async def collect_osint(
         self,
         target: str,
-        search_engines: Optional[List[str]] = None,
-        social_media: Optional[List[str]] = None
+        search_engines: list[str] | None = None,
+        social_media: list[str] | None = None
     ) -> TargetInfo:
         """
         收集目標 OSINT 資訊
@@ -340,14 +338,14 @@ class SocialEngineeringManager:
             raise PermissionError("Authorization denied for OSINT collection")
         
         try:
-            logger.info(f"Collecting OSINT for target", extra={"target": target})
+            logger.info("Collecting OSINT for target", extra={"target": target})
 
             target_id = f"target_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            data_sources: List[str] = []
-            social_profiles: Dict[str, str] = {}
+            data_sources: list[str] = []
+            social_profiles: dict[str, str] = {}
 
             # ── DNS / 主機名稱解析（公開資訊）──
-            resolved_ips: List[str] = []
+            resolved_ips: list[str] = []
             domain = target.split("@")[-1] if "@" in target else target
             try:
                 ip = socket.gethostbyname(domain)
@@ -387,7 +385,7 @@ class SocialEngineeringManager:
                 info.skills = [f"resolved_ip:{ip}" for ip in resolved_ips]
 
             logger.info(
-                f"OSINT collection completed",
+                "OSINT collection completed",
                 extra={"target_id": target_id, "confidence": info.confidence_score},
             )
             return info
@@ -410,7 +408,7 @@ class SocialEngineeringManager:
             AnalyticsData: 分析數據
         """
         try:
-            logger.info(f"Fetching analytics for campaign", extra={"campaign_id": campaign_id})
+            logger.info("Fetching analytics for campaign", extra={"campaign_id": campaign_id})
 
             campaign = self._campaigns.get(campaign_id)
             if campaign is None:
@@ -423,9 +421,9 @@ class SocialEngineeringManager:
             credentials_submitted = len(creds)
 
             # 從憑證記錄彙計地理分布 / 瀏覽器統計
-            geo: Dict[str, int] = {}
-            browsers: Dict[str, int] = {}
-            os_stats_: Dict[str, int] = {}
+            geo: dict[str, int] = {}
+            browsers: dict[str, int] = {}
+            os_stats_: dict[str, int] = {}
             for c in creds:
                 if c.country:
                     geo[c.country] = geo.get(c.country, 0) + 1
@@ -453,7 +451,7 @@ class SocialEngineeringManager:
             )
 
             logger.info(
-                f"Analytics retrieved successfully",
+                "Analytics retrieved successfully",
                 extra={"campaign_id": campaign_id, "success_rate": analytics.success_rate},
             )
             return analytics
@@ -465,7 +463,7 @@ class SocialEngineeringManager:
     async def get_harvested_credentials(
         self,
         campaign_id: str
-    ) -> List[CredentialData]:
+    ) -> list[CredentialData]:
         """
         獲取收集到的憑證
         
@@ -476,7 +474,7 @@ class SocialEngineeringManager:
             List[CredentialData]: 憑證列表
         """
         try:
-            logger.info(f"Fetching harvested credentials", extra={"campaign_id": campaign_id})
+            logger.info("Fetching harvested credentials", extra={"campaign_id": campaign_id})
 
             credentials = self._credentials.get(campaign_id, [])
 
@@ -504,7 +502,7 @@ class SocialEngineeringManager:
             bool: 是否成功停止
         """
         try:
-            logger.info(f"Stopping campaign", extra={"campaign_id": campaign_id})
+            logger.info("Stopping campaign", extra={"campaign_id": campaign_id})
 
             campaign = self._campaigns.get(campaign_id)
             if campaign is None:
@@ -520,7 +518,7 @@ class SocialEngineeringManager:
             campaign["status"] = CampaignStatus.CANCELLED
             campaign["stopped_at"] = datetime.now().isoformat()
 
-            logger.info(f"Campaign stopped successfully", extra={"campaign_id": campaign_id})
+            logger.info("Campaign stopped successfully", extra={"campaign_id": campaign_id})
             return True
 
         except Exception as e:

@@ -10,16 +10,12 @@ import shutil
 import struct
 import subprocess
 import zipfile
-from datetime import datetime
-from typing import Optional
 
 from .models import (
     AnalysisMode,
     APKInfo,
     BinaryInfo,
     BinaryType,
-    CodeAnalysisResult,
-    DecompileConfig,
     DecompileResult,
     DecompilerType,
     MalwareAnalysisResult,

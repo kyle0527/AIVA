@@ -495,10 +495,25 @@ fn generate_summary(results: &[TargetResult]) -> ScanSummary {
     
     let total_endpoints: usize = results.iter().map(|r| r.endpoints.len()).sum();
     let total_sensitive_info: usize = results.iter().map(|r| r.sensitive_info.len()).sum();
+    // 實現實際的風險評分解析邏輯
+    let mut total_score = 0.0f32;
+    for r in results.iter() {
+        if let Some(surface) = &r.attack_surface {
+            // 透過字串比對從 Debug 格式的 report 中提取風險指標
+            let high_count = surface.matches("High").count() as f32;
+            let medium_count = surface.matches("Medium").count() as f32;
+            let low_count = surface.matches("Low").count() as f32;
+            
+            // 權重計算: High(9.0), Medium(5.0), Low(2.0)
+            total_score += (high_count * 9.0) + (medium_count * 5.0) + (low_count * 2.0);
+        }
+    }
     
-    // TODO: 實現實際的風險評分解析邏輯
-    // attack_surface 現在是 String 型別,需要解析或重構為結構化型別
-    let average_risk_score = 0.0f32;
+    let average_risk_score = if successful_scans > 0 {
+        total_score / successful_scans as f32
+    } else {
+        0.0f32
+    };
     
     ScanSummary {
         total_targets,

@@ -126,8 +126,8 @@ class PersistenceChecker:
                     result["error"] = "winreg module not available (not on Windows)"
             else:  # Linux/macOS
                 # 檢查 systemd 服務
-                import os
                 import glob
+                import os
                 systemd_paths = [
                     "/etc/systemd/system/",
                     "/lib/systemd/system/",
@@ -419,8 +419,8 @@ class PersistenceChecker:
                 })
             
             # 檢查系統 cron 目錄
-            import os
             import glob
+            import os
             cron_dirs = ["/etc/cron.d/", "/etc/cron.daily/", "/etc/cron.hourly/", "/etc/cron.weekly/"]
             for cron_dir in cron_dirs:
                 if os.path.exists(cron_dir):

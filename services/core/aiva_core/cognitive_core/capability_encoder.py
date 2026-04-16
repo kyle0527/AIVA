@@ -22,11 +22,11 @@ AIVA 結構化能力編碼器 (Capability Encoder)
 日期: 2026-01-04
 """
 
-import hashlib
-import numpy as np
-from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
+import hashlib
+from typing import Any
 
+import numpy as np
 
 # 模組編碼映射（固定順序）
 MODULE_ENCODING = {
@@ -110,7 +110,7 @@ class CapabilityEncoder:
     ```
     """
     
-    def __init__(self, config: Optional[EncodingConfig] = None):
+    def __init__(self, config: EncodingConfig | None = None):
         """初始化編碼器
         
         Args:
@@ -140,7 +140,7 @@ class CapabilityEncoder:
         self._reserved_start = self._structure_end
         self._reserved_end = self.config.output_dim
     
-    def encode(self, flow: Dict[str, Any]) -> np.ndarray:
+    def encode(self, flow: dict[str, Any]) -> np.ndarray:
         """將單個 Flow 編碼為向量
         
         Args:
@@ -173,7 +173,7 @@ class CapabilityEncoder:
         
         return vector
     
-    def encode_batch(self, flows: List[Dict[str, Any]]) -> np.ndarray:
+    def encode_batch(self, flows: list[dict[str, Any]]) -> np.ndarray:
         """批量編碼多個 Flow
         
         Args:
@@ -223,7 +223,7 @@ class CapabilityEncoder:
         extension = extension / (np.linalg.norm(extension) + 1e-8) * 0.3
         vector[self._component_start + 4:self._component_end] = extension
     
-    def _encode_parameters(self, vector: np.ndarray, parameters: List[Dict]) -> None:
+    def _encode_parameters(self, vector: np.ndarray, parameters: list[dict]) -> None:
         """編碼參數特徵"""
         if not parameters:
             return
@@ -262,7 +262,7 @@ class CapabilityEncoder:
         hash_features = hash_features / (np.linalg.norm(hash_features) + 1e-8) * 0.4
         vector[self._param_start + 10:self._param_end] = hash_features
     
-    def _encode_tags(self, vector: np.ndarray, tags: List[str]) -> None:
+    def _encode_tags(self, vector: np.ndarray, tags: list[str]) -> None:
         """編碼結構化標籤"""
         if not tags:
             return
@@ -312,7 +312,7 @@ class CapabilityEncoder:
         hash_features = hash_features / (np.linalg.norm(hash_features) + 1e-8) * 0.3
         vector[self._tag_start + 33:self._tag_end] = hash_features
     
-    def _encode_structure(self, vector: np.ndarray, flow: Dict) -> None:
+    def _encode_structure(self, vector: np.ndarray, flow: dict) -> None:
         """編碼結構特徵"""
         # 路徑長度（歸一化）
         length = flow.get('length', 1)
@@ -371,7 +371,7 @@ class CapabilityEncoder:
         query_vector: np.ndarray,
         candidate_vectors: np.ndarray,
         top_k: int = 5
-    ) -> List[tuple[int, float]]:
+    ) -> list[tuple[int, float]]:
         """找到最相似的向量
         
         Args:
@@ -396,7 +396,7 @@ class CapabilityEncoder:
 
 
 # 便捷函數
-def encode_capability(flow: Dict[str, Any]) -> np.ndarray:
+def encode_capability(flow: dict[str, Any]) -> np.ndarray:
     """便捷函數：編碼單個能力
     
     Args:
@@ -409,7 +409,7 @@ def encode_capability(flow: Dict[str, Any]) -> np.ndarray:
     return encoder.encode(flow)
 
 
-def encode_capabilities(flows: List[Dict[str, Any]]) -> np.ndarray:
+def encode_capabilities(flows: list[dict[str, Any]]) -> np.ndarray:
     """便捷函數：批量編碼能力
     
     Args:

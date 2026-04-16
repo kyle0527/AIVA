@@ -28,7 +28,6 @@
 
 import os
 from pathlib import Path
-from typing import List
 
 # ==================== 專案根路徑 ====================
 
@@ -101,7 +100,7 @@ def ensure_directories() -> None:
         EXPERIENCES_DIR,
         TRAINING_DATA_DIR,
     ]
-    
+
     for directory in directories:
         directory.mkdir(parents=True, exist_ok=True)
 
@@ -146,20 +145,20 @@ def get_latest_version_dir() -> Path:
     """
     if not ANALYSIS_HISTORY_DIR.exists():
         return get_version_dir(1)
-    
+
     # 查找所有版本目錄
     versions = []
     for item in ANALYSIS_HISTORY_DIR.iterdir():
         if item.is_dir() and item.name.startswith("v") and item.name[1:].isdigit():
             versions.append(int(item.name[1:]))
-    
+
     if not versions:
         return get_version_dir(1)
-    
+
     return get_version_dir(max(versions))
 
 
-def list_all_output_dirs() -> List[Path]:
+def list_all_output_dirs() -> list[Path]:
     """列出所有輸出目錄
     
     Returns:
@@ -211,12 +210,12 @@ def export_paths_config(format: str = "json") -> str:
         配置文件內容
     """
     import json
-    
+
     config = get_config_summary()
-    
+
     if format == "json":
         return json.dumps(config, indent=2, ensure_ascii=False)
-    
+
     elif format == "env":
         # 環境變量格式
         lines = [
@@ -229,7 +228,7 @@ def export_paths_config(format: str = "json") -> str:
             env_key = f"AIVA_{key.upper()}_DIR"
             lines.append(f"{env_key}={value}")
         return "\n".join(lines)
-    
+
     elif format == "typescript":
         # TypeScript 配置格式
         lines = [
@@ -245,7 +244,7 @@ def export_paths_config(format: str = "json") -> str:
         lines.append("  }")
         lines.append("};")
         return "\n".join(lines)
-    
+
     elif format == "go":
         # Go 配置格式
         lines = [
@@ -262,7 +261,7 @@ def export_paths_config(format: str = "json") -> str:
             lines.append(f'    {const_name} = "{value}"')
         lines.append(")")
         return "\n".join(lines)
-    
+
     elif format == "rust":
         # Rust 配置格式
         lines = [
@@ -286,7 +285,7 @@ def export_paths_config(format: str = "json") -> str:
         lines.append("    }")
         lines.append("}")
         return "\n".join(lines)
-    
+
     else:
         return json.dumps(config, indent=2, ensure_ascii=False)
 

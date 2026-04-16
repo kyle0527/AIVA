@@ -89,8 +89,8 @@ try:
         st.metric("總漏洞數", total_vulns)
     
     with col2:
-        # 計算高危漏洞（TODO: 需要實際數據結構）
-        high_risk = 0
+        # 計算高危漏洞
+        high_risk = sum(1 for v in results.get("vulnerabilities", []) if str(v.get("severity", "")).lower() in ["high", "critical", "高危", "嚴重"])
         st.metric("高危漏洞", high_risk)
     
     with col3:

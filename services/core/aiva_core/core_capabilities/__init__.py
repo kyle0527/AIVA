@@ -12,20 +12,30 @@
 def __getattr__(name):
     """延遲導入機制"""
     if name == "AIVACommandProcessor":
-        from services.core.aiva_core.core_capabilities.dialog.assistant import AIVACommandProcessor
+        from services.core.aiva_core.core_capabilities.dialog.assistant import (
+            AIVACommandProcessor,
+        )
         return AIVACommandProcessor
     elif name == "AttackExecutor":
         # 已移至 features 模組
-        from services.features.function_exploit.executor.attack_executor import AttackExecutor
+        from services.features.function_exploit.executor.attack_executor import (
+            AttackExecutor,
+        )
         return AttackExecutor
     elif name == "AttackChain":
-        from services.core.aiva_core.core_capabilities.attack.attack_chain import AttackChain
+        from services.core.aiva_core.core_capabilities.attack.attack_chain import (
+            AttackChain,
+        )
         return AttackChain
     elif name == "ExploitOrchestrator":
-        from services.core.aiva_core.core_capabilities.attack.exploit_orchestrator import ExploitOrchestrator
+        from services.core.aiva_core.core_capabilities.attack.exploit_orchestrator import (
+            ExploitOrchestrator,
+        )
         return ExploitOrchestrator
     elif name == "CapabilityRegistry":
-        from services.core.aiva_core.core_capabilities.capability_registry import CapabilityRegistry
+        from services.core.aiva_core.core_capabilities.capability_registry import (
+            CapabilityRegistry,
+        )
         return CapabilityRegistry
     elif name == "TaskContext":
         from services.core.aiva_core.core_capabilities.task_context import TaskContext

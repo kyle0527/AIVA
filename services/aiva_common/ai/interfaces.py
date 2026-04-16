@@ -12,8 +12,9 @@ AIVA AI 介面定義 - 可插拔 AI 組件介面
 """
 
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Any, AsyncContextManager, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, AsyncContextManager
 
 if TYPE_CHECKING:
     from ..schemas import (

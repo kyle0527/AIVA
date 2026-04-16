@@ -8,6 +8,7 @@ import ast
 import os
 from pathlib import Path
 
+
 def validate_handler_file(handler_path: str, expected_class_name: str) -> dict:
     """驗證 handler 文件結構"""
     result = {
@@ -28,7 +29,7 @@ def validate_handler_file(handler_path: str, expected_class_name: str) -> dict:
     
     try:
         # 讀取並解析文件
-        with open(handler_path, 'r', encoding='utf-8') as f:
+        with open(handler_path, encoding='utf-8') as f:
             content = f.read()
         
         tree = ast.parse(content)
@@ -129,7 +130,7 @@ def main():
         print(f"  {status_icon} 導入 manager: {result['imports_manager']}")
         
         if result["errors"]:
-            print(f"  ⚠️  錯誤:")
+            print("  ⚠️  錯誤:")
             for error in result["errors"]:
                 print(f"    - {error}")
             all_passed = False
@@ -157,7 +158,7 @@ def main():
     ]
     
     if commands_path.exists():
-        with open(commands_path, 'r', encoding='utf-8') as f:
+        with open(commands_path, encoding='utf-8') as f:
             content = f.read()
         
         for cmd_type in required_types:

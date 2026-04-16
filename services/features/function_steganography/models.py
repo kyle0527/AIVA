@@ -5,10 +5,9 @@ Steganography Module Data Models
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Dict, Any
 from pathlib import Path
+from typing import Any
 
-from aiva_common.enums import VulnerabilityType, Severity, Confidence
 from aiva_common.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -84,14 +83,14 @@ class EmbedConfig:
     output_file: str
     
     # Security
-    password: Optional[str] = None
+    password: str | None = None
     encryption: EncryptionAlgorithm = EncryptionAlgorithm.NONE
     
     # Advanced Options
     compression: bool = False
     noise_level: float = 0.0
     
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -107,10 +106,10 @@ class EmbedResult:
     capacity_used_percent: float = 0.0
     
     # Quality Metrics
-    psnr: Optional[float] = None  # Peak Signal-to-Noise Ratio
-    ssim: Optional[float] = None  # Structural Similarity Index
+    psnr: float | None = None  # Peak Signal-to-Noise Ratio
+    ssim: float | None = None  # Structural Similarity Index
     
-    error: Optional[str] = None
+    error: str | None = None
     timestamp: datetime = field(default_factory=datetime.now)
 
 
@@ -122,9 +121,9 @@ class ExtractConfig:
     output_file: str
     
     # Security
-    password: Optional[str] = None
+    password: str | None = None
     
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -138,9 +137,9 @@ class ExtractResult:
     
     # Verification
     verified: bool = False
-    checksum: Optional[str] = None
+    checksum: str | None = None
 
-    error: Optional[str] = None
+    error: str | None = None
     timestamp: datetime = field(default_factory=datetime.now)
 
 
@@ -150,7 +149,7 @@ class EnhancedSteganographyDetector:
     def __init__(self):
         self.supported_formats = {'.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif'}
     
-    async def comprehensive_detection(self, file_path: Path) -> Dict[str, Any]:
+    async def comprehensive_detection(self, file_path: Path) -> dict[str, Any]:
         """全面隱寫術檢測"""
         try:
             logger.info(f"檢測隱寫術: {file_path}")
@@ -245,11 +244,11 @@ class DetectionResult:
     confidence: float  # 0.0 - 1.0
     
     # Detection Details
-    method_detected: Optional[SteganographyMethod] = None
+    method_detected: SteganographyMethod | None = None
     anomaly_score: float = 0.0
     
     # Analysis
-    statistics: Dict[str, Any] = field(default_factory=dict)
+    statistics: dict[str, Any] = field(default_factory=dict)
     suspicious_regions: list = field(default_factory=list)
     
     timestamp: datetime = field(default_factory=datetime.now)

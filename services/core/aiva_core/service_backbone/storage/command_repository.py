@@ -7,16 +7,14 @@
 - 成功率追蹤
 """
 
+from datetime import UTC, datetime, timedelta
 import logging
-from datetime import datetime, timedelta, UTC
-from typing import Any, Dict, List, Optional
-from pathlib import Path
+from typing import Any
 
-from sqlalchemy import desc, func, and_
-from sqlalchemy.orm import Session
+from sqlalchemy import and_, desc, func
 
-from .models import Base, CommandExecutionModel
 from .backends import StorageBackend
+from .models import Base, CommandExecutionModel
 
 logger = logging.getLogger(__name__)
 
@@ -48,22 +46,22 @@ class CommandRepository:
         command_name: str,
         command_type: str,
         capability_endpoint: str,
-        flow_path: List[str],
+        flow_path: list[str],
         flow_length: int,
         primary_module: str,
-        modules_involved: List[str],
+        modules_involved: list[str],
         status: str,
         success: bool,
         execution_time_ms: float,
-        flow_id: Optional[str] = None,
+        flow_id: str | None = None,
         flow_preference: str = "balanced",
-        parameters: Optional[Dict[str, Any]] = None,
-        result_data: Optional[Dict[str, Any]] = None,
-        error_message: Optional[str] = None,
-        user_id: Optional[str] = None,
-        session_id: Optional[str] = None,
+        parameters: dict[str, Any] | None = None,
+        result_data: dict[str, Any] | None = None,
+        error_message: str | None = None,
+        user_id: str | None = None,
+        session_id: str | None = None,
         is_ai_generated: bool = False,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
     ) -> bool:
         """保存指令執行記錄
         
@@ -140,18 +138,18 @@ class CommandRepository:
         self,
         limit: int = 50,
         offset: int = 0,
-        command_name: Optional[str] = None,
-        capability_endpoint: Optional[str] = None,
-        status: Optional[str] = None,
-        success: Optional[bool] = None,
-        user_id: Optional[str] = None,
-        session_id: Optional[str] = None,
-        primary_module: Optional[str] = None,
-        flow_preference: Optional[str] = None,
-        is_ai_generated: Optional[bool] = None,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
-    ) -> List[Dict[str, Any]]:
+        command_name: str | None = None,
+        capability_endpoint: str | None = None,
+        status: str | None = None,
+        success: bool | None = None,
+        user_id: str | None = None,
+        session_id: str | None = None,
+        primary_module: str | None = None,
+        flow_preference: str | None = None,
+        is_ai_generated: bool | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+    ) -> list[dict[str, Any]]:
         """查詢指令執行歷史
         
         Args:
@@ -245,10 +243,10 @@ class CommandRepository:
     
     async def get_command_statistics(
         self,
-        capability_endpoint: Optional[str] = None,
-        primary_module: Optional[str] = None,
+        capability_endpoint: str | None = None,
+        primary_module: str | None = None,
         days: int = 7,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """獲取指令統計信息
         
         Args:
@@ -347,7 +345,7 @@ class CommandRepository:
         self,
         limit: int = 10,
         days: int = 7,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """獲取最常用的能力
         
         Args:
@@ -403,7 +401,7 @@ class CommandRepository:
         threshold_ms: float = 1000.0,
         limit: int = 20,
         days: int = 7,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """獲取執行緩慢的指令
         
         Args:

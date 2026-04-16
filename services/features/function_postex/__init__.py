@@ -23,9 +23,9 @@ from services.features.function_postex.detector.postex_detector import (
     PostExDetector,
 )
 from services.features.function_postex.engines import (
-    PrivilegeEscalationEngine,
     LateralMovementEngine,
     PersistenceEngine,
+    PrivilegeEscalationEngine,
 )
 
 __all__ = [

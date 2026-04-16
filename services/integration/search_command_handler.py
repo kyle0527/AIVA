@@ -23,19 +23,18 @@ CLI 使用示例：
 """
 
 import asyncio
+from datetime import UTC, datetime
 import os
-from typing import Any, List, Optional
-from datetime import datetime, timezone
+from typing import Any
 
 import aiohttp
-
 from aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,
-    CommandStatus,
+    CommandCallback,
     CommandContext,
+    CommandStatus,
     CommandType,
-    CommandCallback
 )
 from aiva_common.utils import get_logger
 
@@ -52,7 +51,7 @@ class SearchCommandHandler:
     4. 社交工程：Email breach, WHOIS, Domain info
     """
     
-    def __init__(self, config: Optional[dict[str, Any]] = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         """初始化搜索命令處理器
         
         Args:
@@ -86,7 +85,7 @@ class SearchCommandHandler:
         }
         
         # 回調處理器
-        self.callback_handler: Optional[CommandCallback] = None
+        self.callback_handler: CommandCallback | None = None
         
         self.logger.info("✅ SearchCommandHandler 已初始化")
     
@@ -102,7 +101,7 @@ class SearchCommandHandler:
     async def handle_command(
         self,
         command: AICommand,
-        context: Optional[CommandContext] = None
+        context: CommandContext | None = None
     ) -> AICommandResult:
         """處理搜索命令
         
@@ -159,8 +158,8 @@ class SearchCommandHandler:
                 error_code="",
                 error_details={},
                 execution_time=execution_time,
-                started_at=datetime.fromtimestamp(start_time, tz=timezone.utc),
-                completed_at=datetime.now(timezone.utc),
+                started_at=datetime.fromtimestamp(start_time, tz=UTC),
+                completed_at=datetime.now(UTC),
                 metrics={
                     "search_type": command.command_type.value,
                     "results_count": self._count_results(results)
@@ -181,8 +180,8 @@ class SearchCommandHandler:
                 error_code="SEARCH_EXECUTION_ERROR",
                 error_details={"exception_type": type(e).__name__},
                 execution_time=execution_time,
-                started_at=datetime.fromtimestamp(start_time, tz=timezone.utc),
-                completed_at=datetime.now(timezone.utc)
+                started_at=datetime.fromtimestamp(start_time, tz=UTC),
+                completed_at=datetime.now(UTC)
             )
     
     # ===== 搜索引擎實現 =====
@@ -257,7 +256,7 @@ class SearchCommandHandler:
                         ]
                     }
         
-        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
+        except (TimeoutError, aiohttp.ClientError) as e:
             self.logger.error(f"Google 搜索失敗: {e}")
             raise
     
@@ -335,7 +334,7 @@ class SearchCommandHandler:
                         "related_topics": related_topics
                     }
         
-        except asyncio.TimeoutError:
+        except TimeoutError:
             self.logger.error("DuckDuckGo 搜索超時")
             return {
                 "query": query,
@@ -407,7 +406,7 @@ class SearchCommandHandler:
                         ]
                     }
         
-        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
+        except (TimeoutError, aiohttp.ClientError) as e:
             self.logger.error(f"GitHub 搜索失敗: {e}")
             raise
     
@@ -497,7 +496,7 @@ class SearchCommandHandler:
                         "vulnerabilities": vulnerabilities
                     }
         
-        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
+        except (TimeoutError, aiohttp.ClientError) as e:
             self.logger.error(f"CVE 搜索失敗: {e}")
             raise
     
@@ -553,7 +552,7 @@ class SearchCommandHandler:
                         ]
                     }
         
-        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
+        except (TimeoutError, aiohttp.ClientError) as e:
             self.logger.error(f"Shodan 搜索失敗: {e}")
             raise
     
@@ -721,7 +720,7 @@ async def main_cli():
     # 加載配置
     config = {}
     if args.config_file and os.path.exists(args.config_file):
-        with open(args.config_file, 'r', encoding='utf-8') as f:
+        with open(args.config_file, encoding='utf-8') as f:
             config = json.load(f)
     
     # 創建處理器

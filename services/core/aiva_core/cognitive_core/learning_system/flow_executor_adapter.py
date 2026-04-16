@@ -22,13 +22,12 @@ Architecture:
     返回結果
 """
 
-import json
-from typing import Any, Dict, List, Optional
-from pathlib import Path
 from dataclasses import dataclass
+from typing import Any
 
 from aiva_common.utils import get_logger
-from .cli_decision_engine import CLIDecisionEngine, AttackFlow, AttackCapability
+
+from .cli_decision_engine import AttackCapability, AttackFlow, CLIDecisionEngine
 
 logger = get_logger(__name__)
 
@@ -46,10 +45,10 @@ class ExecutionResult:
     flow_id: int
     module: str
     output: Any
-    error: Optional[str] = None
+    error: str | None = None
     execution_time: float = 0.0
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "success": self.success,
             "flow_id": self.flow_id,
@@ -71,8 +70,8 @@ class FlowExecutorAdapter:
     
     def __init__(
         self,
-        decision_engine: Optional[CLIDecisionEngine] = None,
-        external_executor: Optional[Any] = None
+        decision_engine: CLIDecisionEngine | None = None,
+        external_executor: Any | None = None
     ):
         """初始化適配器
         
@@ -94,7 +93,9 @@ class FlowExecutorAdapter:
         try:
             # 導入 external exploration 的 FlowExecutor
             # 路徑: services/core/aiva_core/internal_exploration/aiva_external_executor.py
-            from services.core.aiva_core.internal_exploration.aiva_external_executor import MultiLangExecutor
+            from services.core.aiva_core.internal_exploration.aiva_external_executor import (
+                MultiLangExecutor,
+            )
             
             self.external_executor = MultiLangExecutor()
             logger.info("✅ 已載入 External FlowExecutor")
@@ -104,10 +105,10 @@ class FlowExecutorAdapter:
     
     def execute_recommended_flows(
         self,
-        scan_context: Dict[str, Any],
+        scan_context: dict[str, Any],
         top_k: int = 3,
-        config: Optional[ExecutionConfig] = None
-    ) -> List[ExecutionResult]:
+        config: ExecutionConfig | None = None
+    ) -> list[ExecutionResult]:
         """根據掃描上下文推薦並執行攻擊流程
         
         這是主要的對外接口，完整流程：
@@ -162,8 +163,8 @@ class FlowExecutorAdapter:
     def execute_flow(
         self,
         flow: AttackFlow,
-        target_context: Dict[str, Any],
-        config: Optional[ExecutionConfig] = None
+        target_context: dict[str, Any],
+        config: ExecutionConfig | None = None
     ) -> ExecutionResult:
         """執行單個攻擊流程
         
@@ -224,8 +225,8 @@ class FlowExecutorAdapter:
     def _build_execution_params(
         self,
         flow: AttackFlow,
-        target_context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        target_context: dict[str, Any]
+    ) -> dict[str, Any]:
         """構建執行參數
         
         將 AttackFlow 和 target_context 轉換為 FlowExecutor 需要的格式。
@@ -254,11 +255,11 @@ class FlowExecutorAdapter:
     def search_and_execute(
         self,
         capability: AttackCapability,
-        target_context: Dict[str, Any],
-        keywords: Optional[List[str]] = None,
+        target_context: dict[str, Any],
+        keywords: list[str] | None = None,
         limit: int = 3,
-        config: Optional[ExecutionConfig] = None
-    ) -> List[ExecutionResult]:
+        config: ExecutionConfig | None = None
+    ) -> list[ExecutionResult]:
         """搜索並執行指定能力的攻擊流程
         
         更直接的接口：指定攻擊類型 + 關鍵字，直接執行。

@@ -1,13 +1,18 @@
 import asyncio
 import logging
-from typing import List, Dict, Any, Optional
+from typing import Any
 import uuid
 
-from aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget, FunctionTaskTestConfig
-from services.features.function_xss.traditional_detector import TraditionalXssDetector
+from aiva_common.schemas import (
+    FunctionTaskPayload,
+    FunctionTaskTarget,
+    FunctionTaskTestConfig,
+)
+
 from services.features.function_xss.dom_xss_detector import DomXssDetector
-from services.features.function_xss.stored_detector import StoredXssDetector
 from services.features.function_xss.payload_generator import XssPayloadGenerator
+from services.features.function_xss.stored_detector import StoredXssDetector
+from services.features.function_xss.traditional_detector import TraditionalXssDetector
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +32,8 @@ class XssScanner:
         self, 
         target_url: str, 
         scan_type: str = "comprehensive", 
-        options: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        options: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """
         執行 XSS 掃描
         
@@ -85,9 +90,9 @@ class XssScanner:
             "findings": results
         }
 
-    async def _scan_reflected(self, url: str, method: str, timeout: float, options: Dict) -> List[Dict]:
+    async def _scan_reflected(self, url: str, method: str, timeout: float, options: dict) -> list[dict]:
         """執行 Reflected XSS 掃描"""
-        from urllib.parse import urlparse, parse_qs
+        from urllib.parse import parse_qs, urlparse
         
         parsed_url = urlparse(url)
         query_params = parse_qs(parsed_url.query)
@@ -139,7 +144,7 @@ class XssScanner:
             for d in all_detections
         ]
 
-    async def _scan_dom(self, url: str, timeout: float, options: Dict) -> List[Dict]:
+    async def _scan_dom(self, url: str, timeout: float, options: dict) -> list[dict]:
         """執行 DOM XSS 掃描 (Static Analysis)"""
         import httpx
         
@@ -178,7 +183,7 @@ class XssScanner:
             
         return []
 
-    async def _scan_stored(self, url: str, method: str, timeout: float, options: Dict) -> List[Dict]:
+    async def _scan_stored(self, url: str, method: str, timeout: float, options: dict) -> list[dict]:
         """執行 Stored XSS 掃描"""
         view_url = options.get("view_url")
         if not view_url:

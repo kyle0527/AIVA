@@ -5,8 +5,6 @@
 
 import json
 import logging
-from datetime import datetime
-from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -89,8 +87,9 @@ class LearningAdapter:
             }
         
         # 使用 ModelTrainer 訓練
-        from aiva_common.schemas import ModelTrainingConfig
         from uuid import uuid4
+
+        from aiva_common.schemas import ModelTrainingConfig
         
         config = ModelTrainingConfig(
             config_id=f"config_{uuid4().hex[:8]}",

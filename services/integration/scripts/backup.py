@@ -5,10 +5,10 @@
 """
 
 import argparse
-import logging
-import shutil
 from datetime import datetime
+import logging
 from pathlib import Path
+import shutil
 
 from services.integration.aiva_integration.config import (
     ATTACK_GRAPH_FILE,

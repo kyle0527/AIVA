@@ -144,7 +144,7 @@ class PluginManager:
         # 從 entry_points 發現插件
         try:
             import pkg_resources  # type: ignore
-            
+
             for entry_point in pkg_resources.iter_entry_points("aiva.plugins"):
                 try:
                     metadata = self._create_metadata_from_entry_point(entry_point)
@@ -175,7 +175,7 @@ class PluginManager:
                 data = tomllib.load(f)
         else:
             # 回退到 JSON
-            with open(plugin_file, "r", encoding="utf-8") as f:
+            with open(plugin_file, encoding="utf-8") as f:
                 data = json.load(f)
 
         plugin_data = data.get("plugin", {})

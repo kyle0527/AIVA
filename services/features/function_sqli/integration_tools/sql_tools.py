@@ -12,25 +12,23 @@ AIVA SQL Injection Tools Module - Task 12
 """
 
 import asyncio
+from dataclasses import dataclass, field
+from datetime import datetime
 import json
 import os
+from pathlib import Path
 import re
 import subprocess
 import tempfile
 import time
+from typing import Any
 import urllib.parse
-from dataclasses import dataclass, field
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import aiohttp
-import requests
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
-from rich.text import Text
 
 # 常數定義 - 避免字串重複
 CONSOLE_PROMPTS = {
@@ -41,9 +39,7 @@ CONSOLE_PROMPTS = {
     'GOODBYE': "[bold yellow]感謝使用 AIVA SQL 注入工具集![/bold yellow]"
 }
 
-from aiva_common.schemas import APIResponse
 from aiva_common.utils import get_logger
-
 
 logger = get_logger(__name__)
 console = Console()
@@ -54,13 +50,13 @@ class SQLTarget:
     """SQL 注入目標資訊"""
     url: str
     method: str = "GET"
-    parameters: Dict[str, str] = field(default_factory=dict)
-    headers: Dict[str, str] = field(default_factory=dict)
-    cookies: Dict[str, str] = field(default_factory=dict)
-    data: Optional[str] = None
-    vulnerable_params: List[str] = field(default_factory=list)
-    injection_type: Optional[str] = None
-    dbms: Optional[str] = None
+    parameters: dict[str, str] = field(default_factory=dict)
+    headers: dict[str, str] = field(default_factory=dict)
+    cookies: dict[str, str] = field(default_factory=dict)
+    data: str | None = None
+    vulnerable_params: list[str] = field(default_factory=list)
+    injection_type: str | None = None
+    dbms: str | None = None
 
 
 @dataclass
@@ -74,8 +70,8 @@ class SQLInjectionResult:
     evidence: str
     severity: str  # Critical, High, Medium, Low
     confidence: int  # 0-100
-    dbms_info: Optional[Dict[str, Any]] = None
-    exploit_data: Optional[Dict[str, Any]] = None
+    dbms_info: dict[str, Any] | None = None
+    exploit_data: dict[str, Any] | None = None
 
 
 class SqlmapIntegration:
@@ -83,9 +79,9 @@ class SqlmapIntegration:
     
     def __init__(self):
         self.sqlmap_path = self._find_sqlmap_path()
-        self.session_files: List[Path] = []
+        self.session_files: list[Path] = []
         
-    def _find_sqlmap_path(self) -> Optional[str]:
+    def _find_sqlmap_path(self) -> str | None:
         """查找 sqlmap 安裝路徑"""
         possible_paths = [
             "/usr/share/sqlmap/sqlmap.py",
@@ -135,7 +131,7 @@ class SqlmapIntegration:
             logger.error(f"安裝 Sqlmap 時發生錯誤: {e}")
             return False
     
-    async def scan_target(self, target: SQLTarget, options: Optional[Dict[str, Any]] = None) -> List[SQLInjectionResult]:
+    async def scan_target(self, target: SQLTarget, options: dict[str, Any] | None = None) -> list[SQLInjectionResult]:
         """使用 Sqlmap 掃描目標"""
         if not self.sqlmap_path:
             console.print("[red]Sqlmap 未安裝，正在嘗試安裝...[/red]")
@@ -199,7 +195,7 @@ class SqlmapIntegration:
         
         return results
     
-    def _parse_sqlmap_output(self, output: str, target_url: str) -> List[SQLInjectionResult]:
+    def _parse_sqlmap_output(self, output: str, target_url: str) -> list[SQLInjectionResult]:
         """解析 Sqlmap 輸出"""
         results = []
         
@@ -245,7 +241,7 @@ class CustomSQLInjectionScanner:
     """自定義 SQL 注入掃描器"""
     
     def __init__(self):
-        self.session: Optional[aiohttp.ClientSession] = None
+        self.session: aiohttp.ClientSession | None = None
         self._own_session = False
         self.payloads = self._load_payloads()
     
@@ -266,7 +262,7 @@ class CustomSQLInjectionScanner:
             await self.session.close()
             self.session = None
         
-    def _load_payloads(self) -> Dict[str, List[str]]:
+    def _load_payloads(self) -> dict[str, list[str]]:
         """載入 SQL 注入載荷"""
         return {
             'error_based': [
@@ -303,7 +299,7 @@ class CustomSQLInjectionScanner:
             ]
         }
     
-    async def scan_target(self, target: SQLTarget) -> List[SQLInjectionResult]:
+    async def scan_target(self, target: SQLTarget) -> list[SQLInjectionResult]:
         """掃描目標的 SQL 注入漏洞"""
         results = []
         
@@ -320,7 +316,7 @@ class CustomSQLInjectionScanner:
         
         return results
     
-    async def _test_injection_type(self, target: SQLTarget, injection_type: str, payloads: List[str]) -> List[SQLInjectionResult]:
+    async def _test_injection_type(self, target: SQLTarget, injection_type: str, payloads: list[str]) -> list[SQLInjectionResult]:
         """測試特定類型的 SQL 注入"""
         results = []
         
@@ -343,7 +339,7 @@ class CustomSQLInjectionScanner:
         
         return results
     
-    async def _get_baseline_response(self, target: SQLTarget) -> Optional[Dict[str, Any]]:
+    async def _get_baseline_response(self, target: SQLTarget) -> dict[str, Any] | None:
         """獲取基準響應"""
         try:
             if self.session is None:
@@ -387,7 +383,7 @@ class CustomSQLInjectionScanner:
             logger.error(f"獲取基準響應失敗: {e}")
             return None
     
-    async def _test_payload(self, target: SQLTarget, payload: str, injection_type: str, baseline: Dict[str, Any]) -> Optional[SQLInjectionResult]:
+    async def _test_payload(self, target: SQLTarget, payload: str, injection_type: str, baseline: dict[str, Any]) -> SQLInjectionResult | None:
         """測試單個載荷"""
         try:
             # 構建測試 URL 或數據
@@ -401,7 +397,7 @@ class CustomSQLInjectionScanner:
                     parsed_url = urllib.parse.urlparse(test_url)
                     query_str = parsed_url.query if parsed_url.query else ""
                     # 使用 keep_blank_values=True 確保正確的類型推斷
-                    query_params: Dict[str, List[str]] = urllib.parse.parse_qs(query_str, keep_blank_values=True)
+                    query_params: dict[str, list[str]] = urllib.parse.parse_qs(query_str, keep_blank_values=True)
                     query_params[param_name] = [param_value + payload]
                     new_query = urllib.parse.urlencode(query_params, doseq=True)
                     test_url = urllib.parse.urlunparse(parsed_url._replace(query=new_query))
@@ -456,8 +452,8 @@ class CustomSQLInjectionScanner:
         return None
     
     def _analyze_response(self, content: str, status: int, response_time: float,
-                         injection_type: str, baseline: Dict[str, Any], 
-                         target_url: str, parameter: str, payload: str) -> Optional[SQLInjectionResult]:
+                         injection_type: str, baseline: dict[str, Any], 
+                         target_url: str, parameter: str, payload: str) -> SQLInjectionResult | None:
         """分析響應以檢測 SQL 注入"""
         
         # 錯誤基礎檢測
@@ -542,10 +538,10 @@ class NoSQLInjectionScanner:
     """NoSQL 注入掃描器"""
     
     def __init__(self):
-        self.session: Optional[aiohttp.ClientSession] = None
+        self.session: aiohttp.ClientSession | None = None
         self.nosql_payloads = self._load_nosql_payloads()
     
-    def _load_nosql_payloads(self) -> List[str]:
+    def _load_nosql_payloads(self) -> list[str]:
         """載入 NoSQL 注入載荷"""
         return [
             "true, true",
@@ -561,7 +557,7 @@ class NoSQLInjectionScanner:
             "{\"password\": {\"$regex\": \"^.*\"}}"
         ]
     
-    async def scan_target(self, target: SQLTarget) -> List[SQLInjectionResult]:
+    async def scan_target(self, target: SQLTarget) -> list[SQLInjectionResult]:
         """掃描 NoSQL 注入漏洞"""
         results = []
         
@@ -583,7 +579,7 @@ class NoSQLInjectionScanner:
         
         return results
     
-    async def _test_nosql_payload(self, target: SQLTarget, payload: str) -> Optional[SQLInjectionResult]:
+    async def _test_nosql_payload(self, target: SQLTarget, payload: str) -> SQLInjectionResult | None:
         """測試 NoSQL 載荷"""
         try:
             # 構建測試請求
@@ -631,7 +627,7 @@ class BlindSQLInjectionScanner:
     """盲注掃描器"""
     
     def __init__(self):
-        self.session: Optional[aiohttp.ClientSession] = None
+        self.session: aiohttp.ClientSession | None = None
         self._own_session = False
         
     async def _ensure_session(self) -> aiohttp.ClientSession:
@@ -644,7 +640,7 @@ class BlindSQLInjectionScanner:
         await asyncio.sleep(0)  # 使 async 函數合法
         return self.session
         
-    async def scan_blind_injection(self, target: SQLTarget) -> List[SQLInjectionResult]:
+    async def scan_blind_injection(self, target: SQLTarget) -> list[SQLInjectionResult]:
         """掃描盲注漏洞"""
         results = []
         
@@ -663,7 +659,7 @@ class BlindSQLInjectionScanner:
         
         return results
     
-    async def _test_time_blind_injection(self, target: SQLTarget) -> List[SQLInjectionResult]:
+    async def _test_time_blind_injection(self, target: SQLTarget) -> list[SQLInjectionResult]:
         """測試時間盲注"""
         results = []
         
@@ -706,7 +702,7 @@ class BlindSQLInjectionScanner:
         
         return results
     
-    async def _test_boolean_blind_injection(self, target: SQLTarget) -> List[SQLInjectionResult]:
+    async def _test_boolean_blind_injection(self, target: SQLTarget) -> list[SQLInjectionResult]:
         """測試布林盲注"""
         results = []
         
@@ -753,9 +749,9 @@ class SQLInjectionManager:
         self.custom_scanner = CustomSQLInjectionScanner()
         self.nosql_scanner = NoSQLInjectionScanner()
         self.blind_scanner = BlindSQLInjectionScanner()
-        self.scan_results: List[SQLInjectionResult] = []
+        self.scan_results: list[SQLInjectionResult] = []
         
-    async def comprehensive_scan(self, target_url: str, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    async def comprehensive_scan(self, target_url: str, options: dict[str, Any] | None = None) -> dict[str, Any]:
         """執行綜合 SQL 注入掃描"""
         options = options or {}
         
@@ -857,7 +853,7 @@ class SQLInjectionManager:
         
         return results
     
-    def _parse_target(self, target_url: str, options: Dict[str, Any]) -> SQLTarget:
+    def _parse_target(self, target_url: str, options: dict[str, Any]) -> SQLTarget:
         """解析掃描目標"""
         parsed_url = urllib.parse.urlparse(target_url)
         
@@ -875,7 +871,7 @@ class SQLInjectionManager:
             data=options.get('data')
         )
     
-    def _result_to_dict(self, result: SQLInjectionResult) -> Dict[str, Any]:
+    def _result_to_dict(self, result: SQLInjectionResult) -> dict[str, Any]:
         """將結果轉換為字典"""
         return {
             'target_url': result.target_url,
@@ -1187,7 +1183,7 @@ class SQLInjectionCLI:
         except Exception as e:
             console.print(f"[bold red]導出失敗: {e}[/bold red]")
     
-    def _display_scan_results(self, results: Dict[str, Any]):
+    def _display_scan_results(self, results: dict[str, Any]):
         """顯示掃描結果"""
         summary = results['summary']
         

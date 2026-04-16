@@ -10,19 +10,17 @@ HackingTool SQL 工具管理器
 """
 
 import asyncio
-import json
-import shutil
-import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
+import shutil
+from typing import Any
 
-from aiva_common.utils.logging import get_logger
 from aiva_common.utils.ids import new_id
+from aiva_common.utils.logging import get_logger
 
 from .hackingtool_config import (
-    HACKINGTOOL_SQL_CONFIGS, HackingToolSQLConfig,
-    SQLToolType, sql_integrator
+    HACKINGTOOL_SQL_CONFIGS,
+    HackingToolSQLConfig,
 )
 
 logger = get_logger(__name__)
@@ -31,7 +29,7 @@ logger = get_logger(__name__)
 class HackingToolSQLManager:
     """HackingTool SQL 工具管理器"""
     
-    def __init__(self, tools_dir: Optional[Path] = None):
+    def __init__(self, tools_dir: Path | None = None):
         self.tools_dir = tools_dir or Path.cwd() / "hackingtool_sql_tools"
         self.configs = HACKINGTOOL_SQL_CONFIGS
         self.trace_id = new_id("hackingtool_manager")
@@ -42,7 +40,7 @@ class HackingToolSQLManager:
         logger.info("HackingTool SQL 管理器已初始化", 
                    extra={"tools_dir": str(self.tools_dir), "trace_id": self.trace_id})
     
-    async def check_all_tools_status(self) -> Dict[str, Dict[str, Any]]:
+    async def check_all_tools_status(self) -> dict[str, dict[str, Any]]:
         """檢查所有工具的狀態"""
         status_report = {}
         
@@ -52,7 +50,7 @@ class HackingToolSQLManager:
         
         return status_report
     
-    async def _check_tool_status(self, tool_name: str, config: HackingToolSQLConfig) -> Dict[str, Any]:
+    async def _check_tool_status(self, tool_name: str, config: HackingToolSQLConfig) -> dict[str, Any]:
         """檢查單個工具的狀態"""
         status = {
             "name": tool_name,
@@ -119,14 +117,14 @@ class HackingToolSQLManager:
             # 如果命令執行成功或返回預期的幫助信息，認為工具可執行
             return process.returncode in [0, 1, 2]  # 很多工具的 --help 返回非零
             
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning(f"測試工具 {tool_name} 超時 [trace_id={self.trace_id}]")
             return False
         except Exception as e:
             logger.warning(f"測試工具 {tool_name} 可執行性失敗: {e} [trace_id={self.trace_id}]")
             return False
     
-    async def install_tool(self, tool_name: str, force_reinstall: bool = False) -> Dict[str, Any]:
+    async def install_tool(self, tool_name: str, force_reinstall: bool = False) -> dict[str, Any]:
         """安裝指定工具"""
         if tool_name not in self.configs:
             return {"success": False, "error": f"Unknown tool: {tool_name}"}
@@ -193,7 +191,7 @@ class HackingToolSQLManager:
             else:
                 result["error"] = "Installation completed but tool not found"
             
-        except asyncio.TimeoutError:
+        except TimeoutError:
             result["error"] = f"Installation timeout after {config.timeout_seconds} seconds"
         except Exception as e:
             result["error"] = f"Installation failed: {str(e)}"
@@ -204,7 +202,7 @@ class HackingToolSQLManager:
         
         return result
     
-    async def install_all_tools(self, skip_existing: bool = True) -> Dict[str, Dict[str, Any]]:
+    async def install_all_tools(self, skip_existing: bool = True) -> dict[str, dict[str, Any]]:
         """安裝所有工具"""
         results = {}
         
@@ -228,7 +226,7 @@ class HackingToolSQLManager:
         
         return results
     
-    def uninstall_tool(self, tool_name: str) -> Dict[str, Any]:
+    def uninstall_tool(self, tool_name: str) -> dict[str, Any]:
         """卸載指定工具"""
         if tool_name not in self.configs:
             return {"success": False, "error": f"Unknown tool: {tool_name}"}
@@ -248,7 +246,7 @@ class HackingToolSQLManager:
             logger.error(f"{error_msg} [trace_id={self.trace_id}]")
             return {"success": False, "error": error_msg}
     
-    async def get_tool_recommendations(self, target_type: str = "web") -> List[str]:
+    async def get_tool_recommendations(self, target_type: str = "web") -> list[str]:
         """根據目標類型推薦工具"""
         recommendations = []
         
@@ -290,7 +288,7 @@ class HackingToolSQLManager:
         
         return recommendations
     
-    def get_installation_script(self, tool_names: Optional[List[str]] = None) -> str:
+    def get_installation_script(self, tool_names: list[str] | None = None) -> str:
         """生成安裝腳本"""
         if tool_names is None:
             tool_names = list(self.configs.keys())
@@ -326,7 +324,7 @@ class HackingToolSQLManager:
         
         return "\n".join(script_lines)
     
-    async def generate_status_report(self) -> Dict[str, Any]:
+    async def generate_status_report(self) -> dict[str, Any]:
         """生成詳細的狀態報告"""
         status_data = await self.check_all_tools_status()
         

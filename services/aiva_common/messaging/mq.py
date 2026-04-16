@@ -3,7 +3,6 @@
 This module provides a unified interface for RabbitMQ message broker operations.
 """
 
-import asyncio
 import logging
 from abc import ABC, abstractmethod
 from collections.abc import AsyncIterator
@@ -211,7 +210,7 @@ async def get_broker() -> AbstractBroker:
             "aio_pika module not available. "
             "Install aio_pika: pip install aio-pika"
         )
-    
+
     broker = RabbitBroker()
     await broker.connect()
     return broker

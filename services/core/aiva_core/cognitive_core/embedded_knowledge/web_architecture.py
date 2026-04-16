@@ -21,19 +21,19 @@ Web 架構安全漏洞檢測模組
     - API Rate Limit Bypass
 """
 
-import re
-import json
 import base64
 from dataclasses import dataclass, field
-from typing import Any
 from enum import Enum, auto
+import json
+import re
+from typing import Any
 
 from .base import (
-    DetectionResult,
-    ConfidenceLevel,
-    VulnerabilityType,
     AttackContext,
+    ConfidenceLevel,
+    DetectionResult,
     ResponseAnalysis,
+    VulnerabilityType,
 )
 
 
@@ -319,7 +319,7 @@ class WebArchitectureAnalyzer:
         mutations = schema_data.get("mutationType", {}).get("name", "")
         
         evidence = [
-            f"Introspection 已啟用",
+            "Introspection 已啟用",
             f"發現 {len(type_names)} 個類型",
             f"Query 類型: {queries}" if queries else "無 Query",
             f"Mutation 類型: {mutations}" if mutations else "無 Mutation",

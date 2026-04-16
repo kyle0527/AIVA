@@ -4,13 +4,12 @@ from collections.abc import Sequence
 import copy
 from dataclasses import dataclass
 import html
-import re
 from html import unescape
+import re
 from urllib.parse import unquote_plus, urlencode, urlparse, urlunparse
 
-import httpx
-
 from aiva_common.schemas import FunctionTaskPayload
+import httpx
 
 
 @dataclass
@@ -210,7 +209,7 @@ def _inject_mapping(
         mapping[parameter] = payload
         return mapping
 
-    for key in mapping.keys():
+    for key in mapping:
         mapping[key] = payload
     return mapping
 

@@ -5,14 +5,13 @@ function_web_scanner.scanners.directory_bruteforcer
 執行 Web 目錄和文件發現。
 """
 
-import requests
 import concurrent.futures
-from typing import List, Dict
 from dataclasses import dataclass
 from urllib.parse import urljoin
 
-from aiva_common.utils import get_logger
 from aiva_common.enums.common import Severity
+from aiva_common.utils import get_logger
+import requests
 
 logger = get_logger(__name__)
 
@@ -49,7 +48,7 @@ class DirectoryBruteforcer:
         })
         logger.info(f"目錄暴力破解器初始化 (threads: {threads}, verify_ssl: {verify_ssl})")
     
-    def scan(self, base_url: str, extensions: List[str] = None) -> List[DirectoryResult]:
+    def scan(self, base_url: str, extensions: list[str] = None) -> list[DirectoryResult]:
         """
         掃描目錄和文件
         
@@ -64,7 +63,7 @@ class DirectoryBruteforcer:
         results = []
         
         try:
-            with open(self.wordlist_path, 'r') as f:
+            with open(self.wordlist_path) as f:
                 wordlist = [line.strip() for line in f if line.strip()]
             
             # Generate URLs to test

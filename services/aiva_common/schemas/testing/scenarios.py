@@ -14,5 +14,5 @@ from ...enhanced import (
 
 __all__ = [
     "EnhancedScanRequest",
-    "EnhancedTaskExecution", 
+    "EnhancedTaskExecution",
 ]

@@ -11,26 +11,37 @@
 """
 
 import json
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
-from aiva_common.schemas import ScanCompletedPayload, Phase0CompletedPayload
-from aiva_common.utils import get_logger
-from aiva_common.messaging import AbstractBroker
 from aiva_common.enums import RiskLevel
-from services.core.aiva_core.core_capabilities.ingestion.scan_module_interface import ScanModuleInterface
-# 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
-from services.core.aiva_core.cognitive_core.learning_system.analysis.dynamic_strategy_adjustment import StrategyAdjuster
-from services.core.aiva_core.core_capabilities.analysis.initial_surface import InitialAttackSurface
-from services.core.aiva_core.task_planning.planner.task_generator import TaskGenerator
-from services.core.aiva_core.task_planning.executor.task_queue_manager import TaskQueueManager
-from services.core.aiva_core.service_backbone.state.session_state_manager import SessionStateManager
-from services.features.function_bizlogic.business_schemas import AttackSurfaceAnalysis
+from aiva_common.messaging import AbstractBroker
+from aiva_common.schemas import Phase0CompletedPayload, ScanCompletedPayload
+from aiva_common.utils import get_logger
 
 # [2026-01-19] 整合 AI 決策引擎
 from services.core.aiva_core.cognitive_core.decision.enhanced_decision_agent import (
-    EnhancedDecisionAgent,
     DecisionContext,
+    EnhancedDecisionAgent,
 )
+
+# 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
+from services.core.aiva_core.cognitive_core.learning_system.analysis.dynamic_strategy_adjustment import (
+    StrategyAdjuster,
+)
+from services.core.aiva_core.core_capabilities.analysis.initial_surface import (
+    InitialAttackSurface,
+)
+from services.core.aiva_core.core_capabilities.ingestion.scan_module_interface import (
+    ScanModuleInterface,
+)
+from services.core.aiva_core.service_backbone.state.session_state_manager import (
+    SessionStateManager,
+)
+from services.core.aiva_core.task_planning.executor.task_queue_manager import (
+    TaskQueueManager,
+)
+from services.core.aiva_core.task_planning.planner.task_generator import TaskGenerator
+from services.features.function_bizlogic.business_schemas import AttackSurfaceAnalysis
 
 if TYPE_CHECKING:
     pass  # 保留為將來的僅類型檢查導入
@@ -265,7 +276,9 @@ class ScanResultProcessor:
         Returns:
             已分發的任務數量
         """
-        from services.core.aiva_core.core_capabilities.output.to_functions import to_function_message
+        from services.core.aiva_core.core_capabilities.output.to_functions import (
+            to_function_message,
+        )
 
         logger.info(f"[📤] [Stage 6/7] Dispatching tasks for {scan_id}")
 

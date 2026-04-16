@@ -21,20 +21,23 @@ AIVA Web Scanner Module
     )
 """
 
+from services.features.function_web_scanner.command_handler import (
+    WebScannerCommandHandler,
+)
 from services.features.function_web_scanner.integration_tools import (
-    WebAttackManager,
-    SubdomainEnumerator,
     DirectoryScanner,
+    SubdomainEnumerator,
+    WebAttackManager,
     WebVulnerabilityScanner,
 )
 from services.features.function_web_scanner.scanners import (
-    SubdomainScanner,
     DirectoryBruteforcer,
-    TechDetector,
     PortScanner,
+    SubdomainScanner,
+    TechDetector,
     WebCrawler,
 )
-from services.features.function_web_scanner.command_handler import WebScannerCommandHandler
+
 
 def register_web_scanner_handler_to_command_center():
     """註冊 Web Scanner 命令處理器到系統命令中心

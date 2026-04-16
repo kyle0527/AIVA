@@ -19,9 +19,9 @@ Architecture:
 Date: 2026-02-09 (拆分自 enhanced_decision_agent.py)
 """
 
-import logging
 from datetime import datetime
-from typing import Any, Optional, TYPE_CHECKING, Protocol
+import logging
+from typing import Any, Protocol
 
 from aiva_common.utils import get_logger
 
@@ -64,7 +64,7 @@ class KnowledgeDecisionMixin:
     def query_internal_capabilities(
         self,
         query: str,
-        scope_filter: Optional[str] = None,
+        scope_filter: str | None = None,
         top_k: int = 5,
     ) -> list[dict[str, Any]]:
         """AI 查詢內部能力庫
@@ -210,8 +210,8 @@ class KnowledgeDecisionMixin:
         """
         # 延遲導入，避免循環依賴
         from ..embedded_knowledge import (
-            VulnerabilityDetector,
             AttackContext,
+            VulnerabilityDetector,
         )
 
         results: list[dict[str, Any]] = []
@@ -271,7 +271,7 @@ class KnowledgeDecisionMixin:
     def identify_high_risk_cves(
         self,
         url: str = "",
-        response_headers: Optional[dict[str, str]] = None,
+        response_headers: dict[str, str] | None = None,
         response_body: str = "",
     ) -> list[dict[str, Any]]:
         """AI 識別高風險 CVE
@@ -310,7 +310,7 @@ class KnowledgeDecisionMixin:
     def generate_waf_bypass_payloads(
         self,
         vuln_type: str,
-        waf_type: Optional[str] = None,
+        waf_type: str | None = None,
     ) -> list[dict[str, Any]]:
         """AI 生成 WAF 繞過 payload
 
@@ -358,7 +358,7 @@ class KnowledgeDecisionMixin:
         self,
         response_headers: dict[str, str],
         response_body: str = "",
-        endpoints: Optional[list[str]] = None,
+        endpoints: list[str] | None = None,
     ) -> dict[str, Any]:
         """AI 分析 Web 架構
 

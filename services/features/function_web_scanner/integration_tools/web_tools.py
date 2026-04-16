@@ -12,28 +12,22 @@ AIVA Web Attack Module - Task 11
 """
 
 import asyncio
-import json
-import os
-import re
-import subprocess
-import time
-import urllib.parse
 from dataclasses import dataclass, field
 from datetime import datetime
+import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+import re
+from typing import Any
+import urllib.parse
 
 import aiohttp
+from aiva_common.utils import get_logger
 import dns.resolver
-import requests
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 from rich.text import Text
-
-from aiva_common.schemas import APIResponse
-from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 console = Console()
@@ -54,10 +48,10 @@ class WebTarget:
     url: str
     domain: str = ""
     ip: str = ""
-    ports: List[int] = field(default_factory=list)
-    subdomains: List[str] = field(default_factory=list)
-    technologies: List[str] = field(default_factory=list)
-    vulnerabilities: List[Dict[str, Any]] = field(default_factory=list)
+    ports: list[int] = field(default_factory=list)
+    subdomains: list[str] = field(default_factory=list)
+    technologies: list[str] = field(default_factory=list)
+    vulnerabilities: list[dict[str, Any]] = field(default_factory=list)
     
     def __post_init__(self):
         if not self.domain:
@@ -70,7 +64,7 @@ class SubdomainResult:
     """子域名枚舉結果"""
     domain: str
     subdomain: str
-    ip_addresses: List[str] = field(default_factory=list)
+    ip_addresses: list[str] = field(default_factory=list)
     source: str = ""
     confidence: float = 0.0
 
@@ -94,18 +88,18 @@ class ScanResult:
     scan_type: str
     timestamp: datetime
     status: str  # success, failed, partial
-    data: Dict[str, Any]
-    error: Optional[str] = None
+    data: dict[str, Any]
+    error: str | None = None
 
 
 class SubdomainEnumerator:
     """子域名枚舉器 - 基於 Sublist3r 模式"""
     
     def __init__(self):
-        self.found_subdomains: Set[str] = set()
-        self.session: Optional[aiohttp.ClientSession] = None
+        self.found_subdomains: set[str] = set()
+        self.session: aiohttp.ClientSession | None = None
         
-    async def enumerate_subdomains(self, domain: str) -> List[str]:
+    async def enumerate_subdomains(self, domain: str) -> list[str]:
         """枚舉子域名"""
         try:
             self.found_subdomains.clear()
@@ -252,10 +246,10 @@ class DirectoryScanner:
     """目錄掃描器 - 基於 Dirb 模式"""
     
     def __init__(self):
-        self.session: Optional[aiohttp.ClientSession] = None
-        self.found_directories: List[Dict[str, Any]] = []
+        self.session: aiohttp.ClientSession | None = None
+        self.found_directories: list[dict[str, Any]] = []
         
-    async def scan_directories(self, target_url: str, wordlist: Optional[List[str]] = None) -> List[Dict[str, Any]]:
+    async def scan_directories(self, target_url: str, wordlist: list[str] | None = None) -> list[dict[str, Any]]:
         """掃描目錄和文件"""
         try:
             self.found_directories.clear()
@@ -304,7 +298,7 @@ class DirectoryScanner:
         except Exception as e:
             logger.debug(f"路徑檢查失敗 {url}: {e}")
     
-    def _get_default_wordlist(self) -> List[str]:
+    def _get_default_wordlist(self) -> list[str]:
         """獲取默認詞典"""
         return [
             'admin/', 'administrator/', 'login/', 'wp-admin/', 'phpmyadmin/',
@@ -319,12 +313,12 @@ class VulnerabilityScanner:
     """漏洞掃描器 — 執行多類型 Web 漏洞檢測並分析回應"""
 
     def __init__(self):
-        self.vulnerabilities: List[Dict[str, Any]] = []
-        self.session: Optional[aiohttp.ClientSession] = None
+        self.vulnerabilities: list[dict[str, Any]] = []
+        self.session: aiohttp.ClientSession | None = None
         self._baseline_content: str = ""
         self._baseline_status: int = 0
 
-    async def scan_vulnerabilities(self, target_url: str) -> List[Dict[str, Any]]:
+    async def scan_vulnerabilities(self, target_url: str) -> list[dict[str, Any]]:
         """掃描常見漏洞"""
         try:
             self.vulnerabilities.clear()
@@ -685,9 +679,9 @@ class TechnologyDetector:
     """技術檢測器"""
     
     def __init__(self):
-        self.technologies: List[str] = []
+        self.technologies: list[str] = []
         
-    async def detect_technologies(self, target_url: str) -> List[str]:
+    async def detect_technologies(self, target_url: str) -> list[str]:
         """檢測網站使用的技術"""
         try:
             self.technologies.clear()
@@ -771,9 +765,9 @@ class WebAttackManager:
         self.directory_scanner = DirectoryScanner()
         self.vulnerability_scanner = VulnerabilityScanner()
         self.technology_detector = TechnologyDetector()
-        self.scan_results: List[ScanResult] = []
+        self.scan_results: list[ScanResult] = []
         
-    async def comprehensive_scan(self, target_url: str, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    async def comprehensive_scan(self, target_url: str, options: dict[str, Any] | None = None) -> dict[str, Any]:
         """執行綜合掃描"""
         options = options or {}
         target = WebTarget(url=target_url)
@@ -1139,7 +1133,7 @@ class WebAttackCLI:
         except Exception as e:
             console.print(f"[bold red]導出失敗: {e}[/bold red]")
     
-    def _display_scan_results(self, results: Dict[str, Any]):
+    def _display_scan_results(self, results: dict[str, Any]):
         """顯示掃描結果"""
         summary = results['scan_summary']
         

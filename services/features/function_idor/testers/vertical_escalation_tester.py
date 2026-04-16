@@ -11,10 +11,9 @@ with lower-privilege credentials.
 from dataclasses import dataclass
 from enum import Enum
 
+from aiva_common.schemas import FunctionTaskPayload
 import httpx
 from pydantic import HttpUrl
-
-from aiva_common.schemas import FunctionTaskPayload
 
 
 class PrivilegeLevel(Enum):

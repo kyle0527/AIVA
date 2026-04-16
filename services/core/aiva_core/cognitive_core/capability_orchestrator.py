@@ -25,26 +25,25 @@
 """
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import datetime
 
 # UTC 兼容性处理（Python 3.11+ 使用 UTC，较旧版本使用 timezone.utc）
 try:
     from datetime import UTC  # type: ignore
 except ImportError:
-    UTC = timezone.utc  # type: ignore
-from typing import List, Dict, Any, Optional, Tuple, TYPE_CHECKING
+    UTC = UTC  # type: ignore
+from typing import TYPE_CHECKING, Any, Optional
 from uuid import uuid4
 
+from aiva_common.async_utils import default_process_manager
+from aiva_common.core.error_handling import AIVAError, ErrorSeverity, ErrorType
+from aiva_common.utils import get_logger
 from pydantic import BaseModel, Field
 
-from aiva_common.utils import get_logger
-from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity
-from aiva_common.async_utils import AsyncProcessManager, default_process_manager
-
-from .internal_loop_connector import InternalLoopConnector
-from .rag.knowledge_base import KnowledgeBase
 from ..core_capabilities.capability_registry import get_capability_registry
 from ..core_capabilities.risk_policy_manager import RiskPolicyManager
+from .internal_loop_connector import InternalLoopConnector
+from .rag.knowledge_base import KnowledgeBase
 
 if TYPE_CHECKING:
     from .learning_system.experience_manager import ExperienceManager
@@ -57,7 +56,7 @@ class TaskRequirement(BaseModel):
     task_id: str = Field(..., description="任務唯一ID")
     task_type: str = Field(..., description="任務類型: scan, attack, analysis, comprehensive")
     target: str = Field(..., description="目標 URL 或 IP")
-    objectives: List[str] = Field(default_factory=list, description="任務目標列表")
+    objectives: list[str] = Field(default_factory=list, description="任務目標列表")
     constraints: dict[str, Any] = Field(default_factory=dict, description="約束條件")
     priority: int = Field(default=5, ge=1, le=10, description="優先級 1-10")
 
@@ -66,11 +65,11 @@ class CapabilityPlan(BaseModel):
     """能力執行計劃 (v2.0 - CLI 架構)"""
     plan_id: str = Field(..., description="計劃唯一ID")
     task_id: str = Field(..., description="關聯的任務ID")
-    selected_capabilities: List[dict[str, Any]] = Field(default_factory=list, description="選中的能力列表")
-    execution_sequence: List[str] = Field(default_factory=list, description="執行順序 (capability_id)")
+    selected_capabilities: list[dict[str, Any]] = Field(default_factory=list, description="選中的能力列表")
+    execution_sequence: list[str] = Field(default_factory=list, description="執行順序 (capability_id)")
     estimated_duration: int = Field(default=0, description="預計耗時(秒)")
     risk_level: str = Field(default="medium", description="風險等級: low, medium, high")
-    cli_commands: List[str] = Field(default_factory=list, description="生成的 CLI 命令列表")
+    cli_commands: list[str] = Field(default_factory=list, description="生成的 CLI 命令列表")
     reasoning: str = Field(default="", description="AI 決策理由")
 
 
@@ -78,11 +77,11 @@ class ExecutionResult(BaseModel):
     """執行結果 (v2.0 - CLI 架構)"""
     plan_id: str = Field(..., description="計劃ID")
     success: bool = Field(default=False, description="是否成功")
-    completed_commands: List[str] = Field(default_factory=list, description="已完成的命令")
-    failed_commands: List[str] = Field(default_factory=list, description="失敗的命令")
-    command_outputs: Dict[str, dict[str, Any]] = Field(default_factory=dict, description="命令輸出映射 {cmd: {stdout, stderr, exit_code}}")
+    completed_commands: list[str] = Field(default_factory=list, description="已完成的命令")
+    failed_commands: list[str] = Field(default_factory=list, description="失敗的命令")
+    command_outputs: dict[str, dict[str, Any]] = Field(default_factory=dict, description="命令輸出映射 {cmd: {stdout, stderr, exit_code}}")
     total_duration: float = Field(default=0.0, description="總耗時(秒)")
-    issues_found: List[dict[str, Any]] = Field(default_factory=list, description="發現的問題列表")
+    issues_found: list[dict[str, Any]] = Field(default_factory=list, description="發現的問題列表")
 
 
 class CapabilityOrchestrator:
@@ -118,8 +117,8 @@ class CapabilityOrchestrator:
     
     def __init__(
         self,
-        rag_kb: Optional[KnowledgeBase] = None,
-        internal_connector: Optional[InternalLoopConnector] = None,
+        rag_kb: KnowledgeBase | None = None,
+        internal_connector: InternalLoopConnector | None = None,
         experience_manager: Optional["ExperienceManager"] = None
     ):
         """初始化能力編排器
@@ -140,7 +139,7 @@ class CapabilityOrchestrator:
         self.experience_manager = experience_manager
         
         # 執行歷史記錄 (用於學習優化)
-        self.execution_history: List[Tuple[CapabilityPlan, ExecutionResult]] = []
+        self.execution_history: list[tuple[CapabilityPlan, ExecutionResult]] = []
         
         # 能力性能統計 (用於優化選擇)
         self.capability_performance: dict[str, dict[str, Any]] = {}
@@ -244,9 +243,9 @@ class CapabilityOrchestrator:
     async def _query_relevant_capabilities(
         self, 
         requirement: TaskRequirement,
-        aiva_module_filter: Optional[str] = None,
-        entry_point_filter: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+        aiva_module_filter: str | None = None,
+        entry_point_filter: str | None = None
+    ) -> list[dict[str, Any]]:
         """查詢相關能力（使用 InternalLoopConnector.query_capabilities）
         
         ✅ 架構修復 (2025-12-16):
@@ -323,10 +322,10 @@ class CapabilityOrchestrator:
     
     def _filter_by_aiva_module(
         self,
-        capabilities: List[Dict[str, Any]],
-        aiva_module_filter: Optional[str] = None,
-        entry_point_filter: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+        capabilities: list[dict[str, Any]],
+        aiva_module_filter: str | None = None,
+        entry_point_filter: str | None = None
+    ) -> list[dict[str, Any]]:
         """✅ 新增：按六大模組和入口點過濾能力
         
         Args:
@@ -363,8 +362,8 @@ class CapabilityOrchestrator:
     
     def group_capabilities_by_aiva_module(
         self,
-        capabilities: List[Dict[str, Any]]
-    ) -> Dict[str, List[Dict[str, Any]]]:
+        capabilities: list[dict[str, Any]]
+    ) -> dict[str, list[dict[str, Any]]]:
         """✅ 新增：按六大模組分組能力
         
         用於展示和分析能力分佈
@@ -391,7 +390,7 @@ class CapabilityOrchestrator:
     def _fallback_capability_search(
         self,
         requirement: TaskRequirement
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """降級方案: 直接從 CapabilityRegistry 搜索
         
         當 RAG 不可用時使用。遵循 aiva_common 原則：
@@ -433,8 +432,8 @@ class CapabilityOrchestrator:
     
     def _filter_available_capabilities(
         self,
-        capabilities: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
+        capabilities: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
         """過濾可用且健康的能力
         
         檢查能力的健康狀態、可用性,過濾掉不可用的能力
@@ -465,9 +464,9 @@ class CapabilityOrchestrator:
     
     def _select_best_capabilities(
         self,
-        capabilities: List[Dict[str, Any]],
+        capabilities: list[dict[str, Any]],
         requirement: TaskRequirement
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """選擇最佳能力組合
         
         根據歷史性能、健康狀態、任務匹配度選擇最佳能力
@@ -497,7 +496,7 @@ class CapabilityOrchestrator:
     
     def _calculate_capability_score(
         self,
-        capability: Dict[str, Any],
+        capability: dict[str, Any],
         requirement: TaskRequirement
     ) -> float:
         """計算能力評分
@@ -552,9 +551,9 @@ class CapabilityOrchestrator:
     
     def _generate_execution_sequence(
         self,
-        capabilities: List[Dict[str, Any]],
+        capabilities: list[dict[str, Any]],
         requirement: TaskRequirement
-    ) -> List[str]:
+    ) -> list[str]:
         """生成執行序列
         
         根據能力間的依賴關係和任務類型決定執行順序
@@ -587,9 +586,9 @@ class CapabilityOrchestrator:
     
     def _order_scan_sequence(
         self,
-        cap_ids: List[str],
-        capabilities: List[Dict[str, Any]]
-    ) -> List[str]:
+        cap_ids: list[str],
+        capabilities: list[dict[str, Any]]
+    ) -> list[str]:
         """排序掃描能力執行順序
         
         Phase 0 (快速偵察) → Phase 1 (深度掃描) → 專項掃描
@@ -598,7 +597,7 @@ class CapabilityOrchestrator:
         phase1_caps = []
         other_caps = []
         
-        for cap_id, cap in zip(cap_ids, capabilities):
+        for cap_id, cap in zip(cap_ids, capabilities, strict=False):
             name = cap["metadata"].get("capability_name", "").lower()
             
             if "phase0" in name or "reconnaissance" in name:
@@ -612,9 +611,9 @@ class CapabilityOrchestrator:
     
     def _order_attack_sequence(
         self,
-        cap_ids: List[str],
-        capabilities: List[Dict[str, Any]]
-    ) -> List[str]:
+        cap_ids: list[str],
+        capabilities: list[dict[str, Any]]
+    ) -> list[str]:
         """排序攻擊能力執行順序
         
         低風險 → 中風險 → 高風險
@@ -629,7 +628,7 @@ class CapabilityOrchestrator:
         }
         
         scored = []
-        for cap_id, cap in zip(cap_ids, capabilities):
+        for cap_id, cap in zip(cap_ids, capabilities, strict=False):
             name = cap["metadata"].get("capability_name", "").lower()
             risk = 1
             
@@ -645,9 +644,9 @@ class CapabilityOrchestrator:
     
     def _order_comprehensive_sequence(
         self,
-        cap_ids: List[str],
-        capabilities: List[Dict[str, Any]]
-    ) -> List[str]:
+        cap_ids: list[str],
+        capabilities: list[dict[str, Any]]
+    ) -> list[str]:
         """排序綜合任務執行順序
         
         掃描 → 分析 → 攻擊
@@ -657,7 +656,7 @@ class CapabilityOrchestrator:
         attack_caps = []
         other_caps = []
         
-        for cap_id, cap in zip(cap_ids, capabilities):
+        for cap_id, cap in zip(cap_ids, capabilities, strict=False):
             category = cap["metadata"].get("category", "").lower()
             
             if "scan" in category:
@@ -673,10 +672,10 @@ class CapabilityOrchestrator:
     
     def _capabilities_to_cli_commands(
         self,
-        capabilities: List[Dict[str, Any]],
-        execution_sequence: List[str],
+        capabilities: list[dict[str, Any]],
+        execution_sequence: list[str],
         requirement: TaskRequirement
-    ) -> List[str]:
+    ) -> list[str]:
         """將能力轉換為 CLI 命令
         
         這是連接內部分析和實際執行的關鍵步驟（v2.0 - CLI 架構）
@@ -754,7 +753,7 @@ class CapabilityOrchestrator:
     
     def _assess_risk_level(
         self,
-        capabilities: List[Dict[str, Any]],
+        capabilities: list[dict[str, Any]],
         requirement: TaskRequirement
     ) -> str:
         """評估風險等級（使用 RiskPolicyManager 從 YAML 讀取策略）
@@ -810,8 +809,8 @@ class CapabilityOrchestrator:
     def _generate_reasoning(
         self,
         requirement: TaskRequirement,
-        capabilities: List[Dict[str, Any]],
-        _sequence: List[str]
+        capabilities: list[dict[str, Any]],
+        _sequence: list[str]
     ) -> str:
         """生成決策理由
         
@@ -892,7 +891,7 @@ class CapabilityOrchestrator:
                     
                     if result["exit_code"] == 0 and not result["timed_out"]:
                         completed.append(cli_cmd)
-                        logger.info(f"   ✅ Command succeeded")
+                        logger.info("   ✅ Command succeeded")
                     else:
                         failed.append(cli_cmd)
                         if result["timed_out"]:
@@ -934,7 +933,7 @@ class CapabilityOrchestrator:
             logger.error(f"❌ Execution failed: {e}", exc_info=True)
             raise
     
-    def _extract_issues_from_outputs(self, command_outputs: Dict[str, dict]) -> List[Dict[str, Any]]:
+    def _extract_issues_from_outputs(self, command_outputs: dict[str, dict]) -> list[dict[str, Any]]:
         """從命令輸出中提取發現的問題
         
         Args:
@@ -1072,9 +1071,9 @@ class CapabilityOrchestrator:
 async def quick_plan_and_execute(
     task_type: str,
     target: str,
-    objectives: List[str],
+    objectives: list[str],
     **kwargs
-) -> Tuple[CapabilityPlan, ExecutionResult]:
+) -> tuple[CapabilityPlan, ExecutionResult]:
     """快速計劃和執行
     
     便捷函數,用於快速測試和演示

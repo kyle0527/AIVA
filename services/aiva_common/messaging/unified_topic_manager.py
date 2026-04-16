@@ -13,12 +13,12 @@ AIVA 統一 Topic 管理器 - V2 架構增強版
 """
 
 from __future__ import annotations
-from typing import Dict, List, Optional, Set
-from enum import Enum
-from dataclasses import dataclass
-import logging
 
-from aiva_common.enums import Topic, ModuleName
+import logging
+from dataclasses import dataclass
+from enum import Enum
+
+from aiva_common.enums import Topic
 from aiva_common.schemas.generated.messaging import AivaMessage
 
 logger = logging.getLogger(__name__)
@@ -52,18 +52,18 @@ class UnifiedTopicManager:
     3. 向後兼容性維護
     4. Topic 映射與驗證
     """
-    
+
     def __init__(self):
         self._topic_metadata = self._initialize_topic_metadata()
         self._legacy_mappings = self._initialize_legacy_mappings()
-    
-    def _initialize_topic_metadata(self) -> Dict[str, TopicMetadata]:
+
+    def _initialize_topic_metadata(self) -> dict[str, TopicMetadata]:
         """初始化 Topic 元資料"""
         return {
             # Scan Topics
             Topic.TASK_SCAN_START: TopicMetadata(
                 category="tasks", module="scan", action="start",
-                description="掃描任務啟動", 
+                description="掃描任務啟動",
                 default_routing=RoutingStrategy.DIRECT, priority=7
             ),
             Topic.RESULTS_SCAN_COMPLETED: TopicMetadata(
@@ -71,19 +71,19 @@ class UnifiedTopicManager:
                 description="掃描結果完成",
                 default_routing=RoutingStrategy.BROADCAST, priority=6
             ),
-            
-            # Function Topics  
+
+            # Function Topics
             Topic.TASK_FUNCTION_START: TopicMetadata(
                 category="tasks", module="function", action="start",
                 description="函式測試任務啟動",
                 default_routing=RoutingStrategy.DIRECT, priority=7
             ),
             Topic.RESULTS_FUNCTION_COMPLETED: TopicMetadata(
-                category="results", module="function", action="completed", 
+                category="results", module="function", action="completed",
                 description="函式測試結果完成",
                 default_routing=RoutingStrategy.BROADCAST, priority=6
             ),
-            
+
             # AI Topics
             Topic.TASK_AI_TRAINING_START: TopicMetadata(
                 category="tasks", module="ai", action="training.start",
@@ -92,10 +92,10 @@ class UnifiedTopicManager:
             ),
             Topic.EVENT_AI_EXPERIENCE_CREATED: TopicMetadata(
                 category="events", module="ai", action="experience.created",
-                description="AI 經驗創建事件", 
+                description="AI 經驗創建事件",
                 default_routing=RoutingStrategy.BROADCAST, priority=5
             ),
-            
+
             # General Topics
             Topic.FINDING_DETECTED: TopicMetadata(
                 category="findings", module="core", action="detected",
@@ -103,13 +103,13 @@ class UnifiedTopicManager:
                 default_routing=RoutingStrategy.BROADCAST, priority=9
             ),
             Topic.COMMAND_TASK_CANCEL: TopicMetadata(
-                category="commands", module="core", action="task.cancel", 
+                category="commands", module="core", action="task.cancel",
                 description="任務取消命令",
                 default_routing=RoutingStrategy.DIRECT, priority=8
             ),
         }
-    
-    def _initialize_legacy_mappings(self) -> Dict[str, str]:
+
+    def _initialize_legacy_mappings(self) -> dict[str, str]:
         """初始化舊版 Topic 映射"""
         return {
             # 舊版 routing key 映射到新版 Topic
@@ -120,63 +120,63 @@ class UnifiedTopicManager:
             "finding.new": Topic.FINDING_DETECTED,
             "task.cancel": Topic.COMMAND_TASK_CANCEL,
         }
-    
-    def get_topic_metadata(self, topic: str) -> Optional[TopicMetadata]:
+
+    def get_topic_metadata(self, topic: str) -> TopicMetadata | None:
         """獲取 Topic 元資料"""
         return self._topic_metadata.get(topic)
-    
+
     def get_routing_strategy(self, topic: str) -> RoutingStrategy:
         """獲取 Topic 的預設路由策略"""
         metadata = self.get_topic_metadata(topic)
         return metadata.default_routing if metadata else RoutingStrategy.BROADCAST
-    
+
     def get_priority(self, topic: str) -> int:
         """獲取 Topic 的預設優先級"""
         metadata = self.get_topic_metadata(topic)
         return metadata.priority if metadata else 5
-    
+
     def normalize_topic(self, legacy_topic: str) -> str:
         """標準化 Topic（支援舊版映射）"""
         # 如果是新版 Topic，直接返回
         if legacy_topic in self._topic_metadata:
             return legacy_topic
-        
+
         # 如果是舊版，進行映射
         if legacy_topic in self._legacy_mappings:
             new_topic = self._legacy_mappings[legacy_topic]
             logger.info(f"🔄 Topic 映射: {legacy_topic} -> {new_topic}")
             return new_topic
-        
+
         # 未知 Topic，記錄警告
         logger.warning(f"⚠️  未知 Topic: {legacy_topic}")
         return legacy_topic
-    
+
     def validate_topic(self, topic: str) -> bool:
         """驗證 Topic 是否有效"""
         return topic in self._topic_metadata or topic in self._legacy_mappings
-    
-    def get_topics_by_category(self, category: str) -> List[str]:
+
+    def get_topics_by_category(self, category: str) -> list[str]:
         """根據類別獲取 Topic 列表"""
         return [
             topic for topic, metadata in self._topic_metadata.items()
             if metadata.category == category
         ]
-    
-    def get_topics_by_module(self, module: str) -> List[str]:
+
+    def get_topics_by_module(self, module: str) -> list[str]:
         """根據模組獲取 Topic 列表"""
         return [
             topic for topic, metadata in self._topic_metadata.items()
             if metadata.module == module
         ]
-    
+
     def create_enhanced_message(
         self,
         topic: str,
-        payload: Dict,
+        payload: dict,
         source_module: str,
-        target_module: Optional[str] = None,
-        trace_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
+        target_module: str | None = None,
+        trace_id: str | None = None,
+        correlation_id: str | None = None,
         **kwargs
     ) -> AivaMessage:
         """創建增強版 AivaMessage
@@ -185,16 +185,17 @@ class UnifiedTopicManager:
         """
         import uuid
         from datetime import datetime
+
         from aiva_common.schemas.generated.base_types import MessageHeader
-        
+
         # 標準化 Topic
         normalized_topic = self.normalize_topic(topic)
-        
+
         # 獲取 Topic 元資料
         metadata = self.get_topic_metadata(normalized_topic)
         routing_strategy = metadata.default_routing if metadata else RoutingStrategy.BROADCAST
         priority = metadata.priority if metadata else 5
-        
+
         # 創建 MessageHeader
         header = MessageHeader(
             message_id=str(uuid.uuid4()),
@@ -205,7 +206,7 @@ class UnifiedTopicManager:
             timestamp=datetime.now(),
             version="1.1"
         )
-        
+
         # 創建 AivaMessage
         return AivaMessage(
             header=header,
@@ -221,8 +222,8 @@ class UnifiedTopicManager:
             metadata=kwargs.get('metadata', {}),
             ttl_seconds=kwargs.get('ttl_seconds')
         )
-    
-    def get_migration_report(self) -> Dict[str, any]:
+
+    def get_migration_report(self) -> dict[str, any]:
         """生成遷移報告"""
         return {
             "total_topics": len(self._topic_metadata),
@@ -231,7 +232,7 @@ class UnifiedTopicManager:
             "modules": list({m.module for m in self._topic_metadata.values()}),
             "routing_strategies": {
                 strategy.value: len([
-                    m for m in self._topic_metadata.values() 
+                    m for m in self._topic_metadata.values()
                     if m.default_routing == strategy
                 ])
                 for strategy in RoutingStrategy

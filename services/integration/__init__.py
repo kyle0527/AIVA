@@ -71,6 +71,7 @@ def register_search_handler_to_command_center(config: dict = None) -> None:
         })
     """
     from aiva_common.core.command_center import get_command_center
+
     from .search_command_handler import SearchCommandHandler
     
     command_center = get_command_center()

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 功能步驟執行器
 
@@ -19,11 +18,10 @@
    此模組保留但無法正常運作，直到功能模組統一遷移。
 """
 
-import time
-import logging
-from typing import Any, Callable, Dict, List, Optional, Set, Type
+from collections.abc import Callable
 from dataclasses import dataclass, field
-
+import time
+from typing import Any
 
 # ==================== Stub Classes (替代已歸檔的 base 模組) ====================
 
@@ -33,20 +31,20 @@ class FeatureRegistry:
     NOTE: 原 base/feature_registry.py 已歸檔。
     此為 stub 實現，等待功能模組統一遷移。
     """
-    _registry: Dict[str, Type[Any]] = {}
+    _registry: dict[str, type[Any]] = {}
 
     @classmethod
-    def register(cls, name: str, feature_class: Type[Any]) -> None:
+    def register(cls, name: str, feature_class: type[Any]) -> None:
         """註冊功能模組"""
         cls._registry[name] = feature_class
 
     @classmethod
-    def get(cls, name: str) -> Optional[Type[Any]]:
+    def get(cls, name: str) -> type[Any] | None:
         """取得功能模組類別"""
         return cls._registry.get(name)
 
     @classmethod
-    def list_features(cls) -> List[str]:
+    def list_features(cls) -> list[str]:
         """列出所有已註冊功能"""
         return list(cls._registry.keys())
 
@@ -61,13 +59,13 @@ class FeatureResult:
     """
     success: bool = True
     ok: bool = True  # 別名，部分程式碼使用 ok 而非 success
-    findings: List[Dict[str, Any]] = field(default_factory=list)
-    error: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    findings: list[dict[str, Any]] = field(default_factory=list)
+    error: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
     feature: str = ""  # 功能模組名稱
-    command_record: Dict[str, Any] = field(default_factory=dict)  # 執行記錄
+    command_record: dict[str, Any] = field(default_factory=dict)  # 執行記錄
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """轉換為字典"""
         return {
             "success": self.success,
@@ -112,9 +110,9 @@ class FeatureStepExecutor:
 
     def __init__(
         self,
-        on_trace: Optional[Callable[[Dict[str, Any]], None]] = None,
-        on_experience: Optional[Callable[[Dict[str, Any]], None]] = None,
-        on_emit: Optional[Callable[[Dict[str, Any]], None]] = None
+        on_trace: Callable[[dict[str, Any]], None] | None = None,
+        on_experience: Callable[[dict[str, Any]], None] | None = None,
+        on_emit: Callable[[dict[str, Any]], None] | None = None
     ) -> None:
         """
         初始化功能步驟執行器
@@ -127,7 +125,7 @@ class FeatureStepExecutor:
         self.on_trace = on_trace or (lambda _: None)
         self.on_experience = on_experience or (lambda _: None)
         self.on_emit = on_emit or (lambda _: None)
-        self.execution_stats: Dict[str, Any] = {
+        self.execution_stats: dict[str, Any] = {
             "total_executions": 0,
             "successful_executions": 0,
             "failed_executions": 0,
@@ -135,7 +133,7 @@ class FeatureStepExecutor:
             "total_findings": 0
         }
 
-    def execute(self, step: Dict[str, Any]) -> Dict[str, Any]:
+    def execute(self, step: dict[str, Any]) -> dict[str, Any]:
         """
         執行功能步驟
 
@@ -244,9 +242,9 @@ class FeatureStepExecutor:
 
     def _distribute_result(
         self,
-        step: Dict[str, Any],
+        step: dict[str, Any],
         result: FeatureResult,
-        result_dict: Dict[str, Any]
+        result_dict: dict[str, Any]
     ) -> None:
         """
         將結果分發到各個系統組件
@@ -296,7 +294,7 @@ class FeatureStepExecutor:
             # 分發失敗不應該影響主要執行流程
             print(f"結果分發失敗: {e}")
 
-    def _handle_error(self, step: Dict[str, Any], error_result: Dict[str, Any]) -> None:
+    def _handle_error(self, step: dict[str, Any], error_result: dict[str, Any]) -> None:
         """
         處理執行錯誤
 
@@ -328,7 +326,7 @@ class FeatureStepExecutor:
         except Exception as e:
             print(f"錯誤處理失敗: {e}")
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """
         取得執行統計資訊
 
@@ -358,9 +356,9 @@ class FeatureStepExecutor:
 
 # 便利函數：快速創建執行器
 def create_executor(
-    trace_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
-    experience_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
-    emit_callback: Optional[Callable[[Dict[str, Any]], None]] = None
+    trace_callback: Callable[[dict[str, Any]], None] | None = None,
+    experience_callback: Callable[[dict[str, Any]], None] | None = None,
+    emit_callback: Callable[[dict[str, Any]], None] | None = None
 ) -> FeatureStepExecutor:
     """
     快速創建功能步驟執行器
@@ -380,7 +378,7 @@ def create_executor(
     )
 
 # 全域執行器實例（可選使用）
-_global_executor: Optional[FeatureStepExecutor] = None
+_global_executor: FeatureStepExecutor | None = None
 
 
 def get_global_executor() -> FeatureStepExecutor:
@@ -392,9 +390,9 @@ def get_global_executor() -> FeatureStepExecutor:
 
 
 def set_global_callbacks(
-    trace_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
-    experience_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
-    emit_callback: Optional[Callable[[Dict[str, Any]], None]] = None
+    trace_callback: Callable[[dict[str, Any]], None] | None = None,
+    experience_callback: Callable[[dict[str, Any]], None] | None = None,
+    emit_callback: Callable[[dict[str, Any]], None] | None = None
 ) -> None:
     """設定全域執行器的回調函數"""
     executor = get_global_executor()

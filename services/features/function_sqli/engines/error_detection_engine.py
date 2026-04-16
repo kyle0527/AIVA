@@ -5,9 +5,8 @@
 
 
 import re
-import aiohttp
-from typing import Dict, List, Tuple
 
+import aiohttp
 from aiva_common.utils import get_logger
 
 from ..config import SqliConfig
@@ -59,7 +58,7 @@ class ErrorDetectionEngine(BaseDetector):
         ]
 
     async def detect(
-        self, target_url: str, params: Dict[str, str], method: str = "GET"
+        self, target_url: str, params: dict[str, str], method: str = "GET"
     ) -> list[DetectionResult]:
         """執行錯誤檢測"""
         results = []
@@ -120,7 +119,7 @@ class ErrorDetectionEngine(BaseDetector):
         logger.debug(f"Error detection completed. Found {len(results)} vulnerabilities")
         return results
 
-    def _analyze_error_response(self, response_text: str) -> Tuple[str, bool]:
+    def _analyze_error_response(self, response_text: str) -> tuple[str, bool]:
         """分析回應中的SQL錯誤"""
         for db_type, patterns in self.error_patterns.items():
             for pattern in patterns:

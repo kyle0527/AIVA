@@ -18,15 +18,14 @@ WAF 繞過技術字典引擎
     - 特定廠商繞過 (Vendor-Specific Bypass)
 """
 
-import re
-import urllib.parse
 from dataclasses import dataclass, field
-from typing import Any
 from enum import Enum, auto
+import re
+from typing import Any
+import urllib.parse
 
 from .base import (
     WAFVendor,
-    KnowledgeRegistry,
 )
 
 
@@ -421,7 +420,7 @@ class WAFBypassEngine:
         for vendor, signatures in cls.WAF_DETECTION_SIGNATURES.items():
             # 檢查 Headers
             for header in signatures.get("headers", []):
-                if header.lower() in [h.lower() for h in response_headers.keys()]:
+                if header.lower() in [h.lower() for h in response_headers]:
                     matched_indicators.append(f"header:{header}")
             
             # 檢查 Cookies

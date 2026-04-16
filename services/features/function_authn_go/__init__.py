@@ -24,7 +24,7 @@ Authentication Testing Module (Go)
 """
 
 # 導入 Python 包裝器（推薦）
-from .authn_wrapper import scan_authentication, get_engine_info
+from .authn_wrapper import get_engine_info, scan_authentication
 
 # 導入舊的 Manager（已廢棄，請使用 authn_wrapper）
 # from .authn_manager import AuthnManager, scan_target

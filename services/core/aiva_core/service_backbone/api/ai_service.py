@@ -18,10 +18,10 @@ AIVA AI 持續運作服務
 """
 
 import asyncio
-import signal
-import logging
 from datetime import datetime
-from typing import Optional, Dict, Any
+import logging
+import signal
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ def signal_handler(signum, frame):
 class AIService:
     """AI 持續運作服務"""
     
-    def __init__(self, mode: str, config: Dict[str, Any]):
+    def __init__(self, mode: str, config: dict[str, Any]):
         self.mode = mode
         self.config = config
         self.running = False
@@ -121,7 +121,9 @@ class AIService:
             
     async def run_monitor_mode(self):
         """後台監控模式 - 持續監控並掃描"""
-        from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+        from services.scan.coordinators.multi_engine_coordinator import (
+            MultiEngineCoordinator,
+        )
         
         targets = self.config.get("targets", [])
         interval = self.config.get("interval", 3600)  # 預設 1 小時
@@ -130,7 +132,7 @@ class AIService:
             logger.warning("[WARNING] 未指定監控目標，使用預設目標")
             targets = ["http://localhost:3000"]
         
-        logger.info(f"🔍 監控模式啟動")
+        logger.info("🔍 監控模式啟動")
         logger.info(f"📋 監控目標: {', '.join(targets)}")
         logger.info(f"⏱️  掃描間隔: {interval}秒 ({interval/60:.1f}分鐘)")
         
@@ -168,7 +170,7 @@ class AIService:
             # 等待下一次掃描
             if RUNNING:
                 logger.info(f"\n💤 等待 {interval}秒後進行下一次掃描...")
-                logger.info(f"   (按 Ctrl+C 停止服務)")
+                logger.info("   (按 Ctrl+C 停止服務)")
                 
                 for remaining in range(interval, 0, -30):
                     if not RUNNING:
@@ -179,8 +181,11 @@ class AIService:
                     
     async def run_interactive_mode(self):
         """交互式模式 - AI 對話交互"""
-        from services.core.aiva_core.core_capabilities.dialog.assistant import AIVADialogAssistant
         from aiva_common.command_center import get_command_center
+
+        from services.core.aiva_core.core_capabilities.dialog.assistant import (
+            AIVADialogAssistant,
+        )
         
         logger.info("💬 AIVA AI 交互模式啟動")
         logger.info("[AI] 正在初始化 AI 對話助理...")
@@ -213,7 +218,7 @@ class AIService:
                     break
                 
                 # 將用戶輸入交給 AI 對話助理處理
-                logger.info(f"[AI] AI 正在思考...")
+                logger.info("[AI] AI 正在思考...")
                 response = await assistant.process_user_input(user_input)
                 
                 # 顯示 AI 回應
@@ -232,7 +237,7 @@ class AIService:
                         task_result = await command_center.execute(command)
                         
                         if task_result.get('success'):
-                            logger.info(f"[SUCCESS] 任務執行成功")
+                            logger.info("[SUCCESS] 任務執行成功")
                             if task_result.get('results'):
                                 logger.info(f"[REPORT] 結果: {task_result['results']}")
                         else:

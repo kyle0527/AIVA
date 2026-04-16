@@ -6,10 +6,8 @@ Out-of-Band (OOB) 檢測引擎 - 基於外帶通道的SQL注入檢測
 
 import re
 import uuid
-import aiohttp
-from typing import Dict, List, Tuple
 
-from aiva_common.schemas import FunctionTaskPayload
+import aiohttp
 from aiva_common.utils import get_logger
 
 from ..config import SqliConfig
@@ -48,7 +46,7 @@ class OOBDetectionEngine(BaseDetector):
         }
 
     async def detect(
-        self, target_url: str, params: Dict[str, str], method: str = "GET"
+        self, target_url: str, params: dict[str, str], method: str = "GET"
     ) -> list[DetectionResult]:
         """執行OOB檢測"""
         results = []

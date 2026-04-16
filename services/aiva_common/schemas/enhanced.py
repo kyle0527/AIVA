@@ -4,7 +4,7 @@ Enhanced 版本 Schemas
 此模組定義了各種增強版本的資料模型,提供更詳細的字段和擴展功能。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any, Literal, cast
 
 from pydantic import BaseModel, Field, HttpUrl, field_validator
@@ -43,8 +43,8 @@ class EnhancedFindingPayload(BaseModel):
     sarif_result: SARIFResult | None = None
 
     metadata: dict[str, Any] = Field(default_factory=dict)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @field_validator("finding_id")
     @classmethod
@@ -217,7 +217,7 @@ class EnhancedRiskAssessment(BaseModel):
     residual_risk: float = Field(ge=0.0, le=10.0, description="殘餘風險")
 
     # 時間戳
-    assessed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    assessed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     valid_until: datetime | None = Field(default=None, description="有效期限")
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
@@ -306,7 +306,7 @@ class EnhancedTaskExecution(BaseModel):
     memory_usage: int | None = Field(default=None, description="內存使用(MB)")
 
     # 時間戳
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     started_at: datetime | None = Field(default=None, description="開始時間")
     completed_at: datetime | None = Field(default=None, description="完成時間")
 
@@ -350,6 +350,6 @@ class EnhancedVulnerabilityCorrelation(BaseModel):
     priority_ranking: list[str] = Field(default_factory=list, description="優先級排序")
 
     # 時間戳
-    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")

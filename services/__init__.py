@@ -6,8 +6,9 @@ AIVA Services Module
 
 
 import os
-import sys
 from pathlib import Path
+import sys
+
 
 def setup_aiva_paths():
     """

@@ -9,37 +9,37 @@ AIVA 能力註冊中心初始化模組
 - 豐富的監控和診斷功能
 """
 
-from .registry import CapabilityRegistry, registry
+from .function_recon import (
+    DNSRecon,
+    FunctionReconManager,
+    NetworkScanner,
+    OSINTRecon,
+    ReconCLI,
+    ReconStatus,
+    ReconTarget,
+    ReconTargetType,
+    WebRecon,
+    register_recon_capabilities,
+)
+from .lifecycle import InstallationResult, ToolLifecycleEvent, ToolLifecycleManager
+from .lifecycle_cli import LifecycleCLI
 from .models import (
+    CapabilityEvidence,
     CapabilityRecord,
-    CapabilityEvidence, 
     CapabilityScorecard,
-    CapabilityType,
     CapabilityStatus,
+    CapabilityType,
     CLITemplate,
     ExecutionRequest,
     ExecutionResult,
     InputParameter,
     OutputParameter,
+    create_capability_id,
     create_sample_capability,
     validate_capability_id,
-    create_capability_id
 )
+from .registry import CapabilityRegistry, registry
 from .toolkit import CapabilityToolkit, toolkit
-from .lifecycle import ToolLifecycleManager, ToolLifecycleEvent, InstallationResult
-from .lifecycle_cli import LifecycleCLI
-from .function_recon import (
-    FunctionReconManager,
-    NetworkScanner,
-    DNSRecon,
-    WebRecon,
-    OSINTRecon,
-    ReconCLI,
-    ReconTarget,
-    ReconTargetType,
-    ReconStatus,
-    register_recon_capabilities
-)
 
 __version__ = "1.0.0"
 __author__ = "AIVA Development Team"

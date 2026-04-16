@@ -23,13 +23,13 @@ Module Knowledge Manager - 模組知識庫管理器
 - ... (未來所有模組的報告)
 """
 
-import json
-import logging
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 from datetime import datetime
 import hashlib
+import json
+import logging
+from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -39,12 +39,12 @@ class ExecutionContext:
     """外部模組執行上下文"""
     module_name: str           # 模組名稱（如 function_xss）
     target_url: str            # 目標URL
-    sent_data: Dict[str, Any]  # 發出的數據（payload, params, headers等）
-    received_data: Dict[str, Any]  # 接收的數據（response, status, errors等）
+    sent_data: dict[str, Any]  # 發出的數據（payload, params, headers等）
+    received_data: dict[str, Any]  # 接收的數據（response, status, errors等）
     timestamp: str
     execution_id: str
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             'module_name': self.module_name,
             'target_url': self.target_url,
@@ -63,9 +63,9 @@ class KnowledgeMatch:
     scenario_name: str         # 情況名稱
     confidence: float          # 匹配信心度（0-1）
     category: str              # 類別（成功/可疑/失敗）
-    adjustment: Optional[Dict[str, Any]]  # 建議調整
-    causality: Optional[str]   # 因果關係說明
-    learning_points: List[str]  # 學習點
+    adjustment: dict[str, Any] | None  # 建議調整
+    causality: str | None   # 因果關係說明
+    learning_points: list[str]  # 學習點
 
 
 @dataclass
@@ -73,12 +73,12 @@ class LearningRecommendation:
     """學習建議"""
     recommendation_id: str
     execution_context: ExecutionContext
-    knowledge_match: Optional[KnowledgeMatch]
-    adjustments: List[Dict[str, Any]]  # 具體調整建議
+    knowledge_match: KnowledgeMatch | None
+    adjustments: list[dict[str, Any]]  # 具體調整建議
     rationale: str             # 建議理由
     confidence: float          # 建議信心度
     requires_rag: bool         # 是否需要RAG搜索
-    rag_query: Optional[str]   # RAG搜索查詢
+    rag_query: str | None   # RAG搜索查詢
     timestamp: str
 
 
@@ -146,7 +146,7 @@ class ModuleKnowledgeManager:
         # 載入JSON知識庫（直接加載）
         for json_file in json_files:
             try:
-                with open(json_file, 'r', encoding='utf-8') as f:
+                with open(json_file, encoding='utf-8') as f:
                     data = json.load(f)
                     module_name = data.get('module')
                     if module_name:
@@ -185,7 +185,7 @@ class ModuleKnowledgeManager:
         else:
             return filename.split('_')[0].lower()
     
-    def _parse_markdown_report(self, md_file: Path) -> Dict[str, Any]:
+    def _parse_markdown_report(self, md_file: Path) -> dict[str, Any]:
         """解析Markdown報告為結構化數據
         
         從報告中提取：
@@ -248,7 +248,7 @@ class ModuleKnowledgeManager:
                 str(md_file)
             )
     
-    def _create_empty_knowledge_structure(self, module_name: str, report_file: str) -> Dict[str, Any]:
+    def _create_empty_knowledge_structure(self, module_name: str, report_file: str) -> dict[str, Any]:
         """建立空白的知識結構"""
         return {
             'module': module_name,
@@ -263,7 +263,7 @@ class ModuleKnowledgeManager:
             'learning_points': []
         }
     
-    def _identify_section_type(self, section_title: str) -> Optional[str]:
+    def _identify_section_type(self, section_title: str) -> str | None:
         """識別章節類型"""
         title_lower = section_title.lower()
         
@@ -286,7 +286,7 @@ class ModuleKnowledgeManager:
         """從Markdown列表行中提取內容"""
         return line.lstrip('-*').strip()
     
-    def _parse_table_param_line(self, line: str) -> Optional[Tuple[str, str]]:
+    def _parse_table_param_line(self, line: str) -> tuple[str, str] | None:
         """解析表格參數行
         
         Returns:
@@ -299,14 +299,14 @@ class ModuleKnowledgeManager:
             return (param_name, param_value)
         return None
     
-    def _log_parse_success(self, filename: str, result: Dict[str, Any]) -> None:
+    def _log_parse_success(self, filename: str, result: dict[str, Any]) -> None:
         """記錄解析成功資訊"""
         logger.info(f"✅ 成功解析 {filename}: "
                    f"成功={len(result['scenarios']['success'])}, "
                    f"可疑={len(result['scenarios']['suspicious'])}, "
                    f"失敗={len(result['scenarios']['failure'])}")
     
-    def _store_section_data(self, result: Dict[str, Any], section: str, data: List[str]) -> None:
+    def _store_section_data(self, result: dict[str, Any], section: str, data: list[str]) -> None:
         """儲存章節數據到結果結構"""
         if section in ['success', 'suspicious', 'failure']:
             result['scenarios'][section].extend(data)
@@ -315,7 +315,7 @@ class ModuleKnowledgeManager:
         elif section == 'learning':
             result['learning_points'].extend(data)
     
-    def _build_scenario_index(self, module_name: str, knowledge: Dict[str, Any]) -> None:
+    def _build_scenario_index(self, module_name: str, knowledge: dict[str, Any]) -> None:
         """建立情況索引"""
         scenarios = knowledge.get('scenarios', {})
         
@@ -398,7 +398,7 @@ class ModuleKnowledgeManager:
                 learning_points=[]
             )
     
-    def _extract_features(self, context: ExecutionContext) -> Dict[str, Any]:
+    def _extract_features(self, context: ExecutionContext) -> dict[str, Any]:
         """提取執行上下文的特徵
         
         特徵包括：
@@ -436,7 +436,7 @@ class ModuleKnowledgeManager:
         
         return features
     
-    def _extract_keywords(self, text: str) -> List[str]:
+    def _extract_keywords(self, text: str) -> list[str]:
         """提取響應中的關鍵字"""
         keywords = []
         text_lower = text.lower() if text else ''
@@ -461,7 +461,7 @@ class ModuleKnowledgeManager:
         
         return keywords
     
-    def _calculate_similarity(self, features: Dict[str, Any], scenario: Dict[str, Any]) -> float:
+    def _calculate_similarity(self, features: dict[str, Any], scenario: dict[str, Any]) -> float:
         """計算特徵與情況的相似度"""
         # 簡化版：檢查關鍵特徵匹配
         score = 0.0
@@ -580,7 +580,7 @@ class ModuleKnowledgeManager:
         
         return " | ".join(query_parts)
     
-    def _query_rag(self, query: str, context: ExecutionContext) -> List[Dict[str, Any]]:
+    def _query_rag(self, query: str, context: ExecutionContext) -> list[dict[str, Any]]:
         """執行RAG搜索
         
         Args:
@@ -613,7 +613,7 @@ class ModuleKnowledgeManager:
                     limit=5
                 )
             else:
-                logger.warning(f"RAG client does not have search() or query() method")
+                logger.warning("RAG client does not have search() or query() method")
                 return []
             
             # 解析結果
@@ -626,7 +626,7 @@ class ModuleKnowledgeManager:
             logger.error(f"❌ RAG查詢失敗: {e}", exc_info=True)
             return []
     
-    def _parse_rag_results(self, results: Any) -> List[Dict[str, Any]]:
+    def _parse_rag_results(self, results: Any) -> list[dict[str, Any]]:
         """解析RAG搜索結果
         
         Args:
@@ -675,7 +675,7 @@ class ModuleKnowledgeManager:
         hash_input = f"{context.execution_id}_{context.timestamp}"
         return f"rec_{hashlib.md5(hash_input.encode()).hexdigest()[:8]}"
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """獲取統計資訊"""
         return {
             'total_modules': self.total_modules,

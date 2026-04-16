@@ -7,16 +7,15 @@
 重構說明: 將巨型函數拆分為多個單一職責的小函數，降低認知複雜度從 36 → <10
 """
 
+from collections import defaultdict
 import json
 from pathlib import Path
-from collections import defaultdict, Counter
 
 # 導入 classify_script_type 函數
 try:
     from .core_analyzer import classify_script_type
 except ImportError:
     # 本地測試時的後備導入
-    import sys
     from core_analyzer import classify_script_type
 
 def load_analysis_data(results_dir: Path) -> dict:
@@ -29,7 +28,7 @@ def load_analysis_data(results_dir: Path) -> dict:
         分析數據字典
     """
     json_path = results_dir / 'analysis_results.json'
-    with open(json_path, 'r', encoding='utf-8') as f:
+    with open(json_path, encoding='utf-8') as f:
         return json.load(f)
 
 def print_basic_statistics(data: dict) -> None:

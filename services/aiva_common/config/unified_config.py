@@ -11,18 +11,17 @@ from pydantic import BaseModel
 
 # 導入預設值
 from .defaults import (
-    ENABLE_PROMETHEUS,
-    RATE_LIMIT_RPS,
-    RATE_LIMIT_BURST,
-    SCAN_TIMEOUT,
-    SCAN_MAX_RETRIES,
-    SCAN_CONCURRENT,
-    MODEL_CACHE_SIZE,
-    BIO_NEURON_INPUT_SIZE,
     BIO_NEURON_HIDDEN_SIZE,
+    BIO_NEURON_INPUT_SIZE,
+    ENABLE_PROMETHEUS,
+    MODEL_CACHE_SIZE,
+    RATE_LIMIT_BURST,
+    RATE_LIMIT_RPS,
+    SCAN_CONCURRENT,
+    SCAN_MAX_RETRIES,
+    SCAN_TIMEOUT,
     get_integration_paths,
 )
-
 
 # ================================
 # ✅ 已移除資料庫配置 (v2.0)

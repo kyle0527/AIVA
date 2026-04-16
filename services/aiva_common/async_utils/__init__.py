@@ -377,7 +377,7 @@ class AsyncProcessManager:
             stream_output=True
         )
     """
-    
+
     def __init__(self, cleanup_on_exit: bool = True):
         """初始化進程管理器
         
@@ -387,27 +387,27 @@ class AsyncProcessManager:
         import atexit
         import signal
         import sys
-        
+
         self._active_processes: dict[int, asyncio.subprocess.Process] = {}
         self._process_info: dict[int, dict[str, Any]] = {}
         self._lock = asyncio.Lock()
         self._cleanup_registered = False
-        
+
         if cleanup_on_exit:
             self._register_cleanup_handlers()
-    
+
     def _register_cleanup_handlers(self) -> None:
         """註冊清理處理器"""
         import atexit
         import signal
         import sys
-        
+
         if self._cleanup_registered:
             return
-        
+
         # atexit 處理器
         atexit.register(self._sync_cleanup_all)
-        
+
         # Windows 不支援 SIGTERM，需要特殊處理
         if sys.platform != "win32":
             # Unix 信號處理
@@ -416,19 +416,19 @@ class AsyncProcessManager:
                     signal.signal(sig, self._signal_handler)
                 except (OSError, ValueError):
                     pass  # 某些環境無法設置信號處理器
-        
+
         self._cleanup_registered = True
-    
+
     def _signal_handler(self, signum: int, frame: Any) -> None:
         """信號處理器"""
         self._sync_cleanup_all()
-    
+
     def _sync_cleanup_all(self) -> None:
         """同步清理所有進程（用於 atexit）"""
         import os
         import signal
         import sys
-        
+
         for pid, proc in list(self._active_processes.items()):
             try:
                 if proc.returncode is None:
@@ -442,10 +442,10 @@ class AsyncProcessManager:
                             proc.terminate()
             except Exception:
                 pass
-        
+
         self._active_processes.clear()
         self._process_info.clear()
-    
+
     async def run_command(
         self,
         cmd: list[str],
@@ -478,35 +478,35 @@ class AsyncProcessManager:
         import os
         import sys
         import time
-        
+
         start_time = time.time()
-        
+
         # 構建進程參數
         process_kwargs: dict[str, Any] = {
             "stdout": asyncio.subprocess.PIPE,
             "stderr": asyncio.subprocess.PIPE,
         }
-        
+
         if cwd:
             process_kwargs["cwd"] = cwd
-        
+
         if env:
             # 合併環境變數
             merged_env = os.environ.copy()
             merged_env.update(env)
             process_kwargs["env"] = merged_env
-        
+
         # Unix: 創建新的進程組以便清理
         if sys.platform != "win32":
             process_kwargs["start_new_session"] = True
-        
+
         try:
             # 創建異步子進程
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
                 **process_kwargs
             )
-            
+
             # 追蹤進程
             async with self._lock:
                 self._active_processes[proc.pid] = proc
@@ -515,13 +515,13 @@ class AsyncProcessManager:
                     "start_time": start_time,
                     "cwd": cwd,
                 }
-            
+
             try:
                 if stream_output and output_callback:
                     # 即時串流輸出
                     stdout_lines: list[str] = []
                     stderr_lines: list[str] = []
-                    
+
                     async def read_stream(
                         stream: asyncio.StreamReader | None,
                         stream_type: str,
@@ -537,7 +537,7 @@ class AsyncProcessManager:
                             lines_list.append(decoded)
                             if output_callback:
                                 output_callback(stream_type, decoded)
-                    
+
                     # 並行讀取 stdout 和 stderr
                     await asyncio.wait_for(
                         asyncio.gather(
@@ -546,7 +546,7 @@ class AsyncProcessManager:
                         ),
                         timeout=timeout
                     )
-                    
+
                     await proc.wait()
                     stdout = "\n".join(stdout_lines)
                     stderr = "\n".join(stderr_lines)
@@ -560,16 +560,16 @@ class AsyncProcessManager:
                     stdout = stdout_bytes.decode("utf-8", errors="replace")
                     stderr = stderr_bytes.decode("utf-8", errors="replace")
                     timed_out = False
-                
-            except asyncio.TimeoutError:
+
+            except TimeoutError:
                 # 超時處理
                 await self._terminate_process(proc)
                 stdout = ""
                 stderr = f"Process timed out after {timeout} seconds"
                 timed_out = True
-            
+
             duration = time.time() - start_time
-            
+
             return {
                 "exit_code": proc.returncode or -1,
                 "stdout": stdout,
@@ -578,22 +578,22 @@ class AsyncProcessManager:
                 "duration": duration,
                 "pid": proc.pid,
             }
-            
+
         finally:
             # 清理追蹤
             async with self._lock:
                 self._active_processes.pop(proc.pid, None)
                 self._process_info.pop(proc.pid, None)
-    
+
     async def _terminate_process(self, proc: asyncio.subprocess.Process) -> None:
         """終止進程（帶有優雅關閉）"""
         import os
         import signal
         import sys
-        
+
         if proc.returncode is not None:
             return
-        
+
         try:
             if sys.platform == "win32":
                 proc.terminate()
@@ -603,11 +603,11 @@ class AsyncProcessManager:
                     os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
                 except (ProcessLookupError, PermissionError):
                     proc.terminate()
-            
+
             # 等待進程結束
             try:
                 await asyncio.wait_for(proc.wait(), timeout=5.0)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # 強制終止
                 if sys.platform == "win32":
                     proc.kill()
@@ -616,10 +616,10 @@ class AsyncProcessManager:
                         os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
                     except (ProcessLookupError, PermissionError):
                         proc.kill()
-                        
+
         except Exception:
             pass
-    
+
     async def cleanup_all(self) -> int:
         """清理所有活動進程
         
@@ -634,11 +634,11 @@ class AsyncProcessManager:
             self._active_processes.clear()
             self._process_info.clear()
         return cleaned
-    
+
     def get_active_processes(self) -> list[dict[str, Any]]:
         """獲取活動進程列表"""
         import time
-        
+
         result = []
         for pid, info in self._process_info.items():
             result.append({
@@ -648,12 +648,12 @@ class AsyncProcessManager:
                 "cwd": info.get("cwd"),
             })
         return result
-    
+
     # ============================================
     # 遙測數據解析 (Telemetry Parsing)
     # ============================================
     # 解決 AI 學習迴圈「感官缺失」問題
-    
+
     def _parse_telemetry(
         self,
         stdout: str,
@@ -674,7 +674,7 @@ class AsyncProcessManager:
             遙測數據字典
         """
         import re
-        
+
         telemetry = {
             "http_status_codes": self._extract_http_codes(stdout, stderr),
             "waf_triggered": self._detect_waf_patterns(stderr),
@@ -683,13 +683,13 @@ class AsyncProcessManager:
             "connection_issues": self._detect_connection_issues(stderr),
             "error_patterns": self._extract_error_patterns(stderr),
         }
-        
+
         return telemetry
-    
+
     def _extract_http_codes(self, stdout: str, stderr: str) -> list[int]:
         """提取 HTTP 狀態碼"""
         import re
-        
+
         combined = stdout + stderr
         # 匹配常見的 HTTP 狀態碼格式
         patterns = [
@@ -697,14 +697,14 @@ class AsyncProcessManager:
             r'Status:\s*(\d{3})',       # Status: 403
             r'(\d{3})\s+(?:OK|Forbidden|Not Found|Internal Server Error)',  # 403 Forbidden
         ]
-        
+
         codes = []
         for pattern in patterns:
             matches = re.findall(pattern, combined, re.IGNORECASE)
             codes.extend(int(m) for m in matches)
-        
+
         return list(set(codes))  # 去重
-    
+
     def _detect_waf_patterns(self, stderr: str) -> bool:
         """檢測 WAF 攔截特徵
         
@@ -738,10 +738,10 @@ class AsyncProcessManager:
             "security violation",
             "captcha",
         ]
-        
+
         stderr_lower = stderr.lower()
         return any(keyword in stderr_lower for keyword in waf_keywords)
-    
+
     def _detect_bypass_success(self, stdout: str) -> bool:
         """檢測成功繞過防護的特徵"""
         bypass_indicators = [
@@ -754,14 +754,14 @@ class AsyncProcessManager:
             "rce achieved",
             "payload executed",
         ]
-        
+
         stdout_lower = stdout.lower()
         return any(indicator in stdout_lower for indicator in bypass_indicators)
-    
+
     def _extract_response_times(self, stdout: str) -> list[float]:
         """提取響應時間（毫秒）"""
         import re
-        
+
         # 匹配常見的時間格式
         patterns = [
             r'(\d+\.?\d*)\s*ms',           # 123.45 ms
@@ -769,7 +769,7 @@ class AsyncProcessManager:
             r'latency[=:]\s*(\d+\.?\d*)',  # latency=123
             r'(\d+\.?\d*)\s*seconds?',     # 1.23 seconds
         ]
-        
+
         times = []
         for pattern in patterns:
             matches = re.findall(pattern, stdout, re.IGNORECASE)
@@ -782,9 +782,9 @@ class AsyncProcessManager:
                     times.append(time_value)
                 except ValueError:
                     pass
-        
+
         return times
-    
+
     def _detect_connection_issues(self, stderr: str) -> bool:
         """檢測連線問題"""
         connection_errors = [
@@ -795,14 +795,14 @@ class AsyncProcessManager:
             "connection aborted",
             "broken pipe",
         ]
-        
+
         stderr_lower = stderr.lower()
         return any(error in stderr_lower for error in connection_errors)
-    
+
     def _extract_error_patterns(self, stderr: str) -> list[str]:
         """提取錯誤模式類型"""
         error_types = []
-        
+
         error_mapping = {
             "timeout": ["timeout", "timed out"],
             "permission_denied": ["permission denied", "access denied", "forbidden"],
@@ -811,14 +811,14 @@ class AsyncProcessManager:
             "ssl_error": ["ssl error", "certificate verify failed"],
             "authentication_error": ["authentication failed", "unauthorized", "401"],
         }
-        
+
         stderr_lower = stderr.lower()
         for error_type, keywords in error_mapping.items():
             if any(kw in stderr_lower for kw in keywords):
                 error_types.append(error_type)
-        
+
         return error_types
-    
+
     async def run_command_with_telemetry(
         self,
         cmd: list[str],
@@ -873,14 +873,14 @@ class AsyncProcessManager:
             stream_output=stream_output,
             output_callback=output_callback
         )
-        
+
         # 解析遙測數據
         telemetry = self._parse_telemetry(
             stdout=result["stdout"],
             stderr=result["stderr"],
             exit_code=result["exit_code"]
         )
-        
+
         result["telemetry"] = telemetry
         return result
 

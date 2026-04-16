@@ -9,32 +9,25 @@ Author: AIVA Development Team
 License: MIT
 """
 
-import os
-import socket
-import subprocess
-import webbrowser
 import asyncio
-import ipaddress
-import dns.resolver
-import requests
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Union, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum, auto
+import ipaddress
+import logging
+import socket
+from typing import Any
 
+import dns.resolver
+import requests
 from rich.console import Console
 from rich.panel import Panel
-from rich.text import Text
+from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 from rich.prompt import Prompt
 from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskID
-from rich.layout import Layout
-from rich.live import Live
 
 from services.integration.capability.registry import CapabilityRegistry, CapabilityType
-from services.integration.capability.toolkit import CapabilityToolkit
-import logging
+
 LOGGER = logging.getLogger(__name__)
 
 console = Console()
@@ -68,7 +61,7 @@ class ReconTarget:
     """偵察目標"""
     target: str
     target_type: ReconTargetType
-    description: Optional[str] = None
+    description: str | None = None
     created_at: datetime = field(default_factory=datetime.now)
     
     def __post_init__(self):
@@ -89,13 +82,13 @@ class ReconResult:
     target: ReconTarget
     scan_type: str
     status: ReconStatus
-    data: Dict[str, Any] = field(default_factory=dict)
-    error_message: Optional[str] = None
+    data: dict[str, Any] = field(default_factory=dict)
+    error_message: str | None = None
     started_at: datetime = field(default_factory=datetime.now)
-    completed_at: Optional[datetime] = None
-    duration: Optional[float] = None
+    completed_at: datetime | None = None
+    duration: float | None = None
     
-    def mark_completed(self, data: Dict[str, Any]):
+    def mark_completed(self, data: dict[str, Any]):
         """標記為完成"""
         self.status = ReconStatus.COMPLETED
         self.data = data
@@ -118,7 +111,7 @@ class NetworkScanner:
     def __init__(self):
         self.console = Console()
     
-    async def nmap_scan(self, target: str, scan_type: str = "basic") -> Dict[str, Any]:
+    async def nmap_scan(self, target: str, scan_type: str = "basic") -> dict[str, Any]:
         """執行nmap掃描"""
         try:
             if scan_type == "basic":
@@ -155,7 +148,7 @@ class NetworkScanner:
         except Exception as e:
             return {"error": str(e), "success": False}
     
-    async def port_scan(self, target: str, ports: str = "1-1000") -> Dict[str, Any]:
+    async def port_scan(self, target: str, ports: str = "1-1000") -> dict[str, Any]:
         """執行端口掃描"""
         try:
             cmd = ["nmap", "-p", ports, target]
@@ -189,7 +182,7 @@ class DNSRecon:
     def __init__(self):
         self.console = Console()
     
-    def host_to_ip(self, hostname: str) -> Dict[str, Any]:
+    def host_to_ip(self, hostname: str) -> dict[str, Any]:
         """主機名轉IP地址"""
         try:
             ip = socket.gethostbyname(hostname)
@@ -205,7 +198,7 @@ class DNSRecon:
                 "success": False
             }
     
-    def dns_lookup(self, domain: str, record_type: str = "A") -> Dict[str, Any]:
+    def dns_lookup(self, domain: str, record_type: str = "A") -> dict[str, Any]:
         """DNS查詢"""
         try:
             resolver = dns.resolver.Resolver()
@@ -229,7 +222,7 @@ class DNSRecon:
                 "success": False
             }
     
-    def reverse_dns(self, ip: str) -> Dict[str, Any]:
+    def reverse_dns(self, ip: str) -> dict[str, Any]:
         """反向DNS查詢"""
         try:
             hostname = socket.gethostbyaddr(ip)
@@ -257,7 +250,7 @@ class WebRecon:
             'User-Agent': 'AIVA-Recon/1.0 (Information Gathering)'
         })
     
-    def website_info(self, url: str) -> Dict[str, Any]:
+    def website_info(self, url: str) -> dict[str, Any]:
         """獲取網站基本信息"""
         try:
             if not url.startswith(('http://', 'https://')):
@@ -281,7 +274,7 @@ class WebRecon:
                 "success": False
             }
     
-    def check_admin_panels(self, domain: str) -> Dict[str, Any]:
+    def check_admin_panels(self, domain: str) -> dict[str, Any]:
         """檢查常見管理面板 - 基於Breacher功能"""
         admin_paths = [
             "admin", "administrator", "admin.php", "admin.html",
@@ -344,7 +337,7 @@ class OSINTRecon:
     def __init__(self):
         self.console = Console()
     
-    def email_osint(self, email: str) -> Dict[str, Any]:
+    def email_osint(self, email: str) -> dict[str, Any]:
         """電子郵件開源情報收集"""
         try:
             domain = email.split('@')[1]
@@ -384,7 +377,7 @@ class OSINTRecon:
                 "success": False
             }
     
-    def search_secrets(self, domain: str) -> Dict[str, Any]:
+    def search_secrets(self, domain: str) -> dict[str, Any]:
         """搜索敏感信息 - 簡化版SecretFinder功能"""
         try:
             # 獲取robots.txt
@@ -406,7 +399,7 @@ class OSINTRecon:
                 "success": False
             }
     
-    def _check_robots_txt(self, domain: str) -> Dict[str, Any]:
+    def _check_robots_txt(self, domain: str) -> dict[str, Any]:
         """檢查robots.txt"""
         try:
             url = f"http://{domain}/robots.txt"
@@ -423,7 +416,7 @@ class OSINTRecon:
         except Exception:
             return {"exists": False, "error": "Request failed"}
     
-    def _check_sensitive_files(self, domain: str) -> List[Dict[str, Any]]:
+    def _check_sensitive_files(self, domain: str) -> list[dict[str, Any]]:
         """檢查敏感文件"""
         sensitive_paths = [
             ".env", ".git/config", "config.php", "database.php",
@@ -452,7 +445,7 @@ class OSINTRecon:
         
         return results
     
-    def _parse_robots_disallow(self, robots_content: str) -> List[str]:
+    def _parse_robots_disallow(self, robots_content: str) -> list[str]:
         """解析robots.txt中的禁止路徑"""
         disallowed = []
         for line in robots_content.split('\n'):
@@ -472,11 +465,11 @@ class FunctionReconManager:
         self.dns_recon = DNSRecon()
         self.web_recon = WebRecon()
         self.osint_recon = OSINTRecon()
-        self.results: List[ReconResult] = []
+        self.results: list[ReconResult] = []
         
         LOGGER.info("功能偵察管理器已初始化")
     
-    def create_target(self, target: str, target_type: ReconTargetType, description: Optional[str] = None) -> ReconTarget:
+    def create_target(self, target: str, target_type: ReconTargetType, description: str | None = None) -> ReconTarget:
         """創建偵察目標"""
         return ReconTarget(
             target=target,
@@ -484,7 +477,7 @@ class FunctionReconManager:
             description=description or ""
         )
     
-    async def comprehensive_scan(self, target: ReconTarget) -> List[ReconResult]:
+    async def comprehensive_scan(self, target: ReconTarget) -> list[ReconResult]:
         """綜合掃描"""
         results = []
         
@@ -651,7 +644,7 @@ class FunctionReconManager:
         
         return result
     
-    def display_results(self, results: List[ReconResult]):
+    def display_results(self, results: list[ReconResult]):
         """顯示掃描結果"""
         for result in results:
             panel_title = f"[{RECON_STYLE}]{result.scan_type.upper()}[/]"
@@ -743,7 +736,7 @@ class FunctionReconManager:
         
         return '\n'.join(lines)
     
-    def get_scan_summary(self) -> Dict[str, Any]:
+    def get_scan_summary(self) -> dict[str, Any]:
         """獲取掃描摘要"""
         total = len(self.results)
         completed = len([r for r in self.results if r.status == ReconStatus.COMPLETED])

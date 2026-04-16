@@ -23,32 +23,31 @@ Self-Healing 分析執行腳本 (修復優化版)
 """
 
 import argparse
-import sys
+from datetime import datetime
 import json
 from pathlib import Path
-from typing import List, Optional, Dict, Any
-from datetime import datetime
+import sys
 
 # 導入分析器
 try:
-    from .core_analyzer import CoreAnalyzer, AnalysisReport
+    from .analyze_connection_recommendations import ConnectionRecommendationAnalyzer
     from .analyze_dataflow_breakpoints import DataFlowBreakpointAnalyzer
     from .analyze_missing_function_connections import MissingConnectionAnalyzer
+    from .core_analyzer import AnalysisReport, CoreAnalyzer
     from .practical_analyzer import PracticalAnalyzer
-    from .analyze_connection_recommendations import ConnectionRecommendationAnalyzer
 except ImportError:
     # 本地執行時的路徑處理
-    from core_analyzer import CoreAnalyzer, AnalysisReport
+    from analyze_connection_recommendations import ConnectionRecommendationAnalyzer
     from analyze_dataflow_breakpoints import DataFlowBreakpointAnalyzer
     from analyze_missing_function_connections import MissingConnectionAnalyzer
+    from core_analyzer import AnalysisReport, CoreAnalyzer
     from practical_analyzer import PracticalAnalyzer
-    from analyze_connection_recommendations import ConnectionRecommendationAnalyzer
 
 
 class AnalysisRunner:
     """分析執行器 - 封裝各個分析器的調用邏輯"""
     
-    def __init__(self, output_dir: Optional[Path] = None):
+    def __init__(self, output_dir: Path | None = None):
         self.output_dir = output_dir
         if self.output_dir:
             self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -75,7 +74,7 @@ class AnalysisRunner:
         default_dir.mkdir(parents=True, exist_ok=True)
         return default_dir
 
-    def _get_analysis_json(self, target: Path) -> Optional[Path]:
+    def _get_analysis_json(self, target: Path) -> Path | None:
         """尋找 analysis_results.json"""
         # 1. 檢查 target/analysis_results/analysis_results.json (標準位置)
         standard_path = target / "analysis_results" / "analysis_results.json"
@@ -272,7 +271,7 @@ class AnalysisRunner:
             print(f"❌ 連接建議分析失敗: {e}")
             return {}
 
-    def run_batch_analysis(self, targets: List[Path], mode: str = "quick") -> List[dict]:
+    def run_batch_analysis(self, targets: list[Path], mode: str = "quick") -> list[dict]:
         """批量分析多個目標"""
         print(f"\n📦 批量分析模式: {len(targets)} 個目標")
         print("=" * 80)

@@ -11,18 +11,16 @@ HackingTool SQL 工具管理 CLI
     python hackingtool_sql_cli.py report                   # 生成狀態報告
 """
 
+import argparse
 import asyncio
 import json
-import sys
-import argparse
 from pathlib import Path
-from typing import Dict, Any
 
 # 添加 AIVA 路徑
-
 from aiva_common.utils.logging import get_logger
-from services.features.function_sqli.hackingtool_manager import sql_tool_manager
+
 from services.features.function_sqli.hackingtool_config import HACKINGTOOL_SQL_CONFIGS
+from services.features.function_sqli.hackingtool_manager import sql_tool_manager
 
 logger = get_logger(__name__)
 

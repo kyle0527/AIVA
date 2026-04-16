@@ -10,6 +10,7 @@ import logging
 from typing import Any
 from uuid import uuid4
 
+from aiva_common.enums.modules import ModuleName, Topic
 from aiva_common.schemas import (
     AivaMessage,
     AttackPlan,
@@ -19,7 +20,6 @@ from aiva_common.schemas import (
     MessageHeader,
     ScanStartPayload,
 )
-from aiva_common.enums.modules import ModuleName, Topic
 
 from .message_broker import MessageBroker
 

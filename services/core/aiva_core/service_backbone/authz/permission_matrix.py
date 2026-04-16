@@ -1,5 +1,6 @@
 import ast
 import operator
+
 """Permission Matrix - 權限矩陣數據結構與分析
 
 提供權限矩陣的數據結構、存儲、查詢與分析功能。
@@ -8,13 +9,12 @@ import operator
 from datetime import datetime
 from typing import Any
 
+from aiva_common.enums import AccessDecision
 import numpy as np
-import structlog
 
 # 直接導入pandas - 缺少依賴時應明確報錯，不使用降級邏輯
 import pandas as pd
-
-from aiva_common.enums import AccessDecision
+import structlog
 
 logger = structlog.get_logger(__name__)
 
@@ -231,7 +231,7 @@ class PermissionMatrix:
                         return any(_eval(v) for v in node.values)
                 elif isinstance(node, ast.Compare):
                     left = _eval(node.left)
-                    for op, comparator in zip(node.ops, node.comparators):
+                    for op, comparator in zip(node.ops, node.comparators, strict=False):
                         right = _eval(comparator)
                         if not operators[type(op)](left, right):
                             return False
@@ -241,7 +241,7 @@ class PermissionMatrix:
                     operand = _eval(node.operand)
                     return operators[type(node.op)](operand)
                 elif isinstance(node, ast.Dict):
-                     return {_eval(k): _eval(v) for k, v in zip(node.keys, node.values)}
+                     return {_eval(k): _eval(v) for k, v in zip(node.keys, node.values, strict=False)}
                 elif isinstance(node, ast.List):
                      return [_eval(v) for v in node.elts]
                 elif isinstance(node, ast.Tuple):
@@ -535,10 +535,9 @@ def main():
 
 # ==================== 風險控制增強功能 (整合自 aiva_core_v1) ====================
 
-import os
-from enum import Enum
-from typing import Dict, List, Optional
 from dataclasses import dataclass
+from enum import Enum
+import os
 
 
 class RiskLevel(str, Enum):
@@ -554,10 +553,10 @@ class OperationContext:
     """操作上下文"""
     operation_name: str
     risk_level: RiskLevel = RiskLevel.L0
-    tags: Optional[List[str]] = None
+    tags: list[str] | None = None
     environment: str = "development"  # development, testing, production
     requester: str = "system"
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: dict[str, Any] | None = None
 
     def __post_init__(self):
         if self.tags is None:
@@ -652,7 +651,7 @@ class RiskGuard:
             return True  # 未知環境，允許通過
         return risk_level.value in env_limits
 
-    def _check_attack_tags(self, tags: List[str]) -> bool:
+    def _check_attack_tags(self, tags: list[str]) -> bool:
         """檢查攻擊標籤"""
         attack_tags = {"attack", "exploit", "destructive", "intrusive"}
         has_attack_tags = bool(set(tags) & attack_tags)
@@ -678,7 +677,7 @@ class RiskGuard:
         
         return True
 
-    def get_allowed_operations(self, environment: Optional[str] = None) -> Dict[str, List[str]]:
+    def get_allowed_operations(self, environment: str | None = None) -> dict[str, list[str]]:
         """獲取當前環境允許的操作列表
         
         Args:
@@ -718,7 +717,7 @@ def get_risk_guard() -> RiskGuard:
 
 
 def authorize_operation(operation_name: str, risk_level: str = "L0", 
-                       tags: Optional[List[str]] = None, **kwargs) -> bool:
+                       tags: list[str] | None = None, **kwargs) -> bool:
     """便捷的操作授權函數
     
     Args:

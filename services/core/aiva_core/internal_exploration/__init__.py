@@ -66,17 +66,17 @@ __version__ = "10.0.0"
 __status__ = "Production"
 
 # 核心分析器（推薦使用）- 從 self_healing 子模組導入
-from .self_healing import CoreAnalyzer, AnalysisReport
+# 基礎流程分析器（保留在主模組）
+from .python_tools.aiva_flow_analyzer import AIVAFlowAnalyzer
 
 # 自我修復分析器
 from .self_healing import (
+    AnalysisReport,
+    CoreAnalyzer,
     DataFlowBreakpointAnalyzer,
     MissingConnectionAnalyzer,
     PracticalAnalyzer,
 )
-
-# 基礎流程分析器（保留在主模組）
-from .python_tools.aiva_flow_analyzer import AIVAFlowAnalyzer
 
 __all__ = [
     # 核心（推薦使用）

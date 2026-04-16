@@ -17,12 +17,11 @@ BizLogic Module - 業務邏輯漏洞檢測模組
 """
 
 # 導入所有掃描器類別
-from .price_manipulation_scanner import PriceManipulationScanner
-from .workflow_bypass_scanner import WorkflowBypassScanner
-from .race_condition_scanner import RaceConditionScanner
-
 # 導入整合工具
 from .integration_tools.bizlogic_tools import BizLogicManager
+from .price_manipulation_scanner import PriceManipulationScanner
+from .race_condition_scanner import RaceConditionScanner
+from .workflow_bypass_scanner import WorkflowBypassScanner
 
 __version__ = "3.0.0"
 __status__ = "production"

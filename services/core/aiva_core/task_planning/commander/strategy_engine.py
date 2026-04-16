@@ -3,9 +3,9 @@
 負責策略決策、風險評估和信心度計算
 """
 
-import logging
 from datetime import datetime
-from typing import Any, Optional
+import logging
+from typing import Any
 
 # 導入風險策略管理器（配置化風險評估）
 from .policy_manager import PolicyManager
@@ -23,7 +23,7 @@ class StrategyEngine:
     def __init__(
         self,
         data_directory: Any = None,
-        policy_path: Optional[str] = None,
+        policy_path: str | None = None,
     ):
         """初始化策略引擎
         

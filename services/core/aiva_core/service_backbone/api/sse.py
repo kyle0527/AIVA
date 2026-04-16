@@ -9,10 +9,11 @@
 """
 
 import asyncio
-import json
+from collections.abc import AsyncIterator
 from datetime import datetime
+import json
 from pathlib import Path
-from typing import AsyncIterator, Optional, Any, TYPE_CHECKING
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
@@ -70,7 +71,7 @@ class StatusEvent:
         status: str, 
         progress: float,
         phase: str,
-        current_task: Optional[str] = None,
+        current_task: str | None = None,
         findings_count: int = 0
     ):
         self.scan_id = scan_id
@@ -97,7 +98,7 @@ class StatusEvent:
 async def _read_existing_logs(log_file: Path, scan_id: str) -> AsyncIterator[LogEvent]:
     """異步讀取現有日誌"""
     if AIOFILES_AVAILABLE:
-        async with aiofiles.open(log_file, 'r', encoding='utf-8') as f:
+        async with aiofiles.open(log_file, encoding='utf-8') as f:
             async for line in f:
                 log_event = _parse_log_line(line, scan_id)
                 if log_event:
@@ -105,7 +106,7 @@ async def _read_existing_logs(log_file: Path, scan_id: str) -> AsyncIterator[Log
     else:
         # 使用線程池執行同步 I/O
         def read_lines():
-            with open(log_file, 'r', encoding='utf-8') as f:
+            with open(log_file, encoding='utf-8') as f:
                 return f.readlines()
         
         lines = await asyncio.to_thread(read_lines)
@@ -130,7 +131,7 @@ async def _read_new_logs_from_position(
     new_position = position
     
     if AIOFILES_AVAILABLE:
-        async with aiofiles.open(log_file, 'r', encoding='utf-8') as f:
+        async with aiofiles.open(log_file, encoding='utf-8') as f:
             await f.seek(position)
             content = await f.read()
             new_position = position + len(content.encode('utf-8'))
@@ -145,7 +146,7 @@ async def _read_new_logs_from_position(
         def read_from_position():
             nonlocal new_position, scan_completed
             result = []
-            with open(log_file, 'r', encoding='utf-8') as f:
+            with open(log_file, encoding='utf-8') as f:
                 f.seek(position)
                 for line in f:
                     log_event = _parse_log_line(line, scan_id)
@@ -279,7 +280,9 @@ async def stream_status(scan_id: str) -> Any:  # EventSourceResponse when availa
     async def status_generator() -> AsyncIterator[dict]:
         """狀態生成器"""
         # 需要導入 SessionStateManager（延遲導入避免循環依賴）
-        from services.core.aiva_core.service_backbone.state.session_state_manager import SessionStateManager
+        from services.core.aiva_core.service_backbone.state.session_state_manager import (
+            SessionStateManager,
+        )
         
         state_manager = SessionStateManager()
         
@@ -333,7 +336,7 @@ async def stream_status(scan_id: str) -> Any:  # EventSourceResponse when availa
 
 # ==================== 工具函數 ====================
 
-def _parse_log_line(line: str, scan_id: str) -> Optional[LogEvent]:
+def _parse_log_line(line: str, scan_id: str) -> LogEvent | None:
     """解析日誌行
     
     Args:

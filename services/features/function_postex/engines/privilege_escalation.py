@@ -5,15 +5,15 @@ function_postex.engines.privilege_escalation
 檢測可用於權限提升的系統誤配置和漏洞。
 """
 
-import os
-import subprocess
-import platform
-from pathlib import Path
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
+import os
+from pathlib import Path
+import platform
+import subprocess
+from typing import Any
 
+from aiva_common.enums.common import Confidence, Severity
 from aiva_common.utils import get_logger
-from aiva_common.enums.common import Severity, Confidence
 
 logger = get_logger(__name__)
 
@@ -26,9 +26,9 @@ class PrivEscVector:
     confidence: Confidence
     title: str
     description: str
-    evidence: Dict[str, Any]
+    evidence: dict[str, Any]
     recommendation: str
-    exploit_commands: List[str]
+    exploit_commands: list[str]
     category: str  # suid, sudo, kernel, cron, docker, etc.
 
 
@@ -46,7 +46,7 @@ class PrivilegeEscalationEngine:
         self.os_type = platform.system().lower()
         logger.info(f"權限提升引擎初始化 (OS: {self.os_type}, SafeMode: {safe_mode})")
     
-    def scan(self, target: str = "localhost") -> List[PrivEscVector]:
+    def scan(self, target: str = "localhost") -> list[PrivEscVector]:
         """
         執行權限提升掃描
         
@@ -68,7 +68,7 @@ class PrivilegeEscalationEngine:
         logger.info(f"權限提升掃描完成，發現 {len(vectors)} 個向量")
         return vectors
     
-    def _check_linux_privesc(self) -> List[PrivEscVector]:
+    def _check_linux_privesc(self) -> list[PrivEscVector]:
         """Linux 權限提升檢查"""
         vectors = []
         
@@ -92,7 +92,7 @@ class PrivilegeEscalationEngine:
         
         return vectors
     
-    def _check_suid_binaries(self) -> List[PrivEscVector]:
+    def _check_suid_binaries(self) -> list[PrivEscVector]:
         """檢查 SUID/SGID 二進制文件"""
         vectors = []
         
@@ -149,7 +149,7 @@ class PrivilegeEscalationEngine:
         
         return vectors
     
-    def _check_sudo_config(self) -> List[PrivEscVector]:
+    def _check_sudo_config(self) -> list[PrivEscVector]:
         """檢查 Sudo 配置"""
         vectors = []
         
@@ -201,7 +201,7 @@ class PrivilegeEscalationEngine:
         
         return vectors
     
-    def _check_writable_paths(self) -> List[PrivEscVector]:
+    def _check_writable_paths(self) -> list[PrivEscVector]:
         """檢查可寫入的關鍵路徑"""
         vectors = []
         
@@ -233,7 +233,7 @@ class PrivilegeEscalationEngine:
         
         return vectors
     
-    def _check_cron_jobs(self) -> List[PrivEscVector]:
+    def _check_cron_jobs(self) -> list[PrivEscVector]:
         """檢查 Cron Jobs 配置"""
         vectors = []
         
@@ -262,7 +262,7 @@ class PrivilegeEscalationEngine:
         
         return vectors
     
-    def _check_docker_socket(self) -> List[PrivEscVector]:
+    def _check_docker_socket(self) -> list[PrivEscVector]:
         """檢查 Docker Socket 訪問"""
         vectors = []
         
@@ -288,7 +288,7 @@ class PrivilegeEscalationEngine:
         
         return vectors
     
-    def _check_kernel_version(self) -> List[PrivEscVector]:
+    def _check_kernel_version(self) -> list[PrivEscVector]:
         """檢查內核版本已知漏洞"""
         vectors = []
         
@@ -326,7 +326,7 @@ class PrivilegeEscalationEngine:
         
         return vectors
     
-    def _check_windows_privesc(self) -> List[PrivEscVector]:
+    def _check_windows_privesc(self) -> list[PrivEscVector]:
         """Windows 權限提升檢查"""
         vectors = []
 
@@ -347,7 +347,7 @@ class PrivilegeEscalationEngine:
 
         return vectors
 
-    def _check_unquoted_service_paths(self) -> List[PrivEscVector]:
+    def _check_unquoted_service_paths(self) -> list[PrivEscVector]:
         """檢查未加引號的服務路徑"""
         vectors = []
         try:
@@ -372,7 +372,7 @@ class PrivilegeEscalationEngine:
                                 severity=Severity.HIGH,
                                 confidence=Confidence.HIGH,
                                 title=f"Unquoted Service Path: {parts[0]}",
-                                description=f"Service has unquoted path with spaces, allowing DLL/binary hijacking",
+                                description="Service has unquoted path with spaces, allowing DLL/binary hijacking",
                                 evidence={"service": parts[0], "path": path_candidate},
                                 recommendation="Quote the service binary path in the registry",
                                 exploit_commands=[
@@ -389,7 +389,7 @@ class PrivilegeEscalationEngine:
             logger.error(f"Error checking unquoted service paths: {e}")
         return vectors
 
-    def _check_always_install_elevated(self) -> List[PrivEscVector]:
+    def _check_always_install_elevated(self) -> list[PrivEscVector]:
         """檢查 AlwaysInstallElevated 設定"""
         vectors = []
         try:
@@ -424,7 +424,7 @@ class PrivilegeEscalationEngine:
             logger.error(f"Error checking AlwaysInstallElevated: {e}")
         return vectors
 
-    def _check_writable_service_binaries(self) -> List[PrivEscVector]:
+    def _check_writable_service_binaries(self) -> list[PrivEscVector]:
         """檢查可寫入的服務執行檔"""
         vectors = []
         try:
@@ -462,7 +462,7 @@ class PrivilegeEscalationEngine:
             logger.error(f"Error checking writable service binaries: {e}")
         return vectors
 
-    def _check_windows_scheduled_tasks(self) -> List[PrivEscVector]:
+    def _check_windows_scheduled_tasks(self) -> list[PrivEscVector]:
         """檢查可利用的排程工作"""
         vectors = []
         try:
@@ -505,7 +505,7 @@ class PrivilegeEscalationEngine:
             logger.error(f"Error checking scheduled tasks: {e}")
         return vectors
 
-    def _check_windows_token_privileges(self) -> List[PrivEscVector]:
+    def _check_windows_token_privileges(self) -> list[PrivEscVector]:
         """檢查當前使用者的 Token 權限"""
         vectors = []
         try:

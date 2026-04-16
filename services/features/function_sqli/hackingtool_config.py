@@ -1,4 +1,5 @@
 import shlex
+
 """
 HackingTool SQL 注入工具配置
 整合 HackingTool 的 SQL 注入工具到 AIVA function_sqli 模組中
@@ -8,16 +9,20 @@ HackingTool SQL 注入工具配置
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any
 from enum import Enum
-import subprocess
-import shutil
 from pathlib import Path
-import shlex
+import shutil
+import subprocess
+from typing import Any
 
-from aiva_common.enums import ProgrammingLanguage, Severity, Confidence
+from aiva_common.enums import ProgrammingLanguage
 from aiva_common.schemas import APIResponse
-from services.integration.capability.models import CapabilityRecord, CapabilityType, CapabilityStatus
+
+from services.integration.capability.models import (
+    CapabilityRecord,
+    CapabilityStatus,
+    CapabilityType,
+)
 
 
 class SQLToolType(Enum):
@@ -42,9 +47,9 @@ class HackingToolSQLConfig:
     project_url: str
     
     # 安裝配置
-    install_commands: List[str] = field(default_factory=list)
-    run_commands: List[str] = field(default_factory=list)
-    dependencies: List[str] = field(default_factory=list)
+    install_commands: list[str] = field(default_factory=list)
+    run_commands: list[str] = field(default_factory=list)
+    dependencies: list[str] = field(default_factory=list)
     
     # 檢測配置
     supports_get: bool = True
@@ -62,8 +67,8 @@ class HackingToolSQLConfig:
     
     # 輸出解析配置
     output_format: str = "text"  # text, json, xml
-    result_patterns: Dict[str, str] = field(default_factory=dict)
-    confidence_mapping: Dict[str, float] = field(default_factory=dict)
+    result_patterns: dict[str, str] = field(default_factory=dict)
+    confidence_mapping: dict[str, float] = field(default_factory=dict)
 
 
 # HackingTool SQL 工具配置定義
@@ -242,7 +247,7 @@ class HackingToolSQLIntegrator:
     
     def __init__(self):
         self.configs = HACKINGTOOL_SQL_CONFIGS
-        self.installed_tools: Dict[str, bool] = {}
+        self.installed_tools: dict[str, bool] = {}
     
     def check_tool_availability(self, tool_name: str) -> bool:
         """檢查工具是否可用"""
@@ -263,7 +268,7 @@ class HackingToolSQLIntegrator:
         
         return True
     
-    def get_available_tools(self) -> List[str]:
+    def get_available_tools(self) -> list[str]:
         """獲取可用的工具列表"""
         available = []
         for tool_name in self.configs:
@@ -271,7 +276,7 @@ class HackingToolSQLIntegrator:
                 available.append(tool_name)
         return available
     
-    def get_enabled_tools(self) -> List[str]:
+    def get_enabled_tools(self) -> list[str]:
         """獲取啟用的工具列表"""
         enabled = []
         for tool_name, config in self.configs.items():
@@ -279,14 +284,14 @@ class HackingToolSQLIntegrator:
                 enabled.append(tool_name)
         return enabled
     
-    def get_tools_by_type(self, tool_type: SQLToolType) -> List[str]:
+    def get_tools_by_type(self, tool_type: SQLToolType) -> list[str]:
         """根據類型獲取工具"""
         return [
             name for name, config in self.configs.items()
             if config.tool_type == tool_type
         ]
     
-    def get_tools_by_capability(self, capability: str) -> List[str]:
+    def get_tools_by_capability(self, capability: str) -> list[str]:
         """根據能力獲取工具"""
         capability_map = {
             "blind": "supports_blind",
@@ -306,7 +311,7 @@ class HackingToolSQLIntegrator:
             if getattr(config, attr_name, False)
         ]
     
-    def generate_capability_records(self) -> List[CapabilityRecord]:
+    def generate_capability_records(self) -> list[CapabilityRecord]:
         """生成 AIVA CapabilityRecord"""
         records = []
         
@@ -383,7 +388,7 @@ class HackingToolSQLIntegrator:
             print(f"安裝 {tool_name} 時發生錯誤: {e}")
             return False
     
-    def run_tool(self, tool_name: str, target: str, **kwargs) -> Dict[str, Any]:
+    def run_tool(self, tool_name: str, target: str, **kwargs) -> dict[str, Any]:
         """執行指定工具"""
         if tool_name not in self.configs:
             return {"success": False, "error": "Tool not found"}

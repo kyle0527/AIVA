@@ -3,6 +3,6 @@
 此模組提供各種協議適配器，遵循軟件工程最佳實踐。
 """
 
-from .protocol_adapter import ProtocolAdapter, HttpProtocolAdapter, create_http_adapter
+from .protocol_adapter import HttpProtocolAdapter, ProtocolAdapter, create_http_adapter
 
 __all__ = ["ProtocolAdapter", "HttpProtocolAdapter", "create_http_adapter"]

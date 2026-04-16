@@ -9,11 +9,9 @@
 4. 提供快速定位和修復建議
 """
 
-import re
-from pathlib import Path
-from typing import Dict, List, Tuple
 from collections import defaultdict
 from dataclasses import dataclass
+import re
 
 
 @dataclass
@@ -94,11 +92,11 @@ class PracticalAnalyzer:
             'save', 'load', 'record', 'persist',
         ]
         
-    def analyze_report(self, report_file: str) -> Dict[str, List[Issue]]:
+    def analyze_report(self, report_file: str) -> dict[str, list[Issue]]:
         """分析報告並分級"""
         print(f"📖 讀取報告: {report_file}")
         
-        with open(report_file, 'r', encoding='utf-8') as f:
+        with open(report_file, encoding='utf-8') as f:
             content = f.read()
             
         # 提取三種類型的問題
@@ -142,7 +140,7 @@ class PracticalAnalyzer:
         
         return issues
         
-    def _parse_definition_missing(self, content: str) -> List[Issue]:
+    def _parse_definition_missing(self, content: str) -> list[Issue]:
         """解析定義缺失"""
         issues: list[Issue] = []
         
@@ -171,7 +169,7 @@ class PracticalAnalyzer:
             
         return issues
         
-    def _parse_call_missing(self, content: str) -> List[Issue]:
+    def _parse_call_missing(self, content: str) -> list[Issue]:
         """解析調用缺失"""
         issues: list[Issue] = []
         
@@ -198,7 +196,7 @@ class PracticalAnalyzer:
             
         return issues
         
-    def _parse_potential_missing(self, content: str) -> List[Issue]:
+    def _parse_potential_missing(self, content: str) -> list[Issue]:
         """解析潛在連接缺失"""
         issues: list[Issue] = []
         
@@ -226,7 +224,7 @@ class PracticalAnalyzer:
             
         return issues
         
-    def _deduplicate_issues(self, issues: List[Issue]) -> List[Issue]:
+    def _deduplicate_issues(self, issues: list[Issue]) -> list[Issue]:
         """
         智能去重：合併相似問題
         - 相同 caller → callee 只保留 1 個
@@ -289,9 +287,7 @@ class PracticalAnalyzer:
         is_potential = issue.problem_type == '潛在缺失'
         
         # 綜合判斷
-        if is_critical_file and has_critical_keyword:
-            return 'CRITICAL'
-        elif is_unused_function and has_critical_keyword:
+        if is_critical_file and has_critical_keyword or is_unused_function and has_critical_keyword:
             return 'CRITICAL'
         elif is_critical_file or (is_unused_function and not is_potential):
             return 'HIGH'
@@ -302,7 +298,7 @@ class PracticalAnalyzer:
         else:
             return 'MEDIUM'
             
-    def _write_statistics(self, f, issues: Dict[str, List[Issue]]) -> None:
+    def _write_statistics(self, f, issues: dict[str, list[Issue]]) -> None:
         """寫入統計摘要
         
         複雜度: A (2) - 簡單統計
@@ -316,7 +312,7 @@ class PracticalAnalyzer:
         f.write(f"- **ℹ️ LOW:** {len(issues['LOW'])} 個\n")
         f.write(f"- **🗑️ 已過濾噪音:** {len(issues['NOISE'])} 個\n\n")
     
-    def _write_critical_issues(self, f, issues: List[Issue]) -> None:
+    def _write_critical_issues(self, f, issues: list[Issue]) -> None:
         """寫入 CRITICAL 問題
         
         複雜度: B (6) - 雙層循環
@@ -343,7 +339,7 @@ class PracticalAnalyzer:
         
         f.write("---\n\n")
     
-    def _write_high_issues(self, f, issues: List[Issue]) -> None:
+    def _write_high_issues(self, f, issues: list[Issue]) -> None:
         """寫入 HIGH 問題
         
         複雜度: B (7) - 雙層循環 + 條件
@@ -373,7 +369,7 @@ class PracticalAnalyzer:
         
         f.write("---\n\n")
     
-    def _write_medium_low_issues(self, f, medium_issues: List[Issue], low_issues: List[Issue]) -> None:
+    def _write_medium_low_issues(self, f, medium_issues: list[Issue], low_issues: list[Issue]) -> None:
         """寫入 MEDIUM 和 LOW 問題
         
         複雜度: A (4) - 簡單統計
@@ -402,7 +398,7 @@ class PracticalAnalyzer:
             f.write(f"這些是低優先級問題，通常可以忽略。總計: {len(low_issues)} 個\n\n")
             f.write("---\n\n")
     
-    def _write_action_plan(self, f, issues: Dict[str, List[Issue]]) -> None:
+    def _write_action_plan(self, f, issues: dict[str, list[Issue]]) -> None:
         """寫入行動計劃
         
         複雜度: A (4) - 條件判斷
@@ -428,7 +424,7 @@ class PracticalAnalyzer:
             f.write("### 📆 兩週內\n\n")
             f.write(f"根據實際需要處理 MEDIUM 問題（共 {len(issues['MEDIUM'])} 個）\n\n")
     
-    def _write_quick_start_guide(self, f, issues: Dict[str, List[Issue]]) -> None:
+    def _write_quick_start_guide(self, f, issues: dict[str, list[Issue]]) -> None:
         """寫入快速開始指南
         
         複雜度: A (2) - 簡單條件
@@ -454,7 +450,7 @@ class PracticalAnalyzer:
         f.write("pytest services/core/aiva_core/tests\n")
         f.write("```\n\n")
     
-    def generate_practical_report(self, issues: Dict[str, List[Issue]], output_file: str):
+    def generate_practical_report(self, issues: dict[str, list[Issue]], output_file: str):
         """生成實用報告
         
         複雜度: A (1) - 主協調函數，單一職責
@@ -475,7 +471,7 @@ class PracticalAnalyzer:
         
         print("  ✅ 報告已保存")
         
-    def generate_quick_fix_list(self, issues: Dict[str, List[Issue]], output_file: str):
+    def generate_quick_fix_list(self, issues: dict[str, list[Issue]], output_file: str):
         """生成快速修復清單"""
         print(f"📝 生成快速修復清單: {output_file}")
         

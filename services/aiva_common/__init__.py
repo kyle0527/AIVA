@@ -26,15 +26,10 @@ import contextlib
 # 導入新增的通用模組
 from . import enums, utils
 from . import schemas as common_schemas
+from .config import config_manager
 
 # 重新導出核心模組以支持舊的導入路徑
 from .core import error_handling
-from .config import config_manager
-from .observability import monitoring, monitoring_log_handler
-from .security import security, security_config, security_middleware
-from .services import service_discovery
-from .pipeline import data_pipeline, stream_processor
-from .messaging import mq
 
 # 導出 error_handling 的核心類別
 from .core.error_handling import (
@@ -45,7 +40,6 @@ from .core.error_handling import (
     ErrorType,
     create_error_context,
 )
-
 from .enums import (
     AccessDecision,
     AssetExposure,
@@ -78,6 +72,11 @@ from .enums import (
     VulnerabilityStatus,
     VulnerabilityType,
 )
+from .messaging import mq
+from .observability import monitoring, monitoring_log_handler
+from .pipeline import data_pipeline, stream_processor
+from .security import security, security_config, security_middleware
+from .services import service_discovery
 
 # 版本信息從專用模組導入
 from .version import __version__, get_version, get_version_info
@@ -121,6 +120,11 @@ with contextlib.suppress(ImportError):
         ModuleStatus,
         OastEvent,
         OastProbe,
+        Phase0CompletedPayload,
+        # Phase0/Phase1 兩階段掃描
+        Phase0StartPayload,
+        Phase1CompletedPayload,
+        Phase1StartPayload,
         PostExResultPayload,
         PostExTestPayload,
         RateLimit,
@@ -135,11 +139,6 @@ with contextlib.suppress(ImportError):
         ScanCompletedPayload,
         ScanScope,
         ScanStartPayload,
-        # Phase0/Phase1 兩階段掃描
-        Phase0StartPayload,
-        Phase0CompletedPayload,
-        Phase1StartPayload,
-        Phase1CompletedPayload,
         SensitiveMatch,
         Summary,
         Target,

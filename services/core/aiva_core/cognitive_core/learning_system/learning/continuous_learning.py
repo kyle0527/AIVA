@@ -12,11 +12,11 @@ Continuous Learning Engine - 持續學習引擎
 版本: 2.0.0
 """
 
-import logging
 import time
-from typing import Any, Optional
+from typing import Any
 
 from aiva_common.utils import get_logger
+
 from ..experience_manager import ExperienceManager
 from .model_trainer import ModelTrainer
 from .online_learner import OnlineLearner
@@ -40,9 +40,9 @@ class ContinuousLearningEngine:
     
     def __init__(
         self,
-        online_learner: Optional[OnlineLearner] = None,
-        experience_manager: Optional[ExperienceManager] = None,
-        model_trainer: Optional[ModelTrainer] = None,
+        online_learner: OnlineLearner | None = None,
+        experience_manager: ExperienceManager | None = None,
+        model_trainer: ModelTrainer | None = None,
         batch_train_threshold: int = 100,
         min_train_interval: int = 3600,
         online_learning_enabled: bool = True
@@ -312,9 +312,9 @@ class ContinuousLearningEngine:
 
 
 def create_continuous_learning_engine(
-    online_learner: Optional[OnlineLearner] = None,
-    experience_manager: Optional[ExperienceManager] = None,
-    model_trainer: Optional[ModelTrainer] = None
+    online_learner: OnlineLearner | None = None,
+    experience_manager: ExperienceManager | None = None,
+    model_trainer: ModelTrainer | None = None
 ) -> ContinuousLearningEngine:
     """創建持續學習引擎的便捷函數
     

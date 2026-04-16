@@ -6,9 +6,8 @@ import ipaddress
 import re
 from typing import Any
 
-import httpx
-
 from aiva_common.utils import get_logger
+import httpx
 
 logger = get_logger(__name__)
 

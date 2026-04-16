@@ -10,17 +10,17 @@ from dataclasses import dataclass, field
 import time
 from typing import Any
 
-import httpx
-
+from aiva_common.detection import (
+    DetectionPhase,
+    UnifiedSmartDetectionManager,
+)
 from aiva_common.schemas import FunctionTaskPayload
 from aiva_common.utils import get_logger
-from aiva_common.detection import (
-    UnifiedSmartDetectionManager,
-    DetectionPhase,
-)
+import httpx
+
 from .config.idor_config import IdorConfig
-from .testers.cross_user_tester import CrossUserTester, CrossUserTestResult
 from .resource_id_extractor import ResourceId, ResourceIdExtractor
+from .testers.cross_user_tester import CrossUserTester, CrossUserTestResult
 from .testers.vertical_escalation_tester import (
     PrivilegeLevel,
     VerticalEscalationTester,

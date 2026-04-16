@@ -2,19 +2,16 @@
 Wordlist Generator Manager
 """
 
+from collections import Counter
+from datetime import datetime
 import itertools
 import logging
 import math
 import os
 import time
-from collections import Counter
-from datetime import datetime
-from typing import List, Optional
 
 from .models import (
     CharsetType,
-    GenerationStrategy,
-    GeneratorConfig,
     GeneratorResult,
     WordlistStats,
 )
@@ -85,8 +82,8 @@ class WordlistGeneratorManager:
     async def generate_cupp_wordlist(
         self,
         name: str,
-        birthdate: Optional[str] = None,
-        keywords: List[str] = None,
+        birthdate: str | None = None,
+        keywords: list[str] = None,
         output_file: str = "cupp_wordlist.txt"
     ) -> GeneratorResult:
         """基於目標資訊生成字典（CUPP 風格：名字/生日/關鍵詞的常見變形組合）
@@ -183,7 +180,7 @@ class WordlistGeneratorManager:
     
     async def merge_wordlists(
         self,
-        input_files: List[str],
+        input_files: list[str],
         output_file: str,
         deduplicate: bool = True,
         sort: bool = False

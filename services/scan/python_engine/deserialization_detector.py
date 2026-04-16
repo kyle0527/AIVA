@@ -5,11 +5,11 @@ OWASP A08:2021 - Software and Data Integrity Failures
 檢測 Python, Java, PHP, .NET 等語言的反序列化漏洞
 """
 
-import pickle
 import base64
-import time
-from typing import List, Optional
 from dataclasses import dataclass
+import pickle
+import time
+
 import requests
 
 # OWASP 常量定義
@@ -182,7 +182,7 @@ args: ['sleep 5']
         param: str,
         language: str,
         method: str = 'POST'
-    ) -> List[DeserializationFinding]:
+    ) -> list[DeserializationFinding]:
         """
         測試反序列化漏洞
         
@@ -261,7 +261,7 @@ args: ['sleep 5']
                     success=False
                 ))
                 
-            except Exception as e:
+            except Exception:
                 continue
         
         return findings
@@ -326,7 +326,7 @@ args: ['sleep 5']
         url: str,
         cookie_name: str,
         language: str
-    ) -> List[DeserializationFinding]:
+    ) -> list[DeserializationFinding]:
         """
         測試 Cookie 中的反序列化漏洞
         
@@ -368,7 +368,7 @@ args: ['sleep 5']
                     ))
                     break
                     
-            except Exception as e:
+            except Exception:
                 continue
         
         return findings

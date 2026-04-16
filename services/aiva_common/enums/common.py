@@ -20,7 +20,7 @@ class CVSSSeverity(str, Enum):
     嚴重程度按照官方分數範圍定義
     """
     NONE = "None"        # 0.0 - 無影響
-    LOW = "Low"          # 0.1-3.9 - 低風險  
+    LOW = "Low"          # 0.1-3.9 - 低風險
     MEDIUM = "Medium"    # 4.0-6.9 - 中等風險
     HIGH = "High"        # 7.0-8.9 - 高風險
     CRITICAL = "Critical" # 9.0-10.0 - 極高風險
@@ -117,7 +117,7 @@ class VulnerabilityRiskLevel(str, Enum):
     """
 
     CRITICAL = "critical"
-    HIGH = "high"  
+    HIGH = "high"
     MEDIUM = "medium"
     LOW = "low"
     INFO = "info"
@@ -701,13 +701,13 @@ class HTTPStatusClass(str, Enum):
     """
 
     INFORMATIONAL = "1xx"  # 100-199: RFC 7231 Section 6.2 - 信息響應
-    SUCCESSFUL = "2xx"     # 200-299: RFC 7231 Section 6.3 - 成功響應  
+    SUCCESSFUL = "2xx"     # 200-299: RFC 7231 Section 6.3 - 成功響應
     REDIRECTION = "3xx"    # 300-399: RFC 7231 Section 6.4 - 重定向響應
     CLIENT_ERROR = "4xx"   # 400-499: RFC 7231 Section 6.5 - 客戶端錯誤
     SERVER_ERROR = "5xx"   # 500-599: RFC 7231 Section 6.6 - 服務器錯誤
 
 
-# 向後相容別名 (將於 v6.0 移除)  
+# 向後相容別名 (將於 v6.0 移除)
 HttpStatusCodeRange = HTTPStatusClass
 
 

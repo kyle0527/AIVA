@@ -4,14 +4,14 @@
 """
 
 from .xss_tools import (
-    XSSTarget,
-    XSSVulnerability,
+    BlindXSSDetector,
     DalfoxIntegration,
-    XSSPayloadGenerator,
     DOMXSSDetector,
     StoredXSSDetector,
-    BlindXSSDetector,
     XSSManager,
+    XSSPayloadGenerator,
+    XSSTarget,
+    XSSVulnerability,
 )
 
 __all__ = [

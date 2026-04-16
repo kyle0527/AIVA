@@ -5,9 +5,8 @@ from dataclasses import dataclass
 import html
 from urllib.parse import urlparse, urlunparse
 
-import httpx
-
 from aiva_common.schemas import FunctionTaskPayload
+import httpx
 
 
 @dataclass

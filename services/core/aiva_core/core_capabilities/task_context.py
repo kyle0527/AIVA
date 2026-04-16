@@ -13,15 +13,15 @@
 """
 
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
-from datetime import datetime, timezone
+from typing import Any
 
 # UTC 兼容性处理（Python 3.11+ 使用 UTC，较旧版本使用 timezone.utc）
 try:
     from datetime import UTC  # type: ignore
 except ImportError:
-    UTC = timezone.utc  # type: ignore
+    UTC = UTC  # type: ignore
 
 
 class TaskIntent(str, Enum):
@@ -62,7 +62,7 @@ class TaskConstraints:
     
     # 時間約束
     timeout: int = 30  # 秒
-    max_duration: Optional[int] = None  # 最大持續時間（秒）
+    max_duration: int | None = None  # 最大持續時間（秒）
     
     # 隱匿設置
     stealth_level: StealthLevel = StealthLevel.MEDIUM
@@ -82,7 +82,7 @@ class TaskConstraints:
 @dataclass
 class AIDecisionParams:
     """AI 決策參數"""
-    selected_tool: Optional[str] = None  # AI 決定的工具 (nmap/masscan/sqlmap)
+    selected_tool: str | None = None  # AI 決定的工具 (nmap/masscan/sqlmap)
     confidence_score: float = 0.0  # AI 對此決策的信心分數 (0-1)
     reasoning: str = ""  # 決策推理
     alternatives: list[str] = field(default_factory=list)  # 備選方案
@@ -114,7 +114,7 @@ class TaskContext:
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     
     # === 用戶輸入原文 ===
-    user_input: Optional[str] = None  # 保存原始用戶命令
+    user_input: str | None = None  # 保存原始用戶命令
 
 
 @dataclass
@@ -128,7 +128,7 @@ class ScanTaskContext(TaskContext):
     scan_type: str = "syn"  # 掃描類型 (syn/tcp/udp/comprehensive)
     
     # === 引擎選擇 ===
-    preferred_engine: Optional[str] = None  # 首選引擎 (nmap/masscan)
+    preferred_engine: str | None = None  # 首選引擎 (nmap/masscan)
     fallback_engines: list[str] = field(default_factory=list)  # 備用引擎
     
     # === Phase0/Phase1 控制 ===
@@ -146,7 +146,7 @@ class AttackTaskContext(TaskContext):
     """
     # === 攻擊目標 ===
     objective: str = "comprehensive_assessment"  # 攻擊目標
-    vulnerability_type: Optional[str] = None  # 漏洞類型 (xss/sqli/ssrf等)
+    vulnerability_type: str | None = None  # 漏洞類型 (xss/sqli/ssrf等)
     
     # === 攻擊參數 ===
     payloads: list[str] = field(default_factory=list)  # 攻擊載荷

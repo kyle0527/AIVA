@@ -20,7 +20,7 @@ __all__ = [
     "RiskAssessmentResult",
     "RiskTrendAnalysis",
     "AttackPathNode",
-    "AttackPathEdge", 
+    "AttackPathEdge",
     "AttackPathPayload",
     "AttackPathRecommendation",
     # 標準參考 (references.py)

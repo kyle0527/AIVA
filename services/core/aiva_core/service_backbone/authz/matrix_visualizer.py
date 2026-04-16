@@ -8,11 +8,11 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from jinja2 import Template
-import structlog
+import plotly.graph_objects as go
 
 # 直接導入plotly - 缺少依賴時應明確報錯，不使用降級邏輯
 from plotly.subplots import make_subplots
-import plotly.graph_objects as go
+import structlog
 
 # 型別檢查時的導入
 if TYPE_CHECKING:

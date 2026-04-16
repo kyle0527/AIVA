@@ -20,16 +20,13 @@
     - Tier 3: 概率性觸發 (Probabilistic Triggers)
 """
 
-import re
 from dataclasses import dataclass, field
-from typing import Any
 from enum import Enum, auto
+import re
+from typing import Any
 
 from .base import (
-    DetectionResult,
     ConfidenceLevel,
-    VulnerabilityType,
-    AttackContext,
     KnowledgeRegistry,
 )
 

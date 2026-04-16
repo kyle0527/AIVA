@@ -9,20 +9,20 @@
 - 可持久化的權重儲存
 """
 
+import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
-import json
 import time
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 try:
+    import numpy as np
     import torch
     import torch.nn as nn
-    import torch.optim as optim
     import torch.nn.functional as F
-    import numpy as np
+    import torch.optim as optim
 
     # AIVA 自研 Embedding 層 - 使用 all-MiniLM-L6-v2 的權重但架構自主可控
     from .aiva_embedding import AIVAEmbedding
@@ -40,9 +40,13 @@ except ImportError as e:
     BaseClass = object
 
 # aiva_common 強制依賴 - 必須正確安裝
-from aiva_common.enums.common import Severity, Confidence
-from aiva_common.enums.security import VulnerabilityType
-from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+from aiva_common.core.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
+from aiva_common.enums.common import Severity
 
 MODULE_NAME = "real_neural_core"
 
@@ -52,11 +56,11 @@ class RealAICore(BaseClass):
     
     def __init__(self, 
                  input_size: int = 512,
-                 hidden_sizes: Optional[list] = None, 
+                 hidden_sizes: list | None = None, 
                  output_size: int = 100,  # 5M模型主輸出維度
                  aux_output_size: int = 531,  # 5M模型輔助輸出維度
                  use_5m_model: bool = True,  # 是否使用5M模型
-                 weights_path: Optional[str] = None):
+                 weights_path: str | None = None):
         """
         初始化真實的神經網路核心
         
@@ -234,7 +238,7 @@ class RealAICore(BaseClass):
             logger.error(f"儲存權重失敗: {e}")
             raise
     
-    def load_weights(self, filepath: Optional[str] = None) -> None:
+    def load_weights(self, filepath: str | None = None) -> None:
         """載入真實的權重檔案 - 支援多種 key 命名結構
         
         重構說明: 將複雜的權重載入邏輯拆分為多個子函數以降低複雜度
@@ -255,7 +259,7 @@ class RealAICore(BaseClass):
             logger.error(f"載入權重失敗: {e}")
             raise
 
-    def _validate_weight_filepath(self, filepath: Optional[str]) -> str:
+    def _validate_weight_filepath(self, filepath: str | None) -> str:
         """驗證並返回權重檔案路徑"""
         if filepath is None:
             if self.use_5m_model:
@@ -296,7 +300,7 @@ class RealAICore(BaseClass):
         logger.debug(f"Model keys: {len(self.state_dict().keys())}, State dict keys: {len(state_dict.keys())}")
         
         # 檢查是否需要 network.N 格式映射
-        if not any(k.startswith('network.') for k in state_dict.keys()):
+        if not any(k.startswith('network.') for k in state_dict):
             return state_dict
         
         # 定義映射規則
@@ -346,7 +350,7 @@ class RealAICore(BaseClass):
         # aux_output_layer 缺失為預期行為（舊版權重），不納入錯誤判斷
         critical_missing = [k for k in missing_keys if k not in self._AUX_LAYER_KEYS]
         if critical_missing:
-            logger.warning(f"aux_output_layer 使用 Xavier 初始化（舊版權重不含此層）")
+            logger.warning("aux_output_layer 使用 Xavier 初始化（舊版權重不含此層）")
 
         # 判斷載入結果
         if not missing_keys and not unexpected_keys:
@@ -372,7 +376,7 @@ class RealAICore(BaseClass):
 class RealDecisionEngine:
     """真實的決策引擎 - 支援5M特化神經網路"""
     
-    def __init__(self, weights_path: Optional[str] = None, use_5m_model: bool = True):
+    def __init__(self, weights_path: str | None = None, use_5m_model: bool = True):
         """
         初始化真實的決策引擎
         
@@ -694,7 +698,7 @@ class RealDecisionEngine:
     
     def generate_decision(self, 
                          task_description: str, 
-                         context: str = "") -> Dict[str, Any]:
+                         context: str = "") -> dict[str, Any]:
         """
         使用 5M 特化神經網絡生成 Bug Bounty 專業決策
         
@@ -797,7 +801,7 @@ class RealDecisionEngine:
         
         return max(0.0, min(1.0, enhanced_confidence))
     
-    def _analyze_decision_output(self, output: torch.Tensor, context: str) -> Dict[str, Any]:
+    def _analyze_decision_output(self, output: torch.Tensor, context: str) -> dict[str, Any]:
         """分析決策輸出（單一輸出版本）- 使用神經網路真實輸出
         
         注意：移除 task 參數以符合 SonarQube 建議（參數未使用）
@@ -858,7 +862,7 @@ class RealDecisionEngine:
         }
     
     def _analyze_bug_bounty_decision(self, main_output: torch.Tensor, aux_output: torch.Tensor, 
-                                   _task: str, _context: str) -> Dict[str, Any]:
+                                   _task: str, _context: str) -> dict[str, Any]:
         """分析 Bug Bounty 專業決策
         
         Args:
@@ -944,7 +948,7 @@ class RealDecisionEngine:
     def train_step(self, 
                    inputs: torch.Tensor, 
                    targets: torch.Tensor,
-                   aux_targets: Optional[torch.Tensor] = None) -> Dict[str, float]:
+                   aux_targets: torch.Tensor | None = None) -> dict[str, float]:
         """
         執行優化的 5M 特化網絡訓練步驟
         
@@ -972,7 +976,7 @@ class RealDecisionEngine:
         return loss_breakdown
     
     def _compute_training_loss(self, inputs: torch.Tensor, targets: torch.Tensor, 
-                              aux_targets: Optional[torch.Tensor]) -> Dict[str, Any]:
+                              aux_targets: torch.Tensor | None) -> dict[str, Any]:
         """計算訓練損失"""
         if self.use_5m_model and aux_targets is not None:
             return self._compute_dual_output_loss(inputs, targets, aux_targets)
@@ -980,7 +984,7 @@ class RealDecisionEngine:
             return self._compute_single_output_loss(inputs, targets)
     
     def _compute_dual_output_loss(self, inputs: torch.Tensor, targets: torch.Tensor,
-                                 aux_targets: torch.Tensor) -> Dict[str, Any]:
+                                 aux_targets: torch.Tensor) -> dict[str, Any]:
         """計算雙重輸出損失 (5M 模型)"""
         main_output, aux_output = self.ai_core.forward_with_aux(inputs)
         
@@ -1004,7 +1008,7 @@ class RealDecisionEngine:
             'loss_ratio': float(main_loss.item() / (aux_loss.item() + 1e-8))
         }
     
-    def _compute_single_output_loss(self, inputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, Any]:
+    def _compute_single_output_loss(self, inputs: torch.Tensor, targets: torch.Tensor) -> dict[str, Any]:
         """計算單一輸出損失 (舊式模型)"""
         output = self.ai_core(inputs)
         
@@ -1059,7 +1063,7 @@ class RealDecisionEngine:
                 'timestamp': time.time()
             })
     
-    def _update_training_statistics(self, loss_breakdown: Dict[str, Any]) -> None:
+    def _update_training_statistics(self, loss_breakdown: dict[str, Any]) -> None:
         """更新訓練統計信息"""
         # 基本統計更新
         if not hasattr(self, 'training_stats'):

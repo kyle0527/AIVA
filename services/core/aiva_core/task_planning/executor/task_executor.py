@@ -13,10 +13,6 @@ from dataclasses import dataclass
 import logging
 from typing import Any
 
-from ..planner.task_converter import ExecutableTask
-from ..planner.tool_selector import ToolDecision
-from .execution_status_monitor import ExecutionContext, ExecutionMonitor
-
 # 問題四修復：導入動態調用組件
 from services.core.aiva_core.core_capabilities.capability_registry import (
     get_capability_registry,
@@ -24,6 +20,10 @@ from services.core.aiva_core.core_capabilities.capability_registry import (
 from services.core.aiva_core.service_backbone.api.unified_function_caller import (
     UnifiedFunctionCaller,
 )
+
+from ..planner.task_converter import ExecutableTask
+from ..planner.tool_selector import ToolDecision
+from .execution_status_monitor import ExecutionContext, ExecutionMonitor
 
 logger = logging.getLogger(__name__)
 
@@ -173,7 +173,9 @@ class TaskExecutor:
 
         # 調用真實的掃描服務
         try:
-            from ...service_backbone.api.unified_function_caller import get_unified_caller
+            from ...service_backbone.api.unified_function_caller import (
+                get_unified_caller,
+            )
             
             caller = get_unified_caller()
             scan_result = await caller.call_function(
@@ -360,7 +362,9 @@ class TaskExecutor:
 
         # 調用真實的整合服務（如果有配置）
         try:
-            from ...service_backbone.api.unified_function_caller import get_unified_caller
+            from ...service_backbone.api.unified_function_caller import (
+                get_unified_caller,
+            )
             
             caller = get_unified_caller()
             integration_result = await caller.call_function(
@@ -407,7 +411,9 @@ class TaskExecutor:
 
         # 調用真實的核心分析服務
         try:
-            from ...service_backbone.api.unified_function_caller import get_unified_caller
+            from ...service_backbone.api.unified_function_caller import (
+                get_unified_caller,
+            )
             
             caller = get_unified_caller()
             analysis_result = await caller.call_function(

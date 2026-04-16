@@ -4,18 +4,18 @@ Knowledge Base - 知識庫類別
 為 VectorStore 提供高級抽象接口，支援 RAG 引擎所需的知識管理功能
 """
 
+from collections.abc import Awaitable
+from datetime import datetime
 import hashlib
 import logging
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Union, Protocol, Awaitable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Protocol
 
 # UTC 兼容性处理（Python 3.11+ 使用 UTC，较旧版本使用 timezone.utc）
 try:
     from datetime import UTC  # type: ignore
 except ImportError:
-    UTC = timezone.utc  # type: ignore
+    UTC = UTC  # type: ignore
 
-from .vector_store import VectorStore
 
 if TYPE_CHECKING:
     from aiva_common.schemas.dual_loop import RAGQueryRequest, RAGQueryResult
@@ -33,7 +33,7 @@ class VectorStoreProtocol(Protocol):
         self,
         doc_id: str,
         text: str,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: dict[str, Any] | None = None
     ) -> Awaitable[None]:
         """添加文檔到向量存儲（異步）"""
         ...
@@ -42,25 +42,25 @@ class VectorStoreProtocol(Protocol):
         self,
         query: str,
         top_k: int = 5,
-        filter_metadata: Optional[Dict[str, Any]] = None
-    ) -> Awaitable[List[Dict[str, Any]]]:
+        filter_metadata: dict[str, Any] | None = None
+    ) -> Awaitable[list[dict[str, Any]]]:
         """搜索相似文檔（異步）"""
         ...
     
     def add_capability_from_registry(
         self,
-        capability: Dict[str, Any],
-        capability_id: Optional[str] = None
+        capability: dict[str, Any],
+        capability_id: str | None = None
     ) -> None:
         """從 integration/capability 註冊表添加能力（v2.1 新增）"""
         ...
     
     def search_by_environment(
         self,
-        environment_features: Dict[str, float],
+        environment_features: dict[str, float],
         top_k: int = 5,
-        filter_type: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+        filter_type: str | None = None
+    ) -> list[dict[str, Any]]:
         """根據環境特徵搜索最匹配的能力（v2.1 新增 - 去語意化檢索）"""
         ...
 
@@ -83,7 +83,7 @@ class KnowledgeBase:
         self.vector_store = vector_store
         logger.info("KnowledgeBase initialized with vector store")
     
-    async def search(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+    async def search(self, query: str, top_k: int = 5) -> list[dict[str, Any]]:
         """搜索相關知識
         
         Args:
@@ -126,6 +126,7 @@ class KnowledgeBase:
             RAGQueryResult: 查詢結果
         """
         import asyncio
+
         from aiva_common.schemas.dual_loop import RAGQueryResult
         
         try:
@@ -183,7 +184,7 @@ class KnowledgeBase:
                 timestamp=datetime.now(UTC)
             )
     
-    async def add_knowledge(self, content: str, metadata: Optional[Dict[str, Any]] = None) -> bool:
+    async def add_knowledge(self, content: str, metadata: dict[str, Any] | None = None) -> bool:
         """添加知識到知識庫
         
         Args:
@@ -232,7 +233,7 @@ class KnowledgeBase:
             logger.error(f"Codebase indexing failed: {e}")
             return False
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """獲取知識庫統計信息
         
         Returns:

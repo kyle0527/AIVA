@@ -4,7 +4,7 @@
 此模組定義了模組狀態、心跳、性能指標等監控相關的資料模型。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -30,7 +30,7 @@ class ModuleStatus(BaseModel):
     queue_size: int = 0
     tasks_completed: int = 0
     tasks_failed: int = 0
-    last_heartbeat: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    last_heartbeat: datetime = Field(default_factory=lambda: datetime.now(UTC))
     metrics: dict[str, Any] = Field(default_factory=dict)
     uptime_seconds: float = 0.0
 
@@ -51,7 +51,7 @@ class FunctionTelemetry(BaseModel):
     attempts: int = 0
     errors: list[str] = Field(default_factory=list)
     duration_seconds: float = 0.0
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     def to_details(self, findings_count: int | None = None) -> dict[str, Any]:
         """轉換為詳細報告格式"""
@@ -78,7 +78,7 @@ class ErrorRecord(BaseModel):
 
     category: ErrorCategory
     message: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     details: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -97,7 +97,7 @@ class EarlyStoppingInfo(BaseModel):
     """提前停止信息"""
 
     reason: StoppingReason
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     total_tests: int
     completed_tests: int
     remaining_tests: int
@@ -287,7 +287,7 @@ class FunctionExecutionResult(BaseModel):
     telemetry: dict[str, Any]
     errors: list[dict[str, Any]] = Field(default_factory=list)
     duration_seconds: float = 0.0
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class OastEvent(BaseModel):
@@ -297,7 +297,7 @@ class OastEvent(BaseModel):
     probe_token: str
     event_type: str  # "http", "dns", "smtp", "ftp"
     source_ip: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     protocol: str | None = None
     raw_request: str | None = None
     raw_data: dict[str, Any] = Field(default_factory=dict)
@@ -319,7 +319,7 @@ class OastProbe(BaseModel):
     callback_url: str
     task_id: str
     scan_id: str
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     expires_at: datetime | None = None
     status: str = "active"
 
@@ -342,7 +342,7 @@ class SIEMEventPayload(BaseModel):
     destination: str | None = None
     message: str
     details: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class NotificationPayload(BaseModel):
@@ -356,7 +356,7 @@ class NotificationPayload(BaseModel):
     details: dict[str, Any] = Field(default_factory=dict)
     recipients: list[str] = Field(default_factory=list)
     attachments: list[dict[str, Any]] = Field(default_factory=list)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # ============================================================================
@@ -373,7 +373,7 @@ class SIEMEvent(BaseModel):
 
     # 時間信息
     timestamp: datetime = Field(description="事件時間戳")
-    received_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    received_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     # 事件屬性
     severity: Severity = Field(description="嚴重程度")

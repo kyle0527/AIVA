@@ -1,8 +1,16 @@
 from __future__ import annotations
-from typing import List
+
 from aiva_common.enums import Confidence, Severity, VulnerabilityType
-from aiva_common.schemas import FindingPayload, Vulnerability, FindingEvidence, FindingImpact, FindingRecommendation, FindingTarget
-from aiva_common.utils import new_id, get_logger
+from aiva_common.schemas import (
+    FindingEvidence,
+    FindingImpact,
+    FindingPayload,
+    FindingRecommendation,
+    FindingTarget,
+    Vulnerability,
+)
+from aiva_common.utils import get_logger, new_id
+
 from ..config.ssrf_config import SsrfConfig
 from ..engine.ssrf_engine import SSRFEngine, SSRFIssue
 
@@ -12,7 +20,7 @@ class SSRFDetector:
     def __init__(self, config: SsrfConfig):
         self.config = config
 
-    async def analyze(self, target_url: str) -> List[FindingPayload]:
+    async def analyze(self, target_url: str) -> list[FindingPayload]:
         engine = SSRFEngine(timeout=self.config.request_timeout,
                             max_redirects=self.config.max_redirects,
                             allow_active=self.config.allow_active_network,

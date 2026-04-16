@@ -8,11 +8,12 @@
 - 支援多環境/多客戶策略
 """
 
-import logging
-import yaml
-from pathlib import Path
-from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
+import logging
+from pathlib import Path
+from typing import Any
+
+import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ class RiskLevel:
     """風險等級定義"""
     name: str
     min_score: int
-    max_score: Optional[int]
+    max_score: int | None
     description: str
     mitigation_required: bool
     recommended_action: str
@@ -47,7 +48,7 @@ class PolicyManager:
     4. 支援策略熱更新（生產環境）
     """
 
-    def __init__(self, policy_path: Optional[str] = None):
+    def __init__(self, policy_path: str | None = None):
         """初始化策略管理器
         
         Args:
@@ -61,9 +62,9 @@ class PolicyManager:
             policy_path_obj = Path(policy_path)
         
         self.policy_path: Path = policy_path_obj
-        self.policy: Dict[str, Any] = {}
-        self.rules: Dict[str, List[RiskRule]] = {}
-        self.risk_levels: Dict[str, RiskLevel] = {}
+        self.policy: dict[str, Any] = {}
+        self.rules: dict[str, list[RiskRule]] = {}
+        self.risk_levels: dict[str, RiskLevel] = {}
         
         self._load_policy()
 
@@ -78,7 +79,7 @@ class PolicyManager:
                 self._use_fallback_policy()
                 return
             
-            with open(self.policy_path, 'r', encoding='utf-8') as f:
+            with open(self.policy_path, encoding='utf-8') as f:
                 self.policy = yaml.safe_load(f)
             
             # 解析規則
@@ -117,7 +118,7 @@ class PolicyManager:
                 f"   策略文件必須存在且格式正確"
             ) from e
 
-    def assess_risk(self, situation: Dict[str, Any], constraints: Dict[str, Any]) -> Dict[str, Any]:
+    def assess_risk(self, situation: dict[str, Any], constraints: dict[str, Any]) -> dict[str, Any]:
         """評估風險因素
         
         Args:
@@ -176,7 +177,7 @@ class PolicyManager:
             'policy_version': self.policy.get('version', 'unknown')
         }
 
-    def _evaluate_condition(self, condition: str, context: Dict[str, Any]) -> bool:
+    def _evaluate_condition(self, condition: str, context: dict[str, Any]) -> bool:
         """安全地評估條件表達式
         
         Args:
@@ -240,7 +241,7 @@ class PolicyManager:
             'low', 0, None, 'Unknown risk level', False, 'Review manually'
         ))
 
-    def reload_policy(self, policy_path: Optional[str] = None):
+    def reload_policy(self, policy_path: str | None = None):
         """重新加載策略（熱更新支援）
         
         Args:
@@ -252,7 +253,7 @@ class PolicyManager:
         logger.info(f"Reloading risk policy from {self.policy_path}")
         self._load_policy()
 
-    def get_policy_info(self) -> Dict[str, Any]:
+    def get_policy_info(self) -> dict[str, Any]:
         """獲取當前策略信息"""
         return {
             'policy_name': self.policy.get('policy_name', 'unknown'),

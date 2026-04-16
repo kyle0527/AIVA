@@ -14,9 +14,7 @@ AIVA Internal Exploration 路徑配置
 最後更新: 2026-01-21
 """
 
-import os
 from pathlib import Path
-from typing import Dict, Optional
 
 # ==========================================
 # 常量定義
@@ -240,7 +238,7 @@ def ensure_all_dirs():
     ExternalPaths.ensure_dirs()
     CombinedPaths.SELF_HEALING_DIR.mkdir(parents=True, exist_ok=True)
 
-def resolve_legacy_path(legacy_path: str) -> Optional[Path]:
+def resolve_legacy_path(legacy_path: str) -> Path | None:
     """解析舊路徑到新路徑"""
     return LEGACY_PATHS.get(legacy_path)
 

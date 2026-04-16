@@ -10,31 +10,31 @@ AIVA Analysis Domain Schemas
 此領域專注於代碼分析、漏洞發現的分析過程。
 """
 
-from .results import *
-from .language_support import *
 # 從ai_models導入分析相關的AI模型
 from .ai_models import (
-    AITrainingStartPayload,
-    AITrainingProgressPayload,
     AITrainingCompletedPayload,
-    ModelTrainingConfig,
+    AITrainingProgressPayload,
+    AITrainingStartPayload,
     ExperienceSample,
-    TraceRecord,
+    ModelTrainingConfig,
     RAGKnowledgeUpdatePayload,
     RAGQueryPayload,
     RAGResponsePayload,
+    TraceRecord,
 )
+from .language_support import *
+from .results import *
 
 __all__ = [
     # 分析結果標準 (analysis.py)
-    "BaseAnalysisResult", 
+    "BaseAnalysisResult",
     "JavaScriptAnalysisResult",
     "DataLeak",
     "AnalysisType",
     "LegacyJavaScriptAnalysisResultAdapter",
     # 語言支持 (languages.py)
     "LanguageDetectionResult",
-    "LanguageSpecificVulnerability", 
+    "LanguageSpecificVulnerability",
     "MultiLanguageCodebase",
     "LanguageSpecificScanConfig",
     "CrossLanguageAnalysis",
@@ -44,7 +44,7 @@ __all__ = [
     "LanguageInteroperability",
     # AI分析模型 (ai.py部分)
     "AITrainingStartPayload",
-    "AITrainingProgressPayload", 
+    "AITrainingProgressPayload",
     "AITrainingCompletedPayload",
     "ModelTrainingConfig",
     "ExperienceSample",

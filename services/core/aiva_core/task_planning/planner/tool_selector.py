@@ -13,12 +13,12 @@ from enum import Enum
 import json
 import logging
 from pathlib import Path
-from typing import Any, Optional, Dict, List
-
-from .task_converter import ExecutableTask
+from typing import Any
 
 # 導入 CLI 命令模型
 from aiva_common.schemas.commands import CLICommand
+
+from .task_converter import ExecutableTask
 
 logger = logging.getLogger(__name__)
 
@@ -233,8 +233,8 @@ class ToolSelector:
         self,
         intent: str,
         target: str,
-        context: Optional[Dict[str, Any]] = None
-    ) -> Optional[CLICommand]:
+        context: dict[str, Any] | None = None
+    ) -> CLICommand | None:
         """根據意圖選擇 CLI 命令（新架構）
 
         Args:
@@ -296,7 +296,7 @@ class ToolSelector:
         logger.info(f"✅ 選擇 CLI 命令: {cmd.flow_id} for {intent}")
         return cmd
 
-    def _load_internal_flows(self) -> List[Dict[str, Any]]:
+    def _load_internal_flows(self) -> list[dict[str, Any]]:
         """加載內部 flows 定義
 
         Returns:
@@ -325,7 +325,7 @@ class ToolSelector:
         logger.error("未找到 internal_classification.json")
         return []
 
-    def _match_flow_by_intent(self, intent: str, flows: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    def _match_flow_by_intent(self, intent: str, flows: list[dict[str, Any]]) -> dict[str, Any] | None:
         """根據意圖匹配最佳 flow
 
         Args:

@@ -5,11 +5,11 @@
 確保 AI 決策系統能夠統一解析和使用檢測結果。
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from enum import Enum, auto
-from typing import Any, Callable, TypeAlias
-from datetime import datetime, timezone
-
+from typing import Any, TypeAlias
 
 # ==================== 枚舉類型 ====================
 
@@ -140,7 +140,7 @@ class DetectionResult:
     recommendations: list[str] = field(default_factory=list)
     technical_details: dict[str, Any] = field(default_factory=dict)
     raw_data: dict[str, Any] = field(default_factory=dict)
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     
     def to_dict(self) -> dict[str, Any]:
         """轉換為字典格式，便於 JSON 序列化"""

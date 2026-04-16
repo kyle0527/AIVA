@@ -18,8 +18,6 @@ AIVA AI System Models - AI智能系統模組
 from datetime import UTC, datetime
 from typing import Any
 
-from pydantic import BaseModel, Field
-
 from aiva_common.enums import (
     Confidence,
     ModuleName,
@@ -28,14 +26,15 @@ from aiva_common.enums import (
     TestStatus,
 )
 from aiva_common.schemas import (
-    RAGResponsePayload,
-    AIVerificationRequest,
-    AITrainingStartPayload,
-    AITrainingProgressPayload,
     AITrainingCompletedPayload,
+    AITrainingProgressPayload,
+    AITrainingStartPayload,
+    AIVerificationRequest,
     RAGKnowledgeUpdatePayload,
-    RAGQueryPayload
+    RAGQueryPayload,
+    RAGResponsePayload,
 )
+from pydantic import BaseModel, Field
 
 # ==================== AI 驗證系統 ====================
 

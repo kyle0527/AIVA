@@ -7,9 +7,8 @@ import asyncio
 import logging
 from typing import Any
 
+from aiva_common.enums import Confidence, Severity
 import httpx
-
-from aiva_common.enums import VulnerabilityType, Severity, Confidence
 
 logger = logging.getLogger(__name__)
 

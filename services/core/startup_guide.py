@@ -5,20 +5,20 @@ AIVA Core 啟動指南
 系統完整啟動步驟和故障排除指南
 """
 
-import sys
-import subprocess
 from pathlib import Path
+import sys
+
 
 def print_startup_guide():
     """打印啟動指南"""
     
-    guide = """
+    guide = f"""
 [START] AIVA Core 系統完整啟動步驟
 =====================================
 
 [1] 1. 前置檢查
 --------------
-[OK] Python 版本: 3.11+ (當前: {python_version})
+[OK] Python 版本: 3.11+ (當前: {sys.version.split()[0]})
 [OK] 工作目錄: C:\\D\\fold7\\AIVA-git\\services\\core
 [OK] 核心模組: aiva_core v4.1.1
 
@@ -114,7 +114,7 @@ curl http://localhost:8000/capabilities
 🌐 Web UI: http://localhost:8000
 📖 API 文檔: http://localhost:8000/docs
 =======================================
-    """.format(python_version=sys.version.split()[0])
+    """
     
     print(guide)
 

@@ -9,17 +9,16 @@
 """
 
 import asyncio
+from enum import Enum
 import hashlib
 import logging
 import time
-from typing import Any, TYPE_CHECKING, Optional
-from enum import Enum
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .knowledge_base import KnowledgeBase
 
 from aiva_common.schemas import (
-    AttackPlan,
     AttackStep,
     AttackTarget,
     ExperienceSample,
@@ -61,7 +60,7 @@ class QueryCache:
         content = f"{query_type}:{query}:{top_k}"
         return hashlib.md5(content.encode()).hexdigest()
     
-    def get(self, query: str, query_type: str, top_k: int) -> Optional[Any]:
+    def get(self, query: str, query_type: str, top_k: int) -> Any | None:
         """獲取緩存"""
         key = self._make_key(query, query_type, top_k)
         
@@ -418,8 +417,9 @@ class RAGEngine:
         arsenal_results: list[dict[str, Any]] = []
         if arsenal_collection:
             try:
-                import chromadb
                 from pathlib import Path
+
+                import chromadb
 
                 # 外部武器庫 ChromaDB 路徑（由 _dev_tools/ingest_payloads_to_rag.py 寫入）
                 db_path = Path(__file__).resolve().parents[7] / "data" / "chroma"

@@ -9,10 +9,10 @@ AIVA Capability Adapters
 """
 
 from .hackingtool_adapter import (
+    HACKINGTOOL_CATEGORIES,
     AIVAToolAdapter,
     HackingToolDefinition,
     create_adapter_factory,
-    HACKINGTOOL_CATEGORIES
 )
 
 __all__ = [

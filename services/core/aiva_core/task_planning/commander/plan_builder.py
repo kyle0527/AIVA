@@ -1,7 +1,7 @@
 """攻擊計劃建構器 - 負責生成攻擊計畫和提示詞建構"""
 
-import logging
 from datetime import datetime
+import logging
 from typing import Any
 from uuid import uuid4
 

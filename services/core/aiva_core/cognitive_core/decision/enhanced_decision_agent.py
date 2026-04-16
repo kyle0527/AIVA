@@ -22,29 +22,28 @@ Integration Note:
 - 新增: embedded_knowledge 知識引擎整合
 """
 
+import asyncio
 from datetime import datetime, timedelta
 import json
 import logging
 from pathlib import Path
-from typing import Any, Optional, TYPE_CHECKING
-import asyncio
+from typing import TYPE_CHECKING, Any
 import uuid
-
-# [新增] 引入真實神經網路引擎
-from ..neural.real_neural_core import RealDecisionEngine
-
-# [新增] 引入內外部閉環連接器
-from ..internal_loop_connector import InternalLoopConnector
-from ..external_loop_connector import ExternalLoopConnector
 
 # [新增] 引入 embedded_knowledge 知識引擎
 from ..embedded_knowledge import (
-    VulnerabilityDetector,
     CVEIdentifier,
+    VulnerabilityDetector,
     WAFBypassEngine,
     WebArchitectureAnalyzer,
-    AttackContext,
 )
+from ..external_loop_connector import ExternalLoopConnector
+
+# [新增] 引入內外部閉環連接器
+from ..internal_loop_connector import InternalLoopConnector
+
+# [新增] 引入真實神經網路引擎
+from ..neural.real_neural_core import RealDecisionEngine
 
 # [Split] 拆分模組
 from .bounty_strategy_agent import BountyStrategyAgent
@@ -55,18 +54,19 @@ if TYPE_CHECKING:
     from aiva_common.schemas.commands import CLICommand
 
 # 使用 aiva_common 的統一枚舉定義
+# Operation mode as string literal (bio_neuron_master.py 已移除)
+from typing import Literal
+
 from aiva_common.enums import RiskLevel
 
 # 使用 aiva_common 的決策數據合約 (問題三修復)
 from aiva_common.schemas import (
+    DecisionConstraints,
     HighLevelIntent,
     IntentType,
     TargetInfo,
-    DecisionConstraints,
 )
 
-# Operation mode as string literal (bio_neuron_master.py 已移除)
-from typing import Literal
 OperationMode = Literal["ui", "ai", "chat"]
 
 
@@ -328,6 +328,7 @@ class EnhancedDecisionAgent(KnowledgeDecisionMixin):
             CLICommand: CLI 參數包
         """
         from aiva_common.schemas.commands import CLICommand
+
         from ...task_planning.planner.tool_selector import ToolSelector
 
         # 1. 分析上下文提取意圖
@@ -577,7 +578,7 @@ class EnhancedDecisionAgent(KnowledgeDecisionMixin):
         self,
         context: DecisionContext,
         rag_suggestions: list[dict[str, Any]] | None = None
-    ) -> Optional[Decision]:
+    ) -> Decision | None:
         """[新增] 基於 5M 神經網路的真實 AI 決策
 
         v2.1 (2026-01-08): 整合 RAG 建議到神經決策
@@ -655,9 +656,9 @@ class EnhancedDecisionAgent(KnowledgeDecisionMixin):
 
     def _ensemble_decision(
         self,
-        neural: Optional[Decision],
-        experience: Optional[Decision],
-        rule: Optional[Decision],
+        neural: Decision | None,
+        experience: Decision | None,
+        rule: Decision | None,
         context: DecisionContext,
         rag_suggestions: list[dict[str, Any]] | None = None
     ) -> Decision:
@@ -1074,9 +1075,10 @@ class EnhancedDecisionAgent(KnowledgeDecisionMixin):
 
         # 直接使用 AICommandCenter 下達命令
         try:
+            import uuid
+
             from aiva_common.core.command_center import get_command_center
             from aiva_common.schemas import AICommand, CommandType
-            import uuid
 
             command_center = get_command_center()
             target = context.target_info.get("value", "http://localhost:3000")
@@ -1132,9 +1134,10 @@ class EnhancedDecisionAgent(KnowledgeDecisionMixin):
         self.logger.info(f"   🎯 對目標 {target} 執行漏洞測試")
 
         try:
+            import uuid
+
             from aiva_common.core.command_center import get_command_center
             from aiva_common.schemas import AICommand, CommandType
-            import uuid
 
             command_center = get_command_center()
 

@@ -6,6 +6,7 @@ AIVA Rich Console
 
 from rich.console import Console
 from rich.traceback import install
+
 from .themes import AIVA_THEME
 
 # 全域 Console 實例

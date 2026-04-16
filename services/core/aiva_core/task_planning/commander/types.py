@@ -8,7 +8,6 @@ from enum import Enum
 # 導入新架構的 CLI 命令模型（階段 1：CLI 參數包驅動架構）
 from aiva_common.schemas.commands import CLICommand
 
-
 # 重新導出 CLICommand 供其他模組使用
 __all__ = ["AITaskType", "AIComponent", "CLICommand"]
 

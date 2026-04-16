@@ -4,21 +4,22 @@ AIVA UI 組件
 提供可重用的 UI 組件函數
 """
 
-from typing import List, Tuple, Optional, Any
+from typing import Any
+
+from rich.align import Align
 from rich.panel import Panel
-from rich.table import Table
 from rich.progress import (
+    BarColumn,
     Progress,
     SpinnerColumn,
     TextColumn,
-    BarColumn,
     TimeRemainingColumn,
 )
 from rich.prompt import Confirm
-from rich.align import Align
-from rich.text import Text
+from rich.table import Table
+
 from .rich_console import get_console
-from .themes import TABLE_STYLES, PANEL_STYLES, ICONS
+from .themes import ICONS, PANEL_STYLES, TABLE_STYLES
 
 # 使用函數獲取 console，確保主題正確套用
 console = get_console()
@@ -53,7 +54,7 @@ def show_banner(
 
 def show_menu(
     title: str,
-    options: List[Tuple[str, str, str]],
+    options: list[tuple[str, str, str]],
     style: str = "main_menu"
 ) -> None:
     """顯示選單
@@ -91,8 +92,8 @@ def show_menu(
 
 def show_table(
     title: str,
-    columns: List[Tuple[str, dict]],
-    rows: List[List[Any]],
+    columns: list[tuple[str, dict]],
+    rows: list[list[Any]],
     style: str = "data"
 ) -> None:
     """顯示數據表格
@@ -124,9 +125,9 @@ def show_table(
 
 def show_panel(
     content: str,
-    title: Optional[str] = None,
+    title: str | None = None,
     style: str = "info",
-    icon: Optional[str] = None
+    icon: str | None = None
 ) -> None:
     """顯示面板
     
@@ -153,7 +154,7 @@ def show_panel(
 
 def show_progress(
     description: str = "處理中...",
-    total: Optional[int] = None
+    total: int | None = None
 ) -> Progress:
     """建立進度條
     
@@ -201,7 +202,7 @@ def show_success(message: str) -> None:
         icon=ICONS["success"]
     )
 
-def show_error(message: str, details: Optional[str] = None) -> None:
+def show_error(message: str, details: str | None = None) -> None:
     """顯示錯誤訊息"""
     content = f"[aiva.error]{message}[/aiva.error]"
     if details:

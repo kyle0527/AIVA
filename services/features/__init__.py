@@ -60,9 +60,9 @@ __version__ = "2.0.0"  # 升級到 v2.0，符合 aiva_common 規範
 # ==================== 從 aiva_common 導入共享基礎設施 ====================
 from aiva_common.enums import (
     Confidence,
-    Severity, 
-    ThreatLevel,  # 使用統一的 ThreatLevel
+    Severity,
     TaskStatus,
+    ThreatLevel,  # 使用統一的 ThreatLevel
     VulnerabilityType,
 )
 from aiva_common.schemas import (
@@ -80,6 +80,7 @@ from aiva_common.schemas import (
     OastProbe,
     TestExecution,
 )
+from aiva_common.schemas.base import ExecutionError
 
 # ==================== 從 aiva_common 導入 Features 使用的類 ====================
 # 注意: 這些類實際定義在 aiva_common.schemas 中，而非本地 models 模組
@@ -88,7 +89,6 @@ from aiva_common.schemas.tasks import (
     APISecurityTestPayload,
     APITestCase,
 )
-from aiva_common.schemas.base import ExecutionError
 from aiva_common.schemas.telemetry import FunctionTelemetry
 
 # ==================== 本模組專屬類型（待實現或移除） ====================

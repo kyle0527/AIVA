@@ -8,11 +8,11 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
-import networkx as nx
-
 from aiva_common.enums import (
     ProgrammingLanguage,
 )
+import networkx as nx
+
 from services.core.aiva_core.core_capabilities.capability_registry import (
     CapabilityRegistry,
 )
@@ -26,8 +26,8 @@ from aiva_common.core.error_handling import (
     create_error_context,
 )
 from aiva_common.utils.logging import get_logger
+
 from services.integration.capability.registry import CapabilityRegistry
-from services.integration.capability.models import CapabilityRecord
 
 logger = get_logger(__name__)
 MODULE_NAME = "aiva_core.decision.skill_graph"

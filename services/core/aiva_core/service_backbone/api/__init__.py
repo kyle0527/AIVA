@@ -5,8 +5,8 @@ API Module - API 服務模組
 """
 
 # app.py 提供 FastAPI 應用和服務器功能（替代 fastapi_server.py）
-from .app import app as AIVAServer  # FastAPI 應用實例
 from .ai_service import AIService
+from .app import app as AIVAServer  # FastAPI 應用實例
 
 __all__ = [
     "AIVAServer",

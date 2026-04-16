@@ -1,4 +1,5 @@
 import shlex
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -48,16 +49,14 @@ v3.3 (2026-01-21) - 🔧 統一路徑配置
     python aiva_external_executor.py --lang rust --func analyze_cookies --dry-run
 """
 
-import sys
-import os
-import json
-import subprocess
 import argparse
-from pathlib import Path
-from typing import Dict, List, Optional, Any
 from collections import defaultdict
 from datetime import datetime
 import importlib
+import json
+import os
+from pathlib import Path
+import subprocess
 
 # ==========================================
 # 路徑配置
@@ -72,8 +71,8 @@ DRY_RUN_MESSAGE = "[Dry Run] 不實際執行"
 # 嘗試導入統一路徑配置
 try:
     from services.integration.data.internal_exploration.paths_config import (
-        ExternalPaths,
         DATA_ROOT,
+        ExternalPaths,
         ensure_all_dirs,
     )
     USING_NEW_PATHS = True
@@ -123,7 +122,7 @@ class MultiLangExecutor:
             return
         
         try:
-            with open(CLASSIFICATION_DATA, 'r', encoding='utf-8') as f:
+            with open(CLASSIFICATION_DATA, encoding='utf-8') as f:
                 data = json.load(f)
             
             # 從 metadata 獲取統計
@@ -162,7 +161,7 @@ class MultiLangExecutor:
             import traceback
             traceback.print_exc()
     
-    def _load_python_capabilities(self, data: Dict):
+    def _load_python_capabilities(self, data: dict):
         """載入 Python 能力（從 flows）"""
         if "flows" in data:
             for flow in data["flows"]:
@@ -184,7 +183,7 @@ class MultiLangExecutor:
                     "parameters": []  # Python flows 不直接包含參數定義
                 })
     
-    def _load_compiled_lang_capabilities(self, lang: str, data: Dict):
+    def _load_compiled_lang_capabilities(self, lang: str, data: dict):
         """載入編譯型語言能力（Rust/Go/TypeScript）
         
         Args:
@@ -208,7 +207,7 @@ class MultiLangExecutor:
             }
             self.capabilities[lang].append(capability)
     
-    def _extract_python_params(self, flow: Dict) -> List[Dict]:
+    def _extract_python_params(self, flow: dict) -> list[dict]:
         """提取 Python 能力的參數（從 flow 定義推斷）"""
         # 基於 CLI command 提取參數
         cli = flow.get("cli_command", "")
@@ -228,7 +227,7 @@ class MultiLangExecutor:
         
         return params
     
-    def _extract_lang_params(self, func: Dict) -> List[Dict]:
+    def _extract_lang_params(self, func: dict) -> list[dict]:
         """提取編譯型語言的參數
         
         Args:
@@ -249,7 +248,7 @@ class MultiLangExecutor:
         
         return params
     
-    def list_capabilities(self, lang: Optional[str] = None, category: Optional[str] = None):
+    def list_capabilities(self, lang: str | None = None, category: str | None = None):
         """列出可用能力"""
         languages = [lang] if lang else ["python", "rust", "go", "typescript"]
         
@@ -350,7 +349,7 @@ class MultiLangExecutor:
             print(f"[錯誤] 不支持的語言: {target_lang}")
             return False
 
-    def execute_python(self, flow_id: Optional[int] = None, func_name: Optional[str] = None, 
+    def execute_python(self, flow_id: int | None = None, func_name: str | None = None, 
                       dry_run: bool = False, **kwargs):
         """執行 Python 能力"""
         if flow_id:
@@ -423,7 +422,7 @@ class MultiLangExecutor:
             traceback.print_exc()
             return False
     
-    def _execute_python_top_level_function(self, module_name: str, func_name: str, target: str, kwargs: Dict, cap: Dict | None = None) -> bool:
+    def _execute_python_top_level_function(self, module_name: str, func_name: str, target: str, kwargs: dict, cap: dict | None = None) -> bool:
         """執行 Python 頂層函數
         
         Args:
@@ -505,7 +504,10 @@ class MultiLangExecutor:
                         elif 'TaskPayload' in str(param_type) or 'Payload' in str(param_type):
                             # 嘗試構建 TaskPayload 物件
                             try:
-                                from aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget
+                                from aiva_common.schemas import (
+                                    FunctionTaskPayload,
+                                    FunctionTaskTarget,
+                                )
                                 task_payload = FunctionTaskPayload(
                                     task_id=kwargs.get('task_id', 'task_executor_001'),
                                     scan_id=kwargs.get('scan_id', 'scan_executor_001'),
@@ -528,7 +530,7 @@ class MultiLangExecutor:
                         else:
                             result = func_obj(*call_args, **call_kwargs)
                     else:
-                        print(f"[執行] 調用 {func_name}({', '.join(f'{k}=...' for k in call_kwargs.keys())}) {'[ASYNC]' if is_async else ''}")
+                        print(f"[執行] 調用 {func_name}({', '.join(f'{k}=...' for k in call_kwargs)}) {'[ASYNC]' if is_async else ''}")
                         if is_async:
                             import asyncio
                             result = asyncio.run(func_obj(**call_kwargs))
@@ -538,7 +540,7 @@ class MultiLangExecutor:
                     print(f"\n[結果] {result}")
                     return True
                     
-            except (ImportError, AttributeError) as e:
+            except (ImportError, AttributeError):
                 continue
             except Exception as e:
                 print(f"[錯誤] {import_path}: {e}")
@@ -550,7 +552,7 @@ class MultiLangExecutor:
         print(f"[建議] 檢查模組路徑: services/features/{module_name}/")
         return False
     
-    def _execute_python_class_method(self, module_name: str, class_name: str, method_name: str, target: str, kwargs: Dict, cap: Dict | None = None) -> bool:
+    def _execute_python_class_method(self, module_name: str, class_name: str, method_name: str, target: str, kwargs: dict, cap: dict | None = None) -> bool:
         """執行 Python 類方法
         
         Args:
@@ -663,7 +665,10 @@ class MultiLangExecutor:
                             elif 'TaskPayload' in str(param_type) or 'Payload' in str(param_type):
                                 # 嘗試構建 TaskPayload 物件
                                 try:
-                                    from aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget
+                                    from aiva_common.schemas import (
+                                        FunctionTaskPayload,
+                                        FunctionTaskTarget,
+                                    )
                                     task_payload = FunctionTaskPayload(
                                         task_id=kwargs.get('task_id', 'task_executor_001'),
                                         scan_id=kwargs.get('scan_id', 'scan_executor_001'),
@@ -683,7 +688,7 @@ class MultiLangExecutor:
                         if missing_required:
                             print(f"[警告] 缺少必要參數: {', '.join(missing_required)}")
                         
-                        print(f"[執行] {class_name}().{method_name}({', '.join(f'{k}=...' for k in call_kwargs.keys())}) {'[ASYNC]' if is_async else ''}")
+                        print(f"[執行] {class_name}().{method_name}({', '.join(f'{k}=...' for k in call_kwargs)}) {'[ASYNC]' if is_async else ''}")
                         
                         if is_async:
                             import asyncio
@@ -694,7 +699,7 @@ class MultiLangExecutor:
                         print(f"\n[結果] {result}")
                         return True
                         
-            except (ImportError, AttributeError) as e:
+            except (ImportError, AttributeError):
                 continue
             except Exception as e:
                 print(f"[錯誤] {import_path}: {e}")
@@ -858,7 +863,7 @@ class MultiLangExecutor:
             print(f"[錯誤] 執行失敗: {e}")
             return False
     
-    def generate_reference_docs(self, output_format: str = "md", output_dir: Optional[str] = None):
+    def generate_reference_docs(self, output_format: str = "md", output_dir: str | None = None):
         """生成外部模組 CLI 指令參考文件
         
         支援兩種格式:
@@ -987,7 +992,7 @@ class MultiLangExecutor:
             
             print(f"[成功] Markdown 參考文件已生成: {filename}")
             
-        except IOError as e:
+        except OSError as e:
             print(f"[錯誤] 無法寫入文件: {e}")
     
     def _generate_json_database(self, output_dir: Path):
@@ -1032,7 +1037,7 @@ class MultiLangExecutor:
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(db_records, f, indent=2, ensure_ascii=False)
             print(f"[成功] JSON 資料庫已生成: {filename}")
-        except IOError as e:
+        except OSError as e:
             print(f"[錯誤] 無法寫入文件: {e}")
 
 

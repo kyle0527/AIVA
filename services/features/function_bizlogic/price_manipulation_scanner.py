@@ -4,17 +4,12 @@
 """
 
 import asyncio
-import hashlib
-import logging
-from typing import Any, Optional
-from decimal import Decimal
 import json
-import time
+import logging
+from typing import Any
 
+from aiva_common.enums import Confidence, Severity
 import httpx
-
-from aiva_common.enums import VulnerabilityType, Severity, Confidence
-from .finding_helper import create_bizlogic_finding
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +83,7 @@ class PriceManipulationScanner:
         self, 
         response_data: dict[str, Any],
         client: httpx.AsyncClient,
-        transaction_id: Optional[str] = None
+        transaction_id: str | None = None
     ) -> dict[str, Any]:
         """
         驗證交易是否真正完成

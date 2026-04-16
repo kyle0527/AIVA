@@ -10,13 +10,10 @@
 """
 
 import ast
-import os
-import re
-from pathlib import Path
-from typing import Dict, List, Set, Tuple, Optional
-from dataclasses import dataclass, field
 from collections import defaultdict
-import json
+from dataclasses import dataclass, field
+from pathlib import Path
+import re
 
 
 @dataclass
@@ -24,12 +21,12 @@ class FunctionInfo:
     """函數信息"""
     name: str
     file: str
-    params: List[Tuple[str, Optional[str]]]  # (param_name, type_hint)
-    return_type: Optional[str]
-    calls: List[str]
-    called_by: List[str] = field(default_factory=list)
-    docstring: Optional[str] = None
-    decorators: List[str] = field(default_factory=list)
+    params: list[tuple[str, str | None]]  # (param_name, type_hint)
+    return_type: str | None
+    calls: list[str]
+    called_by: list[str] = field(default_factory=list)
+    docstring: str | None = None
+    decorators: list[str] = field(default_factory=list)
     is_async: bool = False
     line_number: int = 0
 
@@ -42,11 +39,11 @@ class ConnectionRecommendation:
     callee: str
     callee_file: str
     confidence: str  # CRITICAL, HIGH, MEDIUM, LOW
-    reason: List[str]
+    reason: list[str]
     impact: str  # BLOCKING, HIGH, MEDIUM, LOW, NONE
     impact_description: str
     suggested_location: str
-    code_example: Optional[str] = None
+    code_example: str | None = None
 
 
 class ConnectionRecommendationAnalyzer:
@@ -54,8 +51,8 @@ class ConnectionRecommendationAnalyzer:
     
     def __init__(self, source_root: str):
         self.source_root = Path(source_root)
-        self.functions: Dict[str, FunctionInfo] = {}
-        self.file_imports: Dict[str, Set[str]] = defaultdict(set)
+        self.functions: dict[str, FunctionInfo] = {}
+        self.file_imports: dict[str, set[str]] = defaultdict(set)
         
         # 關鍵詞模式匹配
         self.critical_patterns = {
@@ -75,7 +72,7 @@ class ConnectionRecommendationAnalyzer:
                 continue
                 
             try:
-                with open(py_file, 'r', encoding='utf-8') as f:
+                with open(py_file, encoding='utf-8') as f:
                     content = f.read()
                     tree = ast.parse(content, filename=str(py_file))
                     self._extract_from_ast(tree, py_file)
@@ -145,7 +142,7 @@ class ConnectionRecommendationAnalyzer:
         elif isinstance(node, ast.ImportFrom) and node.module:
             self.file_imports[file_path].add(node.module)
                 
-    def analyze_missing_connections(self) -> List[ConnectionRecommendation]:
+    def analyze_missing_connections(self) -> list[ConnectionRecommendation]:
         """分析缺失的連接"""
         print("\n🔗 分析缺失連接...")
         recommendations = []
@@ -186,7 +183,7 @@ class ConnectionRecommendationAnalyzer:
         print(f"  ✅ 生成了 {len(recommendations)} 個連接建議")
         return recommendations
         
-    def _find_orphaned_functions(self) -> Dict[str, FunctionInfo]:
+    def _find_orphaned_functions(self) -> dict[str, FunctionInfo]:
         """找出孤立的函數（有參數或返回值但未被調用）"""
         orphaned = {}
         
@@ -215,7 +212,7 @@ class ConnectionRecommendationAnalyzer:
                 
         return orphaned
         
-    def _find_potential_callers(self, orphan_func: FunctionInfo) -> List[Tuple[str, str, List[str]]]:
+    def _find_potential_callers(self, orphan_func: FunctionInfo) -> list[tuple[str, str, list[str]]]:
         """找出潛在的調用者"""
         potential = []
         
@@ -234,7 +231,7 @@ class ConnectionRecommendationAnalyzer:
         self, 
         potential_caller: FunctionInfo, 
         callee: FunctionInfo
-    ) -> Tuple[str, List[str]]:
+    ) -> tuple[str, list[str]]:
         """計算連接的置信度"""
         reasons = []
         score = 0
@@ -321,7 +318,7 @@ class ConnectionRecommendationAnalyzer:
         
         return len(intersection) / len(union)
         
-    def _check_semantic_match(self, caller: FunctionInfo, callee: FunctionInfo) -> Optional[str]:
+    def _check_semantic_match(self, caller: FunctionInfo, callee: FunctionInfo) -> str | None:
         """檢查語義匹配"""
         callee_lower = callee.name.lower()
         caller_lower = caller.name.lower()
@@ -381,7 +378,7 @@ class ConnectionRecommendationAnalyzer:
         # 在調用者的文檔中提到被調用者
         return callee.name.lower() in caller.docstring.lower()
         
-    def _evaluate_impact(self, orphan_func: FunctionInfo) -> Tuple[str, str]:
+    def _evaluate_impact(self, orphan_func: FunctionInfo) -> tuple[str, str]:
         """評估缺失連接的影響"""
         func_lower = orphan_func.name.lower()
         
@@ -407,7 +404,7 @@ class ConnectionRecommendationAnalyzer:
         """建議插入位置"""
         return f"在 {caller.file} 的 {caller.name} 函數中，第 {caller.line_number} 行附近"
         
-    def _generate_code_example(self, callee: FunctionInfo) -> Optional[str]:
+    def _generate_code_example(self, callee: FunctionInfo) -> str | None:
         """生成代碼示例"""
         # 生成參數
         args = []
@@ -434,7 +431,7 @@ class ConnectionRecommendationAnalyzer:
         scores = {"CRITICAL": 4, "HIGH": 3, "MEDIUM": 2, "LOW": 1, "NONE": 0}
         return scores.get(confidence, 0)
         
-    def generate_report(self, recommendations: List[ConnectionRecommendation], output_file: str):
+    def generate_report(self, recommendations: list[ConnectionRecommendation], output_file: str):
         """生成報告"""
         print(f"\n📝 生成報告: {output_file}")
         

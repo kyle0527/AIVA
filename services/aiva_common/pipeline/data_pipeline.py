@@ -2,7 +2,7 @@
 AIVA Data Pipeline System
 AIVA 數據流管道系統
 
-實施 TODO 項目 11: 實現數據流管道
+
 - 流式數據處理
 - 批量數據處理
 - 實時數據分析
@@ -35,9 +35,8 @@ from typing import (
     runtime_checkable,
 )
 
-from ..config.config_manager import ConfigManager, ConfigScope, get_config_manager
+from ..config.config_manager import ConfigManager, get_config_manager
 from ..core.error_handling import AIVAError, ErrorHandler, ErrorSeverity, ErrorType
-
 
 T = TypeVar("T", contravariant=True)
 U = TypeVar("U", covariant=True)
@@ -195,7 +194,7 @@ class FileDataSource:
 
             # 使用 asyncio.to_thread 在線程池中執行 I/O 操作
             content = await asyncio.to_thread(self._read_file_sync)
-            
+
             # 根據格式類型產生數據記錄
             if self.format_type == "json":
                 async for record in self._yield_json_records(content):

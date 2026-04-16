@@ -7,10 +7,8 @@ import os
 from typing import Any, Protocol, cast
 from urllib.parse import urlparse
 
-import httpx
-
 from aiva_common.schemas import FunctionTaskPayload
-from aiva_common.utils import new_id
+import httpx
 
 
 @dataclass

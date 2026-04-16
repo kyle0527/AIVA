@@ -3,24 +3,12 @@ Steganography Manager
 整合 AI-Steganography-Detection 和 StegX 引擎
 """
 
-import os
 import logging
-from typing import Optional
-from datetime import datetime
-
-from .models import (
-    SteganographyMethod,
-    CarrierType,
-    EmbedConfig,
-    EmbedResult,
-    ExtractConfig,
-    ExtractResult,
-    DetectionResult
-)
 
 # 引入新引擎
 from .engines.ai_steg_engine import AIStegDetectionEngine
 from .engines.stegx_engine import StegXEngine
+from .models import DetectionResult, EmbedResult, ExtractResult, SteganographyMethod
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +34,7 @@ class SteganographyManager:
         carrier_file: str,
         secret_file: str,
         output_file: str,
-        password: Optional[str] = None
+        password: str | None = None
     ) -> EmbedResult:
         """嵌入數據到載體"""
         try:
@@ -79,7 +67,7 @@ class SteganographyManager:
         self,
         stego_file: str,
         output_file: str,
-        password: Optional[str] = None
+        password: str | None = None
     ) -> ExtractResult:
         """從載體提取數據"""
         try:
@@ -196,7 +184,7 @@ class SteganographyManager:
         self,
         stego_image: str,
         output_file: str,
-        password: Optional[str] = None
+        password: str | None = None
     ) -> ExtractResult:
         """使用 StegX 引擎提取隱藏文件
         
@@ -302,7 +290,7 @@ class SteganographyManager:
     async def ai_detect_steganography(
         self,
         image_path: str,
-        model_path: Optional[str] = None
+        model_path: str | None = None
     ) -> DetectionResult:
         """使用 AI 模型檢測隱寫
         
@@ -346,7 +334,7 @@ class SteganographyManager:
         self,
         directory: str,
         recursive: bool = True,
-        extensions: Optional[list] = None
+        extensions: list | None = None
     ) -> dict:
         """批量掃描目錄中的圖片
         

@@ -4,14 +4,14 @@ Base SQL Injection Detector Interface
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, Any, Dict
-import aiohttp
 import logging
+from typing import Any
+
+import aiohttp
 
 from ..config import SqliConfig
+from ..detection_models import DetectionResult
 from ..payload_wrapper_encoder import PayloadWrapperEncoder
-from ..detection_models import DetectionResult
-from ..detection_models import DetectionResult
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class BaseDetector(ABC):
         self.payload_encoder = payload_encoder
 
     @abstractmethod
-    async def detect(self, target_url: str, params: Dict[str, str], method: str = "GET") -> List[DetectionResult]:
+    async def detect(self, target_url: str, params: dict[str, str], method: str = "GET") -> list[DetectionResult]:
         """
         執行檢測
         :param target_url: 目標 URL
@@ -32,9 +32,8 @@ class BaseDetector(ABC):
         :param method: 請求方法
         :return: 檢測結果列表
         """
-        pass
 
-    async def _send_request(self, url: str, method: str, data: Optional[Dict] = None, params: Optional[Dict] = None) -> Any:
+    async def _send_request(self, url: str, method: str, data: dict | None = None, params: dict | None = None) -> Any:
         """
         發送 HTTP 請求 (統一處理錯誤與重試)
         """

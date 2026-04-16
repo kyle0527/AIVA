@@ -6,13 +6,12 @@ AIVA 系統 SOP 合規性檢查工具
 """
 
 import asyncio
-import sys
-import os
-import json
 import importlib.util
-from pathlib import Path
-from typing import Any, List
+import json
 import logging
+import os
+from pathlib import Path
+import sys
 
 # 設置專案根目錄
 project_root = Path(__file__).parent.parent.parent.parent
@@ -23,11 +22,18 @@ logger = logging.getLogger(__name__)
 # 嘗試導入核心模組
 try:
     from services.core.aiva_core.ai_engine import (
-        AIModelManager, Tool, CodeReader, CodeWriter,
-        CodeAnalyzer, CommandExecutor, ScanTrigger, VulnerabilityDetector
+        AIModelManager,
+        CodeAnalyzer,
+        CodeReader,
+        CodeWriter,
+        CommandExecutor,
+        ScanTrigger,
+        Tool,
+        VulnerabilityDetector,
     )
     from services.core.aiva_core.cognitive_core.neural.real_neural_core import (
-        RealDecisionEngine, RealAICore
+        RealAICore,
+        RealDecisionEngine,
     )
     from services.core.aiva_core.learning import ModelTrainer, ScalableBioTrainer
     IMPORT_SUCCESS = True
@@ -157,12 +163,6 @@ class AIVASOPComplianceChecker:
         # 檢查 AI 引擎核心
         print("2.1 檢查 AI 引擎核心...")
         try:
-            from services.core.aiva_core.cognitive_core.neural.real_neural_core import (
-                RealDecisionEngine, RealAICore
-            )
-            from services.core.aiva_core.ai_engine import (
-                AIModelManager, OptimizedScalableBioNet
-            )
             print("✅ AI 引擎核心模組載入成功 (5M Decision Engine)")
             ai_checks['ai_engine_core'] = True
         except Exception as e:
@@ -172,10 +172,6 @@ class AIVASOPComplianceChecker:
         # 檢查工具系統
         print("2.2 檢查工具系統...")
         try:
-            from services.core.aiva_core.ai_engine import (
-                Tool, CodeReader, CodeWriter, CodeAnalyzer,
-                CommandExecutor, ScanTrigger, VulnerabilityDetector
-            )
             print("✅ 工具系統載入成功")
             ai_checks['tool_system'] = True
         except Exception as e:
@@ -185,9 +181,6 @@ class AIVASOPComplianceChecker:
         # 檢查學習系統
         print("2.3 檢查學習系統...")
         try:
-            from services.core.aiva_core.learning import (
-                ModelTrainer, ScalableBioTrainer, ScalableBioTrainingConfig
-            )
             print("✅ 學習系統載入成功")
             ai_checks['learning_system'] = True
         except Exception as e:

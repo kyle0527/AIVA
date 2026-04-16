@@ -6,12 +6,13 @@
 為真實的PyTorch神經網路，同時保持相同的API簽名。
 """
 
-import torch
-import numpy as np
-from numpy.typing import NDArray
-from typing import Any, Optional
 import logging
 from pathlib import Path
+from typing import Any
+
+import numpy as np
+from numpy.typing import NDArray
+import torch
 
 # 導入真實AI核心
 from .real_neural_core import RealAICore, RealDecisionEngine
@@ -26,7 +27,7 @@ class RealScalableBioNet:
     使用真實的PyTorch神經網路而不是MD5+ASCII假AI。
     """
     
-    def __init__(self, input_size: int, num_tools: int, weights_path: Optional[str] = None) -> None:
+    def __init__(self, input_size: int, num_tools: int, weights_path: str | None = None) -> None:
         """
         初始化真實的決策網路
         
@@ -278,7 +279,7 @@ class RealBioNeuronRAGAgent:
         
         return vector
 
-def create_real_scalable_bionet(input_size: int, num_tools: int, weights_path: Optional[str] = None) -> RealScalableBioNet:
+def create_real_scalable_bionet(input_size: int, num_tools: int, weights_path: str | None = None) -> RealScalableBioNet:
     """
     創建真實的ScalableBioNet實例 - 工廠函數
     

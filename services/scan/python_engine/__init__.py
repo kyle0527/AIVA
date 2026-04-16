@@ -27,6 +27,6 @@ Python 掃描引擎 - 專注於深度安全檢測
 __version__ = "1.0.0"
 __all__ = ["XXEDetector", "DeserializationDetector", "PassiveAnalyzer"]
 
-from .xxe_detector import XXEDetector, XXEFinding
 from .deserialization_detector_v2 import DeserializationDetector, DeserializationFinding
 from .passive_analyzer import PassiveAnalyzer, PassiveFinding
+from .xxe_detector import XXEDetector, XXEFinding

@@ -4,7 +4,7 @@
 此模組包含與漏洞發現、證據收集、影響評估等相關的資料模型。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -61,6 +61,7 @@ class Vulnerability(BaseModel):
 
 # 保持向後相容的別名
 from .security.findings import Target
+
 FindingTarget = Target
 
 
@@ -108,8 +109,8 @@ class FindingPayload(BaseModel):
     impact: FindingImpact | None = None
     recommendation: FindingRecommendation | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @field_validator("finding_id")
     @classmethod
@@ -184,7 +185,7 @@ class JavaScriptAnalysisResult(BaseModel):
     risk_score: float = Field(ge=0.0, le=10.0, default=0.0)  # 0.0 - 10.0
     security_score: int = Field(ge=0, le=100, default=100)  # 0-100 分
 
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # ==================== 外部武器庫執行結果 ====================
@@ -196,22 +197,22 @@ class ExternalToolFinding(BaseModel):
     tool_name: str = Field(description="外部工具名稱, 例如 XSStrike, sqlmap")
     execution_id: str = Field(description="執行批次 ID")
     target_url: str = Field(description="掃描目標 URL")
-    
+
     # 執行狀態
     return_code: int = Field(description="進程回傳碼")
     execution_time_seconds: float = Field(description="執行時間 (秒)")
     is_success: bool = Field(description="是否成功執行完成")
-    
+
     # 原始輸出
     raw_stdout: str | None = Field(default=None, description="原始標準輸出")
     raw_stderr: str | None = Field(default=None, description="原始標準錯誤輸出")
     parsed_json_output: dict[str, Any] | None = Field(default=None, description="若工具原生支援 JSON 輸出則保存於此")
-    
+
     # AI 轉換輔助欄位
     identified_vulnerabilities: list[str] = Field(default_factory=list, description="初步從 String 匹配出的潛在漏洞關鍵字")
     tool_specific_metrics: dict[str, Any] = Field(default_factory=dict, description="特定工具附加數據 (如截獲封包數, 成功 Payload)")
-    
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # ==================== 漏洞關聯分析 ====================
@@ -227,7 +228,7 @@ class VulnerabilityCorrelation(BaseModel):
     root_cause: str | None = None
     common_components: list[str] = Field(default_factory=list)
     explanation: str | None = None
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class CodeLevelRootCause(BaseModel):
@@ -271,7 +272,7 @@ class AIVerificationResult(BaseModel):
     test_steps: list[str] = Field(default_factory=list)
     observations: list[str] = Field(default_factory=list)
     recommendations: list[str] = Field(default_factory=list)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class VulnerabilityScorecard(BaseModel):
@@ -305,7 +306,7 @@ class VulnerabilityScorecard(BaseModel):
 
     # 元數據
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), description="評分卡創建時間"
+        default_factory=lambda: datetime.now(UTC), description="評分卡創建時間"
     )
     updated_at: datetime | None = Field(default=None, description="最後更新時間")
     evaluator_version: str | None = Field(default=None, description="評估器版本")

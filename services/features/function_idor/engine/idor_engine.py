@@ -1,9 +1,11 @@
 from __future__ import annotations
-import re
-import httpx
-import json
+
 from dataclasses import dataclass
-from typing import List, Optional
+import json
+import re
+
+import httpx
+
 
 @dataclass
 class IdCandidate:
@@ -16,8 +18,8 @@ class IDORIssue:
     url: str
     description: str
     severity: str = "HIGH"
-    cwe: Optional[str] = None
-    evidence: Optional[str] = None
+    cwe: str | None = None
+    evidence: str | None = None
 
 class IDOREngine:
     def __init__(self, *, timeout: float, allow_active: bool, safe_mode: bool):
@@ -29,14 +31,14 @@ class IDOREngine:
         await self.client.aclose()
 
     @staticmethod
-    def extract_ids_from_url(url: str) -> List[IdCandidate]:
-        ids: List[IdCandidate] = []
+    def extract_ids_from_url(url: str) -> list[IdCandidate]:
+        ids: list[IdCandidate] = []
         for m in re.finditer(r'(?<![\w])(\d{1,12})(?![\w])', url):
             ids.append(IdCandidate(m.group(1), m.span(1)))
         return ids
 
     @staticmethod
-    def generate_variants(raw: str, count: int) -> List[str]:
+    def generate_variants(raw: str, count: int) -> list[str]:
         try:
             base = int(raw)
             pool = []
@@ -50,7 +52,7 @@ class IDOREngine:
     def replace_id_in_url(url: str, old: str, new: str) -> str:
         return url.replace(old, new, 1)
 
-    async def test_horizontal(self, url: str, user_a_hdr: dict, user_b_hdr: dict) -> Optional[IDORIssue]:
+    async def test_horizontal(self, url: str, user_a_hdr: dict, user_b_hdr: dict) -> IDORIssue | None:
         if not self.allow_active:
             return IDORIssue(kind="IDOR_HORIZONTAL_POTENTIAL", url=url, description="Potential horizontal IDOR (safe_mode)", cwe="CWE-639", severity="MEDIUM")
         try:
@@ -86,7 +88,7 @@ class IDOREngine:
             return IDORIssue(kind="IDOR_HORIZONTAL_POTENTIAL", url=url, description=f"Active test failed: {e}", cwe="CWE-639", severity="MEDIUM")
         return None
 
-    async def test_vertical(self, url: str, low_auth_hdr: dict) -> Optional[IDORIssue]:
+    async def test_vertical(self, url: str, low_auth_hdr: dict) -> IDORIssue | None:
         if not self.allow_active:
             return IDORIssue(kind="IDOR_VERTICAL_POTENTIAL", url=url, description="Potential vertical privilege escalation (safe_mode)", cwe="CWE-269", severity="MEDIUM")
         try:

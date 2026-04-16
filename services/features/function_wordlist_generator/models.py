@@ -5,8 +5,6 @@ Wordlist Generator Module Data Models
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import List, Dict, Optional
-
 
 # ==================== Enums ====================
 
@@ -49,25 +47,25 @@ class GeneratorConfig:
     output_file: str
     
     # Combination Settings
-    charset: Optional[str] = None
+    charset: str | None = None
     min_length: int = 8
     max_length: int = 12
     
     # CUPP Settings (Profile-based)
-    target_name: Optional[str] = None
-    birthdate: Optional[str] = None
-    keywords: List[str] = field(default_factory=list)
+    target_name: str | None = None
+    birthdate: str | None = None
+    keywords: list[str] = field(default_factory=list)
     
     # Rule Settings
-    rules: List[str] = field(default_factory=list)
-    base_words: List[str] = field(default_factory=list)
+    rules: list[str] = field(default_factory=list)
+    base_words: list[str] = field(default_factory=list)
     
     # Advanced Options
     deduplicate: bool = True
     sort: bool = False
-    max_words: Optional[int] = None
+    max_words: int | None = None
     
-    metadata: Dict[str, str] = field(default_factory=dict)
+    metadata: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -83,10 +81,10 @@ class GeneratorResult:
     
     # Timing
     generation_time: float = 0.0
-    start_time: Optional[datetime] = None
-    end_time: Optional[datetime] = None
+    start_time: datetime | None = None
+    end_time: datetime | None = None
     
-    error: Optional[str] = None
+    error: str | None = None
     log_file: str = ""
 
 
@@ -104,10 +102,10 @@ class WordlistStats:
     min_length: int = 0
     max_length: int = 0
     avg_length: float = 0.0
-    length_distribution: Dict[int, int] = field(default_factory=dict)
+    length_distribution: dict[int, int] = field(default_factory=dict)
     
     # Character Stats
-    charset_used: List[str] = field(default_factory=list)
+    charset_used: list[str] = field(default_factory=list)
     has_lowercase: bool = False
     has_uppercase: bool = False
     has_digits: bool = False

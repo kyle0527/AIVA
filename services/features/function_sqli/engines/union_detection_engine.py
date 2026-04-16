@@ -5,9 +5,8 @@
 
 
 import re
-import aiohttp
-from typing import Dict, List, Tuple
 
+import aiohttp
 from aiva_common.utils import get_logger
 
 from ..config import SqliConfig
@@ -66,7 +65,7 @@ class UnionDetectionEngine(BaseDetector):
         ]
 
     async def detect(
-        self, target_url: str, params: Dict[str, str], method: str = "GET"
+        self, target_url: str, params: dict[str, str], method: str = "GET"
     ) -> list[DetectionResult]:
         """執行UNION檢測"""
         results: list[DetectionResult] = []

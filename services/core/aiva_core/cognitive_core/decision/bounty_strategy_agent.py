@@ -16,9 +16,7 @@ Architecture:
 Date: 2026-02-09 (拆分自 enhanced_decision_agent.py)
 """
 
-import logging
-from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from aiva_common.utils import get_logger
 
@@ -701,7 +699,7 @@ class BountyStrategyAgent:
 
     def _decide_waf_bypass(
         self,
-        waf_vendor: Optional[str],
+        waf_vendor: str | None,
         base_confidence: float,
     ) -> dict[str, Any]:
         """基於 WAF 類型和 AI 信心度決定繞過策略"""

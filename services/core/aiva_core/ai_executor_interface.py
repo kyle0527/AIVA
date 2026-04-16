@@ -25,11 +25,10 @@ AI 執行器接口 - 提供給 AI 決策層使用的簡化接口
 實現日期: 2026-01-20
 """
 
-import sys
-from pathlib import Path
-from typing import Optional, Union, List, Dict, Any
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Any
+
 
 @dataclass
 class SimpleExecutionResult:
@@ -37,7 +36,7 @@ class SimpleExecutionResult:
     capability: str
     success: bool
     message: str
-    flow_id: Optional[int] = None
+    flow_id: int | None = None
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
     details: dict = field(default_factory=dict)
 
@@ -56,7 +55,7 @@ class AIExecutorInterface:
         """
         self.verbose = verbose
         self._controller = None
-        self._execution_history: List[SimpleExecutionResult] = []
+        self._execution_history: list[SimpleExecutionResult] = []
         self._initialized = False
     
     def _ensure_initialized(self):
@@ -65,7 +64,9 @@ class AIExecutorInterface:
             if self.verbose:
                 print("🔧 初始化 AI 執行器接口...")
             
-            from aiva_core.internal_exploration.unified_executor_controller import UnifiedExecutorController
+            from aiva_core.internal_exploration.unified_executor_controller import (
+                UnifiedExecutorController,
+            )
             
             self._controller = UnifiedExecutorController()
             self._controller.initialize()
@@ -77,8 +78,8 @@ class AIExecutorInterface:
     def execute(
         self,
         capability: str,
-        target: Optional[str] = None,
-        flow_id: Optional[int] = None,
+        target: str | None = None,
+        flow_id: int | None = None,
         **kwargs
     ) -> SimpleExecutionResult:
         """執行單個能力 (AI 調用的主要方法)
@@ -155,9 +156,9 @@ class AIExecutorInterface:
     
     def execute_batch(
         self,
-        tasks: List[Dict[str, Any]],
+        tasks: list[dict[str, Any]],
         stop_on_error: bool = False
-    ) -> List[SimpleExecutionResult]:
+    ) -> list[SimpleExecutionResult]:
         """批次執行多個能力 (AI 決策後的編排執行)
         
         Args:
@@ -196,7 +197,7 @@ class AIExecutorInterface:
             # 如果設置了 stop_on_error 且執行失敗，停止
             if stop_on_error and not result.success:
                 if self.verbose:
-                    print(f"\n⚠️ 任務失敗，停止批次執行\n")
+                    print("\n⚠️ 任務失敗，停止批次執行\n")
                 break
         
         if self.verbose:
@@ -207,8 +208,8 @@ class AIExecutorInterface:
     
     def get_available_capabilities(
         self,
-        category: Optional[str] = None
-    ) -> Dict[str, List[str]]:
+        category: str | None = None
+    ) -> dict[str, list[str]]:
         """獲取可用能力列表
         
         Args:
@@ -221,7 +222,7 @@ class AIExecutorInterface:
         
         return self._controller.list_capabilities(executor_type=category)
     
-    def get_execution_status(self) -> Dict[str, Any]:
+    def get_execution_status(self) -> dict[str, Any]:
         """獲取執行狀態摘要 (給 AI 決策參考)
         
         Returns:
@@ -247,7 +248,7 @@ class AIExecutorInterface:
             "success_rate": successful / total if total > 0 else 0.0
         }
     
-    def get_execution_history(self, last_n: Optional[int] = None) -> List[SimpleExecutionResult]:
+    def get_execution_history(self, last_n: int | None = None) -> list[SimpleExecutionResult]:
         """獲取執行歷史
         
         Args:
@@ -267,7 +268,7 @@ class AIExecutorInterface:
 # ==================== 快速函數 (給 AI 使用) ====================
 
 # 全局單例
-_global_executor: Optional[AIExecutorInterface] = None
+_global_executor: AIExecutorInterface | None = None
 
 def get_executor(verbose: bool = False) -> AIExecutorInterface:
     """獲取全局執行器實例 (單例模式)
@@ -283,7 +284,7 @@ def get_executor(verbose: bool = False) -> AIExecutorInterface:
         _global_executor = AIExecutorInterface(verbose=verbose)
     return _global_executor
 
-def quick_execute(capability: str, target: Optional[str] = None, **kwargs) -> bool:
+def quick_execute(capability: str, target: str | None = None, **kwargs) -> bool:
     """快速執行 (簡化版本，只返回成功/失敗)
     
     Args:
@@ -302,7 +303,7 @@ def quick_execute(capability: str, target: Optional[str] = None, **kwargs) -> bo
     result = executor.execute(capability, target=target, **kwargs)
     return result.success
 
-def list_capabilities() -> Dict[str, List[str]]:
+def list_capabilities() -> dict[str, list[str]]:
     """列出所有可用能力 (快速函數)
     
     Returns:

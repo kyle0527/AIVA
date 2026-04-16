@@ -13,7 +13,6 @@ Architecture Fix Note:
 
 import asyncio
 import logging
-from pathlib import Path
 from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
@@ -122,7 +121,9 @@ class CapabilityRegistry:
             return
 
         # 導入 integration.CapabilityRegistry（延遲導入避免循環依賴）
-        from services.integration.capability.registry import registry as integration_registry
+        from services.integration.capability.registry import (
+            registry as integration_registry,
+        )
         
         self._integration_registry = integration_registry
         self._capabilities: dict[str, CapabilityInfo] = {}  # 本地緩存
@@ -149,6 +150,10 @@ class CapabilityRegistry:
 
         try:
             # 導入必要模組
+            from datetime import datetime
+
+            from aiva_common.enums.modules import ProgrammingLanguage
+
             from services.core.aiva_core.cognitive_core.internal_loop_connector import (
                 InternalLoopConnector,
             )
@@ -158,9 +163,11 @@ class CapabilityRegistry:
             from services.core.aiva_core.cognitive_core.rag.unified_vector_store import (
                 UnifiedVectorStore,
             )
-            from services.integration.capability.models import CapabilityRecord, CapabilityType, CapabilityStatus
-            from aiva_common.enums.modules import ProgrammingLanguage
-            from datetime import datetime
+            from services.integration.capability.models import (
+                CapabilityRecord,
+                CapabilityStatus,
+                CapabilityType,
+            )
 
             # 初始化 vector_store 和 knowledge_base
             vector_store = UnifiedVectorStore()

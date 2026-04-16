@@ -254,11 +254,11 @@ class Topic(str, Enum):
     # Phase 0: Fast reconnaissance (Rust engine, 5-10 mins)
     TASK_SCAN_PHASE0 = "tasks.scan.phase0"
     RESULTS_SCAN_PHASE0_COMPLETED = "results.scan.phase0.completed"
-    
+
     # Phase 1: Deep scanning (Multi-engine, 10-30 mins)
     TASK_SCAN_PHASE1 = "tasks.scan.phase1"
     RESULTS_SCAN_PHASE1_COMPLETED = "results.scan.phase1.completed"
-    
+
     # Legacy unified scan (backward compatibility)
     # SCAN_START 別名已於 2024-12-19 移除，統一使用 TASK_SCAN_START
     TASK_SCAN_START = "tasks.scan.start"
@@ -291,7 +291,7 @@ class Topic(str, Enum):
     EVENT_AI_TRACE_COMPLETED = "events.ai.trace.completed"
     EVENT_AI_MODEL_UPDATED = "events.ai.model.updated"
     COMMAND_AI_MODEL_DEPLOY = "commands.ai.model.deploy"
-    
+
     # Task Completion Topics (用於外部學習閉環)
     TASK_COMPLETED = "tasks.completed"  # 任務完成事件（觸發學習循環）
     MODEL_UPDATED = "model.updated"  # 模型更新通知

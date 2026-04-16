@@ -11,11 +11,10 @@
 5. 循環依賴 - 可能導致問題的循環
 """
 
-import json
-from pathlib import Path
-from typing import Dict, List, Set, Tuple, Any
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
+import json
+from pathlib import Path
 
 
 @dataclass
@@ -25,7 +24,7 @@ class BreakpointIssue:
     severity: str  # "critical", "warning", "info"
     location: str
     description: str
-    affected_functions: List[str] = field(default_factory=list)
+    affected_functions: list[str] = field(default_factory=list)
     suggested_fix: str = ""
 
 
@@ -35,20 +34,20 @@ class DataFlowBreakpointAnalyzer:
     def __init__(self, analysis_results_path: str):
         self.results_path = Path(analysis_results_path)
         self.analysis_data = self._load_analysis_results()
-        self.issues: List[BreakpointIssue] = []
+        self.issues: list[BreakpointIssue] = []
         
         # 構建圖結構
         self.graph: dict[str, set[str]] = defaultdict(set)  # script -> {called_scripts}
         self.reverse_graph: dict[str, set[str]] = defaultdict(set)  # script -> {caller_scripts}
         self.all_scripts: set[str] = set()
         
-    def _load_analysis_results(self) -> Dict:
+    def _load_analysis_results(self) -> dict:
         """載入分析結果"""
         json_path = self.results_path / "analysis_results.json"
         if not json_path.exists():
             raise FileNotFoundError(f"找不到分析結果: {json_path}")
         
-        with open(json_path, 'r', encoding='utf-8') as f:
+        with open(json_path, encoding='utf-8') as f:
             return json.load(f)
     
     def build_flow_graph(self):

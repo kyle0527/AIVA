@@ -6,23 +6,22 @@ Smart Detection Manager
 """
 
 import asyncio
-import logging
 import difflib
-from typing import Dict, Any, List, Optional, Tuple, Type
+from typing import Any
+
 import aiohttp
-
-from aiva_common.utils import get_logger
 from aiva_common.schemas import FunctionTaskPayload
+from aiva_common.utils import get_logger
 
-from .config import SqliConfig
-from .payload_wrapper_encoder import PayloadWrapperEncoder
 from .backend_db_fingerprinter import BackendDbFingerprinter
+from .config import SqliConfig
 from .engines.base_detector import BaseDetector, DetectionResult
 from .engines.boolean_detection_engine import BooleanDetectionEngine
 from .engines.error_detection_engine import ErrorDetectionEngine
+from .engines.oob_detection_engine import OOBDetectionEngine
 from .engines.time_detection_engine import TimeDetectionEngine
 from .engines.union_detection_engine import UnionDetectionEngine
-from .engines.oob_detection_engine import OOBDetectionEngine
+from .payload_wrapper_encoder import PayloadWrapperEncoder
 
 logger = get_logger(__name__)
 
@@ -33,12 +32,12 @@ class SmartDetectionManager:
     協調和管理各種安全檢測功能的核心組件。
     """
 
-    def __init__(self, config: Optional[SqliConfig] = None):
+    def __init__(self, config: SqliConfig | None = None):
         """初始化智能檢測管理器"""
         self.config = config or SqliConfig()
         self.fingerprinter = BackendDbFingerprinter()
         # Store detector classes, not instances, to instantiate with session per scan
-        self.detector_classes: List[Type[BaseDetector]] = [
+        self.detector_classes: list[type[BaseDetector]] = [
             BooleanDetectionEngine,
             ErrorDetectionEngine,
             TimeDetectionEngine,
@@ -48,13 +47,13 @@ class SmartDetectionManager:
         self.active_scans = {}
         logger.info("SmartDetectionManager initialized with default engines")
 
-    def register_detector(self, detector_cls: Type[BaseDetector]) -> None:
+    def register_detector(self, detector_cls: type[BaseDetector]) -> None:
         """註冊檢測器類別"""
         if detector_cls not in self.detector_classes:
             self.detector_classes.append(detector_cls)
             logger.info(f"Registered detector class: {detector_cls.__name__}")
 
-    async def scan_target(self, task: FunctionTaskPayload) -> List[DetectionResult]:
+    async def scan_target(self, task: FunctionTaskPayload) -> list[DetectionResult]:
         """
         執行完整的智慧掃描流程
         """
@@ -105,7 +104,7 @@ class SmartDetectionManager:
 
         return results
 
-    async def _check_stability(self, session: aiohttp.ClientSession, url: str, task: FunctionTaskPayload) -> Tuple[bool, float]:
+    async def _check_stability(self, session: aiohttp.ClientSession, url: str, task: FunctionTaskPayload) -> tuple[bool, float]:
         """檢查頁面穩定性"""
         encoder = PayloadWrapperEncoder(task)
         encoded = encoder.encode("") # 基準請求
@@ -140,7 +139,7 @@ class SmartDetectionManager:
 
         return is_stable, avg_stability
 
-    async def _fingerprint(self, session: aiohttp.ClientSession, url: str, task: FunctionTaskPayload) -> Tuple[Optional[str], Optional[str]]:
+    async def _fingerprint(self, session: aiohttp.ClientSession, url: str, task: FunctionTaskPayload) -> tuple[str | None, str | None]:
         """識別資料庫"""
         # 構造報錯請求
         encoder = PayloadWrapperEncoder(task)
@@ -177,12 +176,12 @@ class SmartDetectionManager:
         return self.fingerprinter.fingerprint(mock_resp)
 
     # 保留舊方法以兼容現有代碼 (如果有)
-    def start_detection(self, target: str, config: Dict[str, Any]) -> str:
+    def start_detection(self, target: str, config: dict[str, Any]) -> str:
         session_id = f"scan_{len(self.active_scans)}"
         self.active_scans[session_id] = {"target": target, "status": "running"}
         return session_id
 
-    def get_detection_status(self, session_id: str) -> Optional[Dict[str, Any]]:
+    def get_detection_status(self, session_id: str) -> dict[str, Any] | None:
         return self.active_scans.get(session_id)
 
     def stop_detection(self, session_id: str) -> bool:

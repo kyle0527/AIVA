@@ -1,8 +1,17 @@
 from __future__ import annotations
-from typing import List
+
 from aiva_common.enums import Confidence, Severity, VulnerabilityType
-from aiva_common.schemas import FindingPayload, Vulnerability, FindingEvidence, FindingImpact, FindingRecommendation, FindingTarget, FunctionTaskPayload
-from aiva_common.utils import new_id, get_logger
+from aiva_common.schemas import (
+    FindingEvidence,
+    FindingImpact,
+    FindingPayload,
+    FindingRecommendation,
+    FindingTarget,
+    FunctionTaskPayload,
+    Vulnerability,
+)
+from aiva_common.utils import get_logger, new_id
+
 from ..config.idor_config import IdorConfig
 from ..engine.idor_engine import IDOREngine, IDORIssue
 
@@ -12,7 +21,7 @@ class IDORDetector:
     def __init__(self, config: IdorConfig):
         self.config = config
 
-    async def analyze(self, task: FunctionTaskPayload) -> List[FindingPayload]:
+    async def analyze(self, task: FunctionTaskPayload) -> list[FindingPayload]:
         """IDOR漏洞分析 - 重構版本（降低複雜度）"""
         engine = IDOREngine(
             timeout=self.config.request_timeout, 
@@ -22,7 +31,7 @@ class IDORDetector:
         try:
             url = str(task.target.url)
             ids = engine.extract_ids_from_url(url)
-            findings: List[FindingPayload] = []
+            findings: list[FindingPayload] = []
 
             # 水平測試（抽出成獨立函數）
             if self.config.horizontal_enabled:
@@ -42,11 +51,11 @@ class IDORDetector:
         self, 
         engine: IDOREngine, 
         url: str, 
-        ids: List, 
+        ids: list, 
         task: FunctionTaskPayload
-    ) -> List[FindingPayload]:
+    ) -> list[FindingPayload]:
         """執行水平IDOR測試——降低 analyze 複雜度"""
-        findings: List[FindingPayload] = []
+        findings: list[FindingPayload] = []
         # 使用默認的用戶認證設置——修復 options 屬性不存在的問題
         user_a = {}
         user_b = {}
@@ -64,9 +73,9 @@ class IDORDetector:
         self, 
         engine: IDOREngine, 
         task: FunctionTaskPayload
-    ) -> List[FindingPayload]:
+    ) -> list[FindingPayload]:
         """執行垂直IDOR測試——降低 analyze 複雜度"""
-        findings: List[FindingPayload] = []
+        findings: list[FindingPayload] = []
         # 使用默認設置——修復 options 屬性不存在的問題
         low_auth = {}
         targets = self.config.privileged_urls or []

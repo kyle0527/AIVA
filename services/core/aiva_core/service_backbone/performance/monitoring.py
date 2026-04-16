@@ -9,9 +9,9 @@
 
 from collections import defaultdict
 from dataclasses import dataclass
-import time
-from typing import Any, Dict, List, Optional
 from enum import Enum
+import time
+from typing import Any
 
 try:
     import numpy as np
@@ -35,7 +35,7 @@ class Metric:
     name: str
     value: float
     timestamp: float
-    labels: Optional[Dict[str, str]] = None
+    labels: dict[str, str] | None = None
 
 
 class MetricsCollector:
@@ -45,8 +45,8 @@ class MetricsCollector:
         self.metrics = defaultdict(list)
         self.counters = defaultdict(int)
         self.gauges = {}
-        self.component_health: Dict[str, ComponentHealth] = {}
-        self.health_checks: Dict[str, float] = {}  # component_name -> last_check_time
+        self.component_health: dict[str, ComponentHealth] = {}
+        self.health_checks: dict[str, float] = {}  # component_name -> last_check_time
 
     def record_duration(
         self, name: str, duration: float, labels: dict[str, str] = None
@@ -110,7 +110,7 @@ class MetricsCollector:
         return summary
 
     def update_component_health(
-        self, component_name: str, health: ComponentHealth, details: Optional[Dict[str, Any]] = None
+        self, component_name: str, health: ComponentHealth, details: dict[str, Any] | None = None
     ) -> None:
         """更新組件健康狀態"""
         self.component_health[component_name] = health

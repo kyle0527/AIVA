@@ -10,8 +10,10 @@ AIVA跨語言Schema統一定義 - 以手動維護版本為準
 """
 
 from __future__ import annotations
-from typing import Any, Dict, List, Literal, Optional, Union
+
 from datetime import datetime
+from typing import Any, Literal
+
 from pydantic import BaseModel, Field
 
 from .base_types import *
@@ -38,19 +40,19 @@ class FindingPayload(BaseModel):
     target: Target
     """目標資訊"""
 
-    strategy: Optional[str] = None
+    strategy: str | None = None
     """使用的策略"""
 
-    evidence: Optional[FindingEvidence] = None
+    evidence: FindingEvidence | None = None
     """證據資料"""
 
-    impact: Optional[FindingImpact] = None
+    impact: FindingImpact | None = None
     """影響評估"""
 
-    recommendation: Optional[FindingRecommendation] = None
+    recommendation: FindingRecommendation | None = None
     """修復建議"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """中繼資料"""
 
     created_at: datetime
@@ -63,57 +65,57 @@ class FindingPayload(BaseModel):
 class FindingEvidence(BaseModel):
     """漏洞證據"""
 
-    payload: Optional[str] = None
+    payload: str | None = None
     """攻擊載荷"""
 
-    response_time_delta: Optional[float] = None
+    response_time_delta: float | None = None
     """響應時間差異"""
 
-    db_version: Optional[str] = None
+    db_version: str | None = None
     """資料庫版本"""
 
-    request: Optional[str] = None
+    request: str | None = None
     """HTTP請求"""
 
-    response: Optional[str] = None
+    response: str | None = None
     """HTTP響應"""
 
-    proof: Optional[str] = None
+    proof: str | None = None
     """證明資料"""
 
 
 class FindingImpact(BaseModel):
     """漏洞影響評估"""
 
-    description: Optional[str] = None
+    description: str | None = None
     """影響描述"""
 
-    business_impact: Optional[str] = None
+    business_impact: str | None = None
     """業務影響"""
 
-    technical_impact: Optional[str] = None
+    technical_impact: str | None = None
     """技術影響"""
 
-    affected_users: Optional[int] = Field(ge=0, default=None)
+    affected_users: int | None = Field(ge=0, default=None)
     """受影響用戶數"""
 
-    estimated_cost: Optional[float] = Field(ge=0.0, default=None)
+    estimated_cost: float | None = Field(ge=0.0, default=None)
     """估計成本"""
 
 
 class FindingRecommendation(BaseModel):
     """漏洞修復建議"""
 
-    fix: Optional[str] = None
+    fix: str | None = None
     """修復方法"""
 
-    priority: Optional[Literal['critical', 'high', 'medium', 'low']] = Field(default=None)
+    priority: Literal['critical', 'high', 'medium', 'low'] | None = Field(default=None)
     """修復優先級"""
 
-    remediation_steps: List[str] = Field(default_factory=list)
+    remediation_steps: list[str] = Field(default_factory=list)
     """修復步驟"""
 
-    references: List[str] = Field(default_factory=list)
+    references: list[str] = Field(default_factory=list)
     """參考資料"""
 
 
@@ -132,7 +134,7 @@ class TokenTestResult(BaseModel):
     details: str
     """詳細描述"""
 
-    decoded_payload: Optional[Dict[str, Any]] = None
+    decoded_payload: dict[str, Any] | None = None
     """解碼後的載荷內容"""
 
     severity: Literal['HIGH', 'MEDIUM', 'LOW', 'INFO'] = Field(default="MEDIUM")

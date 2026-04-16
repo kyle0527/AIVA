@@ -10,8 +10,10 @@ AIVA跨語言Schema統一定義 - 以手動維護版本為準
 """
 
 from __future__ import annotations
-from typing import Any, Dict, List, Literal, Optional, Union
+
 from datetime import datetime
+from typing import Any, Literal
+
 from pydantic import BaseModel, Field
 
 from .base_types import *
@@ -32,22 +34,22 @@ class CLIParameter(BaseModel):
     required: bool = Field(default=False)
     """是否必需"""
 
-    default_value: Optional[Any] = None
+    default_value: Any | None = None
     """默認值"""
 
-    choices: Optional[List[str]] = None
+    choices: list[str] | None = None
     """可選值列表"""
 
-    min_value: Optional[float] = None
+    min_value: float | None = None
     """最小值"""
 
-    max_value: Optional[float] = None
+    max_value: float | None = None
     """最大值"""
 
-    pattern: Optional[str] = None
+    pattern: str | None = None
     """正則表達式模式"""
 
-    help_text: Optional[str] = None
+    help_text: str | None = None
     """幫助文本"""
 
 
@@ -63,13 +65,13 @@ class CLICommand(BaseModel):
     category: Literal['general', 'scan', 'security', 'analysis', 'reporting', 'config', 'admin', 'debug', 'plugin', 'utility'] = Field(default="general")
     """命令分類"""
 
-    parameters: List[CLIParameter] = Field(default_factory=list)
+    parameters: list[CLIParameter] = Field(default_factory=list)
     """命令參數列表"""
 
-    examples: List[str] = Field(default_factory=list)
+    examples: list[str] = Field(default_factory=list)
     """使用示例"""
 
-    aliases: List[str] = Field(default_factory=list)
+    aliases: list[str] = Field(default_factory=list)
     """命令別名"""
 
     deprecated: bool = Field(default=False)
@@ -78,16 +80,16 @@ class CLICommand(BaseModel):
     min_args: int = Field(ge=0, default=0)
     """最少參數數量"""
 
-    max_args: Optional[int] = Field(ge=0, default=None)
+    max_args: int | None = Field(ge=0, default=None)
     """最多參數數量"""
 
     requires_auth: bool = Field(default=False)
     """是否需要認證"""
 
-    permissions: List[str] = Field(default_factory=list)
+    permissions: list[str] = Field(default_factory=list)
     """所需權限"""
 
-    tags: List[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list)
     """標籤"""
 
     created_at: datetime
@@ -103,7 +105,7 @@ class CLIExecutionResult(BaseModel):
     command: str
     """執行的命令"""
 
-    arguments: List[str] = Field(default_factory=list)
+    arguments: list[str] = Field(default_factory=list)
     """命令參數"""
 
     exit_code: int
@@ -121,16 +123,16 @@ class CLIExecutionResult(BaseModel):
     start_time: datetime
     """開始時間"""
 
-    end_time: Optional[datetime] = None
+    end_time: datetime | None = None
     """結束時間"""
 
-    user_id: Optional[str] = None
+    user_id: str | None = None
     """執行用戶ID"""
 
-    session_id: Optional[str] = None
+    session_id: str | None = None
     """會話ID"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """執行元數據"""
 
 
@@ -140,19 +142,19 @@ class CLISession(BaseModel):
     session_id: str
     """會話ID"""
 
-    user_id: Optional[str] = None
+    user_id: str | None = None
     """用戶ID"""
 
     start_time: datetime
     """開始時間"""
 
-    end_time: Optional[datetime] = None
+    end_time: datetime | None = None
     """結束時間"""
 
-    command_history: List[str] = Field(default_factory=list)
+    command_history: list[str] = Field(default_factory=list)
     """命令歷史"""
 
-    environment: Dict[str, str] = Field(default_factory=dict)
+    environment: dict[str, str] = Field(default_factory=dict)
     """環境變數"""
 
     working_directory: str
@@ -161,7 +163,7 @@ class CLISession(BaseModel):
     active: bool = Field(default=True)
     """會話是否活躍"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """會話元數據"""
 
 
@@ -174,7 +176,7 @@ class CLIConfiguration(BaseModel):
     name: str
     """配置名稱"""
 
-    settings: Dict[str, Any] = Field(default_factory=dict)
+    settings: dict[str, Any] = Field(default_factory=dict)
     """配置設定"""
 
     auto_completion: bool = Field(default=True)
@@ -217,18 +219,18 @@ class CLIMetrics(BaseModel):
     average_execution_time_ms: float = Field(ge=0, default=0.0)
     """平均執行時間(毫秒)"""
 
-    most_used_commands: List[str] = Field(default_factory=list)
+    most_used_commands: list[str] = Field(default_factory=list)
     """最常用命令列表"""
 
-    peak_usage_time: Optional[datetime] = None
+    peak_usage_time: datetime | None = None
     """峰值使用時間"""
 
     collection_period_start: datetime
     """統計開始時間"""
 
-    collection_period_end: Optional[datetime] = None
+    collection_period_end: datetime | None = None
     """統計結束時間"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """統計元數據"""
 

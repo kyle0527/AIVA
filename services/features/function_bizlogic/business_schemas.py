@@ -6,21 +6,20 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
-
-from pydantic import BaseModel, Field, field_validator
 
 # aiva_common 統一錯誤處理
 from aiva_common.core.error_handling import (
     AIVAError,
-    ErrorType,
     ErrorSeverity,
+    ErrorType,
     create_error_context,
 )
 from aiva_common.enums import Severity, TestStatus
 from aiva_common.enums.modules import ModuleName
 from aiva_common.schemas.ai import CVSSv3Metrics
+from pydantic import BaseModel, Field, field_validator
 
 MODULE_NAME = "business_schemas"
 

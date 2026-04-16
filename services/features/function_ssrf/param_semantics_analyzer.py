@@ -6,6 +6,7 @@ import re
 
 from aiva_common.schemas import FunctionTaskPayload
 from aiva_common.utils import get_logger
+
 from .dns_rebinding_detector import DnsRebindingDetector
 
 logger = get_logger(__name__)

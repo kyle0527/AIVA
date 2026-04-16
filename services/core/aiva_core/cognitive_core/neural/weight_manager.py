@@ -11,17 +11,23 @@
     - 安全的序列化和反序列化
 """
 
-import torch
+from dataclasses import dataclass
+from datetime import datetime
 import hashlib
 import json
 import logging
-import time
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, Tuple
-from dataclasses import dataclass
-from datetime import datetime
 import shutil
-from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+import time
+from typing import Any
+
+from aiva_common.core.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
+import torch
 
 MODULE_NAME = "ai_engine.weight_manager"
 
@@ -47,7 +53,7 @@ class AIWeightManager:
     """
     
     def __init__(self, 
-                 base_dir: Union[str, Path] = "weights",
+                 base_dir: str | Path = "weights",
                  backup_enabled: bool = True,
                  max_backups: int = 5):
         """
@@ -77,8 +83,8 @@ class AIWeightManager:
     def save_model_weights(self, 
                           model: torch.nn.Module,
                           model_name: str,
-                          version: Optional[str] = None,
-                          metadata: Optional[Dict[str, Any]] = None) -> Tuple[str, WeightMetadata]:
+                          version: str | None = None,
+                          metadata: dict[str, Any] | None = None) -> tuple[str, WeightMetadata]:
         """
         保存模型權重 (基於PyTorch最佳實踐)
         
@@ -151,7 +157,7 @@ class AIWeightManager:
                           model: torch.nn.Module,
                           model_name: str,
                           version: str = "latest",
-                          device: Optional[Union[str, torch.device]] = None) -> WeightMetadata:
+                          device: str | torch.device | None = None) -> WeightMetadata:
         """
         載入模型權重 (安全模式)
         
@@ -213,7 +219,7 @@ class AIWeightManager:
             logger.error(f"權重載入失敗: {e}")
             raise
     
-    def list_available_weights(self, model_name: Optional[str] = None) -> dict[str, list]:
+    def list_available_weights(self, model_name: str | None = None) -> dict[str, list]:
         """列出可用的權重檔案"""
         try:
             if model_name:
@@ -237,7 +243,7 @@ class AIWeightManager:
         
         return sorted(versions, key=lambda x: x.get('created_at', ''), reverse=True)
     
-    def _extract_version_info(self, file: Path, model_name: str) -> Optional[Dict[str, Any]]:
+    def _extract_version_info(self, file: Path, model_name: str) -> dict[str, Any] | None:
         """從權重檔案提取版本資訊"""
         parts = file.stem.split('_')
         if len(parts) < 2:
@@ -247,7 +253,7 @@ class AIWeightManager:
         metadata_path = self.metadata_dir / f"{model_name}_{version}.json"
         
         if metadata_path.exists():
-            with open(metadata_path, 'r') as f:
+            with open(metadata_path) as f:
                 meta = json.load(f)
                 return {
                     'version': version,
@@ -257,7 +263,7 @@ class AIWeightManager:
                 }
         return None
     
-    def _list_all_models(self) -> Dict[str, list]:
+    def _list_all_models(self) -> dict[str, list]:
         """列出所有模型及其版本"""
         result = {}
         for file in self.weights_dir.glob("*.pth"):
@@ -369,7 +375,7 @@ class AIWeightManager:
                 device_type="unknown"
             )
         
-        with open(metadata_path, 'r') as f:
+        with open(metadata_path) as f:
             meta_dict = json.load(f)
         
         metadata = WeightMetadata(**meta_dict)
@@ -381,7 +387,7 @@ class AIWeightManager:
         
         return metadata
     
-    def _verify_model_compatibility(self, model: torch.nn.Module, arch_info: Dict[str, Any]) -> None:
+    def _verify_model_compatibility(self, model: torch.nn.Module, arch_info: dict[str, Any]) -> None:
         """驗證模型相容性"""
         if not arch_info:
             return
@@ -430,7 +436,7 @@ class AIWeightManager:
             logger.warning(f"清理舊備份失敗: {e}")
 
 # 全局權重管理器實例
-_global_weight_manager: Optional[AIWeightManager] = None
+_global_weight_manager: AIWeightManager | None = None
 
 def get_weight_manager() -> AIWeightManager:
     """獲取全局權重管理器實例"""

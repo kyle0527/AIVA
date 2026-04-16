@@ -6,11 +6,10 @@ OWASP A05:2021 - Security Misconfiguration
 分析 HTTP 流量中的敏感資訊和安全配置問題
 """
 
-import re
-import json
-from typing import List, Optional, Dict, Any
 from dataclasses import dataclass
-from urllib.parse import urlparse, parse_qs
+import json
+import re
+from urllib.parse import parse_qs, urlparse
 
 # OWASP 常量定義
 OWASP_A02_2021 = 'A02:2021'
@@ -25,7 +24,7 @@ class PassiveFinding:
     description: str
     evidence: str
     remediation: str
-    url: Optional[str] = None
+    url: str | None = None
 
 
 class PassiveAnalyzer:
@@ -105,7 +104,7 @@ class PassiveAnalyzer:
             }
         }
     
-    def analyze_har(self, har_path: str) -> List[PassiveFinding]:
+    def analyze_har(self, har_path: str) -> list[PassiveFinding]:
         """
         分析 HAR 文件
         
@@ -118,7 +117,7 @@ class PassiveAnalyzer:
         findings = []
         
         try:
-            with open(har_path, 'r', encoding='utf-8') as f:
+            with open(har_path, encoding='utf-8') as f:
                 har_data = json.load(f)
             
             entries = har_data.get('log', {}).get('entries', [])
@@ -146,7 +145,7 @@ class PassiveAnalyzer:
         
         return findings
     
-    def _analyze_request(self, request: Dict, url: str) -> List[PassiveFinding]:
+    def _analyze_request(self, request: dict, url: str) -> list[PassiveFinding]:
         """分析 HTTP 請求"""
         findings = []
         
@@ -171,7 +170,7 @@ class PassiveAnalyzer:
         
         return findings
     
-    def _analyze_response(self, response: Dict, url: str) -> List[PassiveFinding]:
+    def _analyze_response(self, response: dict, url: str) -> list[PassiveFinding]:
         """分析 HTTP 響應"""
         findings = []
         
@@ -195,7 +194,7 @@ class PassiveAnalyzer:
         
         return findings
     
-    def _check_sensitive_data_in_url(self, url: str) -> List[PassiveFinding]:
+    def _check_sensitive_data_in_url(self, url: str) -> list[PassiveFinding]:
         """檢查 URL 中的敏感數據"""
         findings = []
         
@@ -214,7 +213,7 @@ class PassiveAnalyzer:
         
         return findings
     
-    def _check_sensitive_params(self, params: dict[str, List[str]], url: str) -> List[PassiveFinding]:
+    def _check_sensitive_params(self, params: dict[str, list[str]], url: str) -> list[PassiveFinding]:
         """檢查敏感參數名稱"""
         findings = []
         sensitive_param_names = [
@@ -223,7 +222,7 @@ class PassiveAnalyzer:
             'credit_card', 'cc', 'ssn', 'social_security'
         ]
         
-        for param_name in params.keys():
+        for param_name in params:
             if any(sensitive in param_name.lower() for sensitive in sensitive_param_names):
                 findings.append(PassiveFinding(
                     category='Sensitive Parameter in URL',
@@ -237,7 +236,7 @@ class PassiveAnalyzer:
         
         return findings
     
-    def _check_sensitive_data_in_body(self, body: str, url: str) -> List[PassiveFinding]:
+    def _check_sensitive_data_in_body(self, body: str, url: str) -> list[PassiveFinding]:
         """檢查請求/響應體中的敏感數據"""
         findings = []
         
@@ -258,7 +257,7 @@ class PassiveAnalyzer:
         
         return findings
     
-    def _check_security_headers(self, headers: dict[str, str], url: str) -> List[PassiveFinding]:
+    def _check_security_headers(self, headers: dict[str, str], url: str) -> list[PassiveFinding]:
         """檢查安全頭部"""
         findings = []
         
@@ -308,7 +307,7 @@ class PassiveAnalyzer:
         
         return findings
     
-    def _analyze_cookies(self, cookie_header: str, url: str) -> List[PassiveFinding]:
+    def _analyze_cookies(self, cookie_header: str, url: str) -> list[PassiveFinding]:
         """分析 Cookie 頭"""
         findings = []
         
@@ -334,7 +333,7 @@ class PassiveAnalyzer:
         
         return findings
     
-    def _analyze_set_cookie(self, set_cookie: str, url: str) -> List[PassiveFinding]:
+    def _analyze_set_cookie(self, set_cookie: str, url: str) -> list[PassiveFinding]:
         """分析 Set-Cookie 頭"""
         findings = []
         
@@ -379,7 +378,7 @@ class PassiveAnalyzer:
         
         return findings
     
-    def _check_error_disclosure(self, response: Dict, url: str) -> List[PassiveFinding]:
+    def _check_error_disclosure(self, response: dict, url: str) -> list[PassiveFinding]:
         """檢查錯誤信息洩露"""
         findings = []
         

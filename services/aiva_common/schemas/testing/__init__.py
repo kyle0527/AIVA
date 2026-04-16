@@ -11,17 +11,17 @@ AIVA Testing Domain Schemas
 """
 
 from .api_testing import *
-from .tasks import *
 from .scenarios import *
+from .tasks import *
 
 __all__ = [
     # API測試 (api_standards.py的測試部分)
     "APISecurityTest",
-    "APIVulnerabilityFinding", 
+    "APIVulnerabilityFinding",
     # 任務執行 (tasks.py)
     "ScanStartPayload",
     "ScanCompletedPayload",
-    "FunctionTaskPayload", 
+    "FunctionTaskPayload",
     "FunctionTaskTarget",
     "FunctionTaskContext",
     "FunctionTaskTestConfig",
@@ -30,7 +30,7 @@ __all__ = [
     "ConfigUpdatePayload",
     "ThreatIntelLookupPayload",
     "ThreatIntelResultPayload",
-    "AuthZCheckPayload", 
+    "AuthZCheckPayload",
     "AuthZAnalysisPayload",
     "AuthZResultPayload",
     "RemediationGeneratePayload",
@@ -39,11 +39,11 @@ __all__ = [
     "PostExResultPayload",
     "BizLogicTestPayload",
     "BizLogicResultPayload",
-    "APISchemaPayload", 
+    "APISchemaPayload",
     "APITestCase",
     "APISecurityTestPayload",
     "EASMDiscoveryPayload",
-    "EASMDiscoveryResult", 
+    "EASMDiscoveryResult",
     "ScenarioTestResult",
     "ExploitPayload",
     "TestExecution",

@@ -2,7 +2,6 @@
 支援 Python/Go/Rust/TypeScript 所有功能模組的統一調用
 """
 
-import asyncio
 from dataclasses import dataclass
 import logging
 from typing import Any

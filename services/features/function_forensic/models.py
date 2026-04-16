@@ -5,8 +5,7 @@ Forensic Module Data Models
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import List, Dict, Optional, Any
-
+from typing import Any
 
 # ==================== Enums ====================
 
@@ -67,10 +66,10 @@ class CaseInfo:
     status: str = "open"  # open, in_progress, closed
     
     # Evidence Tracking
-    evidence_items: List[str] = field(default_factory=list)
+    evidence_items: list[str] = field(default_factory=list)
     evidence_location: str = ""
     
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -92,9 +91,9 @@ class EvidenceItem:
     
     # Verification
     verified: bool = False
-    chain_of_custody: List[Dict[str, Any]] = field(default_factory=list)
+    chain_of_custody: list[dict[str, Any]] = field(default_factory=list)
     
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -112,7 +111,7 @@ class AnalysisConfig:
     output_dir: str = "analysis_output"
     report_format: str = "html"  # html, pdf, json
     
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -128,8 +127,8 @@ class AnalysisResult:
     suspicious_items: int = 0
     
     # Artifacts
-    artifacts: List[Dict[str, Any]] = field(default_factory=list)
-    timeline_events: List[Dict[str, Any]] = field(default_factory=list)
+    artifacts: list[dict[str, Any]] = field(default_factory=list)
+    timeline_events: list[dict[str, Any]] = field(default_factory=list)
     
     # Report
     report_file: str = ""
@@ -139,7 +138,7 @@ class AnalysisResult:
     analysis_duration: float = 0.0
     timestamp: datetime = field(default_factory=datetime.now)
     
-    error: Optional[str] = None
+    error: str | None = None
 
 
 @dataclass
@@ -151,8 +150,8 @@ class TimelineEvent:
     description: str
     
     # Additional Info
-    file_path: Optional[str] = None
-    user: Optional[str] = None
-    process: Optional[str] = None
+    file_path: str | None = None
+    user: str | None = None
+    process: str | None = None
     
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)

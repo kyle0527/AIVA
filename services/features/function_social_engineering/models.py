@@ -7,8 +7,7 @@ Social Engineering Module Data Models
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import List, Dict, Optional, Any
-
+from typing import Any
 
 # ==================== Enums ====================
 
@@ -100,34 +99,34 @@ class PhishingConfig:
     """釣魚攻擊配置"""
     phishing_type: PhishingType
     target_platform: TargetPlatform
-    target_emails: List[str]
+    target_emails: list[str]
     sender_email: str
     subject: str
     template_name: str
     callback_url: str
     
     # SMTP Configuration
-    smtp_host: Optional[str] = None
-    smtp_port: Optional[int] = None
-    smtp_username: Optional[str] = None
-    smtp_password: Optional[str] = None
+    smtp_host: str | None = None
+    smtp_port: int | None = None
+    smtp_username: str | None = None
+    smtp_password: str | None = None
     smtp_use_tls: bool = True
     
     # Advanced Options
     personalization: bool = False
     use_url_shortener: bool = False
     tracking_pixel: bool = True
-    schedule_time: Optional[datetime] = None
+    schedule_time: datetime | None = None
     
     # Rate Limiting
     send_rate: int = 10  # Emails per minute
     batch_size: int = 50
     
     # Target Filtering
-    target_filters: Dict[str, Any] = field(default_factory=dict)
+    target_filters: dict[str, Any] = field(default_factory=dict)
     
     # Template Variables
-    template_vars: Dict[str, str] = field(default_factory=dict)
+    template_vars: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -137,18 +136,18 @@ class PhishingResult:
     campaign_id: str
     emails_sent: int = 0
     emails_failed: int = 0
-    public_url: Optional[str] = None
+    public_url: str | None = None
     log_file: str = ""
-    error: Optional[str] = None
+    error: str | None = None
     timestamp: datetime = field(default_factory=datetime.now)
     
     # Delivery Details
-    delivery_method: Optional[DeliveryMethod] = None
-    server_port: Optional[int] = None
+    delivery_method: DeliveryMethod | None = None
+    server_port: int | None = None
     
     # Campaign Info
     status: CampaignStatus = CampaignStatus.RUNNING
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -156,11 +155,11 @@ class CampaignConfig:
     """活動配置"""
     campaign_name: str
     campaign_type: PhishingType
-    target_list: List[str]
+    target_list: list[str]
     
     # Campaign Settings
     start_time: datetime
-    end_time: Optional[datetime] = None
+    end_time: datetime | None = None
     auto_stop: bool = True
     
     # Tracking Settings
@@ -172,40 +171,40 @@ class CampaignConfig:
     
     # Notification Settings
     notify_on_credential: bool = True
-    notification_webhook: Optional[str] = None
-    notification_email: Optional[str] = None
+    notification_webhook: str | None = None
+    notification_email: str | None = None
     
     # Campaign Metadata
-    description: Optional[str] = None
-    tags: List[str] = field(default_factory=list)
-    notes: Optional[str] = None
+    description: str | None = None
+    tags: list[str] = field(default_factory=list)
+    notes: str | None = None
 
 
 @dataclass
 class TargetInfo:
     """目標資訊"""
     target_id: str
-    email: Optional[str] = None
-    name: Optional[str] = None
-    company: Optional[str] = None
-    position: Optional[str] = None
-    department: Optional[str] = None
+    email: str | None = None
+    name: str | None = None
+    company: str | None = None
+    position: str | None = None
+    department: str | None = None
     
     # OSINT Data
-    social_profiles: Dict[str, str] = field(default_factory=dict)  # {platform: url}
-    phone_numbers: List[str] = field(default_factory=list)
-    addresses: List[str] = field(default_factory=list)
+    social_profiles: dict[str, str] = field(default_factory=dict)  # {platform: url}
+    phone_numbers: list[str] = field(default_factory=list)
+    addresses: list[str] = field(default_factory=list)
     
     # Professional Info
-    linkedin_url: Optional[str] = None
-    github_url: Optional[str] = None
-    work_history: List[Dict[str, str]] = field(default_factory=list)
-    skills: List[str] = field(default_factory=list)
+    linkedin_url: str | None = None
+    github_url: str | None = None
+    work_history: list[dict[str, str]] = field(default_factory=list)
+    skills: list[str] = field(default_factory=list)
     
     # Metadata
     last_updated: datetime = field(default_factory=datetime.now)
     confidence_score: float = 0.0  # 0.0 - 1.0
-    data_sources: List[str] = field(default_factory=list)
+    data_sources: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -216,10 +215,10 @@ class CredentialData:
     credential_type: CredentialType
     
     # Credential Details
-    username: Optional[str] = None
-    password: Optional[str] = None
-    api_key: Optional[str] = None
-    token: Optional[str] = None
+    username: str | None = None
+    password: str | None = None
+    api_key: str | None = None
+    token: str | None = None
     
     # Submission Context
     ip_address: str = ""
@@ -227,21 +226,21 @@ class CredentialData:
     timestamp: datetime = field(default_factory=datetime.now)
     
     # Geo Data
-    country: Optional[str] = None
-    city: Optional[str] = None
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
+    country: str | None = None
+    city: str | None = None
+    latitude: float | None = None
+    longitude: float | None = None
     
     # Browser Fingerprint
-    browser: Optional[str] = None
-    os: Optional[str] = None
-    device: Optional[str] = None
-    screen_resolution: Optional[str] = None
+    browser: str | None = None
+    os: str | None = None
+    device: str | None = None
+    screen_resolution: str | None = None
     
     # Additional Data
-    form_data: Dict[str, Any] = field(default_factory=dict)
-    cookies: Dict[str, str] = field(default_factory=dict)
-    headers: Dict[str, str] = field(default_factory=dict)
+    form_data: dict[str, Any] = field(default_factory=dict)
+    cookies: dict[str, str] = field(default_factory=dict)
+    headers: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -268,22 +267,22 @@ class AnalyticsData:
     success_rate: float = 0.0       # (credentials / clicked) * 100
     
     # Geographic Distribution
-    geo_distribution: Dict[str, int] = field(default_factory=dict)  # {country: count}
-    city_distribution: Dict[str, int] = field(default_factory=dict) # {city: count}
+    geo_distribution: dict[str, int] = field(default_factory=dict)  # {country: count}
+    city_distribution: dict[str, int] = field(default_factory=dict) # {city: count}
     
     # Browser/Device Stats
-    browser_stats: Dict[str, int] = field(default_factory=dict)     # {browser: count}
-    os_stats: Dict[str, int] = field(default_factory=dict)          # {os: count}
-    device_stats: Dict[str, int] = field(default_factory=dict)      # {device: count}
+    browser_stats: dict[str, int] = field(default_factory=dict)     # {browser: count}
+    os_stats: dict[str, int] = field(default_factory=dict)          # {os: count}
+    device_stats: dict[str, int] = field(default_factory=dict)      # {device: count}
     
     # Temporal Analysis
-    hourly_activity: Dict[int, int] = field(default_factory=dict)   # {hour: count}
-    daily_activity: Dict[str, int] = field(default_factory=dict)    # {date: count}
+    hourly_activity: dict[int, int] = field(default_factory=dict)   # {hour: count}
+    daily_activity: dict[str, int] = field(default_factory=dict)    # {date: count}
     
     # Timeline
-    start_time: Optional[datetime] = None
-    end_time: Optional[datetime] = None
-    last_activity: Optional[datetime] = None
+    start_time: datetime | None = None
+    end_time: datetime | None = None
+    last_activity: datetime | None = None
     
     # Metadata
     generated_at: datetime = field(default_factory=datetime.now)
@@ -299,21 +298,21 @@ class EmailTemplate:
     # Content
     subject: str
     html_body: str
-    text_body: Optional[str] = None
+    text_body: str | None = None
     
     # Template Variables
-    variables: List[str] = field(default_factory=list)  # {{variable_name}}
+    variables: list[str] = field(default_factory=list)  # {{variable_name}}
     
     # Sender Info
-    default_sender_name: Optional[str] = None
-    default_sender_email: Optional[str] = None
+    default_sender_name: str | None = None
+    default_sender_email: str | None = None
     
     # Attachments
-    attachments: List[str] = field(default_factory=list)
+    attachments: list[str] = field(default_factory=list)
     
     # Metadata
-    description: Optional[str] = None
-    tags: List[str] = field(default_factory=list)
+    description: str | None = None
+    tags: list[str] = field(default_factory=list)
     created_at: datetime = field(default_factory=datetime.now)
     last_modified: datetime = field(default_factory=datetime.now)
     use_count: int = 0
@@ -331,18 +330,18 @@ class LandingPageConfig:
     delivery_method: DeliveryMethod = DeliveryMethod.NGROK
     
     # Customization
-    logo_url: Optional[str] = None
-    company_name: Optional[str] = None
-    custom_css: Optional[str] = None
+    logo_url: str | None = None
+    company_name: str | None = None
+    custom_css: str | None = None
     
     # Tracking
     log_credentials: bool = True
     log_file: str = ""
-    redirect_url: Optional[str] = None  # Redirect after submission
+    redirect_url: str | None = None  # Redirect after submission
     
     # Security
     ssl_enabled: bool = False
-    custom_domain: Optional[str] = None
+    custom_domain: str | None = None
     
     # Metadata
     created_at: datetime = field(default_factory=datetime.now)

@@ -12,7 +12,7 @@ from enum import Enum
 from typing import Any, Dict, Optional, Union
 from uuid import uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 # 嘗試導入 OpenTelemetry（可選依賴）
 try:
@@ -69,8 +69,7 @@ class StructuredLog(BaseModel):
     span_id: str | None = None
     extra_fields: dict[str, Any] = Field(default_factory=dict)
 
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values = True)
 
 
 class Metric(BaseModel):
@@ -389,10 +388,10 @@ __all__ = [
 # 延遲導入以避免循環依賴
 def __getattr__(name):
     if name in ("MonitoringService", "get_monitoring_service", "LogEntry"):
-        from .monitoring import MonitoringService, get_monitoring_service, LogEntry
+        from .monitoring import LogEntry, MonitoringService, get_monitoring_service
         return locals()[name]
     if name in ("MetricData", "WorkerMetrics", "SeverityLevel"):
-        from .metrics import MetricData, WorkerMetrics, SeverityLevel
+        from .metrics import MetricData, SeverityLevel, WorkerMetrics
         return locals()[name]
     if name == "MonitoringLogHandler":
         from .monitoring_log_handler import MonitoringLogHandler

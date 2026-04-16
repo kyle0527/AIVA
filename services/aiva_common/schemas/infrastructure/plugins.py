@@ -4,7 +4,7 @@
 此模組定義了插件清單、執行上下文、配置等相關的資料模型。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -36,10 +36,10 @@ class PluginManifest(BaseModel):
     license: str = Field(default="MIT", description="許可證")
     keywords: list[str] = Field(default_factory=list, description="關鍵詞")
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), description="創建時間"
+        default_factory=lambda: datetime.now(UTC), description="創建時間"
     )
     updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), description="更新時間"
+        default_factory=lambda: datetime.now(UTC), description="更新時間"
     )
 
     @field_validator("plugin_id")
@@ -101,7 +101,7 @@ class PluginExecutionContext(BaseModel):
     trace_id: str | None = Field(default=None, description="追蹤ID")
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), description="創建時間"
+        default_factory=lambda: datetime.now(UTC), description="創建時間"
     )
 
     @field_validator("execution_id")
@@ -131,7 +131,7 @@ class PluginExecutionResult(BaseModel):
     artifacts: dict[str, str] = Field(default_factory=dict, description="產出物件")
     metadata: dict[str, Any] = Field(default_factory=dict, description="執行元數據")
     start_time: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), description="開始時間"
+        default_factory=lambda: datetime.now(UTC), description="開始時間"
     )
     end_time: datetime | None = Field(default=None, description="結束時間")
 
@@ -163,10 +163,10 @@ class PluginConfig(BaseModel):
     )
     tags: list[str] = Field(default_factory=list, description="標籤")
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), description="創建時間"
+        default_factory=lambda: datetime.now(UTC), description="創建時間"
     )
     updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), description="更新時間"
+        default_factory=lambda: datetime.now(UTC), description="更新時間"
     )
 
     @field_validator("custom_config")
@@ -213,7 +213,7 @@ class PluginHealthCheck(BaseModel):
     check_id: str = Field(description="檢查ID")
     status: str = Field(description="健康狀態")
     last_check: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc), description="最後檢查時間"
+        default_factory=lambda: datetime.now(UTC), description="最後檢查時間"
     )
     response_time_ms: float = Field(ge=0, description="響應時間(毫秒)")
     error_count: int = Field(default=0, ge=0, description="錯誤計數")

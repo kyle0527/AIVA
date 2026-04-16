@@ -1,21 +1,22 @@
 import json
 from typing import Any
-from pathlib import Path
 
-from pydantic import HttpUrl
 from aiva_common.enums import Topic
 from aiva_common.messaging import AbstractBroker
 from aiva_common.schemas import (
-    ScanCompletedPayload,
-    Phase0StartPayload,
     Phase0CompletedPayload,
+    Phase0StartPayload,
     Phase1StartPayload,
+    ScanCompletedPayload,
 )
 from aiva_common.utils import get_logger
+from pydantic import HttpUrl
 
 # ✅ 連接到 scan 模組 - MultiEngineCoordinator
 try:
-    from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+    from services.scan.coordinators.multi_engine_coordinator import (
+        MultiEngineCoordinator,
+    )
     SCAN_COORDINATOR_AVAILABLE = True
 except ImportError:
     SCAN_COORDINATOR_AVAILABLE = False
@@ -353,9 +354,6 @@ class ScanModuleInterface:
         Returns:
             Phase0 執行結果字典
         """
-        import asyncio
-        import subprocess
-        from datetime import datetime
         
         logger.info(f"[Phase0-Direct] Starting scan {scan_id} for {len(targets)} targets")
         
@@ -495,7 +493,6 @@ class ScanModuleInterface:
         Returns:
             Phase1 執行結果字典
         """
-        import asyncio
         
         logger.info(
             f"[Phase1-Direct] Starting scan {scan_id} with engines {engines} "
@@ -612,7 +609,6 @@ class ScanModuleInterface:
             Timeout is controlled via asyncio.wait_for in the calling code
         """
         import asyncio
-        import subprocess
         
         logger.debug(f"[Engine] Executing {engine} on {len(targets)} targets")
         
@@ -643,7 +639,7 @@ class ScanModuleInterface:
             
             return result
             
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning(f"[Engine] {engine} timed out after {timeout}s")
             return {
                 "success": False,

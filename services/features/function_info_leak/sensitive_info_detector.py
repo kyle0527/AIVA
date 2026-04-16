@@ -18,16 +18,16 @@ Author: AIVA Security Team
 License: MIT
 """
 
-import re
-import json
-import math
-import logging
-from enum import Enum
-from typing import List, Dict, Optional, Set, Tuple, Any
-from dataclasses import dataclass, field
 from collections import Counter
+from dataclasses import dataclass, field
 from datetime import datetime
+from enum import Enum
 import hashlib
+import json
+import logging
+import math
+import re
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -150,13 +150,13 @@ class SensitiveMatch:
     value: str
     location: Location
     context: str = ""
-    line_number: Optional[int] = None
-    column_number: Optional[int] = None
+    line_number: int | None = None
+    column_number: int | None = None
     severity: AlertSeverity = AlertSeverity.MEDIUM
     description: str = ""
     recommendation: str = ""
     confidence: float = 1.0  # 0.0 - 1.0, 信心度評分
-    entropy: Optional[float] = None  # 熵值
+    entropy: float | None = None  # 熵值
     hash: str = ""  # 用於去重
     
     def __post_init__(self):
@@ -177,7 +177,7 @@ class RiskScore:
     info_count: int = 0
     risk_level: str = "LOW"  # LOW, MEDIUM, HIGH, CRITICAL
     
-    def calculate(self, matches: List[SensitiveMatch]) -> None:
+    def calculate(self, matches: list[SensitiveMatch]) -> None:
         """計算風險評分"""
         severity_weights = {
             AlertSeverity.CRITICAL: 25,
@@ -219,10 +219,10 @@ class RiskScore:
 class DetectionResult:
     """檢測結果"""
     url: str = ""
-    matches: List[SensitiveMatch] = field(default_factory=list)
+    matches: list[SensitiveMatch] = field(default_factory=list)
     risk_score: RiskScore = field(default_factory=RiskScore)
     scan_time: str = field(default_factory=lambda: datetime.utcnow().isoformat())
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
     
     def __post_init__(self):
         """計算風險評分"""
@@ -407,7 +407,7 @@ class SensitiveInfoDetector:
         enable_entropy_check: bool = True,
         entropy_threshold: float = 4.5,
         min_confidence: float = 0.3,
-        custom_patterns: Optional[Dict] = None
+        custom_patterns: dict | None = None
     ):
         """
         初始化檢測器
@@ -430,7 +430,7 @@ class SensitiveInfoDetector:
             self._patterns.update(custom_patterns)
         
         # 去重集合
-        self._seen_hashes: Set[str] = set()
+        self._seen_hashes: set[str] = set()
         
         logger.info(
             f"Initialized SensitiveInfoDetector: "
@@ -439,7 +439,7 @@ class SensitiveInfoDetector:
             f"threshold={entropy_threshold}"
         )
 
-    def _build_patterns(self) -> Dict[SensitiveInfoType, Dict]:
+    def _build_patterns(self) -> dict[SensitiveInfoType, dict]:
         """建立檢測模式 - 擴展至 50+ 種"""
         return {
             # ===== AWS 憑證 =====
@@ -749,7 +749,7 @@ class SensitiveInfoDetector:
         
         return entropy
     
-    def _is_false_positive(self, value: str, context: str) -> Tuple[bool, float]:
+    def _is_false_positive(self, value: str, context: str) -> tuple[bool, float]:
         """
         檢查是否為誤報
         
@@ -828,7 +828,7 @@ class SensitiveInfoDetector:
         return result
 
     def detect_in_headers(
-        self, headers: Dict[str, str], url: str = ""
+        self, headers: dict[str, str], url: str = ""
     ) -> DetectionResult:
         """檢測 HTTP 標頭中的敏感資訊"""
         result = DetectionResult(url=url)
@@ -866,7 +866,7 @@ class SensitiveInfoDetector:
         return result
 
     def detect_in_response(
-        self, response_body: str, headers: Optional[Dict[str, str]] = None, url: str = ""
+        self, response_body: str, headers: dict[str, str] | None = None, url: str = ""
     ) -> DetectionResult:
         """檢測 HTTP 響應中的敏感資訊"""
         result = DetectionResult(url=url)
@@ -893,9 +893,9 @@ class SensitiveInfoDetector:
         logger.info(f"Response detection complete: {len(result.matches)} matches found")
         return result
 
-    def _detect_html_comments(self, html: str) -> List[SensitiveMatch]:
+    def _detect_html_comments(self, html: str) -> list[SensitiveMatch]:
         """檢測 HTML 註釋中的敏感資訊"""
-        matches: List[SensitiveMatch] = []
+        matches: list[SensitiveMatch] = []
 
         # HTML 註釋
         comment_pattern = r"<!--(.*)-->"
@@ -916,9 +916,9 @@ class SensitiveInfoDetector:
 
         return matches
 
-    def _detect_script_blocks(self, html: str) -> List[SensitiveMatch]:
+    def _detect_script_blocks(self, html: str) -> list[SensitiveMatch]:
         """檢測 script 標籤中的敏感資訊"""
-        matches: List[SensitiveMatch] = []
+        matches: list[SensitiveMatch] = []
 
         # script 標籤
         script_pattern = r"<script[^>]*>(.*?)</script>"
@@ -933,9 +933,9 @@ class SensitiveInfoDetector:
 
         return matches
 
-    def _detect_meta_tags(self, html: str) -> List[SensitiveMatch]:
+    def _detect_meta_tags(self, html: str) -> list[SensitiveMatch]:
         """檢測 meta 標籤中的敏感資訊"""
-        matches: List[SensitiveMatch] = []
+        matches: list[SensitiveMatch] = []
 
         # 檢測 meta 標籤
         meta_pattern = r'<meta[^>]+content=["\']([^"\']+)["\'][^>]*>'
@@ -947,9 +947,9 @@ class SensitiveInfoDetector:
 
         return matches
 
-    def _detect_in_text(self, text: str, location: Location) -> List[SensitiveMatch]:
+    def _detect_in_text(self, text: str, location: Location) -> list[SensitiveMatch]:
         """在文本中檢測敏感資訊 (含熵值分析和誤報過濾)"""
-        matches: List[SensitiveMatch] = []
+        matches: list[SensitiveMatch] = []
 
         if not text:
             return matches
@@ -1011,9 +1011,9 @@ class SensitiveInfoDetector:
 
         return matches
     
-    def _detect_high_entropy_strings(self, text: str, location: Location) -> List[SensitiveMatch]:
+    def _detect_high_entropy_strings(self, text: str, location: Location) -> list[SensitiveMatch]:
         """檢測高熵值字符串 (可能是密鑰)"""
-        matches: List[SensitiveMatch] = []
+        matches: list[SensitiveMatch] = []
         
         # 提取可能是密鑰的字符串 (長度 20-100, 包含字母數字)
         potential_keys = re.findall(r'\b([a-zA-Z0-9_-]{20,100})\b', text)
@@ -1046,7 +1046,7 @@ class SensitiveInfoDetector:
         
         return matches
 
-    def _filter_by_severity(self, matches: List[SensitiveMatch]) -> List[SensitiveMatch]:
+    def _filter_by_severity(self, matches: list[SensitiveMatch]) -> list[SensitiveMatch]:
         """根據最小嚴重性等級過濾結果"""
         severity_order = {
             AlertSeverity.CRITICAL: 0,
@@ -1159,7 +1159,7 @@ class SensitiveInfoDetector:
         
         logger.info(f"Report exported to: {output_file} (format: {format})")
     
-    def get_statistics(self, results: List[DetectionResult]) -> Dict[str, Any]:
+    def get_statistics(self, results: list[DetectionResult]) -> dict[str, Any]:
         """
         生成統計資訊
         
@@ -1230,7 +1230,7 @@ def quick_scan(content: str, content_type: str = "text", url: str = "") -> Detec
         return detector.detect_in_response(content, url=url)
 
 
-def batch_scan(targets: List[Tuple[str, str]], output_dir: str = "scan_reports") -> List[DetectionResult]:
+def batch_scan(targets: list[tuple[str, str]], output_dir: str = "scan_reports") -> list[DetectionResult]:
     """
     批次掃描多個目標
     

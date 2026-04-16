@@ -21,9 +21,8 @@
     listener.start_listening()  # 同步阻塞
 """
 
-import json
 import logging
-from typing import Any, Dict
+from typing import Any
 
 from aiva_common.enums import Topic
 from aiva_common.schemas import AivaMessage, FindingPayload
@@ -210,10 +209,10 @@ class ExternalLearningListener:
                 logger.info(f"   Confidence: {recommendation.confidence:.2f}")
                 logger.info(f"   Category: {recommendation.knowledge_match.category}")
             elif recommendation.requires_rag:
-                logger.info(f"❓ Unknown situation, RAG triggered")
+                logger.info("❓ Unknown situation, RAG triggered")
                 logger.info(f"   Query: {recommendation.rag_query}")
             else:
-                logger.info(f"⚠️  No match, no RAG")
+                logger.info("⚠️  No match, no RAG")
             
             # 3. 傳遞給 ExternalLoopConnector（AI 內部異步處理）
             logger.info("\n🧠 Triggering learning process...")
@@ -227,7 +226,7 @@ class ExternalLearningListener:
         except Exception as e:
             logger.error(f"❌ Failed to process finding: {e}", exc_info=True)
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """獲取監聽器統計信息
         
         Returns:

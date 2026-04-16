@@ -7,25 +7,28 @@ HackingTool SQL 注入檢測引擎
 """
 
 import asyncio
-import json
-import re
-from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime
-import subprocess
 from pathlib import Path
+import re
+import subprocess
+from typing import Any
 
-import httpx
-
-from aiva_common.utils.logging import get_logger
-from aiva_common.utils.ids import new_id
-from aiva_common.enums.common import Severity, Confidence
+from aiva_common.enums.common import Confidence, Severity
 from aiva_common.enums.security import VulnerabilityType
 from aiva_common.schemas import (
-    FindingEvidence, FindingImpact, FindingRecommendation, 
-    FindingTarget, Vulnerability, FunctionTaskPayload
+    FindingEvidence,
+    FindingImpact,
+    FindingRecommendation,
+    FindingTarget,
+    FunctionTaskPayload,
+    Vulnerability,
 )
+from aiva_common.utils.ids import new_id
+from aiva_common.utils.logging import get_logger
+import httpx
 
 from ..detection_models import DetectionResult
+
 # 修復: schemas 模組不存在，這些類型實際在其他文件中定義
 # SqliDetectionResult 使用 DetectionResult，SqliTelemetry 從 telemetry 導入
 try:
@@ -36,8 +39,8 @@ except ImportError:
 
 from ..config import SqliConfig
 from ..hackingtool_config import (
-    HackingToolSQLIntegrator, SQLToolType, 
-    HACKINGTOOL_SQL_CONFIGS, sql_integrator
+    HACKINGTOOL_SQL_CONFIGS,
+    sql_integrator,
 )
 
 logger = get_logger(__name__)
@@ -57,7 +60,7 @@ class HackingToolDetectionEngine:
         
         logger.info(f"HackingTool SQL 檢測引擎已創建 [trace_id={self.trace_id}]")
     
-    def _validate_tools_availability(self, enabled_tools: List[str]) -> List[str]:
+    def _validate_tools_availability(self, enabled_tools: list[str]) -> list[str]:
         """驗證工具可用性——降低initialize函數複雜度"""
         available_tools = []
         
@@ -158,7 +161,7 @@ class HackingToolDetectionEngine:
         )
         return True
     
-    async def detect(self, task: FunctionTaskPayload, client: httpx.AsyncClient) -> List[DetectionResult]:
+    async def detect(self, task: FunctionTaskPayload, client: httpx.AsyncClient) -> list[DetectionResult]:
         """執行 HackingTool SQL 注入檢測"""
         results = []
         
@@ -212,7 +215,7 @@ class HackingToolDetectionEngine:
         
         return results
     
-    async def _run_tool_detection(self, tool_name: str, target: str) -> List[DetectionResult]:
+    async def _run_tool_detection(self, tool_name: str, target: str) -> list[DetectionResult]:
         """執行單個工具的檢測
         
         ✅ 修復: 工具執行失敗時拋出異常,不再回傳空列表
@@ -247,7 +250,7 @@ class HackingToolDetectionEngine:
         
         return detection_results
     
-    async def _execute_tool(self, tool_name: str, target: str) -> Dict[str, Any]:
+    async def _execute_tool(self, tool_name: str, target: str) -> dict[str, Any]:
         """異步執行工具命令
         
         ✅ 修復: 執行失敗時拋出異常,移除偽陰性邏輯
@@ -281,7 +284,7 @@ class HackingToolDetectionEngine:
                     process.communicate(),
                     timeout=config.timeout_seconds
                 )
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 process.kill()
                 await process.wait()
                 # ✅ 修復: 拋出異常而非回傳 {"success": False}
@@ -316,7 +319,7 @@ class HackingToolDetectionEngine:
                 "command": cmd
             }
             
-        except asyncio.TimeoutError:
+        except TimeoutError:
             # 已在上面處理
             raise
         except RuntimeError:
@@ -331,7 +334,7 @@ class HackingToolDetectionEngine:
                 f"異常信息: {str(e)}"
             ) from e
     
-    def _parse_tool_output(self, tool_name: str, execution_result: Dict[str, Any], target: str) -> List[DetectionResult]:
+    def _parse_tool_output(self, tool_name: str, execution_result: dict[str, Any], target: str) -> list[DetectionResult]:
         """解析工具輸出，生成檢測結果"""
         config = HACKINGTOOL_SQL_CONFIGS[tool_name]
         results = []
@@ -369,10 +372,10 @@ class HackingToolDetectionEngine:
         self, 
         tool_name: str, 
         config: Any,
-        vuln_info: Dict[str, Any], 
+        vuln_info: dict[str, Any], 
         target: str, 
         full_output: str
-    ) -> Optional[DetectionResult]:
+    ) -> DetectionResult | None:
         """創建標準化的檢測結果"""
         
         try:
@@ -473,7 +476,7 @@ class HackingToolDetectionEngine:
         
         return severity_map.get(vuln_type, Severity.MEDIUM)
     
-    def _extract_payload(self, vuln_info: Dict[str, Any], full_output: str) -> str:
+    def _extract_payload(self, vuln_info: dict[str, Any], full_output: str) -> str:
         """從輸出中提取使用的載荷"""
         # 嘗試從匹配組中獲取載荷
         if vuln_info["groups"]:
@@ -495,7 +498,7 @@ class HackingToolDetectionEngine:
         
         return "Unknown payload"
     
-    def _extract_db_fingerprint(self, full_output: str) -> Optional[str]:
+    def _extract_db_fingerprint(self, full_output: str) -> str | None:
         """從輸出中提取數據庫指紋"""
         db_patterns = [
             r"back-end DBMS:\s*(.+)",
@@ -511,7 +514,7 @@ class HackingToolDetectionEngine:
         
         return None
     
-    def _extract_parameter(self, vuln_info: Dict[str, Any]) -> Optional[str]:
+    def _extract_parameter(self, vuln_info: dict[str, Any]) -> str | None:
         """從漏洞資訊中提取參數名稱"""
         if vuln_info["groups"]:
             for group in vuln_info["groups"]:
@@ -520,7 +523,7 @@ class HackingToolDetectionEngine:
         
         return None
     
-    def get_tool_status(self) -> Dict[str, Any]:
+    def get_tool_status(self) -> dict[str, Any]:
         """獲取所有工具的狀態"""
         status = {
             "available_tools": [],
@@ -548,7 +551,7 @@ class HackingToolDetectionEngine:
         
         return status
     
-    def install_missing_tools(self) -> Dict[str, bool]:
+    def install_missing_tools(self) -> dict[str, bool]:
         """安裝缺失的工具"""
         installation_results = {}
         
@@ -566,7 +569,7 @@ class HackingToolDetectionEngine:
         
         return installation_results
     
-    def _convert_to_detection_result(self, sqli_result: DetectionResult) -> Optional[DetectionResult]:
+    def _convert_to_detection_result(self, sqli_result: DetectionResult) -> DetectionResult | None:
         """將 DetectionResult 轉換為 DetectionResult（已經是正確類型）"""
         try:
             # 使用正確的 DetectionResult 結構

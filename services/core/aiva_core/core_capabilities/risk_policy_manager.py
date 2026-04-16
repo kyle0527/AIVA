@@ -6,10 +6,9 @@
 
 import logging
 from pathlib import Path
-from typing import Any, Optional
-import yaml
+from typing import Any
 
-from aiva_common.enums import RiskLevel
+import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +19,7 @@ class RiskPolicyManager:
     負責從 YAML 配置載入風險評估規則並執行評估
     """
     
-    def __init__(self, policy_file: Optional[Path] = None):
+    def __init__(self, policy_file: Path | None = None):
         """初始化風險策略管理器
         
         Args:
@@ -49,7 +48,7 @@ class RiskPolicyManager:
             )
         
         try:
-            with open(self.policy_file, "r", encoding="utf-8") as f:
+            with open(self.policy_file, encoding="utf-8") as f:
                 self.policy_config = yaml.safe_load(f)
             
             logger.info(f"✅ 載入風險策略: {self.policy_config.get('policy_name', 'unknown')}")
@@ -61,7 +60,7 @@ class RiskPolicyManager:
     def assess_risk(
         self,
         context: dict[str, Any],
-        task_type: Optional[str] = None
+        task_type: str | None = None
     ) -> tuple[str, float, list[dict[str, Any]]]:
         """評估風險等級
         

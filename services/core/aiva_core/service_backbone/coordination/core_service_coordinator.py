@@ -32,7 +32,7 @@ from aiva_common.config.config_manager import (
     ConfigChangeEvent,
     get_config_manager,
 )
-from aiva_common.cross_language import error_handler
+
 # 注意: gRPC 跨語言服務已移除，改為使用 CLI subprocess 執行 (Rust: cargo run, Go: go run, TypeScript: npx ts-node)
 from aiva_common.core.error_handling import (
     AIVAError,
@@ -40,6 +40,7 @@ from aiva_common.core.error_handling import (
     ErrorType,
     create_error_context,
 )
+from aiva_common.cross_language import error_handler
 from aiva_common.observability.monitoring import (
     MetricType,
     TraceContext,
@@ -50,13 +51,14 @@ from aiva_common.security import get_security_manager
 from aiva_common.security.security_middleware import (
     create_security_middleware,
 )
+
 from ...task_planning.command_router import (
     CommandContext,
     ExecutionResult,
     get_command_router,
 )
-from ..context_manager import get_context_manager
 from ...task_planning.planner.task_execution_planner import get_execution_planner
+from ..context_manager import get_context_manager
 
 
 class AIVACoreServiceCoordinator:

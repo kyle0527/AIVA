@@ -11,10 +11,9 @@ belonging to other users.
 from dataclasses import dataclass
 import re
 
+from aiva_common.schemas import FunctionTaskPayload
 import httpx
 from pydantic import HttpUrl
-
-from aiva_common.schemas import FunctionTaskPayload
 
 
 @dataclass

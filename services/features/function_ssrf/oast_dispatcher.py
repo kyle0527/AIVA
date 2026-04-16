@@ -4,9 +4,8 @@ from dataclasses import dataclass
 import json
 import os
 
-import httpx
-
 from aiva_common.schemas import FunctionTaskPayload
+import httpx
 
 
 @dataclass

@@ -7,7 +7,12 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+from aiva_common.core.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
 
 from .backends import HybridBackend, JSONLBackend, PostgreSQLBackend, SQLiteBackend
 from .command_repository import CommandRepository
@@ -100,7 +105,6 @@ class StorageManager:
         self, provided_config: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         """從環境變數讀取數據庫配置"""
-        import os
 
         config = provided_config or {}
 

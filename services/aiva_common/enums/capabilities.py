@@ -20,7 +20,6 @@ AIVA 預定義能力枚舉 - 選單式操作系統
 from enum import Enum
 from typing import Any
 
-
 # =============================================================================
 # 攻擊能力枚舉 - 滲透測試攻擊類型
 # =============================================================================
@@ -33,39 +32,39 @@ class AttackCapability(str, Enum):
     - target: 目標 URL/IP
     - parameters: 可選的額外參數
     """
-    
+
     # === Web 應用攻擊 ===
     SQL_INJECTION = "sql_injection"
     SQL_INJECTION_BLIND = "sql_injection_blind"
     SQL_INJECTION_TIME_BASED = "sql_injection_time_based"
     SQL_INJECTION_UNION = "sql_injection_union"
-    
+
     XSS_REFLECTED = "xss_reflected"
     XSS_STORED = "xss_stored"
     XSS_DOM = "xss_dom"
-    
+
     SSRF_BASIC = "ssrf_basic"
     SSRF_BLIND = "ssrf_blind"
-    
+
     XXE_BASIC = "xxe_basic"
     XXE_BLIND = "xxe_blind"
     XXE_OOB = "xxe_oob"
-    
+
     IDOR = "idor"
     CSRF = "csrf"
-    
+
     # === 注入攻擊 ===
     COMMAND_INJECTION = "command_injection"
     LDAP_INJECTION = "ldap_injection"
     XPATH_INJECTION = "xpath_injection"
     TEMPLATE_INJECTION = "template_injection"
     HEADER_INJECTION = "header_injection"
-    
+
     # === 路徑攻擊 ===
     PATH_TRAVERSAL = "path_traversal"
     LFI = "local_file_inclusion"
     RFI = "remote_file_inclusion"
-    
+
     # === 認證攻擊 ===
     AUTH_BYPASS = "auth_bypass"
     JWT_ATTACK = "jwt_attack"
@@ -73,60 +72,60 @@ class AttackCapability(str, Enum):
     JWT_WEAK_SECRET = "jwt_weak_secret"
     SESSION_FIXATION = "session_fixation"
     PASSWORD_BRUTE_FORCE = "password_brute_force"
-    
+
     # === API 攻擊 ===
     GRAPHQL_INJECTION = "graphql_injection"
     GRAPHQL_INTROSPECTION = "graphql_introspection"
     GRAPHQL_BATCHING = "graphql_batching"
     REST_API_ABUSE = "rest_api_abuse"
-    
+
     # === 反序列化攻擊 ===
     DESERIALIZATION_JAVA = "deserialization_java"
     DESERIALIZATION_PHP = "deserialization_php"
     DESERIALIZATION_PYTHON = "deserialization_python"
     DESERIALIZATION_DOTNET = "deserialization_dotnet"
-    
+
     # === 其他攻擊 ===
     OPEN_REDIRECT = "open_redirect"
     CORS_MISCONFIGURATION = "cors_misconfiguration"
     CLICKJACKING = "clickjacking"
     SUBDOMAIN_TAKEOVER = "subdomain_takeover"
-    
+
     # === 阻斷服務攻擊 ===
     DOS_ATTACK = "dos_attack"
     DDOS_ATTACK = "ddos_attack"
-    
+
     # === NoSQL 攻擊 ===
     NOSQL_INJECTION = "nosql_injection"
 
 
 class ScanCapability(str, Enum):
     """掃描能力選單 - 所有可執行的掃描類型"""
-    
+
     # === 主動掃描 ===
     PORT_SCAN_TCP = "port_scan_tcp"
     PORT_SCAN_UDP = "port_scan_udp"
     PORT_SCAN_SYN = "port_scan_syn"
     PORT_SCAN_FULL = "port_scan_full"
-    
+
     SERVICE_DETECTION = "service_detection"
     VERSION_DETECTION = "version_detection"
     OS_DETECTION = "os_detection"
-    
+
     VULNERABILITY_SCAN = "vulnerability_scan"
     WEB_VULNERABILITY_SCAN = "web_vulnerability_scan"
-    
+
     # === 被動掃描 ===
     PASSIVE_RECON = "passive_recon"
     DNS_ENUMERATION = "dns_enumeration"
     SUBDOMAIN_ENUMERATION = "subdomain_enumeration"
-    
+
     # === Web 掃描 ===
     DIRECTORY_BRUTEFORCE = "directory_bruteforce"
     WEB_CRAWLER = "web_crawler"
     PARAMETER_DISCOVERY = "parameter_discovery"
     TECHNOLOGY_DETECTION = "technology_detection"
-    
+
     # === 資產發現 ===
     ASSET_DISCOVERY = "asset_discovery"
     CLOUD_ASSET_SCAN = "cloud_asset_scan"
@@ -135,27 +134,27 @@ class ScanCapability(str, Enum):
 
 class ReconCapability(str, Enum):
     """偵察能力選單 - 資訊收集類型"""
-    
+
     # === OSINT ===
     WHOIS_LOOKUP = "whois_lookup"
     DNS_LOOKUP = "dns_lookup"
     REVERSE_DNS = "reverse_dns"
     IP_GEOLOCATION = "ip_geolocation"
-    
+
     # === 子域名 ===
     SUBDOMAIN_ENUMERATION = "subdomain_enumeration"
-    
+
     # === 社交工程偵察 ===
     EMAIL_HARVESTING = "email_harvesting"
     LINKEDIN_RECON = "linkedin_recon"
     GITHUB_RECON = "github_recon"
-    
+
     # === 技術偵察 ===
     TECHNOLOGY_FINGERPRINT = "technology_fingerprint"
     WAF_DETECTION = "waf_detection"
     CDN_DETECTION = "cdn_detection"
     CMS_DETECTION = "cms_detection"
-    
+
     # === 網路偵察 ===
     ASN_LOOKUP = "asn_lookup"
     CIDR_EXPANSION = "cidr_expansion"
@@ -165,24 +164,24 @@ class ReconCapability(str, Enum):
 
 class AnalysisCapability(str, Enum):
     """分析能力選單 - 程式碼和安全分析"""
-    
+
     # === 靜態分析 ===
     SAST_SCAN = "sast_scan"
     CODE_REVIEW = "code_review"
     DEPENDENCY_CHECK = "dependency_check"
     SECRET_DETECTION = "secret_detection"
-    
+
     # === 動態分析 ===
     DAST_SCAN = "dast_scan"
     FUZZING = "fuzzing"
     API_FUZZING = "api_fuzzing"
-    
+
     # === 配置分析 ===
     CONFIG_AUDIT = "config_audit"
     COMPLIANCE_CHECK = "compliance_check"
     SECURITY_HEADERS_CHECK = "security_headers_check"
     SSL_TLS_ANALYSIS = "ssl_tls_analysis"
-    
+
     # === 二進制分析 ===
     BINARY_ANALYSIS = "binary_analysis"
     MALWARE_ANALYSIS = "malware_analysis"
@@ -191,23 +190,23 @@ class AnalysisCapability(str, Enum):
 
 class ForensicCapability(str, Enum):
     """數位鑑識能力選單"""
-    
+
     # === 記憶體鑑識 ===
     MEMORY_DUMP = "memory_dump"
     MEMORY_ANALYSIS = "memory_analysis"
     PROCESS_LIST = "process_list"
     NETWORK_CONNECTIONS = "network_connections"
-    
+
     # === 磁碟鑑識 ===
     DISK_IMAGE = "disk_image"
     FILE_RECOVERY = "file_recovery"
     TIMELINE_ANALYSIS = "timeline_analysis"
-    
+
     # === 網路鑑識 ===
     PCAP_ANALYSIS = "pcap_analysis"
     TRAFFIC_ANALYSIS = "traffic_analysis"
     LOG_ANALYSIS = "log_analysis"
-    
+
     # === 隱寫術 ===
     STEGANOGRAPHY_DETECT = "steganography_detect"
     STEGANOGRAPHY_EXTRACT = "steganography_extract"
@@ -215,22 +214,22 @@ class ForensicCapability(str, Enum):
 
 class ExploitCapability(str, Enum):
     """漏洞利用能力選單 - 後滲透操作"""
-    
+
     # === 權限提升 ===
     PRIVILEGE_ESCALATION_LINUX = "privilege_escalation_linux"
     PRIVILEGE_ESCALATION_WINDOWS = "privilege_escalation_windows"
     SUDO_EXPLOIT = "sudo_exploit"
     KERNEL_EXPLOIT = "kernel_exploit"
-    
+
     # === 橫向移動 ===
     LATERAL_MOVEMENT = "lateral_movement"
     PASS_THE_HASH = "pass_the_hash"
     PASS_THE_TICKET = "pass_the_ticket"
-    
+
     # === 持久化 ===
     PERSISTENCE_INSTALL = "persistence_install"
     BACKDOOR_INSTALL = "backdoor_install"
-    
+
     # === 資料外洩 ===
     DATA_EXFILTRATION = "data_exfiltration"
     CREDENTIAL_DUMPING = "credential_dumping"
@@ -238,7 +237,7 @@ class ExploitCapability(str, Enum):
 
 class ReportCapability(str, Enum):
     """報告能力選單"""
-    
+
     VULNERABILITY_REPORT = "vulnerability_report"
     EXECUTIVE_SUMMARY = "executive_summary"
     TECHNICAL_REPORT = "technical_report"
@@ -253,7 +252,7 @@ class ReportCapability(str, Enum):
 
 class CapabilityParameter(str, Enum):
     """能力參數類型 - 定義每個能力需要的輸入參數類型"""
-    
+
     # === 通用參數 ===
     TARGET_URL = "target_url"           # URL 目標
     TARGET_IP = "target_ip"             # IP 目標
@@ -262,20 +261,20 @@ class CapabilityParameter(str, Enum):
     TARGET_CIDR = "target_cidr"         # CIDR 範圍
     TARGET_PORT = "target_port"         # 端口
     TARGET_PORT_RANGE = "target_port_range"  # 端口範圍
-    
+
     # === 認證參數 ===
     USERNAME = "username"
     PASSWORD = "password"
     TOKEN = "token"
     API_KEY = "api_key"
     COOKIE = "cookie"
-    
+
     # === 配置參數 ===
     TIMEOUT = "timeout"                 # 超時時間 (秒)
     THREADS = "threads"                 # 並發線程數
     DEPTH = "depth"                     # 掃描深度
     WORDLIST = "wordlist"               # 字典檔路徑
-    
+
     # === 輸出參數 ===
     OUTPUT_FORMAT = "output_format"     # 輸出格式 (json/html/pdf)
     OUTPUT_PATH = "output_path"         # 輸出路徑
@@ -312,7 +311,7 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "default_timeout": 60,
         "risk_level": "high",
     },
-    
+
     # DDOS / DOS
     AttackCapability.DDOS_ATTACK.value: {
         "name": "DDoS 阻斷服務壓力測試",
@@ -322,7 +321,7 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "default_timeout": 300,
         "risk_level": "high",
     },
-    
+
     # XSS
     AttackCapability.XSS_REFLECTED.value: {
         "name": "反射型 XSS",
@@ -340,7 +339,7 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "default_timeout": 60,
         "risk_level": "high",
     },
-    
+
     # Port Scan
     ScanCapability.PORT_SCAN_TCP.value: {
         "name": "TCP 端口掃描",
@@ -358,7 +357,7 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "default_timeout": 600,
         "risk_level": "low",
     },
-    
+
     # Vulnerability Scan
     ScanCapability.VULNERABILITY_SCAN.value: {
         "name": "漏洞掃描",
@@ -368,7 +367,7 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "default_timeout": 300,
         "risk_level": "medium",
     },
-    
+
     # Recon
     ReconCapability.WHOIS_LOOKUP.value: {
         "name": "WHOIS 查詢",
@@ -394,7 +393,7 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "default_timeout": 300,
         "risk_level": "info",
     },
-    
+
     # Analysis
     AnalysisCapability.SAST_SCAN.value: {
         "name": "靜態應用安全測試",
@@ -412,7 +411,7 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "default_timeout": 120,
         "risk_level": "high",
     },
-    
+
     # Forensic
     ForensicCapability.MEMORY_ANALYSIS.value: {
         "name": "記憶體分析",
@@ -491,7 +490,7 @@ def get_all_capabilities() -> dict[str, list[str]]:
 
 
 def validate_capability_params(
-    capability: str, 
+    capability: str,
     params: dict[str, Any]
 ) -> tuple[bool, list[str]]:
     """驗證能力參數是否完整
@@ -506,13 +505,13 @@ def validate_capability_params(
     config = get_capability_config(capability)
     if not config:
         return False, [f"未知能力: {capability}"]
-    
+
     required = config.get("required_params", [])
     missing = []
-    
+
     for param in required:
         param_name = param.value if isinstance(param, CapabilityParameter) else param
         if param_name not in params:
             missing.append(param_name)
-    
+
     return len(missing) == 0, missing

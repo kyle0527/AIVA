@@ -4,22 +4,22 @@
 符合aiva_common規範
 """
 
-import logging
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
-from dataclasses import dataclass
+import logging
+from typing import Any
 from uuid import uuid4
 
-from aiva_common.schemas import (
-    SessionState,
-    TraceRecord,
-)
 from aiva_common.core.error_handling import (
     AIVAError,
     ErrorContext,
     ErrorSeverity,
     ErrorType,
+)
+from aiva_common.schemas import (
+    SessionState,
+    TraceRecord,
 )
 
 logger = logging.getLogger(__name__)
@@ -52,10 +52,10 @@ class ExecutionTrace:
     trace_type: TraceType
     timestamp: datetime
     module_name: str
-    function_name: Optional[str] = None
-    line_number: Optional[int] = None
-    variables: Optional[Dict[str, Any]] = None
-    metadata: Optional[Dict[str, Any]] = None
+    function_name: str | None = None
+    line_number: int | None = None
+    variables: dict[str, Any] | None = None
+    metadata: dict[str, Any] | None = None
     
     def __post_init__(self):
         """後處理初始化"""
@@ -79,10 +79,10 @@ class UnifiedTracer:
             storage_backend: 儲存後端（資料庫連接等）
         """
         self.storage = storage_backend
-        self.traces: List[ExecutionTrace] = []
-        self.trace_records: List[TraceRecord] = []
-        self.active_sessions: Dict[str, SessionState] = {}
-        self.current_session_id: Optional[str] = None
+        self.traces: list[ExecutionTrace] = []
+        self.trace_records: list[TraceRecord] = []
+        self.active_sessions: dict[str, SessionState] = {}
+        self.current_session_id: str | None = None
         
         logger.info("UnifiedTracer initialized")
     
@@ -121,11 +121,11 @@ class UnifiedTracer:
         self,
         trace_type: TraceType,
         module_name: str,
-        trace_id: Optional[str] = None,
-        function_name: Optional[str] = None,
-        line_number: Optional[int] = None,
-        variables: Optional[Dict[str, Any]] = None,
-        metadata: Optional[Dict[str, Any]] = None
+        trace_id: str | None = None,
+        function_name: str | None = None,
+        line_number: int | None = None,
+        variables: dict[str, Any] | None = None,
+        metadata: dict[str, Any] | None = None
     ) -> ExecutionTrace:
         """記錄一個追蹤點
         
@@ -269,10 +269,10 @@ class UnifiedTracer:
     
     def get_traces(
         self,
-        trace_type: Optional[TraceType] = None,
-        module_name: Optional[str] = None,
-        session_id: Optional[str] = None
-    ) -> List[ExecutionTrace]:
+        trace_type: TraceType | None = None,
+        module_name: str | None = None,
+        session_id: str | None = None
+    ) -> list[ExecutionTrace]:
         """獲取追蹤記錄
         
         Args:
@@ -299,7 +299,7 @@ class UnifiedTracer:
         
         return filtered_traces
     
-    def get_trace_records(self, session_id: Optional[str] = None) -> List[TraceRecord]:
+    def get_trace_records(self, session_id: str | None = None) -> list[TraceRecord]:
         """獲取任務執行記錄
         
         Args:
@@ -428,7 +428,7 @@ class UnifiedTracer:
                 original_exception=e
             )
     
-    def get_session(self, session_id: str) -> Optional[SessionState]:
+    def get_session(self, session_id: str) -> SessionState | None:
         """獲取會話狀態（兼容原 trace_logger 介面）
         
         Args:
@@ -480,7 +480,7 @@ class UnifiedTracer:
         except Exception as e:
             logger.error(f"Failed to clear traces: {e}")
     
-    def get_session_summary(self) -> Dict[str, Any]:
+    def get_session_summary(self) -> dict[str, Any]:
         """獲取會話摘要
         
         Returns:
@@ -511,7 +511,7 @@ class UnifiedTracer:
 
 
 # 全局統一追蹤記錄器實例
-_global_tracer: Optional[UnifiedTracer] = None
+_global_tracer: UnifiedTracer | None = None
 
 
 def get_global_tracer() -> UnifiedTracer:
@@ -524,9 +524,9 @@ def get_global_tracer() -> UnifiedTracer:
 
 def record_execution_trace(
     module_name: str,
-    function_name: Optional[str] = None,
-    line_number: Optional[int] = None,
-    variables: Optional[Dict[str, Any]] = None
+    function_name: str | None = None,
+    line_number: int | None = None,
+    variables: dict[str, Any] | None = None
 ) -> None:
     """記錄執行追蹤（便利函數）
     

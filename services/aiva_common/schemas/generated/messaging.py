@@ -10,8 +10,9 @@ AIVA跨語言Schema統一定義 - 以手動維護版本為準
 """
 
 from __future__ import annotations
-from typing import Any, Dict, List, Optional, Union
-from datetime import datetime
+
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 from .base_types import *
@@ -32,13 +33,13 @@ class AivaMessage(BaseModel):
     source_module: str
     """來源模組識別（發送者）"""
 
-    target_module: Optional[str] = None
+    target_module: str | None = None
     """目標模組識別（接收者，廣播時可為空）"""
 
     trace_id: str
     """分散式追蹤識別碼"""
 
-    correlation_id: Optional[str] = None
+    correlation_id: str | None = None
     """關聯識別碼（用於請求響應配對）"""
 
     routing_strategy: str = Field(values=['broadcast', 'direct', 'fanout', 'round_robin'], default="broadcast")
@@ -47,13 +48,13 @@ class AivaMessage(BaseModel):
     priority: int = Field(default=5)
     """訊息優先級（1-10，10最高）"""
 
-    ttl_seconds: Optional[int] = None
+    ttl_seconds: int | None = None
     """訊息存活時間（秒）"""
 
-    payload: Dict[str, Any]
+    payload: dict[str, Any]
     """訊息載荷"""
 
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: dict[str, Any] | None = None
     """額外中繼資料"""
 
 
@@ -72,16 +73,16 @@ class AIVARequest(BaseModel):
     request_type: str
     """請求類型"""
 
-    payload: Dict[str, Any]
+    payload: dict[str, Any]
     """請求載荷"""
 
-    trace_id: Optional[str] = None
+    trace_id: str | None = None
     """追蹤識別碼"""
 
     timeout_seconds: int = Field(ge=1, le=300, default=30)
     """逾時秒數"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """中繼資料"""
 
     timestamp: str
@@ -100,16 +101,16 @@ class AIVAResponse(BaseModel):
     success: bool
     """執行是否成功"""
 
-    payload: Optional[Dict[str, Any]] = None
+    payload: dict[str, Any] | None = None
     """響應載荷"""
 
-    error_code: Optional[str] = None
+    error_code: str | None = None
     """錯誤代碼"""
 
-    error_message: Optional[str] = None
+    error_message: str | None = None
     """錯誤訊息"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """中繼資料"""
 
     timestamp: str

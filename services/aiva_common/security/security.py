@@ -2,7 +2,7 @@
 AIVA Security Framework
 AIVA 安全認證框架
 
-實施 TODO 項目 13: 設計安全認證框架
+
 - 服務間身份認證和授權
 - 端到端加密通訊
 - 訪問控制和權限管理
@@ -30,7 +30,6 @@ from datetime import datetime, timedelta
 from enum import Enum
 from typing import (
     Any,
-    Optional,
 )
 
 import jwt
@@ -146,7 +145,7 @@ class SecurityPermission:
         return datetime.utcnow() > self.expires_at
 
     def matches(
-        self, resource: str, action: str, context: Optional[dict[str, Any]] = None
+        self, resource: str, action: str, context: dict[str, Any] | None = None
     ) -> bool:
         """檢查權限是否匹配"""
         # 檢查資源匹配
@@ -335,7 +334,7 @@ class CryptographyService:
         public_key = serialization.load_pem_public_key(
             public_key_pem, backend=default_backend()
         )
-        
+
         if not isinstance(public_key, rsa.RSAPublicKey):
             raise TypeError("Expected RSA public key")
 
@@ -355,7 +354,7 @@ class CryptographyService:
         private_key = serialization.load_pem_private_key(
             private_key_pem, password=None, backend=default_backend()
         )
-        
+
         if not isinstance(private_key, rsa.RSAPrivateKey):
             raise TypeError("Expected RSA private key")
 
@@ -375,7 +374,7 @@ class CryptographyService:
         private_key = serialization.load_pem_private_key(
             private_key_pem, password=None, backend=default_backend()
         )
-        
+
         if not isinstance(private_key, rsa.RSAPrivateKey):
             raise TypeError("Expected RSA private key")
 
@@ -397,7 +396,7 @@ class CryptographyService:
             public_key = serialization.load_pem_public_key(
                 public_key_pem, backend=default_backend()
             )
-            
+
             if not isinstance(public_key, rsa.RSAPublicKey):
                 raise TypeError("Expected RSA public key")
 
@@ -453,9 +452,9 @@ class TokenService:
     def generate_jwt_token(
         self,
         subject: str,
-        scopes: Optional[list[str]] = None,
+        scopes: list[str] | None = None,
         expires_in: int = 3600,
-        additional_claims: Optional[dict[str, Any]] = None,
+        additional_claims: dict[str, Any] | None = None,
     ) -> str:
         """生成JWT令牌"""
         now = datetime.utcnow()
@@ -569,7 +568,7 @@ class AuthenticationService:
         self,
         auth_type: AuthenticationType,
         auth_data: dict[str, Any],
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
     ) -> SecurityCredentials | None:
         """認證請求"""
         try:
@@ -687,7 +686,7 @@ class AuthenticationService:
             assert challenge is not None
             assert signature is not None
             assert certificate is not None
-            
+
             challenge_bytes: bytes = (
                 challenge.encode() if isinstance(challenge, str) else challenge
             )
@@ -807,7 +806,7 @@ class AuthorizationService:
         subject_id: str,
         resource: str,
         action: str,
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
     ) -> bool:
         """授權檢查"""
         try:
@@ -850,7 +849,7 @@ class AuthorizationService:
         subject: SecuritySubject,
         resource: str,
         action: str,
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
     ) -> bool:
         """檢查直接權限"""
         for permission_id in subject.direct_permissions:
@@ -865,7 +864,7 @@ class AuthorizationService:
         subject: SecuritySubject,
         resource: str,
         action: str,
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
     ) -> bool:
         """檢查角色權限"""
         # 收集所有角色（包括繼承的角色）
@@ -902,7 +901,7 @@ class AuthorizationService:
         subject_id: str,
         resource: str,
         action: str,
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
     ) -> str:
         """生成緩存鍵"""
         context_str = json.dumps(context or {}, sort_keys=True)
@@ -969,11 +968,11 @@ class SecurityAuditService:
 
     def query_security_events(
         self,
-        event_type: Optional[SecurityEventType] = None,
-        subject_id: Optional[str] = None,
-        result: Optional[str] = None,
-        start_time: Optional[datetime] = None,
-        end_time: Optional[datetime] = None,
+        event_type: SecurityEventType | None = None,
+        subject_id: str | None = None,
+        result: str | None = None,
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
         limit: int = 100,
     ) -> list[SecurityEvent]:
         """查詢安全事件"""
@@ -1038,7 +1037,7 @@ class SecurityAuditService:
 class SecurityManager:
     """安全管理器 - 統一的安全服務入口"""
 
-    def __init__(self, secret_key: Optional[str] = None, issuer: str = "AIVA"):
+    def __init__(self, secret_key: str | None = None, issuer: str = "AIVA"):
         # 初始化密鑰
         if not secret_key:
             secret_key = secrets.token_urlsafe(32)
@@ -1128,7 +1127,7 @@ class SecurityManager:
         self,
         auth_type: AuthenticationType,
         auth_data: dict[str, Any],
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
     ) -> SecurityCredentials | None:
         """認證請求"""
         try:
@@ -1165,7 +1164,7 @@ class SecurityManager:
         subject_id: str,
         resource: str,
         action: str,
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
     ) -> bool:
         """授權請求"""
         try:
@@ -1198,7 +1197,7 @@ class SecurityManager:
             return False
 
     def create_service_credentials(
-        self, service_id: str, scopes: Optional[list[str]] = None, expires_in: int = 86400
+        self, service_id: str, scopes: list[str] | None = None, expires_in: int = 86400
     ) -> dict[str, Any]:
         """為服務創建憑據"""
         try:
@@ -1258,8 +1257,8 @@ class SecurityManager:
     def register_service(
         self,
         service_id: str,
-        roles: Optional[list[str]] = None,
-        direct_permissions: Optional[list[str]] = None,
+        roles: list[str] | None = None,
+        direct_permissions: list[str] | None = None,
     ):
         """註冊服務"""
         subject = SecuritySubject(
@@ -1298,7 +1297,7 @@ def get_security_manager() -> SecurityManager:
 
 
 def create_security_manager(
-    secret_key: Optional[str] = None, issuer: str = "AIVA"
+    secret_key: str | None = None, issuer: str = "AIVA"
 ) -> SecurityManager:
     """創建新的安全管理器實例"""
     return SecurityManager(secret_key, issuer)
@@ -1360,8 +1359,8 @@ def require_authorization(resource: str, action: str):
 
 def secure_endpoint(
     auth_type: AuthenticationType = AuthenticationType.JWT,
-    resource: Optional[str] = None,
-    action: Optional[str] = None,
+    resource: str | None = None,
+    action: str | None = None,
 ):
     """安全端點裝飾器，結合認證和授權"""
 

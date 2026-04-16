@@ -27,120 +27,6 @@ AIVA Common Schemas Package - Domain-Driven Design (DDD) Architecture
 # 注意：_base/common.py 已移除重複，統一使用 base.py 中的定義
 
 # ==================== AI 指令系統 ====================
-from .commands import (
-    CommandType,
-    CommandStatus,
-    CommandPriority,
-    AICommand,
-    AICommandResult,
-    AICommandBatch,
-    AICommandBatchResult,
-    CommandContext,
-)
-
-# ==================== 決策數據合約 ====================
-from .decision import (
-    IntentType,
-    TargetInfo,
-    DecisionConstraints,
-    HighLevelIntent,
-    DecisionToASTContract,
-    DecisionFeedback,
-)
-
-# ==================== 分析引擎領域 ====================
-from .analysis import (
-    BaseAnalysisResult,
-    JavaScriptAnalysisResult,
-    DataLeak,
-    AnalysisType,
-    LegacyJavaScriptAnalysisResultAdapter,
-    LanguageDetectionResult,
-    LanguageSpecificVulnerability,
-    MultiLanguageCodebase,
-    LanguageSpecificScanConfig,
-    CrossLanguageAnalysis,
-    LanguageSpecificPayload,
-    AILanguageModel,
-    CodeQualityReport,
-    LanguageInteroperability,
-    # TODO: AI相關模型暫時禁用，需要重新設計以避免循環導入
-    # AITrainingStartPayload,
-    # AITrainingProgressPayload,
-    # AITrainingCompletedPayload,
-    # ModelTrainingConfig,
-    # ExperienceSample,
-    # TraceRecord,
-    # RAGKnowledgeUpdatePayload,
-    # RAGQueryPayload,
-    # RAGResponsePayload,  # Moved to ai.py import section
-)
-
-# ==================== 安全檢測領域 ====================
-from .security import (
-    BaseSIEMEvent,
-    BaseAttackPathNode,
-    BaseAttackPathEdge,
-    BaseAttackPath,
-    EnhancedSIEMEvent,
-    EventStatus,
-    SkillLevel,
-    Priority,
-    AttackPathNodeType,
-    AttackPathEdgeType,
-    LegacySIEMEventAdapter,
-    LegacyAttackPathAdapter,
-    Vulnerability,
-    Target,
-    FindingEvidence,
-    FindingImpact,
-    FindingRecommendation,
-    FindingPayload,
-    SensitiveMatch,
-    # 漏洞發現 (security/findings.py) - 只包含真正存在的類別
-    Vulnerability,
-    Target,
-    FindingEvidence,
-    FindingImpact,
-    FindingRecommendation,
-    FindingPayload,
-    SensitiveMatch,
-    JavaScriptAnalysisResult,  # 新增缺失的類別
-    VulnerabilityCorrelation,
-    VulnerabilityScorecard,
-    CodeLevelRootCause,
-    # SASTDASTCorrelation,  # Removed - external SAST not needed
-    AIVerificationRequest,
-    AIVerificationResult,
-    STIXDomainObject,
-    STIXRelationshipObject,
-    AttackPattern,
-    Malware,
-    Indicator,
-    ThreatActor,
-    IntrusionSet,
-    Campaign,
-    CourseOfAction,
-    Tool,
-    ObservedData,
-    Report,
-    Relationship,
-    Sighting,
-    Bundle,
-    ExternalReference,
-    GranularMarking,
-    KillChainPhase,
-    TAXIICollection,
-    TAXIIManifest,
-    TAXIIManifestEntry,
-    TAXIIStatus,
-    TAXIIErrorMessage,
-    ThreatIntelligenceReport,
-    IOCEnrichment,
-    BugBountyIntelligence,
-    # LowValueVulnerabilityPattern,  # 已刪除沒用的定義
-)
-
 # ==================== AI 相關 ====================
 # AI模組導入已重構為使用TYPE_CHECKING模式，遵循PEP-484標準
 from .ai import (
@@ -170,6 +56,24 @@ from .ai import (
     SARIFRun,
     SARIFTool,
     TraceRecord,
+)
+
+# ==================== 分析引擎領域 ====================
+from .analysis import (
+    AILanguageModel,
+    AnalysisType,
+    BaseAnalysisResult,
+    CodeQualityReport,
+    CrossLanguageAnalysis,
+    DataLeak,
+    JavaScriptAnalysisResult,
+    LanguageDetectionResult,
+    LanguageInteroperability,
+    LanguageSpecificPayload,
+    LanguageSpecificScanConfig,
+    LanguageSpecificVulnerability,
+    LegacyJavaScriptAnalysisResultAdapter,
+    MultiLanguageCodebase,
 )
 
 # ==================== API 標準 (OpenAPI/AsyncAPI/GraphQL) ====================
@@ -225,26 +129,17 @@ from .async_utils import (
 # ==================== 核心基礎設施（統一來源）====================
 from .base import (
     APIResponse,
-    MessageHeader,
-    Authentication,
-    RateLimit,
-    ScanScope,
     Asset,
-    Summary,
-    Fingerprints,
+    Authentication,
     ExecutionError,
+    Fingerprints,
+    MessageHeader,
+    RateLimit,
     RiskFactor,
+    ScanScope,
+    Summary,
     Task,
     TaskDependency,
-)
-
-# ==================== 訊息處理 ====================
-from .messaging import (
-    AivaMessage,
-    AIVARequest,
-    AIVAResponse,
-    AIVAEvent,
-    AIVACommand,
 )
 
 # ==================== 能力管理 ====================
@@ -262,6 +157,26 @@ from .cli import (
     CLIMetrics,
     CLIParameter,
     CLISession,
+)
+from .commands import (
+    AICommand,
+    AICommandBatch,
+    AICommandBatchResult,
+    AICommandResult,
+    CommandContext,
+    CommandPriority,
+    CommandStatus,
+    CommandType,
+)
+
+# ==================== 決策數據合約 ====================
+from .decision import (
+    DecisionConstraints,
+    DecisionFeedback,
+    DecisionToASTContract,
+    HighLevelIntent,
+    IntentType,
+    TargetInfo,
 )
 
 # ==================== Enhanced 版本 ====================
@@ -310,6 +225,15 @@ from .languages import (
     MultiLanguageCodebase,
 )
 
+# ==================== 訊息處理 ====================
+from .messaging import (
+    AIVACommand,
+    AIVAEvent,
+    AivaMessage,
+    AIVARequest,
+    AIVAResponse,
+)
+
 # ==================== 低價值高概率漏洞 ====================
 # 暫時註解掉缺少的模組導入
 # from .low_value_vulnerabilities import (  # 低價值漏洞相關模型
@@ -337,16 +261,7 @@ from .languages import (
 #     VulnerabilityPattern,
 #     XSSPattern,
 # )  # 註解結束
-
 # ==================== 訊息系統 ====================
-from .messaging import (
-    AIVACommand,
-    AIVAEvent,
-    AivaMessage,
-    AIVARequest,
-    AIVAResponse,
-)
-
 # ==================== 插件系統 ====================
 from .plugins import (
     PluginConfig,
@@ -374,6 +289,63 @@ from .risk import (
     RiskAssessmentContext,
     RiskAssessmentResult,
     RiskTrendAnalysis,
+)
+
+# ==================== 安全檢測領域 ====================
+from .security import (
+    # SASTDASTCorrelation,  # Removed - external SAST not needed
+    AIVerificationRequest,
+    AIVerificationResult,
+    AttackPathEdgeType,
+    AttackPathNodeType,
+    AttackPattern,
+    BaseAttackPath,
+    BaseAttackPathEdge,
+    BaseAttackPathNode,
+    BaseSIEMEvent,
+    BugBountyIntelligence,
+    # LowValueVulnerabilityPattern,  # 已刪除沒用的定義
+    Bundle,
+    Campaign,
+    CodeLevelRootCause,
+    CourseOfAction,
+    EnhancedSIEMEvent,
+    EventStatus,
+    ExternalReference,
+    FindingEvidence,
+    FindingImpact,
+    FindingPayload,
+    FindingRecommendation,
+    GranularMarking,
+    Indicator,
+    IntrusionSet,
+    IOCEnrichment,
+    JavaScriptAnalysisResult,  # 新增缺失的類別
+    KillChainPhase,
+    LegacyAttackPathAdapter,
+    LegacySIEMEventAdapter,
+    Malware,
+    ObservedData,
+    Priority,
+    Relationship,
+    Report,
+    SensitiveMatch,
+    Sighting,
+    SkillLevel,
+    STIXDomainObject,
+    STIXRelationshipObject,
+    Target,
+    TAXIICollection,
+    TAXIIErrorMessage,
+    TAXIIManifest,
+    TAXIIManifestEntry,
+    TAXIIStatus,
+    ThreatActor,
+    ThreatIntelligenceReport,
+    Tool,
+    Vulnerability,
+    VulnerabilityCorrelation,
+    VulnerabilityScorecard,
 )
 
 # ==================== 系統編排 ====================
@@ -405,17 +377,17 @@ from .tasks import (
     FunctionTaskPayload,
     FunctionTaskTarget,
     FunctionTaskTestConfig,
-    PostExTestPayload,
+    Phase0CompletedPayload,
+    # Phase0/Phase1 兩階段掃描 Schema
+    Phase0StartPayload,
+    Phase1CompletedPayload,
+    Phase1StartPayload,
     PostExResultPayload,  # [Fixed] 修復: 補充遺漏的導入
+    PostExTestPayload,
     RemediationGeneratePayload,
     RemediationResultPayload,
     ScanCompletedPayload,
     ScanStartPayload,
-    # Phase0/Phase1 兩階段掃描 Schema
-    Phase0StartPayload,
-    Phase0CompletedPayload,
-    Phase1StartPayload,
-    Phase1CompletedPayload,
     Scenario,
     ScenarioResult,
     ScenarioTestResult,
@@ -715,7 +687,7 @@ __all__ = [
     # 安全事件統一標準
     "BaseSIEMEvent",
     "BaseAttackPathNode",
-    "BaseAttackPathEdge", 
+    "BaseAttackPathEdge",
     "BaseAttackPath",
     "EnhancedSIEMEvent",
     "EventStatus",

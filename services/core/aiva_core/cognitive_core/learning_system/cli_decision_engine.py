@@ -16,12 +16,11 @@ Architecture:
     - 執行: 通過 FlowExecutor 動態調用
 """
 
-import json
-import os
-from typing import List, Dict, Any, Optional
-from pathlib import Path
 from dataclasses import dataclass
 from enum import Enum
+import json
+from pathlib import Path
+from typing import Any
 
 from aiva_common.utils import get_logger
 
@@ -44,7 +43,7 @@ class AttackFlow:
     """攻擊流程資訊"""
     flow_id: int
     module: str
-    path: List[str]
+    path: list[str]
     file_name: str
     use_case: str
     is_operable: bool
@@ -61,7 +60,7 @@ class AttackFlow:
         """獲取完整調用路徑"""
         return " -> ".join(self.path)
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """轉換為字典"""
         return {
             "flow_id": self.flow_id,
@@ -83,7 +82,7 @@ class CLIDecisionEngine:
     AI 可以根據掃描結果，智能選擇合適的攻擊流程。
     """
     
-    def __init__(self, classification_path: Optional[str] = None):
+    def __init__(self, classification_path: str | None = None):
         """初始化決策引擎
         
         Args:
@@ -113,8 +112,8 @@ class CLIDecisionEngine:
             )
         
         self.classification_path = classification_path
-        self.flows_by_module: Dict[str, List[AttackFlow]] = {}
-        self.all_flows: List[AttackFlow] = []
+        self.flows_by_module: dict[str, list[AttackFlow]] = {}
+        self.all_flows: list[AttackFlow] = []
         
         self._load_classification()
         logger.info(f"✅ CLI Decision Engine 已初始化，載入 {len(self.all_flows)} 個攻擊 flows")
@@ -122,7 +121,7 @@ class CLIDecisionEngine:
     def _load_classification(self) -> None:
         """載入 external_classification.json"""
         try:
-            with open(self.classification_path, 'r', encoding='utf-8') as f:
+            with open(self.classification_path, encoding='utf-8') as f:
                 data = json.load(f)
             
             modules = data.get('modules', {})
@@ -156,11 +155,11 @@ class CLIDecisionEngine:
     
     def search_flows(
         self, 
-        capability: Optional[AttackCapability] = None,
-        keywords: Optional[List[str]] = None,
+        capability: AttackCapability | None = None,
+        keywords: list[str] | None = None,
         only_operable: bool = True,
         limit: int = 10
-    ) -> List[AttackFlow]:
+    ) -> list[AttackFlow]:
         """檢索攻擊流程
         
         Args:
@@ -195,7 +194,7 @@ class CLIDecisionEngine:
         # 4. 限制數量
         return candidates[:limit]
     
-    def get_flow_by_id(self, flow_id: int) -> Optional[AttackFlow]:
+    def get_flow_by_id(self, flow_id: int) -> AttackFlow | None:
         """根據 flow_id 獲取流程"""
         for flow in self.all_flows:
             if flow.flow_id == flow_id:
@@ -204,9 +203,9 @@ class CLIDecisionEngine:
     
     def recommend_flows(
         self, 
-        scan_context: Dict[str, Any],
+        scan_context: dict[str, Any],
         top_k: int = 5
-    ) -> List[AttackFlow]:
+    ) -> list[AttackFlow]:
         """根據掃描上下文推薦攻擊流程
         
         Args:
@@ -252,7 +251,7 @@ class CLIDecisionEngine:
         logger.info(f"推薦 {len(flows)} 個攻擊流程 (類型: {vuln_type}, 關鍵字: {keywords})")
         return flows
     
-    def get_module_statistics(self) -> Dict[str, Dict[str, int]]:
+    def get_module_statistics(self) -> dict[str, dict[str, int]]:
         """獲取模組統計資訊"""
         stats = {}
         for module, flows in self.flows_by_module.items():
@@ -298,7 +297,7 @@ def example_usage():
         }
     }
     recommended = engine.recommend_flows(scan_context, top_k=3)
-    print(f"\n推薦的攻擊流程:")
+    print("\n推薦的攻擊流程:")
     for flow in recommended:
         print(f"  - Flow {flow.flow_id}: {flow.full_path}")
         print(f"    使用場景: {flow.use_case}")

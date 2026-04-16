@@ -12,26 +12,23 @@ AIVA 工具生命週期管理器
 """
 
 import asyncio
-import os
-import subprocess
-import sys
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime
 import json
+import os
+from pathlib import Path
 import shutil
-import tempfile
-import aiofiles
+import sys
+from typing import Any
 
-from aiva_common.utils.logging import get_logger
-from aiva_common.utils.ids import new_id
+import aiofiles
 from aiva_common.enums import ProgrammingLanguage
+from aiva_common.utils.ids import new_id
+from aiva_common.utils.logging import get_logger
 
 from .models import CapabilityRecord, CapabilityStatus
 from .registry import CapabilityRegistry
 from .toolkit import CapabilityToolkit
-
 
 logger = get_logger(__name__)
 
@@ -47,8 +44,8 @@ class ToolLifecycleEvent:
     event_type: str  # install, update, uninstall, health_check
     timestamp: datetime
     status: str  # success, failed, in_progress
-    details: Dict[str, Any]
-    error_message: Optional[str] = None
+    details: dict[str, Any]
+    error_message: str | None = None
 
 
 @dataclass
@@ -56,10 +53,10 @@ class InstallationResult:
     """安裝結果"""
     success: bool
     capability_id: str
-    installation_path: Optional[str] = None
-    installed_version: Optional[str] = None
-    dependencies_installed: Optional[List[str]] = field(default_factory=list)
-    error_message: Optional[str] = None
+    installation_path: str | None = None
+    installed_version: str | None = None
+    dependencies_installed: list[str] | None = field(default_factory=list)
+    error_message: str | None = None
     installation_time_seconds: float = 0.0
 
 
@@ -73,7 +70,7 @@ class ToolLifecycleManager:
         self.registry = CapabilityRegistry()
         self.toolkit = CapabilityToolkit()
         self.trace_id = new_id("lifecycle")
-        self.events: List[ToolLifecycleEvent] = []
+        self.events: list[ToolLifecycleEvent] = []
         
         # 安裝路徑配置
         self.installation_paths = {
@@ -96,8 +93,8 @@ class ToolLifecycleManager:
         capability_id: str, 
         event_type: str, 
         status: str,
-        details: Dict[str, Any],
-        error_message: Optional[str] = None
+        details: dict[str, Any],
+        error_message: str | None = None
     ) -> None:
         """記錄生命週期事件"""
         event = ToolLifecycleEvent(
@@ -714,7 +711,7 @@ class ToolLifecycleManager:
         except Exception as e:
             logger.warning(f"移除依賴時出現錯誤: {str(e)}")
     
-    async def health_check_tool(self, capability_id: str) -> Dict[str, Any]:
+    async def health_check_tool(self, capability_id: str) -> dict[str, Any]:
         """工具健康檢查"""
         try:
             capability = await self.registry.get_capability(capability_id)
@@ -760,7 +757,7 @@ class ToolLifecycleManager:
                 "error": error_msg
             }
     
-    async def batch_health_check(self, capability_ids: Optional[List[str]] = None) -> Dict[str, Any]:
+    async def batch_health_check(self, capability_ids: list[str] | None = None) -> dict[str, Any]:
         """批量健康檢查"""
         if capability_ids is None:
             # 檢查所有已註冊的能力
@@ -809,10 +806,10 @@ class ToolLifecycleManager:
     
     def get_lifecycle_events(
         self, 
-        capability_id: Optional[str] = None,
-        event_type: Optional[str] = None,
+        capability_id: str | None = None,
+        event_type: str | None = None,
         limit: int = 100
-    ) -> List[ToolLifecycleEvent]:
+    ) -> list[ToolLifecycleEvent]:
         """獲取生命週期事件歷史"""
         events = self.events.copy()
         
@@ -841,7 +838,7 @@ class ToolLifecycleManager:
         installation_path = self._get_installation_path(capability)
         return installation_path.exists()
     
-    async def _run_command(self, cmd: List[str], cwd: Optional[str] = None) -> str:
+    async def _run_command(self, cmd: list[str], cwd: str | None = None) -> str:
         """執行命令行命令"""
         try:
             process = await asyncio.create_subprocess_exec(

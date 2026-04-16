@@ -5,9 +5,9 @@ StegX Engine
 """
 
 import logging
-import subprocess
-from typing import Dict, Any, Optional
 from pathlib import Path
+import subprocess
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -43,9 +43,9 @@ class StegXEngine:
         cover_image: str,
         secret_file: str,
         output_path: str,
-        password: Optional[str] = None,
+        password: str | None = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """使用 StegX 嵌入數據
         
         Args:
@@ -119,9 +119,9 @@ class StegXEngine:
         self,
         stego_image: str,
         output_path: str,
-        password: Optional[str] = None,
+        password: str | None = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """使用 StegX 提取數據
         
         Args:
@@ -194,9 +194,9 @@ class StegXEngine:
         cover_image: str,
         secret_file: str,
         output_path: str,
-        password: Optional[str] = None,
+        password: str | None = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """隱藏文件（embed_data 的別名）"""
         return await self.embed_data(cover_image, secret_file, output_path, password, **kwargs)
     
@@ -204,9 +204,9 @@ class StegXEngine:
         self,
         stego_image: str,
         output_path: str,
-        password: Optional[str] = None,
+        password: str | None = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """提取文件（extract_data 的別名）"""
         return await self.extract_data(stego_image, output_path, password, **kwargs)
     
@@ -214,7 +214,7 @@ class StegXEngine:
         self,
         carrier_image: str,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """檢查載體容量"""
         try:
             # 基於實際檔案格式與經驗法則計算真實容量 (如 LSB 可用容量)
@@ -251,7 +251,7 @@ class StegXEngine:
         self,
         image_path: str,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """分析隱寫圖像"""
         try:
             if not Path(image_path).exists():
@@ -300,7 +300,7 @@ class StegXEngine:
         self,
         operations: list,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """批量隱藏操作"""
         results = []
         success_count = 0

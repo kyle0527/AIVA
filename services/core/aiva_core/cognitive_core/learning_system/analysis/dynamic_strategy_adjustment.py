@@ -11,7 +11,7 @@
 參考：LEARNING_INTEGRATION_WITH_13STEPS.md
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from aiva_common.utils import get_logger

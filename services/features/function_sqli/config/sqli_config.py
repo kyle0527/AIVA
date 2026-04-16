@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class SqliConfig(BaseModel):
     enable_error: bool = True
     enable_boolean: bool = True

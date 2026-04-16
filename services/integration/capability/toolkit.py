@@ -10,18 +10,17 @@ AIVA 能力註冊系統工具集
 """
 
 import asyncio
+from datetime import datetime
 import json
-import subprocess
-import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
-from datetime import datetime, timedelta
+import sys
+from typing import Any
 
-from aiva_common.utils.logging import get_logger
+from aiva_common.enums import ProgrammingLanguage
 from aiva_common.utils.ids import new_id
-from aiva_common.enums import ProgrammingLanguage, Severity, Confidence
+from aiva_common.utils.logging import get_logger
 
-from .models import CapabilityRecord, CapabilityEvidence, CapabilityStatus
+from .models import CapabilityEvidence, CapabilityRecord
 
 # 設定結構化日誌
 logger = get_logger(__name__)
@@ -40,7 +39,7 @@ class CapabilityToolkit:
     async def validate_capability_schema(
         self, 
         capability: CapabilityRecord
-    ) -> Tuple[bool, List[str]]:
+    ) -> tuple[bool, list[str]]:
         """
         使用 aiva_common 的模式驗證工具驗證能力定義
         
@@ -86,7 +85,7 @@ class CapabilityToolkit:
     async def generate_cross_language_bindings(
         self, 
         capability: CapabilityRecord
-    ) -> Dict[str, str]:
+    ) -> dict[str, str]:
         """
         使用 aiva_common 的程式碼產生工具產生跨語言綁定
         
@@ -321,8 +320,8 @@ class CapabilityToolkit:
     async def _run_python_tool(
         self, 
         tool_path: str, 
-        args: List[str]
-    ) -> Dict[str, Any]:
+        args: list[str]
+    ) -> dict[str, Any]:
         """執行 Python 工具"""
         try:
             cmd = [sys.executable, tool_path] + args
@@ -361,11 +360,11 @@ class CapabilityToolkit:
                 "error": str(e)
             }
     
-    async def _run_python_command(self, args: List[str]) -> Dict[str, Any]:
+    async def _run_python_command(self, args: list[str]) -> dict[str, Any]:
         """執行 Python 命令"""
         return await self._run_command([sys.executable] + args)
     
-    async def _run_command(self, cmd: List[str]) -> Dict[str, Any]:
+    async def _run_command(self, cmd: list[str]) -> dict[str, Any]:
         """執行通用命令"""
         try:
             process = await asyncio.create_subprocess_exec(
@@ -490,8 +489,8 @@ class CapabilityToolkit:
     
     async def export_capabilities_summary(
         self, 
-        capabilities: List[CapabilityRecord]
-    ) -> Dict[str, Any]:
+        capabilities: list[CapabilityRecord]
+    ) -> dict[str, Any]:
         """
         匯出能力摘要統計
         

@@ -13,38 +13,34 @@ task_planning (執行結果) → ExternalLoopConnector → external_learning (�
 ✅ 完整的類型註解
 """
 
-from datetime import datetime, timezone
+from datetime import datetime
 
 # UTC 兼容性处理（Python 3.11+ 使用 UTC，较旧版本使用 timezone.utc）
 try:
     from datetime import UTC  # type: ignore
 except ImportError:
-    UTC = timezone.utc  # type: ignore
+    UTC = UTC  # type: ignore
 from typing import Any
 from uuid import uuid4
 
-# ✅ 修復 1: 使用統一日誌
-from aiva_common.utils.logging import get_logger
+# ✅ 修復 4: 使用統一錯誤處理
+from aiva_common.core.error_handling import (
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
 
 # ✅ 修復 2: 引入 Pydantic 模型
 from aiva_common.schemas.dual_loop import (
-    ExecutionPlan,
-    ExecutionStep,
-    ExecutionTrace,
     DeviationRecord,
-    DeviationAnalysisResult,
-    TrainingDataSample,
+    ExecutionPlan,
+    ExecutionTrace,
+    ExternalLoopProcessResult,
     ModelTrainingResult,
-    ExternalLoopProcessResult
 )
 
-# ✅ 修復 4: 使用統一錯誤處理
-from aiva_common.core.error_handling import (
-    AIVAError,
-    ErrorType,
-    ErrorSeverity,
-    create_error_context
-)
+# ✅ 修復 1: 使用統一日誌
+from aiva_common.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -80,7 +76,9 @@ class ExternalLoopConnector:
         """延遲加載 ASTTraceComparator"""
         if self._comparator is None:
             # 模組整合: external_learning → cognitive_core/learning_system
-            from .learning_system.analysis.ast_trace_comparator import ASTTraceComparator
+            from .learning_system.analysis.ast_trace_comparator import (
+                ASTTraceComparator,
+            )
             self._comparator = ASTTraceComparator()
         return self._comparator
     

@@ -17,7 +17,7 @@
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Any
+from typing import Any
 
 
 @dataclass
@@ -37,15 +37,15 @@ class AttackStrategyProfile:
     persistence: float  # 執行韌性：決定失敗後的重試策略
     
     # === 衍生配置（由核心維度計算） ===
-    techniques: List[str] = field(default_factory=list)
+    techniques: list[str] = field(default_factory=list)
     payload_count: int = 10
     concurrent_attacks: int = 1
     timing_delay: float = 1.0
     user_agent_rotation: bool = True
-    evasion_techniques: List[str] = field(default_factory=list)
+    evasion_techniques: list[str] = field(default_factory=list)
     
     # === 元數據 ===
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
     
     # 移除 risk_level - 這是環境依賴的，不應在策略中定義
     # 風險由目標敏感度決定，不由策略決定
@@ -56,7 +56,7 @@ class AttackStrategyProfile:
 
 def _derive_config_from_dimensions(
     intensity: float, stealth: float, coverage: float, persistence: float
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """從4核心維度計算衍生配置
     
     Note: coverage 參數用於計算測試覆蓋範圍配置
@@ -258,7 +258,7 @@ def create_custom_strategy(
     )
 
 
-def get_all_profiles() -> Dict[str, AttackStrategyProfile]:
+def get_all_profiles() -> dict[str, AttackStrategyProfile]:
     """獲取所有策略配置"""
     return STRATEGY_PROFILES.copy()
 

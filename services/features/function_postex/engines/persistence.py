@@ -5,14 +5,14 @@ function_postex.engines.persistence
 檢測可用於建立持久性的系統配置和方法。
 """
 
-import os
-import platform
-from pathlib import Path
-from typing import List, Dict, Any
 from dataclasses import dataclass
+import os
+from pathlib import Path
+import platform
+from typing import Any
 
+from aiva_common.enums.common import Confidence, Severity
 from aiva_common.utils import get_logger
-from aiva_common.enums.common import Severity, Confidence
 
 logger = get_logger(__name__)
 
@@ -25,10 +25,10 @@ class PersistenceVector:
     confidence: Confidence
     title: str
     description: str
-    evidence: Dict[str, Any]
+    evidence: dict[str, Any]
     recommendation: str
     technique: str  # cron, service, registry, startup, etc.
-    persistence_commands: List[str]
+    persistence_commands: list[str]
 
 
 class PersistenceEngine:
@@ -45,7 +45,7 @@ class PersistenceEngine:
         self.os_type = platform.system().lower()
         logger.info(f"持久性引擎初始化 (OS: {self.os_type}, SafeMode: {safe_mode})")
     
-    def scan(self) -> List[PersistenceVector]:
+    def scan(self) -> list[PersistenceVector]:
         """
         掃描持久性機會
         
@@ -62,7 +62,7 @@ class PersistenceEngine:
         logger.info(f"持久性掃描完成，發現 {len(vectors)} 個向量")
         return vectors
     
-    def _check_linux_persistence(self) -> List[PersistenceVector]:
+    def _check_linux_persistence(self) -> list[PersistenceVector]:
         """Linux 持久性檢查"""
         vectors = []
         
@@ -83,7 +83,7 @@ class PersistenceEngine:
         
         return vectors
     
-    def _check_cron_persistence(self) -> List[PersistenceVector]:
+    def _check_cron_persistence(self) -> list[PersistenceVector]:
         """檢查 Cron 持久性機會"""
         vectors = []
         
@@ -112,7 +112,7 @@ class PersistenceEngine:
         
         return vectors
     
-    def _check_systemd_persistence(self) -> List[PersistenceVector]:
+    def _check_systemd_persistence(self) -> list[PersistenceVector]:
         """檢查 Systemd 服務持久性"""
         vectors = []
         
@@ -148,7 +148,7 @@ class PersistenceEngine:
         
         return vectors
     
-    def _check_shell_rc_persistence(self) -> List[PersistenceVector]:
+    def _check_shell_rc_persistence(self) -> list[PersistenceVector]:
         """檢查 Shell RC 文件持久性"""
         vectors = []
         
@@ -179,7 +179,7 @@ class PersistenceEngine:
         
         return vectors
     
-    def _check_ssh_persistence(self) -> List[PersistenceVector]:
+    def _check_ssh_persistence(self) -> list[PersistenceVector]:
         """檢查 SSH 持久性"""
         vectors = []
         
@@ -205,7 +205,7 @@ class PersistenceEngine:
         
         return vectors
     
-    def _check_ld_preload_persistence(self) -> List[PersistenceVector]:
+    def _check_ld_preload_persistence(self) -> list[PersistenceVector]:
         """檢查 LD_PRELOAD 持久性"""
         vectors = []
         
@@ -234,7 +234,7 @@ class PersistenceEngine:
         
         return vectors
     
-    def _check_windows_persistence(self) -> List[PersistenceVector]:
+    def _check_windows_persistence(self) -> list[PersistenceVector]:
         """Windows 持久性檢查"""
         vectors = []
 
@@ -252,7 +252,7 @@ class PersistenceEngine:
 
         return vectors
 
-    def _check_registry_run_keys(self) -> List[PersistenceVector]:
+    def _check_registry_run_keys(self) -> list[PersistenceVector]:
         """檢查 Registry Run Keys 持久性機會"""
         import subprocess
         vectors = []
@@ -314,7 +314,7 @@ class PersistenceEngine:
 
         return vectors
 
-    def _check_startup_folder(self) -> List[PersistenceVector]:
+    def _check_startup_folder(self) -> list[PersistenceVector]:
         """檢查啟動資料夾持久性"""
         vectors = []
 
@@ -352,7 +352,7 @@ class PersistenceEngine:
 
         return vectors
 
-    def _check_windows_scheduled_tasks_persistence(self) -> List[PersistenceVector]:
+    def _check_windows_scheduled_tasks_persistence(self) -> list[PersistenceVector]:
         """檢查排程工作持久性機會"""
         import subprocess
         vectors = []
@@ -386,7 +386,7 @@ class PersistenceEngine:
 
         return vectors
 
-    def _check_windows_services_persistence(self) -> List[PersistenceVector]:
+    def _check_windows_services_persistence(self) -> list[PersistenceVector]:
         """檢查 Windows 服務持久性機會"""
         import subprocess
         vectors = []

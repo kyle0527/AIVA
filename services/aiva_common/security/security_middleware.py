@@ -10,7 +10,7 @@ import time
 from collections import defaultdict, deque
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from .security import (
     AuthenticationType,
@@ -115,9 +115,9 @@ class CORSHandler:
 
     def configure(
         self,
-        allowed_origins: Optional[list[str]] = None,
-        allowed_methods: Optional[list[str]] = None,
-        allowed_headers: Optional[list[str]] = None,
+        allowed_origins: list[str] | None = None,
+        allowed_methods: list[str] | None = None,
+        allowed_headers: list[str] | None = None,
         allow_credentials: bool = False,
         max_age: int = 86400,
     ):
@@ -132,7 +132,7 @@ class CORSHandler:
         self.max_age = max_age
 
     def get_cors_headers(
-        self, origin: Optional[str] = None, method: Optional[str] = None
+        self, origin: str | None = None, method: str | None = None
     ) -> dict[str, str]:
         """獲取CORS響應頭"""
         headers = {}
@@ -196,7 +196,7 @@ class SecurityHeaders:
 class SecurityMiddleware:
     """安全中間件"""
 
-    def __init__(self, security_manager: Optional[SecurityManager] = None):
+    def __init__(self, security_manager: SecurityManager | None = None):
         self.security_manager = security_manager or get_security_manager()
         self.rate_limiter = RateLimiter()
         self.cors_handler = CORSHandler()
@@ -228,9 +228,9 @@ class SecurityMiddleware:
         method: str,
         path: str,
         headers: dict[str, str],
-        body: Optional[bytes] = None,
-        query_params: Optional[dict[str, str]] = None,
-        client_ip: Optional[str] = None,
+        body: bytes | None = None,
+        query_params: dict[str, str] | None = None,
+        client_ip: str | None = None,
     ) -> dict[str, Any]:
         """處理HTTP請求的安全檢查"""
 
@@ -335,7 +335,7 @@ class SecurityMiddleware:
         credentials: dict[str, Any],
         resource: str,
         action: str,
-        context: Optional[dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
     ) -> bool:
         """授權請求"""
         if not credentials:
@@ -371,7 +371,7 @@ class SecurityValidator:
 
     @staticmethod
     def validate_input(
-        data: Any, max_length: int = 1000, allowed_chars: Optional[str] = None
+        data: Any, max_length: int = 1000, allowed_chars: str | None = None
     ) -> bool:
         """驗證輸入數據"""
         if isinstance(data, str):
@@ -435,7 +435,7 @@ class SecurityValidator:
 
     @staticmethod
     def validate_json_structure(
-        data: dict[str, Any], required_fields: Optional[list[str]] = None, max_depth: int = 5
+        data: dict[str, Any], required_fields: list[str] | None = None, max_depth: int = 5
     ) -> bool:
         """驗證JSON結構"""
         if not isinstance(data, dict):
@@ -468,7 +468,7 @@ class SecurityValidator:
 
 # 便捷函數和裝飾器
 def create_security_middleware(
-    security_manager: Optional[SecurityManager] = None,
+    security_manager: SecurityManager | None = None,
 ) -> SecurityMiddleware:
     """創建安全中間件"""
     return SecurityMiddleware(security_manager)
@@ -504,7 +504,7 @@ def secure_api_endpoint(resource: str, action: str, auth_required: bool = True):
     return decorator
 
 
-def validate_request_data(max_length: int = 1000, required_fields: Optional[list[str]] = None):
+def validate_request_data(max_length: int = 1000, required_fields: list[str] | None = None):
     """請求數據驗證裝飾器"""
 
     def decorator(func):

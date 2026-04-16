@@ -14,31 +14,34 @@
 """
 
 import asyncio
+from datetime import datetime
 import logging
 from pathlib import Path
-from datetime import datetime
 
-from services.integration.capability.registry import CapabilityRegistry
-from services.integration.capability.capabilities.reverse_engineering_capabilities import (
-    REVERSE_ENGINEERING_CAPABILITIES
-)
-from services.integration.capability.models import (
-    CapabilityRecord, CapabilityType, CapabilityStatus, InputParameter
-)
-from aiva_common.enums import ProgrammingLanguage, TaskStatus
+from aiva_common.enums import ProgrammingLanguage
 
 # 導入新的選單式能力定義
 from aiva_common.enums.capabilities import (
-    AttackCapability,
-    ScanCapability,
-    ReconCapability,
     AnalysisCapability,
-    ForensicCapability,
+    AttackCapability,
     ExploitCapability,
+    ForensicCapability,
+    ReconCapability,
     ReportCapability,
-    CAPABILITY_CONFIGS,
+    ScanCapability,
     get_capability_config,
 )
+
+from services.integration.capability.capabilities.reverse_engineering_capabilities import (
+    REVERSE_ENGINEERING_CAPABILITIES,
+)
+from services.integration.capability.models import (
+    CapabilityRecord,
+    CapabilityStatus,
+    CapabilityType,
+    InputParameter,
+)
+from services.integration.capability.registry import CapabilityRegistry
 
 # 配置日誌
 logging.basicConfig(
@@ -110,7 +113,7 @@ class CapabilityRegistrationManager:
             version="1.0.0",
             module="menu_capabilities",
             language=ProgrammingLanguage.PYTHON,
-            entrypoint=f"services.aiva_common.enums.capability_executor:CapabilityExecutor.execute",
+            entrypoint="services.aiva_common.enums.capability_executor:CapabilityExecutor.execute",
             capability_type=type_mapping.get(category, CapabilityType.UTILITY),
             inputs=inputs,
             outputs=[],
@@ -252,7 +255,7 @@ class CapabilityRegistrationManager:
         
         # 列出所有已註冊的能力
         all_caps = await self.registry.list_capabilities()
-        logger.info(f"\n已註冊的能力列表:")
+        logger.info("\n已註冊的能力列表:")
         for cap in all_caps:
             logger.info(f"  - {cap.id}: {cap.name} ({cap.status})")
     

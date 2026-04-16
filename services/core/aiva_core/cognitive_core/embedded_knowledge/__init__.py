@@ -38,22 +38,18 @@ Version: 1.0.0 (2026-01-19)
 """
 
 from .base import (
+    AttackContext,
+    ConfidenceLevel,
     # 基礎數據類型
     DetectionResult,
-    ConfidenceLevel,
-    VulnerabilityType,
-    AttackContext,
-    ResponseAnalysis,
     # 通用工具
     KnowledgeRegistry,
+    ResponseAnalysis,
+    VulnerabilityType,
 )
-
-from .vulnerability_detection import VulnerabilityDetector
-
 from .cve_identification import CVEIdentifier
-
+from .vulnerability_detection import VulnerabilityDetector
 from .waf_bypass import WAFBypassEngine
-
 from .web_architecture import WebArchitectureAnalyzer
 
 __all__ = [

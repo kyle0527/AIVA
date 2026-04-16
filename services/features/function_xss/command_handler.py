@@ -22,18 +22,16 @@ Usage:
     result = await xss_handler.handle_command(command)
 """
 
-import asyncio
-import time
-from typing import Any, Dict, Optional
 from datetime import datetime
+import time
 
 # aiva_common 標準導入
 from aiva_common.core.command_center import CommandHandler
 from aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,
-    CommandStatus,
     CommandContext,
+    CommandStatus,
     CommandType,
 )
 from aiva_common.utils import get_logger
@@ -60,7 +58,7 @@ class XSSCommandHandler(CommandHandler):
     async def handle_command(
         self,
         command: AICommand,
-        context: Optional[CommandContext] = None
+        context: CommandContext | None = None
     ) -> AICommandResult:
         """處理 AI 命令
 
@@ -159,7 +157,7 @@ class XSSCommandHandler(CommandHandler):
                 error_details={"exception_type": "ValueError", "parameter_error": str(e)}
             )
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             # 超時
             self.logger.error("⏱️  XSS 測試超時")
             return AICommandResult(

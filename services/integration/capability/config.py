@@ -7,9 +7,11 @@ AIVA 能力註冊中心配置檔案
 
 import os
 from pathlib import Path
-from typing import Dict, List, Optional, Any
-from pydantic import BaseModel, Field
+from typing import Any
+
 from aiva_common.enums import ProgrammingLanguage
+from pydantic import BaseModel, Field
+
 
 class DatabaseConfig(BaseModel):
     """資料庫配置"""
@@ -23,7 +25,7 @@ class DiscoveryConfig(BaseModel):
     """能力發現配置"""
     auto_discovery_enabled: bool = Field(default=True, description="是否啟用自動發現")
     discovery_interval_minutes: int = Field(default=60, description="發現間隔(分鐘)")
-    scan_directories: List[str] = Field(
+    scan_directories: list[str] = Field(
         default_factory=lambda: [
             "services/features",
             "services/scan", 
@@ -32,7 +34,7 @@ class DiscoveryConfig(BaseModel):
         ],
         description="掃描目錄列表"
     )
-    exclude_patterns: List[str] = Field(
+    exclude_patterns: list[str] = Field(
         default_factory=lambda: [
             "__pycache__",
             "*.pyc",
@@ -49,7 +51,7 @@ class MonitoringConfig(BaseModel):
     health_check_enabled: bool = Field(default=True, description="是否啟用健康檢查")
     health_check_interval_minutes: int = Field(default=15, description="健康檢查間隔(分鐘)")
     performance_monitoring_enabled: bool = Field(default=True, description="是否啟用性能監控")
-    alert_thresholds: Dict[str, Any] = Field(
+    alert_thresholds: dict[str, Any] = Field(
         default_factory=lambda: {
             "max_latency_ms": 5000,
             "min_success_rate": 95.0,
@@ -74,7 +76,7 @@ class LoggingConfig(BaseModel):
     """日誌配置"""
     level: str = Field(default="INFO", description="日誌級別")
     format: str = Field(default="structured", description="日誌格式")
-    output_file: Optional[str] = Field(default=None, description="日誌輸出檔案")
+    output_file: str | None = Field(default=None, description="日誌輸出檔案")
     rotate_enabled: bool = Field(default=True, description="是否啟用日誌輪轉")
     max_file_size_mb: int = Field(default=100, description="最大檔案大小(MB)")
     max_files: int = Field(default=10, description="最大檔案數量")
@@ -84,13 +86,13 @@ class SecurityConfig(BaseModel):
     """安全配置"""
     authentication_enabled: bool = Field(default=False, description="是否啟用認證")
     api_key_required: bool = Field(default=False, description="是否需要 API 金鑰")
-    allowed_origins: List[str] = Field(
+    allowed_origins: list[str] = Field(
         default_factory=lambda: ["*"],
         description="允許的來源"
     )
     ssl_enabled: bool = Field(default=False, description="是否啟用 SSL")
-    ssl_cert_path: Optional[str] = Field(default=None, description="SSL 證書路徑")
-    ssl_key_path: Optional[str] = Field(default=None, description="SSL 私鑰路徑")
+    ssl_cert_path: str | None = Field(default=None, description="SSL 證書路徑")
+    ssl_key_path: str | None = Field(default=None, description="SSL 私鑰路徑")
 
 
 class CapabilityRegistryConfig(BaseModel):
@@ -114,7 +116,7 @@ class CapabilityRegistryConfig(BaseModel):
         default="services/aiva_common",
         description="aiva_common 模組路徑"
     )
-    tools_enabled: List[str] = Field(
+    tools_enabled: list[str] = Field(
         default_factory=lambda: [
             "schema_validator",
             "schema_codegen_tool", 
@@ -124,7 +126,7 @@ class CapabilityRegistryConfig(BaseModel):
     )
     
     # 語言支援配置
-    supported_languages: List[ProgrammingLanguage] = Field(
+    supported_languages: list[ProgrammingLanguage] = Field(
         default_factory=lambda: [
             ProgrammingLanguage.PYTHON,
             ProgrammingLanguage.GO,
@@ -138,6 +140,7 @@ class CapabilityRegistryConfig(BaseModel):
     def load_from_file(cls, config_path: str) -> "CapabilityRegistryConfig":
         """從檔案載入配置"""
         import json
+
         import yaml
         
         path = Path(config_path)
@@ -150,10 +153,10 @@ class CapabilityRegistryConfig(BaseModel):
         
         # 根據檔案擴展名選擇解析器
         if path.suffix.lower() == '.json':
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, encoding='utf-8') as f:
                 data = json.load(f)
         elif path.suffix.lower() in ['.yaml', '.yml']:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, encoding='utf-8') as f:
                 data = yaml.safe_load(f)
         else:
             raise ValueError(f"不支援的配置檔案格式: {path.suffix}")
@@ -163,6 +166,7 @@ class CapabilityRegistryConfig(BaseModel):
     def save_to_file(self, config_path: str) -> None:
         """將配置儲存到檔案"""
         import json
+
         import yaml
         
         path = Path(config_path)
@@ -180,7 +184,7 @@ class CapabilityRegistryConfig(BaseModel):
         else:
             raise ValueError(f"不支援的配置檔案格式: {path.suffix}")
     
-    def get_environment_overrides(self) -> Dict[str, Any]:
+    def get_environment_overrides(self) -> dict[str, Any]:
         """獲取環境變數覆寫"""
         overrides = {}
         
@@ -228,7 +232,7 @@ class CapabilityRegistryConfig(BaseModel):
 default_config = CapabilityRegistryConfig()
 
 # 配置載入函數
-def load_config(config_path: Optional[str] = None) -> CapabilityRegistryConfig:
+def load_config(config_path: str | None = None) -> CapabilityRegistryConfig:
     """載入配置"""
     
     if config_path is None:
@@ -260,7 +264,7 @@ def load_config(config_path: Optional[str] = None) -> CapabilityRegistryConfig:
 
 
 # 配置驗證函數
-def validate_config(config: CapabilityRegistryConfig) -> List[str]:
+def validate_config(config: CapabilityRegistryConfig) -> list[str]:
     """驗證配置有效性"""
     
     errors = []

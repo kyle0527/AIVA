@@ -6,26 +6,24 @@ AIVA 工具生命週期管理 CLI
 提供互動式命令行介面來管理工具的安裝、更新、卸載等生命週期操作
 """
 
-import asyncio
 import argparse
-import sys
-from typing import Optional, List
-from pathlib import Path
-
-from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn
-from rich.prompt import Prompt, Confirm
-from rich.tree import Tree
-from rich.text import Text
-from rich.live import Live
+import asyncio
 
 from aiva_common.utils.logging import get_logger
+from rich.console import Console
+from rich.panel import Panel
+from rich.progress import (
+    BarColumn,
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    TimeElapsedColumn,
+)
+from rich.prompt import Confirm, Prompt
+from rich.table import Table
+from rich.text import Text
 
-from .lifecycle import ToolLifecycleManager, InstallationResult, ToolLifecycleEvent
-from .models import CapabilityRecord
-
+from .lifecycle import ToolLifecycleManager
 
 logger = get_logger(__name__)
 console = Console()
@@ -123,7 +121,7 @@ class LifecycleCLI:
         else:
             console.print("❌ 卸載失敗")
     
-    async def health_check(self, capability_id: Optional[str] = None) -> None:
+    async def health_check(self, capability_id: str | None = None) -> None:
         """健康檢查"""
         if capability_id:
             # 單個工具健康檢查
@@ -233,8 +231,8 @@ class LifecycleCLI:
     
     def show_events(
         self, 
-        capability_id: Optional[str] = None,
-        event_type: Optional[str] = None,
+        capability_id: str | None = None,
+        event_type: str | None = None,
         limit: int = 20
     ) -> None:
         """顯示生命週期事件歷史"""

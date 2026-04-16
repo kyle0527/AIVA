@@ -15,11 +15,11 @@ AIVA 結構化數據流分析器 v3.0
 - Memory-First: 建立全域註冊表進行記憶體內組裝。
 """
 
+import argparse
 import ast
 import json
-import argparse
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 # ==========================================
 # Part 1: 基礎數據結構 (Graph & Node)
@@ -27,11 +27,11 @@ from typing import Any, Dict, List, Optional, Union
 
 class Node:
     """代表流程圖中的一個節點"""
-    def __init__(self, id_: str, label: str, kind: str = "op", metadata: Optional[Dict] = None):
+    def __init__(self, id_: str, label: str, kind: str = "op", metadata: dict | None = None):
         self.id = self._sanitize_id(id_)
         self.label = label
         self.kind = kind  # start, end, op, cond, call
-        self.nexts: List[str] = []  # 存儲下一個節點的 ID
+        self.nexts: list[str] = []  # 存儲下一個節點的 ID
         self.metadata = metadata if metadata is not None else {}
 
     def _sanitize_id(self, id_str: str) -> str:
@@ -42,7 +42,7 @@ class Node:
             cleaned = f"n_{cleaned}"
         return cleaned or "node"
     
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
             "label": self.label,
@@ -57,7 +57,7 @@ class Graph:
         self.name = name  # 用於匹配的名稱 (Head Name)
         self.file_path = file_path
         self.type = graph_type # function, class, module
-        self.nodes: List[Node] = []
+        self.nodes: list[Node] = []
         self.counter = 0
         
         # 建立固定的開始與結束節點
@@ -65,9 +65,9 @@ class Graph:
         self.end = self.add("end", "End")
         
         # 為了快速組圖，記錄這張圖對外的所有呼叫
-        self.outgoing_calls: List[Node] = [] 
+        self.outgoing_calls: list[Node] = [] 
 
-    def add(self, kind: str, label: str, metadata: Optional[Dict] = None) -> Node:
+    def add(self, kind: str, label: str, metadata: dict | None = None) -> Node:
         self.counter += 1
         # 產生全域唯一的節點 ID (包含 graph name 以防衝突)
         node_id = f"{self.name}_{self.counter}"
@@ -85,7 +85,7 @@ class Graph:
         if b.id not in a.nexts:
             a.nexts.append(b.id)
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "name": self.name,
             "file_path": self.file_path,
@@ -102,7 +102,7 @@ class Graph:
 class ParameterExtractor:
     """專門負責從 AST 提取函數參數與型別資訊"""
     
-    def extract_parameters(self, func_node: Union[ast.FunctionDef, ast.AsyncFunctionDef]) -> List[Dict]:
+    def extract_parameters(self, func_node: ast.FunctionDef | ast.AsyncFunctionDef) -> list[dict]:
         params = []
         args = func_node.args
         num_args = len(args.args)
@@ -137,14 +137,14 @@ class ParameterExtractor:
             
         return params
 
-    def _ast_to_value(self, node: Optional[ast.AST]) -> Any:
+    def _ast_to_value(self, node: ast.AST | None) -> Any:
         if node is None: return None
         try:
             if isinstance(node, ast.Constant): return node.value
             return ast.unparse(node)
         except Exception: return "<complex>"
 
-    def _annotation_to_string(self, annotation: Optional[ast.AST]) -> str:
+    def _annotation_to_string(self, annotation: ast.AST | None) -> str:
         if annotation is None: return "any"
         try:
             return ast.unparse(annotation)
@@ -326,14 +326,14 @@ class FlowStitcher:
     """
     def __init__(self):
         # Registry: Key = Function/Class Name (Head), Value = Graph Object
-        self.registry: Dict[str, Graph] = {}
-        self.all_graphs: List[Graph] = []
+        self.registry: dict[str, Graph] = {}
+        self.all_graphs: list[Graph] = []
         
         # 連接資料 (由 stitch() 填充)
-        self.connections: List[Dict] = []
+        self.connections: list[dict] = []
         
         # 鄰接表：用於快速查找 source → targets (由 stitch() 建立)
-        self.adjacency: Dict[str, List[str]] = {}  # graph_name → [connected_graph_names]
+        self.adjacency: dict[str, list[str]] = {}  # graph_name → [connected_graph_names]
 
     def register_graph(self, graph: Graph):
         """暫存一張 AST 分析結果"""
@@ -345,7 +345,7 @@ class FlowStitcher:
         # 如果需要支援模組限定名 (e.g. utils.helper)，可以在這裡擴充
         # 例如: self.registry[f"{module_name}.{graph.name}"] = graph
 
-    def stitch(self) -> List[Dict]:
+    def stitch(self) -> list[dict]:
         """
         執行尾接頭：遍歷所有 Call，若 target_func 存在於 registry，則建立連接
         
@@ -389,7 +389,7 @@ class FlowStitcher:
 
         return self.connections
 
-    def build_flow_chains(self, max_depth: int = 10) -> List[List[str]]:
+    def build_flow_chains(self, max_depth: int = 10) -> list[list[str]]:
         """
         從單步連接構建完整的數據流路徑
         
@@ -420,7 +420,7 @@ class FlowStitcher:
             head_nodes = {sorted_by_outgoing[0][0]} if sorted_by_outgoing else set()
         
         # 從每個頭節點遞歸構建路徑
-        all_chains: List[List[str]] = []
+        all_chains: list[list[str]] = []
         for head in head_nodes:
             self._build_paths_recursive(head, [head], all_chains, max_depth, set())
         
@@ -435,8 +435,8 @@ class FlowStitcher:
     def _build_paths_recursive(
         self, 
         current: str, 
-        current_path: List[str], 
-        all_paths: List[List[str]], 
+        current_path: list[str], 
+        all_paths: list[list[str]], 
         max_depth: int,
         visited: set
     ):
@@ -473,7 +473,7 @@ class FlowStitcher:
                 visited_copy
             )
 
-    def build_function_details(self) -> Dict:
+    def build_function_details(self) -> dict:
         """
         產生 function_details 格式 (兼容舊版 classifier)
         
@@ -483,8 +483,8 @@ class FlowStitcher:
                 "script_functions": {script_name: {functions: {...}, ...}}
             }
         """
-        function_map: Dict[str, Dict] = {}
-        script_functions: Dict[str, Dict] = {}
+        function_map: dict[str, dict] = {}
+        script_functions: dict[str, dict] = {}
         
         for graph in self.all_graphs:
             script_name = Path(graph.file_path).stem
@@ -548,7 +548,7 @@ class FlowStitcher:
 # Part 5: 主程序與相容層
 # ==========================================
 
-def analyze_and_generate(target_dir: str, output_file: Optional[str] = "aiva_flow_analysis_v3.json") -> tuple:
+def analyze_and_generate(target_dir: str, output_file: str | None = "aiva_flow_analysis_v3.json") -> tuple:
     """
     執行分析並生成結果
     
@@ -664,11 +664,11 @@ class AIVAFlowAnalyzer:
     
     def __init__(self, target_dir: str = "."):
         self.target_dir = target_dir
-        self.results: Optional[Dict] = None
-        self.stitcher: Optional[FlowStitcher] = None
-        self._output_dir: Optional[str] = None
+        self.results: dict | None = None
+        self.stitcher: FlowStitcher | None = None
+        self._output_dir: str | None = None
     
-    def analyze_directory(self, target: str, depth: int = 5, verbose: bool = False) -> Dict:
+    def analyze_directory(self, target: str, depth: int = 5, verbose: bool = False) -> dict:
         """
         分析目標目錄
         

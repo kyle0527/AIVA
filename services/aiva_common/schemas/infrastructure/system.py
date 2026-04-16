@@ -4,7 +4,7 @@
 此模組定義了系統編排、會話管理、任務隊列、Webhook 等系統級別的資料模型。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -30,8 +30,8 @@ class SessionState(BaseModel):
     variables: dict[str, Any] = Field(
         default_factory=dict
     )  # 會話變數（用於步驟間傳遞數據）
-    started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    started_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     timeout_at: datetime | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -74,8 +74,8 @@ class ModelTrainingResult(BaseModel):
     f1_score: float | None = None
     average_reward: float | None = None  # 強化學習平均獎勵
     training_duration_seconds: float = 0.0
-    started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    completed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    started_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     metrics: dict[str, Any] = Field(default_factory=dict)
     model_path: str | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
@@ -107,8 +107,8 @@ class TaskQueue(BaseModel):
     average_execution_time: float = Field(ge=0.0, description="平均執行時間")
 
     # 時間戳
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    last_activity: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    last_activity: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
@@ -176,8 +176,8 @@ class SystemOrchestration(BaseModel):
     network_throughput: float = Field(ge=0.0, description="網絡吞吐量(Mbps)")
 
     # 時間戳
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
@@ -195,7 +195,7 @@ class WebhookPayload(BaseModel):
     source: str = Field(description="來源系統")
 
     # 時間戳
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     # 負載數據
     data: dict[str, Any] = Field(default_factory=dict, description="事件數據")

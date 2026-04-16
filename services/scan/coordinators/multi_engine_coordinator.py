@@ -1,17 +1,17 @@
 import asyncio
+from datetime import datetime
 import json
 import logging
-import os
-import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-from datetime import datetime
+from typing import Any
 
 # Import Python Engine Components
 try:
-    from services.scan.python_engine.xxe_detector import XXEDetector
-    from services.scan.python_engine.deserialization_detector_v2 import DeserializationDetector
+    from services.scan.python_engine.deserialization_detector_v2 import (
+        DeserializationDetector,
+    )
     from services.scan.python_engine.passive_analyzer import PassiveAnalyzer
+    from services.scan.python_engine.xxe_detector import XXEDetector
     PYTHON_ENGINE_AVAILABLE = True
 except ImportError:
     PYTHON_ENGINE_AVAILABLE = False
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 class MultiEngineCoordinator:
     """Multi-Engine Coordinator - Orchestrates Go, Rust, and Python scan engines"""
     
-    def __init__(self, project_root: Optional[str] = None):
+    def __init__(self, project_root: str | None = None):
         """
         Initialize the coordinator.
         
@@ -68,7 +68,7 @@ class MultiEngineCoordinator:
         else:
             logger.info("Python Engines initialized.")
 
-    async def _run_command(self, cmd: List[str], input_data: Optional[str] = None) -> Dict[str, Any]:
+    async def _run_command(self, cmd: list[str], input_data: str | None = None) -> dict[str, Any]:
         """Run a CLI command asynchronously"""
         try:
             cmd_str = " ".join(str(p) for p in cmd)
@@ -103,7 +103,7 @@ class MultiEngineCoordinator:
             logger.error(f"Execution error: {e}")
             return {"error": str(e), "status": "failed"}
 
-    async def execute_strategy_fast(self, scan_id: str, targets: List[str], max_depth: int) -> Dict[str, Any]:
+    async def execute_strategy_fast(self, scan_id: str, targets: list[str], max_depth: int) -> dict[str, Any]:
         """Fast Strategy: Port Scan (Rust) + Basic SSRF (Go)"""
         start_time = datetime.now()
         results = {"scan_id": scan_id, "strategy": "fast", "details": {}}
@@ -131,7 +131,7 @@ class MultiEngineCoordinator:
         results["execution_time"] = (datetime.now() - start_time).total_seconds()
         return results
 
-    async def execute_strategy_balanced(self, scan_id: str, targets: List[str], max_depth: int) -> Dict[str, Any]:
+    async def execute_strategy_balanced(self, scan_id: str, targets: list[str], max_depth: int) -> dict[str, Any]:
         """Balanced Strategy: Fast + Info Gather (Rust) + Passive Analysis (Python)"""
         # First run fast scan
         fast_result = await self.execute_strategy_fast(scan_id, targets, max_depth)
@@ -157,7 +157,7 @@ class MultiEngineCoordinator:
         fast_result["strategy"] = "balanced"
         return fast_result
 
-    async def execute_strategy_comprehensive(self, scan_id: str, targets: List[str], max_depth: int) -> Dict[str, Any]:
+    async def execute_strategy_comprehensive(self, scan_id: str, targets: list[str], max_depth: int) -> dict[str, Any]:
         """Comprehensive Strategy: Balanced + Smuggling (Rust) + XXE/Deserial (Python)"""
         # Run Balanced first
         balanced_result = await self.execute_strategy_balanced(scan_id, targets, max_depth)
@@ -182,7 +182,7 @@ class MultiEngineCoordinator:
         balanced_result["strategy"] = "comprehensive"
         return balanced_result
 
-    async def execute_strategy_aggressive(self, scan_id: str, targets: List[str], max_depth: int) -> Dict[str, Any]:
+    async def execute_strategy_aggressive(self, scan_id: str, targets: list[str], max_depth: int) -> dict[str, Any]:
         """Aggressive Strategy: Comprehensive + Auth Brute (Rust)"""
         comp_result = await self.execute_strategy_comprehensive(scan_id, targets, max_depth)
         
@@ -192,6 +192,6 @@ class MultiEngineCoordinator:
         comp_result["strategy"] = "aggressive"
         return comp_result
 
-    async def execute_strategy_smart(self, scan_id: str, targets: List[str], max_depth: int) -> Dict[str, Any]:
+    async def execute_strategy_smart(self, scan_id: str, targets: list[str], max_depth: int) -> dict[str, Any]:
         """Smart Strategy: AI Decided (For now maps to Balanced)"""
         return await self.execute_strategy_balanced(scan_id, targets, max_depth)

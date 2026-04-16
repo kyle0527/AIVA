@@ -3,17 +3,18 @@ AI增強代碼分析引擎
 基於Tree-sitter AST和神經網路的智能代碼分析系統
 """
 import ast
-import hashlib
-import json
-import logging
-import torch
-import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from enum import Enum
+import hashlib
+import json
+import logging
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Union, TYPE_CHECKING
+import time
+from typing import Any
+
 import numpy as np
+import torch
 
 # Tree-sitter 條件導入 - 用於增強解析功能
 TREE_SITTER_AVAILABLE = False
@@ -27,8 +28,12 @@ except ImportError:
     pass
 
 # 使用 5M Decision Engine 替代 BioNeuronRAGAgent
-from ...cognitive_core.neural.real_neural_core import RealDecisionEngine
-from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+from aiva_common.core.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
 
 MODULE_NAME = "ai_analysis.analysis_engine"
 
@@ -65,7 +70,7 @@ class CacheManager:
         """載入緩存索引"""
         if self.cache_index_file.exists():
             try:
-                with open(self.cache_index_file, 'r', encoding='utf-8') as f:
+                with open(self.cache_index_file, encoding='utf-8') as f:
                     self.cache_index = json.load(f)
             except Exception as e:
                 logger.warning(f"載入緩存索引失敗: {e}")
@@ -107,11 +112,11 @@ class AIAnalysisResult:
     """AI分析結果數據類"""
     analysis_type: AnalysisType
     confidence: float
-    findings: List[Dict[str, Any]]
-    recommendations: List[str]
+    findings: list[dict[str, Any]]
+    recommendations: list[str]
     risk_level: str
     explanation: str
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 @dataclass
@@ -122,7 +127,7 @@ class CodeChunk:
     content: str
     node_type: str  # FunctionDef/ClassDef/Module
     node_name: str
-    keywords: Optional[set[str]] = None
+    keywords: set[str] | None = None
     
     def __post_init__(self):
         if self.keywords is None:
@@ -135,7 +140,7 @@ class AIAnalysisEngine:
     整合RAG 1的代碼索引和分析功能
     """
     
-    def __init__(self, codebase_path: str = "/workspaces/AIVA", config: Optional[IndexingConfig] = None):
+    def __init__(self, codebase_path: str = "/workspaces/AIVA", config: IndexingConfig | None = None):
         self.bio_controller = None
         self.rag_agent = None
         self.initialized = False
@@ -166,8 +171,12 @@ class AIAnalysisEngine:
             self.bio_controller = None
             
             # 創建真實的決策核心（使用訓練好的權重）
-            from ...cognitive_core.neural.real_bio_net_adapter import create_real_scalable_bionet, create_real_rag_agent
             from pathlib import Path
+
+            from ...cognitive_core.neural.real_bio_net_adapter import (
+                create_real_rag_agent,
+                create_real_scalable_bionet,
+            )
             
             # 指向訓練好的權重檔案
             weights_path = Path(__file__).parent.parent.parent / "cognitive_core" / "neural" / "weights" / "aiva_real_weights.pth"
@@ -275,7 +284,7 @@ class AIAnalysisEngine:
         visit_node(tree)
         return max_depth
     
-    def _extract_security_features(self, tree: ast.AST, source_code: str) -> List[float]:
+    def _extract_security_features(self, tree: ast.AST, source_code: str) -> list[float]:
         """提取安全相關特徵"""
         features = []
         
@@ -305,7 +314,7 @@ class AIAnalysisEngine:
         
         return features
     
-    def _extract_semantic_features(self, tree: ast.AST) -> List[float]:
+    def _extract_semantic_features(self, tree: ast.AST) -> list[float]:
         """提取語義特徵"""
         features = []
         
@@ -341,8 +350,8 @@ class AIAnalysisEngine:
         self, 
         source_code: str, 
         file_path: str = "",
-        analysis_types: Optional[List[AnalysisType]] = None
-    ) -> Dict[AnalysisType, AIAnalysisResult]:
+        analysis_types: list[AnalysisType] | None = None
+    ) -> dict[AnalysisType, AIAnalysisResult]:
         """
         AI增強的代碼分析主函數
         按照業務流程：初始化檢查 -> 特徵提取 -> 分析類型選擇 -> AI分析 -> 風險計算 -> 結果生成
@@ -520,7 +529,7 @@ class AIAnalysisEngine:
                         file_path=str(py_file)
                     )
                 ) from e
-        except (OSError, IOError) as e:
+        except OSError as e:
             raise AIVAError(
                 message=f"讀取失敗: {e}",
                 error_type=ErrorType.SYSTEM,
@@ -555,7 +564,7 @@ class AIAnalysisEngine:
                             node_name=node.name,
                         )
     
-    def _extract_node_content(self, content: str, node: ast.AST) -> Optional[str]:
+    def _extract_node_content(self, content: str, node: ast.AST) -> str | None:
         """提取AST節點內容"""
         try:
             chunk_content = ast.get_source_segment(content, node)
@@ -565,7 +574,7 @@ class AIAnalysisEngine:
             return self._extract_by_line_numbers(content, node)
         return None
     
-    def _extract_by_line_numbers(self, content: str, node: ast.AST) -> Optional[str]:
+    def _extract_by_line_numbers(self, content: str, node: ast.AST) -> str | None:
         """通過行號範圍提取內容"""
         if not (hasattr(node, 'lineno') and hasattr(node, 'end_lineno')):
             return None
@@ -734,7 +743,7 @@ class AIAnalysisEngine:
             "avg_chunks_per_file": len(self.chunks) / max(self.stats["indexed_files"], 1)
         }
 
-    def _create_failed_results(self, analysis_types: List[AnalysisType], error_msg: str) -> Dict[AnalysisType, AIAnalysisResult]:
+    def _create_failed_results(self, analysis_types: list[AnalysisType], error_msg: str) -> dict[AnalysisType, AIAnalysisResult]:
         """創建失敗的分析結果"""
         results = {}
         for analysis_type in analysis_types:
@@ -822,7 +831,7 @@ class AIAnalysisEngine:
                 metadata={'error': str(e)}
             )
     
-    def _generate_findings(self, features: torch.Tensor, analysis_type: AnalysisType) -> List[Dict[str, Any]]:
+    def _generate_findings(self, features: torch.Tensor, analysis_type: AnalysisType) -> list[dict[str, Any]]:
         """基於特徵向量生成具體發現"""
         findings = []
         
@@ -850,7 +859,7 @@ class AIAnalysisEngine:
         
         return findings
     
-    def _generate_recommendations(self, analysis_type: AnalysisType, findings: List[Dict[str, Any]]) -> List[str]:
+    def _generate_recommendations(self, analysis_type: AnalysisType, findings: list[dict[str, Any]]) -> list[str]:
         """基於發現生成建議"""
         recommendations = []
         
@@ -865,7 +874,7 @@ class AIAnalysisEngine:
         
         return recommendations
     
-    def _calculate_risk_level(self, confidence: float, findings: List[Dict[str, Any]]) -> str:
+    def _calculate_risk_level(self, confidence: float, findings: list[dict[str, Any]]) -> str:
         """計算風險等級"""
         high_severity_count = sum(1 for f in findings if f.get('severity') == 'high')
         medium_severity_count = sum(1 for f in findings if f.get('severity') == 'medium')
@@ -879,7 +888,7 @@ class AIAnalysisEngine:
         else:
             return "safe"
     
-    def _generate_explanation(self, analysis_type: AnalysisType, confidence: float, findings: List[Dict[str, Any]]) -> str:
+    def _generate_explanation(self, analysis_type: AnalysisType, confidence: float, findings: list[dict[str, Any]]) -> str:
         """生成分析解釋"""
         explanation = f"{analysis_type.value}分析完成，置信度: {confidence:.2f}\n"
         
@@ -892,7 +901,7 @@ class AIAnalysisEngine:
         
         return explanation
 
-    def get_analysis_summary(self, results: Dict[AnalysisType, AIAnalysisResult]) -> Dict[str, Any]:
+    def get_analysis_summary(self, results: dict[AnalysisType, AIAnalysisResult]) -> dict[str, Any]:
         """生成分析摘要"""
         total_findings = sum(len(result.findings) for result in results.values())
         avg_confidence = np.mean([result.confidence for result in results.values()]) if results else 0
@@ -910,5 +919,5 @@ class AIAnalysisEngine:
             'total_findings': total_findings,
             'average_confidence': avg_confidence,
             'overall_risk_level': overall_risk,
-            'analysis_types': [at.value for at in results.keys()]
+            'analysis_types': [at.value for at in results]
         }

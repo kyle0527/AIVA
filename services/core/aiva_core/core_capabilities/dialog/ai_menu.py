@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 AIVA AI 智能選單系統
 
@@ -16,11 +15,8 @@ AI 自動調用能力按照規劃執行任務。
 """
 
 import asyncio
-import sys
-from pathlib import Path
-from typing import Dict, Any, List
-import json
 import logging
+from typing import Any
 
 # ✅ 遵循 aiva_common 規範 - 使用統一日誌和 HTTP 客戶端
 try:
@@ -32,13 +28,13 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 try:
-    from rich.console import Console
-    from rich.panel import Panel
-    from rich.prompt import Prompt, Confirm
-    from rich.table import Table
-    from rich.progress import Progress, SpinnerColumn, TextColumn
     from rich import box
+    from rich.console import Console
     from rich.markdown import Markdown
+    from rich.panel import Panel
+    from rich.progress import Progress, SpinnerColumn, TextColumn
+    from rich.prompt import Confirm, Prompt
+    from rich.table import Table
     RICH_AVAILABLE = True
     console = Console()
 except ImportError:
@@ -46,9 +42,10 @@ except ImportError:
     console = None
 
 # 使用相對導入 (使用延遲初始化接口以符合 assistant.py)
-from .assistant import get_dialog_assistant, dialog_assistant
-from ...cognitive_core.ai_capability_query import AICapabilityQuery
 from services.integration.capability.registry import registry as capability_registry
+
+from ...cognitive_core.ai_capability_query import AICapabilityQuery
+from .assistant import dialog_assistant, get_dialog_assistant
 
 
 class AIVAIntelligentMenu:
@@ -73,7 +70,7 @@ class AIVAIntelligentMenu:
             self.ai_assistant = dialog_assistant
         self.capability_query = AICapabilityQuery()
         self.running = True
-        self.session_history: List[Dict[str, Any]] = []
+        self.session_history: list[dict[str, Any]] = []
         
     def print_banner(self):
         """顯示歡迎橫幅"""
@@ -357,7 +354,7 @@ class AIVAIntelligentMenu:
                         border_style="green"
                     ))
                 else:
-                    print(f"\n✅ 掃描已啟動\n")
+                    print("\n✅ 掃描已啟動\n")
                     print(f"掃描ID: {scan_id}")
                     print(f"目標: {target}")
                     print(f"類型: {scan_type}\n")
@@ -654,7 +651,7 @@ class AIVAIntelligentMenu:
         
         input("按 Enter 繼續...")
 
-    async def _execute_capability(self, capability: Dict[str, Any]):
+    async def _execute_capability(self, capability: dict[str, Any]):
         """執行單個能力"""
         name = capability.get('name', 'Unknown')
         if RICH_AVAILABLE and console:
@@ -681,7 +678,7 @@ class AIVAIntelligentMenu:
         
         input("按 Enter 繼續...")
     
-    async def _execute_workflow(self, workflow: List[Dict[str, Any]], task_description: str):
+    async def _execute_workflow(self, workflow: list[dict[str, Any]], task_description: str):
         """執行工作流"""
         if RICH_AVAILABLE and console:
             console.print(f"\n[bold]執行工作流: {task_description}[/bold]\n")

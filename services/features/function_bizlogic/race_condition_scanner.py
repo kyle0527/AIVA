@@ -4,14 +4,12 @@
 """
 
 import asyncio
+from datetime import datetime
 import logging
 from typing import Any
-from datetime import datetime
 
+from aiva_common.enums import Confidence, Severity
 import httpx
-
-from aiva_common.enums import VulnerabilityType, Severity, Confidence
-from .finding_helper import create_bizlogic_finding
 
 logger = logging.getLogger(__name__)
 

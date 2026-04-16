@@ -6,20 +6,19 @@ enabling the AI Commander to execute cryptographic security checks.
 It strictly interfaces with the high-performance Rust core (`crypto_analyzer`).
 """
 
-import time
-import subprocess
+from datetime import datetime
 import json
 import os
-from typing import Optional, Dict, Any
-from datetime import datetime
+import subprocess
+import time
+from typing import Any
 
 from aiva_common.core.command_center import CommandHandler
 from aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,
-    CommandStatus,
     CommandContext,
-    CommandType,
+    CommandStatus,
 )
 from aiva_common.utils import get_logger
 
@@ -50,7 +49,7 @@ class CryptoCommandHandler(CommandHandler):
     async def handle_command(
         self,
         command: AICommand,
-        context: Optional[CommandContext] = None
+        context: CommandContext | None = None
     ) -> AICommandResult:
         """
         Executes a crypto security check command.
@@ -120,7 +119,7 @@ class CryptoCommandHandler(CommandHandler):
                 error_details={"exception_type": type(e).__name__}
             )
 
-    def _run_rust_binary(self, target: str, check_type: str) -> Dict[str, Any]:
+    def _run_rust_binary(self, target: str, check_type: str) -> dict[str, Any]:
         """Runs the compiled Rust binary."""
         try:
             cmd = [self.rust_binary_path, "--target", target, "--check", check_type, "--json"]

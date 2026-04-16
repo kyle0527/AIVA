@@ -7,15 +7,14 @@ import json
 import logging
 from typing import Any
 
-import asyncpg
-import numpy as np
-
 from aiva_common.core.error_handling import (
     AIVAError,
     ErrorSeverity,
     ErrorType,
     create_error_context,
 )
+import asyncpg
+import numpy as np
 
 logger = logging.getLogger(__name__)
 MODULE_NAME = "aiva_core.rag.postgresql_vector_store"

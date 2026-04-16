@@ -15,10 +15,10 @@ from aiva_common.cross_language import (
     AIVAErrorCode,
     AIVAException,
     ErrorSeverity,
-    ErrorContext,
     create_error_context,
     get_error_handler,
 )
+
 from ..command_router import CommandContext, CommandType, ExecutionResult
 
 MODULE_NAME = "execution_planner"

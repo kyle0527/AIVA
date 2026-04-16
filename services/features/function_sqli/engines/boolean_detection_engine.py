@@ -5,17 +5,14 @@
 
 
 import asyncio
-from typing import cast, Dict, List, Optional
-import aiohttp
-import httpx
 
-from aiva_common.schemas import FunctionTaskPayload
+import aiohttp
 from aiva_common.utils import get_logger
 
+from ..config import SqliConfig
 from ..detection_models import DetectionResult
 from ..payload_wrapper_encoder import PayloadWrapperEncoder
 from .base_detector import BaseDetector
-from ..config import SqliConfig
 
 logger = get_logger(__name__)
 
@@ -43,7 +40,7 @@ class BooleanDetectionEngine(BaseDetector):
         ]
 
     async def detect(
-        self, target_url: str, params: Dict[str, str], method: str = "GET"
+        self, target_url: str, params: dict[str, str], method: str = "GET"
     ) -> list[DetectionResult]:
         """執行布林檢測"""
         results: list[DetectionResult] = []

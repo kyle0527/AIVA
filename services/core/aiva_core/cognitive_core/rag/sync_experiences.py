@@ -15,14 +15,13 @@ RAG 經驗同步模組
 import asyncio
 import logging
 from pathlib import Path
-from typing import List, Optional
 
 # 設置日誌
 logger = logging.getLogger(__name__)
 
 
 async def sync_experiences_to_vector_store(
-    capabilities: Optional[List[str]] = None,
+    capabilities: list[str] | None = None,
     limit: int = 1000,
 ):
     """同步執行經驗到向量庫
@@ -33,6 +32,7 @@ async def sync_experiences_to_vector_store(
     """
     try:
         from services.integration.simple_data_manager import get_data_manager
+
         from .vector_store import VectorStore  # 使用相對導入
     except ImportError as e:
         logger.error(f"導入模組失敗: {e}")

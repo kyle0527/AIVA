@@ -8,14 +8,14 @@
 - 支援重試機制
 """
 
+from collections.abc import Iterator
 import json
-from typing import Any, Iterator, Optional
+from typing import Any
 
+from aiva_common.utils import get_logger
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-
-from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -146,7 +146,7 @@ class AIVAApiClient:
     
     def list_scans(
         self,
-        status: Optional[str] = None,
+        status: str | None = None,
         limit: int = 50,
         offset: int = 0
     ) -> dict[str, Any]:

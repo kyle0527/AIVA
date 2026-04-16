@@ -18,12 +18,12 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from .types import AITaskType, AIComponent
+from .attack_coordinator import AttackCoordinator
 from .capability_manager import CapabilityManager
+from .learning_adapter import LearningAdapter
 from .plan_builder import PlanBuilder
 from .strategy_engine import StrategyEngine
-from .attack_coordinator import AttackCoordinator
-from .learning_adapter import LearningAdapter
+from .types import AIComponent, AITaskType
 
 logger = logging.getLogger(__name__)
 
@@ -39,12 +39,12 @@ class CommanderCoordinator:
     
     def __init__(
         self,
-        data_directory: Optional[Path] = None,
+        data_directory: Path | None = None,
         learning_enabled: bool = True,
-        unified_executor: Optional[Any] = None,        # ✅ 接收統一執行器
-        multilang_coordinator: Optional[Any] = None,   # ✅ 接收多語言協調器
-        internal_loop_connector: Optional[Any] = None, # ✅ 接收內部閉環連接器
-        session_state_manager: Optional[Any] = None,   # ✅ 接收會話狀態管理器
+        unified_executor: Any | None = None,        # ✅ 接收統一執行器
+        multilang_coordinator: Any | None = None,   # ✅ 接收多語言協調器
+        internal_loop_connector: Any | None = None, # ✅ 接收內部閉環連接器
+        session_state_manager: Any | None = None,   # ✅ 接收會話狀態管理器
     ):
         """初始化協調器
         
@@ -67,11 +67,11 @@ class CommanderCoordinator:
         self.session_state_manager = session_state_manager
         
         # 延遲初始化子模組
-        self._capability_manager: Optional[CapabilityManager] = None
-        self._plan_builder: Optional[PlanBuilder] = None
-        self._strategy_engine: Optional[StrategyEngine] = None
-        self._attack_coordinator: Optional[AttackCoordinator] = None
-        self._learning_adapter: Optional[LearningAdapter] = None
+        self._capability_manager: CapabilityManager | None = None
+        self._plan_builder: PlanBuilder | None = None
+        self._strategy_engine: StrategyEngine | None = None
+        self._attack_coordinator: AttackCoordinator | None = None
+        self._learning_adapter: LearningAdapter | None = None
         
         logger.info("✅ Commander Coordinator initialized with injected dependencies")
     
@@ -87,9 +87,13 @@ class CommanderCoordinator:
         """延遲加載計劃建構器"""
         if self._plan_builder is None:
             # 初始化 PlanBuilder 所需的依賴
+            from services.core.aiva_core.cognitive_core.decision.enhanced_decision_agent import (
+                EnhancedDecisionAgent,
+            )
+            from services.core.aiva_core.cognitive_core.learning_system.experience_manager import (
+                ExperienceManager,
+            )
             from services.core.aiva_core.cognitive_core.rag.rag_engine import RAGEngine
-            from services.core.aiva_core.cognitive_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
-            from services.core.aiva_core.cognitive_core.learning_system.experience_manager import ExperienceManager
 
             rag_engine = RAGEngine()
             decision_engine = EnhancedDecisionAgent()
@@ -139,9 +143,9 @@ class CommanderCoordinator:
     async def execute_command(
         self,
         task_type: AITaskType,
-        context: Dict[str, Any],
+        context: dict[str, Any],
         **kwargs
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """執行 AI 指令
         
         統一入口，根據任務類型路由到對應的子模組。

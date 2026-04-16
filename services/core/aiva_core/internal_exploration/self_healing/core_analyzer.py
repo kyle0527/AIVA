@@ -12,20 +12,15 @@
     report = analyzer.diagnose_critical_only()
 """
 
-from pathlib import Path
-from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 from datetime import datetime
 import json
-import sys
+from pathlib import Path
 
 # 導入統一路徑配置
 try:
     parent_parent = Path(__file__).parent.parent.parent.parent.parent
-    from aiva_common.config.paths import (
-        SELF_HEALING_DIR,
-        ensure_directories
-    )
+    from aiva_common.config.paths import SELF_HEALING_DIR, ensure_directories
     USE_INTEGRATED_PATHS = True
 except ImportError:
     USE_INTEGRATED_PATHS = False
@@ -38,18 +33,18 @@ MISSING_CONNECTIONS_REPORT = "missing_connections_full.md"
 try:
     # 從父模組導入 AIVAFlowAnalyzer
     from ..python_tools.aiva_flow_analyzer import AIVAFlowAnalyzer
+
     # 從當前子模組導入其他分析器
     from .analyze_dataflow_breakpoints import DataFlowBreakpointAnalyzer
     from .analyze_missing_function_connections import MissingConnectionAnalyzer
     from .practical_analyzer import PracticalAnalyzer
 except ImportError:
     # 本地測試時
-    import sys
     parent_dir = Path(__file__).parent.parent
-    from python_tools.aiva_flow_analyzer import AIVAFlowAnalyzer
     from analyze_dataflow_breakpoints import DataFlowBreakpointAnalyzer
     from analyze_missing_function_connections import MissingConnectionAnalyzer
     from practical_analyzer import PracticalAnalyzer
+    from python_tools.aiva_flow_analyzer import AIVAFlowAnalyzer
 
 
 @dataclass
@@ -65,20 +60,20 @@ class AnalysisReport:
     total_issues: int = 0
     
     # 問題分級
-    critical_issues: List[Dict] = field(default_factory=list)
-    high_issues: List[Dict] = field(default_factory=list)
-    medium_issues: List[Dict] = field(default_factory=list)
-    low_issues: List[Dict] = field(default_factory=list)
+    critical_issues: list[dict] = field(default_factory=list)
+    high_issues: list[dict] = field(default_factory=list)
+    medium_issues: list[dict] = field(default_factory=list)
+    low_issues: list[dict] = field(default_factory=list)
     
     # 各分析器的詳細結果
-    flow_analysis: Optional[Dict] = None
-    breakpoint_analysis: Optional[Dict] = None
-    connection_analysis: Optional[Dict] = None
+    flow_analysis: dict | None = None
+    breakpoint_analysis: dict | None = None
+    connection_analysis: dict | None = None
     
     # 建議
-    recommendations: List[str] = field(default_factory=list)
+    recommendations: list[str] = field(default_factory=list)
     
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """轉為字典"""
         return {
             'timestamp': self.timestamp,
@@ -195,7 +190,7 @@ def classify_script_type(script_path: str, script_name: str) -> str:
     
     # 2. 檢查文件內容
     try:
-        with open(script_path, 'r', encoding='utf-8') as f:
+        with open(script_path, encoding='utf-8') as f:
             content = f.read()
             
             # 檢查是否有 if __name__ == "__main__"
@@ -226,7 +221,7 @@ class CoreAnalyzer:
     - diagnose_critical_only(): 只檢查 CRITICAL 級別
     """
     
-    def __init__(self, source_root: str, output_dir: Optional[str] = None):
+    def __init__(self, source_root: str, output_dir: str | None = None):
         """
         初始化核心分析器
         
@@ -494,7 +489,7 @@ class CoreAnalyzer:
         
         return report
     
-    def _generate_recommendations(self, report: AnalysisReport) -> List[str]:
+    def _generate_recommendations(self, report: AnalysisReport) -> list[str]:
         """生成修復建議"""
         recommendations = []
         

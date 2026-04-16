@@ -6,22 +6,20 @@ For authorized security testing and educational purposes only
 """
 
 import asyncio
-import logging
-import os
-import subprocess
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime
-from typing import Dict, List, Optional, Any
+import logging
+import subprocess
+from typing import Any
 
 from rich.console import Console
 from rich.panel import Panel
-from rich.prompt import Prompt, Confirm, IntPrompt
+from rich.prompt import Confirm, Prompt
 from rich.table import Table
 from rich.theme import Theme
 
 # Local imports - 使用正確的導入路徑
-from .models import CapabilityRecord, CapabilityType, CapabilityStatus, BaseCapability
-from .registry import CapabilityRegistry
+from .models import BaseCapability
 
 # Setup theme and console
 _theme = Theme({"purple": "#7B61FF"})
@@ -39,9 +37,9 @@ class SteganographyResult:
     duration: float
     success: bool
     output: str = ""
-    error_details: Optional[str] = None
-    target_file: Optional[str] = None
-    hidden_data: Optional[str] = None
+    error_details: str | None = None
+    target_file: str | None = None
+    hidden_data: str | None = None
 
 
 def validate_input(choice, valid_choices):
@@ -67,7 +65,7 @@ class SteganographyTool:
         self.installable = True
         self.runnable = True
 
-    def custom_run(self) -> Optional[SteganographyResult]:
+    def custom_run(self) -> SteganographyResult | None:
         """Override in subclass for custom run behavior"""
         return None
 
@@ -574,7 +572,7 @@ class SteganographyCapability(BaseCapability):
             logger.error(f"Initialization failed: {e}")
             return False
 
-    async def execute(self, command: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, command: str, parameters: dict[str, Any]) -> dict[str, Any]:
         """Execute command"""
         try:
             if command == "interactive_menu":

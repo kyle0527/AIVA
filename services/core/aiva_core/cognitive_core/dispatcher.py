@@ -11,11 +11,9 @@
         dispatcher = CognitiveDispatcher()
         result = dispatcher.call_task_planning_sync("generate", objective="...")
 """
-import asyncio
+from datetime import datetime
 import json
 import subprocess
-from datetime import datetime
-from typing import Any, Dict, Optional
 from uuid import uuid4
 
 
@@ -48,7 +46,7 @@ class CognitiveDispatcher:
                 raise ImportError("MessageBroker not available. Please check service_backbone module.")
         return self._broker
     
-    def _build_message(self, action: str, payload: Optional[Dict] = None) -> Dict:
+    def _build_message(self, action: str, payload: dict | None = None) -> dict:
         """構建統一的消息格式"""
         return {
             "action": action,
@@ -65,7 +63,7 @@ class CognitiveDispatcher:
     async def request_plan(
         self, 
         objective: str, 
-        context: Optional[Dict] = None,
+        context: dict | None = None,
         priority: str = "normal"
     ) -> str:
         """請求 task_planning 生成計劃
@@ -95,7 +93,7 @@ class CognitiveDispatcher:
     async def execute_capability(
         self, 
         capability_id: str, 
-        params: Dict,
+        params: dict,
         wait_for_result: bool = False
     ) -> str:
         """請求 core_capabilities 執行能力
@@ -124,7 +122,7 @@ class CognitiveDispatcher:
     
     async def trigger_learning(
         self, 
-        learning_data: Dict,
+        learning_data: dict,
         learning_type: str = "incremental"
     ) -> str:
         """請求 external_learning 進行學習
@@ -149,7 +147,7 @@ class CognitiveDispatcher:
         )
         return message["correlation_id"]
     
-    async def notify_decision(self, decision: Dict) -> str:
+    async def notify_decision(self, decision: dict) -> str:
         """廣播決策結果
         
         Args:
@@ -170,7 +168,7 @@ class CognitiveDispatcher:
         )
         return message["correlation_id"]
     
-    async def store_result(self, result_type: str, data: Dict) -> str:
+    async def store_result(self, result_type: str, data: dict) -> str:
         """存儲結果到 service_backbone
         
         Args:
@@ -294,7 +292,7 @@ class CognitiveDispatcher:
     async def execute_and_notify(
         self, 
         capability_id: str, 
-        params: Dict,
+        params: dict,
         notify_on_complete: bool = True
     ) -> str:
         """執行能力並在完成後通知
@@ -316,7 +314,7 @@ class CognitiveDispatcher:
         
         return correlation_id
     
-    def get_dispatch_stats(self) -> Dict:
+    def get_dispatch_stats(self) -> dict:
         """獲取發送統計（用於監控）"""
         return {
             "source_module": self.source_module,
@@ -344,16 +342,16 @@ def get_dispatcher() -> CognitiveDispatcher:
     return _dispatcher
 
 
-async def dispatch_to_task_planning(objective: str, context: Optional[Dict] = None):
+async def dispatch_to_task_planning(objective: str, context: dict | None = None):
     """快速發送到 task_planning"""
     return await get_dispatcher().request_plan(objective, context)
 
 
-async def dispatch_to_core_capabilities(capability_id: str, params: Dict):
+async def dispatch_to_core_capabilities(capability_id: str, params: dict):
     """快速發送到 core_capabilities"""
     return await get_dispatcher().execute_capability(capability_id, params)
 
 
-async def dispatch_to_external_learning(learning_data: Dict):
+async def dispatch_to_external_learning(learning_data: dict):
     """快速發送到 external_learning"""
     return await get_dispatcher().trigger_learning(learning_data)

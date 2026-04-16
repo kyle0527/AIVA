@@ -12,11 +12,11 @@
         result = dispatcher.execute_attack_sync("sql_injection", "target.com")
 """
 import asyncio
+from datetime import datetime
 import json
 import subprocess
-from datetime import datetime
-from typing import Any, Dict, List, Optional
 from uuid import uuid4
+
 
 class PlanningDispatcher:
     """任務規劃統一發送器
@@ -47,7 +47,7 @@ class PlanningDispatcher:
                 raise ImportError("MessageBroker not available. Please check service_backbone module.")
         return self._broker
     
-    def _build_message(self, action: str, payload: Optional[Dict] = None) -> Dict:
+    def _build_message(self, action: str, payload: dict | None = None) -> dict:
         """構建統一的消息格式"""
         return {
             "action": action,
@@ -63,9 +63,9 @@ class PlanningDispatcher:
     
     async def execute_plan_step(
         self, 
-        step: Dict, 
+        step: dict, 
         capability_id: str,
-        plan_id: Optional[str] = None
+        plan_id: str | None = None
     ) -> str:
         """執行計劃步驟（發送到 core_capabilities）
         
@@ -93,9 +93,9 @@ class PlanningDispatcher:
     
     async def confirm_decision(
         self, 
-        plan: Dict, 
+        plan: dict, 
         question: str,
-        options: Optional[List[str]] = None
+        options: list[str] | None = None
     ) -> str:
         """請求 cognitive_core 確認決策
         
@@ -126,7 +126,7 @@ class PlanningDispatcher:
     async def query_resource(
         self, 
         resource_type: str,
-        filters: Optional[Dict] = None
+        filters: dict | None = None
     ) -> str:
         """查詢 service_backbone 資源狀態
         
@@ -181,7 +181,7 @@ class PlanningDispatcher:
         self, 
         plan_id: str,
         status: str,
-        details: Optional[Dict] = None
+        details: dict | None = None
     ) -> str:
         """廣播計劃狀態更新
         
@@ -350,9 +350,9 @@ class PlanningDispatcher:
     
     async def execute_plan(
         self, 
-        plan: Dict,
+        plan: dict,
         parallel: bool = False
-    ) -> List[str]:
+    ) -> list[str]:
         """執行整個計劃
         
         Args:
@@ -387,7 +387,7 @@ class PlanningDispatcher:
     
     async def execute_with_confirmation(
         self, 
-        step: Dict,
+        step: dict,
         capability_id: str
     ) -> str:
         """執行前請求確認
@@ -407,7 +407,7 @@ class PlanningDispatcher:
         
         return exec_id
     
-    def get_dispatch_stats(self) -> Dict:
+    def get_dispatch_stats(self) -> dict:
         """獲取發送統計（用於監控）"""
         return {
             "source_module": self.source_module,
@@ -433,11 +433,11 @@ def get_dispatcher() -> PlanningDispatcher:
         _dispatcher = PlanningDispatcher()
     return _dispatcher
 
-async def dispatch_to_core_capabilities(step: Dict, capability_id: str):
+async def dispatch_to_core_capabilities(step: dict, capability_id: str):
     """快速發送到 core_capabilities"""
     return await get_dispatcher().execute_plan_step(step, capability_id)
 
-async def dispatch_to_cognitive_core(plan: Dict, question: str):
+async def dispatch_to_cognitive_core(plan: dict, question: str):
     """快速請求 cognitive_core 確認"""
     return await get_dispatcher().confirm_decision(plan, question)
 

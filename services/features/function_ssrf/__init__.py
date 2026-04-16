@@ -6,9 +6,9 @@ Enhanced SSRF detection capabilities with safe mode support.
 Integrated with AIVA five-module architecture.
 """
 
+from .config.ssrf_config import SsrfConfig
 from .detector.ssrf_detector import SSRFDetector
 from .engine.ssrf_engine import SSRFEngine, SSRFIssue
-from .config.ssrf_config import SsrfConfig
 
 __all__ = ["SSRFDetector", "SSRFEngine", "SSRFIssue", "SsrfConfig"]
 

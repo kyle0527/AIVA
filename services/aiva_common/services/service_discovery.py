@@ -2,7 +2,7 @@
 AIVA Service Discovery System
 AIVA 服務發現系統
 
-實施 TODO 項目 10: 創建服務發現機制
+
 - 動態服務註冊和發現
 - 服務健康檢查
 - 負載均衡和故障轉移

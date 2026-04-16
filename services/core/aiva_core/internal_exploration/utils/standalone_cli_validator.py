@@ -15,12 +15,12 @@ Usage:
     python standalone_cli_validator.py --validate-all
 """
 
-import sys
-import json
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime
 import importlib.util
+import json
+from pathlib import Path
+import sys
+from typing import Any
 
 # ==================== 路徑配置 ====================
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -82,7 +82,7 @@ def load_module_directly(module_name: str, file_path: Path) -> Any:
         print(f"❌ 載入模組失敗 {module_name}: {e}")
         return None
 
-def load_ai_capabilities() -> Dict[str, Any]:
+def load_ai_capabilities() -> dict[str, Any]:
     """
     載入 AI 內部能力模組（無需完整 aiva_core）
     
@@ -101,7 +101,7 @@ def load_ai_capabilities() -> Dict[str, Any]:
         ilc_module = load_module_directly("internal_loop_connector", ilc_path)
         if ilc_module:
             capabilities['internal_loop_connector'] = ilc_module
-            print(f"✅ 載入成功: internal_loop_connector")
+            print("✅ 載入成功: internal_loop_connector")
     
     # 2. 載入 rl_models
     rl_path = AIVA_CORE / "ai_models/rl_models.py"
@@ -109,7 +109,7 @@ def load_ai_capabilities() -> Dict[str, Any]:
         rl_module = load_module_directly("rl_models", rl_path)
         if rl_module:
             capabilities['rl_models'] = rl_module
-            print(f"✅ 載入成功: rl_models")
+            print("✅ 載入成功: rl_models")
     
     # 3. 載入 neural_network
     nn_path = AIVA_CORE / "ai_models/neural_network.py"
@@ -117,12 +117,12 @@ def load_ai_capabilities() -> Dict[str, Any]:
         nn_module = load_module_directly("neural_network", nn_path)
         if nn_module:
             capabilities['neural_network'] = nn_module
-            print(f"✅ 載入成功: neural_network")
+            print("✅ 載入成功: neural_network")
     
     return capabilities
 
 # ==================== 數據載入 ====================
-def load_classification_data() -> Optional[Dict[str, Any]]:
+def load_classification_data() -> dict[str, Any] | None:
     """載入分類數據"""
     data_path = DATA_DIR / "classification_data.json"
     if not data_path.exists():
@@ -130,7 +130,7 @@ def load_classification_data() -> Optional[Dict[str, Any]]:
         return None
     
     try:
-        with open(data_path, 'r', encoding='utf-8') as f:
+        with open(data_path, encoding='utf-8') as f:
             data = json.load(f)
         print(f"✅ 載入分類數據: {len(data.get('flows', []))} 個 flows")
         return data
@@ -138,7 +138,7 @@ def load_classification_data() -> Optional[Dict[str, Any]]:
         print(f"❌ 載入分類數據失敗: {e}")
         return None
 
-def load_analysis_results() -> Optional[Dict[str, Any]]:
+def load_analysis_results() -> dict[str, Any] | None:
     """載入分析結果"""
     data_path = DATA_DIR / "analysis_results.json"
     if not data_path.exists():
@@ -146,7 +146,7 @@ def load_analysis_results() -> Optional[Dict[str, Any]]:
         return None
     
     try:
-        with open(data_path, 'r', encoding='utf-8') as f:
+        with open(data_path, encoding='utf-8') as f:
             data = json.load(f)
         print(f"✅ 載入分析結果: {len(data.get('flows', []))} 個 flows")
         return data
@@ -155,7 +155,7 @@ def load_analysis_results() -> Optional[Dict[str, Any]]:
         return None
 
 # ==================== CLI 驗證功能 ====================
-def validate_flow_parameters(flow_data: Dict[str, Any]) -> Tuple[bool, List[str]]:
+def validate_flow_parameters(flow_data: dict[str, Any]) -> tuple[bool, list[str]]:
     """
     驗證單一 flow 的參數配置
     
@@ -193,7 +193,7 @@ def validate_flow_parameters(flow_data: Dict[str, Any]) -> Tuple[bool, List[str]
     
     return len(errors) == 0, errors
 
-def list_all_capabilities(classification_data: Dict[str, Any]) -> None:
+def list_all_capabilities(classification_data: dict[str, Any]) -> None:
     """列出所有能力"""
     flows = classification_data.get('flows', [])
     
@@ -223,18 +223,18 @@ def list_all_capabilities(classification_data: Dict[str, Any]) -> None:
         else:
             non_ai.append(flow)
     
-    print(f"📊 按 AI 類型分類:")
+    print("📊 按 AI 類型分類:")
     print(f"  - AI內部能力: {len(ai_internal)} 個")
     print(f"  - AI對外能力: {len(ai_external)} 個")
     print(f"  - 非AI能力: {len(non_ai)} 個\n")
     
-    print(f"📦 按模組分類:")
+    print("📦 按模組分類:")
     for module, module_flows in sorted(by_module.items()):
         print(f"  - {module}: {len(module_flows)} 個能力")
     
     print(f"\n{'='*80}")
 
-def validate_single_flow(flow_number: int, classification_data: Dict[str, Any]) -> None:
+def validate_single_flow(flow_number: int, classification_data: dict[str, Any]) -> None:
     """驗證單一 flow"""
     flows = classification_data.get('flows', [])
     
@@ -285,7 +285,7 @@ def validate_single_flow(flow_number: int, classification_data: Dict[str, Any]) 
     
     print(f"\n{'='*80}")
 
-def validate_all_flows(classification_data: Dict[str, Any]) -> None:
+def validate_all_flows(classification_data: dict[str, Any]) -> None:
     """驗證所有 flows"""
     flows = classification_data.get('flows', [])
     
@@ -311,7 +311,7 @@ def validate_all_flows(classification_data: Dict[str, Any]) -> None:
     print(f"❌ 無效: {invalid_count} 個")
     
     if invalid_flows:
-        print(f"\n無效 Flows 詳情:")
+        print("\n無效 Flows 詳情:")
         for flow_num, errors in invalid_flows[:10]:  # 只顯示前 10 個
             print(f"\n  Flow {flow_num}:")
             for error in errors:
@@ -322,7 +322,7 @@ def validate_all_flows(classification_data: Dict[str, Any]) -> None:
     
     print(f"\n{'='*80}")
 
-def test_ai_capability(capability_name: str, capabilities: Dict[str, Any]) -> None:
+def test_ai_capability(capability_name: str, capabilities: dict[str, Any]) -> None:
     """測試 AI 能力"""
     if capability_name not in capabilities:
         print(f"❌ 能力 {capability_name} 未載入")
@@ -338,7 +338,7 @@ def test_ai_capability(capability_name: str, capabilities: Dict[str, Any]) -> No
         if capability_name == 'internal_loop_connector':
             # 測試 CapabilityScopeClassifier
             classifier = module.CapabilityScopeClassifier()
-            print(f"✅ 成功創建 CapabilityScopeClassifier")
+            print("✅ 成功創建 CapabilityScopeClassifier")
             
             # 測試分類
             test_file = "services/core/aiva_core/cognitive_core/internal_loop_connector.py"
@@ -349,15 +349,15 @@ def test_ai_capability(capability_name: str, capabilities: Dict[str, Any]) -> No
             # 測試 DQN
             if hasattr(module, 'DQN'):
                 # 注意: 需要 torch，這裡只能檢查類是否存在
-                print(f"✅ DQN 類存在 (需要 torch 才能實例化)")
+                print("✅ DQN 類存在 (需要 torch 才能實例化)")
             
             if hasattr(module, 'PPO'):
-                print(f"✅ PPO 類存在 (需要 torch 才能實例化)")
+                print("✅ PPO 類存在 (需要 torch 才能實例化)")
         
         elif capability_name == 'neural_network':
             # 測試 neural_network
             if hasattr(module, 'NeuralNetwork'):
-                print(f"✅ NeuralNetwork 類存在 (需要 torch 才能實例化)")
+                print("✅ NeuralNetwork 類存在 (需要 torch 才能實例化)")
         
     except Exception as e:
         print(f"❌ 測試失敗: {e}")
@@ -396,7 +396,7 @@ def main():
     args = parser.parse_args()
     
     print(f"\n{'='*80}")
-    print(f"AIVA CLI 驗證器 v1.0")
+    print("AIVA CLI 驗證器 v1.0")
     print(f"時間: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"{'='*80}\n")
     

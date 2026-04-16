@@ -8,8 +8,12 @@ from dataclasses import asdict, dataclass, field
 import logging
 from typing import Any
 
+from services.core.aiva_core.task_planning.planner.ast_parser import (
+    AttackFlowGraph,
+    NodeType,
+)
+
 from ..tracing.trace_recorder import ExecutionTrace, TraceType
-from services.core.aiva_core.task_planning.planner.ast_parser import AttackFlowGraph, NodeType
 
 logger = logging.getLogger(__name__)
 

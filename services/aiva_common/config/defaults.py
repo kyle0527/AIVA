@@ -6,7 +6,6 @@ v2.0 架構：移除外部服務依賴（RabbitMQ、PostgreSQL、Redis）
 
 from pathlib import Path
 
-
 # ============================================================================
 # ✅ 已移除資料庫配置 (v2.0)
 # ============================================================================
@@ -61,7 +60,7 @@ def get_integration_paths(base_dir: str | Path) -> dict:
         包含所有子路徑的字典
     """
     base = Path(base_dir)
-    
+
     return {
         "attack_graph_file": base / "attack_paths" / "attack_graph.pkl",
         "experience_db_url": f"sqlite:///{base / 'experiences' / 'experience.db'}",

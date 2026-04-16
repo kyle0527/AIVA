@@ -8,7 +8,9 @@ from collections.abc import Callable
 from contextlib import suppress
 import json
 import logging
-from typing import Any
+from typing import (
+    Any,  # 添加缺少的類型
+)
 
 import aio_pika
 from aio_pika.abc import (
@@ -18,10 +20,13 @@ from aio_pika.abc import (
     AbstractQueue,
     AbstractRobustConnection,
 )
-from typing import Any, Dict  # 添加缺少的類型
-
-from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
 from aiva_common.config import get_settings
+from aiva_common.core.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
 from aiva_common.enums.modules import ModuleName
 from aiva_common.schemas import AivaMessage
 
@@ -419,13 +424,11 @@ class RPCClient:
 
 # ==================== 事件驅動系統增強 (整合自 AI 模組) ====================
 
-import uuid
-import weakref
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Dict, List, Optional, Set, Union
+import uuid
 
 
 class EventPriority(Enum):
@@ -442,16 +445,16 @@ class AIVAEvent:
     # 事件識別 (必需參數)
     event_type: str
     source_module: str
-    data: Dict[str, Any]
+    data: dict[str, Any]
     
     # 可選參數 (有默認值)
     event_id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     source_version: str = "v2.0"
     
     # 關聯資訊
-    correlation_id: Optional[str] = None
-    causation_id: Optional[str] = None
+    correlation_id: str | None = None
+    causation_id: str | None = None
     
     # 控制資訊
     priority: EventPriority = EventPriority.NORMAL
@@ -460,14 +463,14 @@ class AIVAEvent:
     max_retries: int = 3
     
     # 路由資訊
-    target_modules: Optional[List[str]] = None
+    target_modules: list[str] | None = None
     
     # 元數據
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
     
     def is_expired(self) -> bool:
         """檢查事件是否已過期"""
-        elapsed = (datetime.now(timezone.utc) - self.timestamp).total_seconds()
+        elapsed = (datetime.now(UTC) - self.timestamp).total_seconds()
         return elapsed > self.ttl_seconds
     
     def can_retry(self) -> bool:
@@ -479,12 +482,12 @@ class AIVAEvent:
 class EventSubscription:
     """事件訂閱 (整合自 AI 模組)"""
     module_name: str
-    event_types: List[str]
+    event_types: list[str]
     handler: Callable[[AIVAEvent], Any]
     
     subscription_id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    filter_func: Optional[Callable[[AIVAEvent], bool]] = None
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    filter_func: Callable[[AIVAEvent], bool] | None = None
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     active: bool = True
     
     def matches(self, event: AIVAEvent) -> bool:
@@ -530,11 +533,11 @@ class EnhancedMessageBroker(MessageBroker):
         super().__init__(module_name)
         
         # 事件系統組件
-        self._subscriptions: Dict[str, List[EventSubscription]] = defaultdict(list)
+        self._subscriptions: dict[str, list[EventSubscription]] = defaultdict(list)
         self._event_store: deque[AIVAEvent] = deque(maxlen=10000)  # 內存事件存儲
         self._processing = False
         self._event_queue: asyncio.Queue[AIVAEvent] = asyncio.Queue()
-        self._processors: List[asyncio.Task] = []
+        self._processors: list[asyncio.Task] = []
         
         logger.info(f"EnhancedMessageBroker initialized with event system for {module_name.value}")
     
@@ -585,9 +588,9 @@ class EnhancedMessageBroker(MessageBroker):
     
     async def subscribe_event(self, 
                              module_name: str,
-                             event_types: List[str],
+                             event_types: list[str],
                              handler: Callable[[AIVAEvent], Any],
-                             filter_func: Optional[Callable[[AIVAEvent], bool]] = None) -> str:
+                             filter_func: Callable[[AIVAEvent], bool] | None = None) -> str:
         """訂閱事件
         
         Args:
@@ -657,7 +660,7 @@ class EnhancedMessageBroker(MessageBroker):
                     # 處理事件
                     await self._handle_event(event, processor_name)
                     
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     continue  # 超時，繼續下一輪循環
                 except Exception as e:
                     logger.error(f"Event processor {processor_name} error: {e}")
@@ -708,7 +711,7 @@ class EnhancedMessageBroker(MessageBroker):
                 f"(processor: {processor_name})"
             )
     
-    def get_event_statistics(self) -> Dict[str, Any]:
+    def get_event_statistics(self) -> dict[str, Any]:
         """獲取事件系統統計信息
         
         Returns:
@@ -727,7 +730,7 @@ class EnhancedMessageBroker(MessageBroker):
 
 
 # 全域增強消息代理實例
-_enhanced_broker: Optional[EnhancedMessageBroker] = None
+_enhanced_broker: EnhancedMessageBroker | None = None
 
 
 def get_enhanced_message_broker(module_name: ModuleName = ModuleName.CORE) -> EnhancedMessageBroker:
@@ -746,9 +749,9 @@ def get_enhanced_message_broker(module_name: ModuleName = ModuleName.CORE) -> En
 
 
 # 便捷函數
-async def publish_aiva_event(event_type: str, source_module: str, data: Dict[str, Any], 
+async def publish_aiva_event(event_type: str, source_module: str, data: dict[str, Any], 
                             priority: EventPriority = EventPriority.NORMAL,
-                            target_modules: Optional[List[str]] = None) -> None:
+                            target_modules: list[str] | None = None) -> None:
     """發布 AIVA 事件的便捷函數
     
     Args:
@@ -770,7 +773,7 @@ async def publish_aiva_event(event_type: str, source_module: str, data: Dict[str
 
 
 async def subscribe_aiva_events(module_name: str, 
-                               event_types: List[str],
+                               event_types: list[str],
                                handler: Callable[[AIVAEvent], Any]) -> str:
     """訂閱 AIVA 事件的便捷函數
     

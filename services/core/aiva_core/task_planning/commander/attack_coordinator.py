@@ -5,9 +5,10 @@
 """
 
 import asyncio
-import logging
 from datetime import datetime
-from typing import Any, Optional
+import logging
+from typing import Any
+
 import httpx
 
 # 初始化 logger（必須在任何使用 logger 的地方之前）
@@ -16,12 +17,12 @@ logger = logging.getLogger(__name__)
 # RAG 決策引擎整合
 try:
     from services.core.aiva_core.cognitive_core.learning_system.cli_decision_engine import (
+        AttackCapability,
         CLIDecisionEngine,
-        AttackCapability
     )
     from services.core.aiva_core.cognitive_core.learning_system.flow_executor_adapter import (
+        ExecutionConfig,
         FlowExecutorAdapter,
-        ExecutionConfig
     )
     RAG_AVAILABLE = True
 except ImportError:
@@ -30,7 +31,9 @@ except ImportError:
 
 # 強制依賴檢查 - Fail Fast 原則
 try:
-    from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator  # type: ignore[import-not-found]
+    from services.scan.coordinators.multi_engine_coordinator import (
+        MultiEngineCoordinator,  # type: ignore[import-not-found]
+    )
 except ImportError as e:
     raise ImportError(
         "❌ 缺少必要依賴 MultiEngineCoordinator\n"
@@ -39,7 +42,10 @@ except ImportError as e:
     ) from e
 
 try:
-    from services.features.function_exploit.executor.attack_executor import AttackExecutor, ExecutionMode
+    from services.features.function_exploit.executor.attack_executor import (
+        AttackExecutor,
+        ExecutionMode,
+    )
 except ImportError as e:
     raise ImportError(
         "❌ 缺少必要依賴 AttackExecutor\n"
@@ -48,13 +54,19 @@ except ImportError as e:
     ) from e
 
 # 核心檢測器導入
-from services.features.function_xss.traditional_detector import TraditionalXssDetector
-from services.features.function_xss.payload_generator import XssPayloadGenerator
-from services.features.function_sqli.detector.sqli_detector import SqliDetector
+from aiva_common.enums import Confidence, Severity, VulnerabilityType
+from aiva_common.schemas.findings import (
+    FindingEvidence,
+    FindingPayload,
+    FindingTarget,
+    Vulnerability,
+)
 from aiva_common.schemas.tasks import FunctionTaskPayload, FunctionTaskTarget
-from aiva_common.schemas.findings import FindingPayload, Vulnerability, FindingEvidence, FindingTarget
-from aiva_common.enums import VulnerabilityType, Severity, Confidence
 from aiva_common.utils import new_id
+
+from services.features.function_sqli.detector.sqli_detector import SqliDetector
+from services.features.function_xss.payload_generator import XssPayloadGenerator
+from services.features.function_xss.traditional_detector import TraditionalXssDetector
 
 
 class AttackCoordinator:
@@ -131,7 +143,6 @@ class AttackCoordinator:
         Returns:
             執行結果字典 {"success": bool, "stdout": str, "stderr": str, "returncode": int}
         """
-        import json
         subprocess = self._cli_executor["subprocess"]
         timeout = timeout or self._cli_executor["timeout"]
 
@@ -585,7 +596,7 @@ class AttackCoordinator:
         scan_id = context.get("scan_id", trace_id)
 
         # 輔助函數：更新狀態
-        def update_status(step: int, phase: str, status: str, details: Optional[dict[str, Any]] = None):
+        def update_status(step: int, phase: str, status: str, details: dict[str, Any] | None = None):
             if self.session_state_manager:
                 self.session_state_manager.update_session_status(
                     scan_id,
@@ -864,8 +875,9 @@ class AttackCoordinator:
 
     async def _execute_port_scanner_tool(self, task: dict[str, Any]) -> dict[str, Any]:
         """執行端口掃描"""
-        import httpx
         from urllib.parse import urlparse
+
+        import httpx
 
         target = task["parameters"].get("target", "")
         parsed = urlparse(target if "://" in target else f"http://{target}")
@@ -1256,7 +1268,9 @@ class AttackCoordinator:
             logger.info(f"📋 已解析任務參數: target={scan_context.target}, "
                        f"intent={scan_context.intent}")
 
-            from ...cognitive_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
+            from ...cognitive_core.decision.enhanced_decision_agent import (
+                EnhancedDecisionAgent,
+            )
             decision_agent = EnhancedDecisionAgent()
             ai_decision = decision_agent.decide_scan_strategy(scan_context)
 

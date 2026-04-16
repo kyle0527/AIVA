@@ -1,13 +1,14 @@
 """AIVA 統一 CLI 入口點 - 基於動態 Flow 的函數調用系統"""
-import click
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
+
+import click
 
 # 統一使用 FlowExecutor（來自 internal_exploration）
 # ManifestLoader 已棄用 - manifests/capabilities 目錄已移除
 
-def load_flow_definitions() -> List[Dict[str, Any]]:
+def load_flow_definitions() -> list[dict[str, Any]]:
     """從 latest_classification.json 讀取所有 flows
     
     Returns:
@@ -35,7 +36,7 @@ def load_flow_definitions() -> List[Dict[str, Any]]:
     click.echo("⚠️  未找到 flow 定義文件", err=True)
     return []
 
-def create_flow_command(flow_id: int, flow_info: Dict[str, Any]):
+def create_flow_command(flow_id: int, flow_info: dict[str, Any]):
     """為指定 flow_id 創建命令函數
     
     Args:
@@ -102,7 +103,9 @@ def create_flow_command(flow_id: int, flow_info: Dict[str, Any]):
         
         # 執行 Flow
         try:
-            from services.core.aiva_core.internal_exploration.aiva_internal_executor import FlowExecutor
+            from services.core.aiva_core.internal_exploration.aiva_internal_executor import (
+                FlowExecutor,
+            )
             
             executor = FlowExecutor()
             click.echo("\n⏳ 執行中...")
@@ -162,7 +165,6 @@ def aiva():
         aiva flow<ID> --target <目標> -i <強度>
         aiva list-flows  # 查看所有可用 flows
     """
-    pass
 
 @aiva.command()
 @click.argument('flow_id', type=int)
@@ -182,7 +184,9 @@ def run(flow_id: int, context: str, intensity: float):
         context_data = json.loads(context)
         
         # 使用 FlowExecutor 執行
-        from services.core.aiva_core.internal_exploration.aiva_internal_executor import FlowExecutor
+        from services.core.aiva_core.internal_exploration.aiva_internal_executor import (
+            FlowExecutor,
+        )
         
         executor = FlowExecutor()
         flow = executor.get_flow_by_id(flow_id)
@@ -326,7 +330,7 @@ def list_flows(limit, module, by_endpoint, stats):
         click.echo(f"\n使用 'aiva list-flows --limit {len(flows)}' 查看全部")
         click.echo("使用 'aiva flow<ID> --help' 查看特定 flow 的詳情")
 
-def show_flow_statistics(flows: List[Dict[str, Any]]):
+def show_flow_statistics(flows: list[dict[str, Any]]):
     """顯示 Flow 統計信息"""
     from collections import Counter
     
@@ -337,7 +341,7 @@ def show_flow_statistics(flows: List[Dict[str, Any]]):
     
     # 按終點模組統計（六大模組）
     endpoint_modules = Counter(f.get('endpoint_module', 'unknown') for f in flows)
-    click.echo(f"\n按終點模組分佈:")
+    click.echo("\n按終點模組分佈:")
     for module, count in sorted(endpoint_modules.items(), key=lambda x: -x[1]):
         percentage = (count / len(flows)) * 100
         bar = '█' * int(percentage / 2)
@@ -345,27 +349,27 @@ def show_flow_statistics(flows: List[Dict[str, Any]]):
     
     # 按主要模組統計
     primary_modules = Counter(f.get('primary_module', 'unknown') for f in flows)
-    click.echo(f"\n按主要模組分佈:")
+    click.echo("\n按主要模組分佈:")
     for module, count in sorted(primary_modules.items(), key=lambda x: -x[1]):
         percentage = (count / len(flows)) * 100
         click.echo(f"  {module:20s}: {count:4d} ({percentage:5.1f}%)")
     
     # 按路徑長度統計
     lengths = Counter(f.get('length', 0) for f in flows)
-    click.echo(f"\n按路徑長度分佈:")
+    click.echo("\n按路徑長度分佈:")
     for length, count in sorted(lengths.items()):
         click.echo(f"  {length} 步: {count:4d} 個 flows")
     
     # 組件類型統計
     component_types = Counter(f.get('primary_component_type', 'unknown') for f in flows)
-    click.echo(f"\n按組件類型分佈:")
+    click.echo("\n按組件類型分佈:")
     for comp_type, count in component_types.items():
         percentage = (count / len(flows)) * 100
         click.echo(f"  {comp_type:15s}: {count:4d} ({percentage:5.1f}%)")
     
     click.echo()
 
-def show_flows_by_endpoint_module(flows: List[Dict[str, Any]], limit_per_module: int):
+def show_flows_by_endpoint_module(flows: list[dict[str, Any]], limit_per_module: int):
     """按終點模組（六大模組）分類顯示 Flows"""
     from collections import defaultdict
     
@@ -413,7 +417,7 @@ def show_flows_by_endpoint_module(flows: List[Dict[str, Any]], limit_per_module:
     # 顯示未分類的
     other_modules = set(flows_by_endpoint.keys()) - set(five_modules)
     if other_modules:
-        click.echo(f"🔹 其他模組")
+        click.echo("🔹 其他模組")
         click.echo("-" * 70)
         for module in sorted(other_modules):
             module_flows = flows_by_endpoint[module]

@@ -13,14 +13,14 @@ AIVA Infrastructure Domain Schemas
 
 from .assets import *
 from .plugins import *
-from .telemetry import *
 from .system import *
+from .telemetry import *
 
 __all__ = [
     # 資產管理 (assets.py)
     "AssetLifecyclePayload",
     "VulnerabilityLifecyclePayload",
-    "VulnerabilityUpdatePayload", 
+    "VulnerabilityUpdatePayload",
     "DiscoveredAsset",
     "TechnicalFingerprint",
     "AssetInventoryItem",
@@ -29,10 +29,10 @@ __all__ = [
     "PluginManifest",
     "PluginExecutionContext",
     "PluginExecutionResult",
-    "PluginConfig", 
+    "PluginConfig",
     "PluginRegistry",
     "PluginHealthCheck",
-    # 遙測監控 (telemetry.py)  
+    # 遙測監控 (telemetry.py)
     "HeartbeatPayload",
     "ModuleStatus",
     "FunctionTelemetry",
@@ -42,14 +42,14 @@ __all__ = [
     "EarlyStoppingInfo",
     "AdaptiveBehaviorInfo",
     "FunctionExecutionResult",
-    "OastEvent", 
+    "OastEvent",
     "OastProbe",
     "SIEMEventPayload",
     "SIEMEvent",
     "NotificationPayload",
     # 系統編排 (system.py)
     "SessionState",
-    "ModelTrainingResult", 
+    "ModelTrainingResult",
     "TaskQueue",
     "SystemOrchestration",
     "WebhookPayload",

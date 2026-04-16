@@ -19,11 +19,7 @@ import hashlib
 import platform
 from typing import Any
 
-import structlog
-from typing import Dict, Any
-from datetime import datetime
 from aiva_common.utils.logging import get_logger
-from aiva_common.enums import VulnerabilityType, Severity, Confidence
 
 logger = get_logger(__name__)
 
@@ -39,12 +35,12 @@ class EnhancedPrivilegeAnalyzer:
         self.analysis_results = []
         self.system_info = {}
     
-    async def analyze_system_permissions(self) -> Dict[str, Any]:
+    async def analyze_system_permissions(self) -> dict[str, Any]:
         """分析系統權限配置"""
         try:
             import os
-            import subprocess
             import platform
+            import subprocess
             
             logger.info("開始分析系統權限配置")
             

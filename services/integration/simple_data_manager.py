@@ -13,11 +13,11 @@
 - 学习系统 → 读取完整历史数据
 """
 
-import json
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+import json
 import logging
+from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -41,10 +41,10 @@ class SimpleDataManager:
         capability: str,  # 能力类型: xss, sqli, ssrf, phase0, phase1 等
         task_id: str,
         target: str,
-        request_data: Dict[str, Any],
-        response_data: Optional[Dict[str, Any]] = None,
-        result_data: Optional[Dict[str, Any]] = None,
-        metadata: Optional[Dict[str, Any]] = None
+        request_data: dict[str, Any],
+        response_data: dict[str, Any] | None = None,
+        result_data: dict[str, Any] | None = None,
+        metadata: dict[str, Any] | None = None
     ) -> bool:
         """
         保存任务数据（按能力分类）
@@ -91,10 +91,10 @@ class SimpleDataManager:
     def load_capability_data(
         self,
         capability: str,
-        limit: Optional[int] = None,
-        start_time: Optional[datetime] = None,
-        end_time: Optional[datetime] = None
-    ) -> List[Dict[str, Any]]:
+        limit: int | None = None,
+        start_time: datetime | None = None,
+        end_time: datetime | None = None
+    ) -> list[dict[str, Any]]:
         """
         读取指定能力的历史数据
         
@@ -115,7 +115,7 @@ class SimpleDataManager:
                 return []
             
             records = []
-            with open(capability_file, "r", encoding="utf-8") as f:
+            with open(capability_file, encoding="utf-8") as f:
                 for line in f:
                     if not line.strip():
                         continue
@@ -145,8 +145,8 @@ class SimpleDataManager:
     
     def load_all_data(
         self,
-        limit_per_capability: Optional[int] = None
-    ) -> Dict[str, List[Dict[str, Any]]]:
+        limit_per_capability: int | None = None
+    ) -> dict[str, list[dict[str, Any]]]:
         """
         读取所有能力的数据
         
@@ -173,7 +173,7 @@ class SimpleDataManager:
         
         return all_data
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         获取数据统计信息
         
@@ -190,7 +190,7 @@ class SimpleDataManager:
             capability = jsonl_file.stem
             
             # 统计行数
-            with open(jsonl_file, "r", encoding="utf-8") as f:
+            with open(jsonl_file, encoding="utf-8") as f:
                 count = sum(1 for line in f if line.strip())
             
             stats["capabilities"][capability] = {

@@ -4,7 +4,7 @@
 此模組定義了資產探索、資產生命週期管理、EASM 等相關的資料模型。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -39,7 +39,7 @@ class AssetLifecyclePayload(BaseModel):
     team: str | None = None
     compliance_tags: list[ComplianceFramework] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class VulnerabilityLifecyclePayload(BaseModel):
@@ -55,8 +55,8 @@ class VulnerabilityLifecyclePayload(BaseModel):
     exploitability: Exploitability | None = None
     assigned_to: str | None = None
     due_date: datetime | None = None
-    first_detected: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    last_seen: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    first_detected: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    last_seen: datetime = Field(default_factory=lambda: datetime.now(UTC))
     resolution_date: datetime | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -70,7 +70,7 @@ class VulnerabilityUpdatePayload(BaseModel):
     comment: str | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
     updated_by: str | None = None
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class DiscoveredAsset(BaseModel):
@@ -82,7 +82,7 @@ class DiscoveredAsset(BaseModel):
     discovery_method: str
     confidence: Confidence
     metadata: dict[str, Any] = Field(default_factory=dict)
-    discovered_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # ============================================================================
@@ -123,8 +123,8 @@ class AssetInventoryItem(BaseModel):
     risk_score: float = Field(ge=0.0, le=10.0, description="風險評分")
 
     # 時間戳
-    discovered_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 

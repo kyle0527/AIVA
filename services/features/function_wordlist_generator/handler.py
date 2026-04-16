@@ -22,31 +22,24 @@ Usage:
     result = await wordlist_handler.handle_command(command)
 """
 
-import asyncio
-import time
-from typing import Any, Dict, Optional, List
 from datetime import datetime
+import time
+from typing import Any
 
 # aiva_common 標準導入
 from aiva_common.command_center import CommandHandler
-from aiva_common.schemas.commands import (
-    AICommand, 
-    CommandType
-)
-from aiva_common.utils import get_logger
-from aiva_common.schemas.commands import AICommandResult, CommandStatus, CommandContext
 from aiva_common.core.command_center import CommandHandler
+from aiva_common.schemas.commands import (
+    AICommand,
+    AICommandResult,
+    CommandContext,
+    CommandStatus,
+    CommandType,
+)
 from aiva_common.utils import get_logger
 
 # 現有 Wordlist Generator 功能導入
 from .manager import WordlistGeneratorManager
-from .models import (
-    GenerationStrategy,
-    CharsetType,
-    GeneratorConfig,
-    GeneratorResult,
-    WordlistStats
-)
 
 logger = get_logger(__name__)
 
@@ -67,7 +60,7 @@ class WordlistGeneratorCommandHandler(CommandHandler):
     async def handle_command(
         self, 
         command: AICommand,
-        context: Optional[CommandContext] = None
+        context: CommandContext | None = None
     ) -> AICommandResult:
         """處理 AI 命令
         
@@ -209,9 +202,9 @@ class WordlistGeneratorCommandHandler(CommandHandler):
     async def _execute_operation(
         self,
         operation: str,
-        config: Dict[str, Any],
-        context: Optional[CommandContext] = None
-    ) -> Dict[str, Any]:
+        config: dict[str, Any],
+        context: CommandContext | None = None
+    ) -> dict[str, Any]:
         """執行具體的字典生成操作
         
         Args:
@@ -246,7 +239,7 @@ class WordlistGeneratorCommandHandler(CommandHandler):
                 "error_details": {"type": type(e).__name__, "message": str(e)}
             }
     
-    async def _generate_combination(self, config: Dict[str, Any]) -> Dict[str, Any]:
+    async def _generate_combination(self, config: dict[str, Any]) -> dict[str, Any]:
         """生成組合字典"""
         charset = config.get("charset", "abcdefghijklmnopqrstuvwxyz")
         min_length = config.get("min_length", 6)
@@ -269,7 +262,7 @@ class WordlistGeneratorCommandHandler(CommandHandler):
             "error": result.error
         }
     
-    async def _generate_cupp(self, config: Dict[str, Any]) -> Dict[str, Any]:
+    async def _generate_cupp(self, config: dict[str, Any]) -> dict[str, Any]:
         """生成基於目標資訊的字典 (CUPP)"""
         name = config.get("name")
         if not name:
@@ -299,7 +292,7 @@ class WordlistGeneratorCommandHandler(CommandHandler):
             "error": result.error
         }
     
-    async def _merge_wordlists(self, config: Dict[str, Any]) -> Dict[str, Any]:
+    async def _merge_wordlists(self, config: dict[str, Any]) -> dict[str, Any]:
         """合併多個字典"""
         input_files = config.get("input_files", [])
         if not input_files:
@@ -329,7 +322,7 @@ class WordlistGeneratorCommandHandler(CommandHandler):
             "error": result.error
         }
     
-    async def _analyze_wordlist(self, config: Dict[str, Any]) -> Dict[str, Any]:
+    async def _analyze_wordlist(self, config: dict[str, Any]) -> dict[str, Any]:
         """分析字典統計資訊"""
         file_path = config.get("file_path")
         if not file_path:

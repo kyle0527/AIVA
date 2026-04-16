@@ -1,4 +1,3 @@
-# coding=utf-8
 import os
 import sys
 
@@ -7,14 +6,12 @@ current_dir = os.path.dirname(__file__)
 parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
-from core import HackingTool
-from core import HackingToolsCollection
-
+from core import HackingTool, HackingToolsCollection
 from rich.console import Console
 from rich.panel import Panel
-from rich.text import Text
-from rich.table import Table
 from rich.prompt import Prompt
+from rich.table import Table
+from rich.text import Text
 
 console = Console()
 PURPLE_STYLE = "bold magenta"
@@ -127,7 +124,7 @@ class ForensicTools(HackingToolsCollection):
             url = self._get_attr(t, "PROJECT_URL", "PROJECT_URL", "PROJECT", "project_url", "projectUrl", default="")
             table.add_row(str(title), str(desc).replace("\n", " "), str(url))
 
-        console.print(Panel(table, title=f"[magenta]Available Tools[/magenta]", border_style=PURPLE_STYLE))
+        console.print(Panel(table, title="[magenta]Available Tools[/magenta]", border_style=PURPLE_STYLE))
 
     def show_options(self, parent=None):
         console.print("\n")

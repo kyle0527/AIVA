@@ -10,18 +10,17 @@ AIVA BizLogic Integration Tools
 """
 
 import asyncio
-import logging
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Optional, Any
+import logging
+from typing import Any
 
-from aiva_common.schemas import APIResponse
-from aiva_common.enums import Severity
 from aiva_common.schemas.tasks import FunctionTaskPayload
+
+from ..price_manipulation_scanner import PriceManipulationScanner
 
 # 導入掃描器
 from ..race_condition_scanner import RaceConditionScanner
-from ..price_manipulation_scanner import PriceManipulationScanner
 from ..workflow_bypass_scanner import WorkflowBypassScanner
 
 logger = logging.getLogger(__name__)
@@ -32,9 +31,9 @@ class BizLogicTarget:
     """業務邏輯檢測目標"""
     url: str
     method: str = "POST"
-    parameters: Optional[Dict[str, Any]] = None
-    headers: Optional[Dict[str, str]] = None
-    authorization_token: Optional[str] = None
+    parameters: dict[str, Any] | None = None
+    headers: dict[str, str] | None = None
+    authorization_token: str | None = None
     user_role: str = "customer"
     
     def __post_init__(self):
@@ -52,11 +51,11 @@ class BizLogicVulnerability:
     severity: str
     confidence: str
     target_url: str
-    evidence: Dict[str, Any]
+    evidence: dict[str, Any]
     description: str
     business_impact: str
     remediation: str
-    timestamp: Optional[str] = None
+    timestamp: str | None = None
     
     def __post_init__(self):
         if self.timestamp is None:
@@ -69,7 +68,7 @@ class BizLogicScanOptions:
     # 競態條件選項
     test_race_condition: bool = True
     concurrent_count: int = 10
-    race_test_endpoints: List[str] = None
+    race_test_endpoints: list[str] = None
     
     # 價格操控選項
     test_price_manipulation: bool = True
@@ -79,7 +78,7 @@ class BizLogicScanOptions:
     
     # 工作流程繞過選項
     test_workflow_bypass: bool = True
-    workflow_steps: List[str] = None
+    workflow_steps: list[str] = None
     checkout_endpoint: str = "/checkout"
     
     def __post_init__(self):
@@ -103,8 +102,8 @@ class BizLogicManager:
     async def comprehensive_scan(
         self,
         target_url: str,
-        options: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        options: dict[str, Any]
+    ) -> dict[str, Any]:
         """執行全面的業務邏輯掃描
         
         Args:
@@ -267,8 +266,8 @@ class BizLogicManager:
     def scan_sync(
         self,
         target_url: str,
-        options: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        options: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """執行掃描 (同步接口)
         
         這是功能模組的主要接口，提供同步調用方式。
@@ -322,7 +321,7 @@ class BizLogicManager:
         self,
         task: FunctionTaskPayload,
         options: BizLogicScanOptions
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """執行掃描 (FunctionTaskPayload 接口 - 異步)
         
         Args:
@@ -357,7 +356,7 @@ class BizLogicManager:
         scanner: RaceConditionScanner,
         endpoint: str,
         concurrent_count: int
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """包裝競態條件測試"""
         try:
             return await scanner.test_concurrent_requests(
@@ -372,7 +371,7 @@ class BizLogicManager:
         self,
         test_func,
         endpoint: str
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """包裝價格測試"""
         try:
             return await test_func(endpoint)
@@ -384,7 +383,7 @@ class BizLogicManager:
         self,
         test_func,
         *args
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """包裝工作流程測試"""
         try:
             return await test_func(*args)

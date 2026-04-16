@@ -5,7 +5,7 @@
 威脅情報查詢任務等。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field, HttpUrl, field_validator
@@ -95,7 +95,7 @@ class Phase0StartPayload(BaseModel):
     - 基礎端點發現
     - 初步攻擊面評估
     """
-    
+
     scan_id: str = Field(..., description=SCAN_TASK_ID_DESCRIPTION)
     targets: list[HttpUrl] = Field(..., description="目標 URL 列表")
     scope: ScanScope = Field(default_factory=ScanScope, description="掃描範圍")
@@ -104,7 +104,7 @@ class Phase0StartPayload(BaseModel):
     custom_headers: dict[str, str] = Field(default_factory=dict, description="自定義 HTTP 頭")
     max_depth: int = Field(default=3, ge=1, le=5, description="最大爬取深度")
     timeout: int = Field(default=600, ge=60, le=1800, description="超時時間（秒）")
-    
+
     @field_validator("scan_id")
     @classmethod
     def validate_scan_id(cls, v: str) -> str:
@@ -120,26 +120,26 @@ class Phase0CompletedPayload(BaseModel):
     
     返回初步資產清單和技術棧資訊，供 Core 決定是否執行 Phase 1
     """
-    
+
     scan_id: str = Field(..., description=SCAN_TASK_ID_DESCRIPTION)
     status: str = Field(..., description="執行狀態 (success/failed)")
     execution_time: float = Field(..., description="執行時間（秒）")
-    
+
     # 發現的資產
     assets: list[Asset] = Field(default_factory=list, description="發現的資產清單")
-    
+
     # 技術棧資訊
     fingerprints: Fingerprints | None = Field(None, description="檢測到的技術棧指紋")
-    
+
     # 統計資訊
     summary: Summary = Field(..., description="掃描摘要統計")
-    
+
     # 決策建議（供 Core 參考）
     recommendations: dict[str, Any] = Field(
         default_factory=dict,
         description="Phase 1 引擎選擇建議：{'needs_js_engine': bool, 'needs_form_testing': bool, 'needs_api_testing': bool}"
     )
-    
+
     error_info: str | None = Field(None, description="錯誤資訊（如有）")
 
 
@@ -152,31 +152,31 @@ class Phase1StartPayload(BaseModel):
     - Go: 並發掃描、服務發現
     - Rust: 高性能大規模處理
     """
-    
+
     scan_id: str = Field(..., description=SCAN_TASK_ID_DESCRIPTION)
     targets: list[HttpUrl] = Field(..., description="目標 URL 列表")
     scope: ScanScope = Field(default_factory=ScanScope, description="掃描範圍")
     authentication: Authentication = Field(default_factory=Authentication, description="認證配置")
-    
+
     # Phase 0 結果（用於引擎選擇）
     phase0_result: Phase0CompletedPayload | None = Field(None, description="Phase 0 掃描結果")
-    
+
     # 引擎選擇（Core 根據 Phase 0 結果決定）
     selected_engines: list[str] = Field(
         default_factory=lambda: ["python"],
         description="選擇的掃描引擎：python/typescript/go/rust"
     )
-    
+
     # 掃描策略
     strategy: str = Field(default="deep", description="掃描策略")
     rate_limit: RateLimit = Field(default_factory=RateLimit, description="速率限制")
     custom_headers: dict[str, str] = Field(default_factory=dict, description="自定義 HTTP 頭")
-    
+
     # 深度掃描參數
     max_depth: int = Field(default=5, ge=1, le=10, description="最大爬取深度")
     max_pages: int = Field(default=1000, ge=10, le=10000, description="最大爬取頁面數")
     timeout: int = Field(default=1800, ge=300, le=7200, description="超時時間（秒）")
-    
+
     @field_validator("selected_engines")
     @classmethod
     def validate_engines(cls, v: list[str]) -> list[str]:
@@ -192,32 +192,32 @@ class Phase1CompletedPayload(BaseModel):
     
     整合 Phase 0 和 Phase 1 結果，返回完整資產清單
     """
-    
+
     scan_id: str = Field(..., description=SCAN_TASK_ID_DESCRIPTION)
     status: str = Field(..., description="執行狀態 (success/partial/failed)")
     execution_time: float = Field(..., description="執行時間（秒）")
-    
+
     # 完整資產清單（包含 Phase 0 + Phase 1）
     assets: list[Asset] = Field(default_factory=list, description="完整資產清單")
-    
+
     # 技術棧資訊（整合結果）
     fingerprints: Fingerprints | None = Field(None, description="完整技術棧指紋")
-    
+
     # 統計資訊（整合結果）
     summary: Summary = Field(..., description="完整掃描摘要")
-    
+
     # 各引擎執行結果
     engine_results: dict[str, dict[str, Any]] = Field(
         default_factory=dict,
         description="各引擎執行結果：{'python': {...}, 'typescript': {...}, ...}"
     )
-    
+
     # Phase 0 結果引用
     phase0_summary: dict[str, Any] | None = Field(
         None,
         description="Phase 0 執行摘要"
     )
-    
+
     error_info: str | None = Field(None, description="錯誤資訊（如有）")
 
 
@@ -342,7 +342,7 @@ class ThreatIntelResultPayload(BaseModel):
     sources: dict[str, Any] = Field(default_factory=dict)
     mitre_techniques: list[str] = Field(default_factory=list)
     enrichment_data: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # ==================== 權限檢查任務 ====================
@@ -376,7 +376,7 @@ class AuthZResultPayload(BaseModel):
     decision: str  # "allow", "deny", "conditional"
     analysis: dict[str, Any] = Field(default_factory=dict)
     recommendations: list[str] = Field(default_factory=list)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # ==================== 修復任務 ====================
@@ -406,7 +406,7 @@ class RemediationResultPayload(BaseModel):
     instructions: list[str] = Field(default_factory=list)
     verification_steps: list[str] = Field(default_factory=list)
     risk_assessment: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # ==================== 後滲透測試任務 ====================
@@ -434,7 +434,7 @@ class PostExResultPayload(BaseModel):
     risk_level: ThreatLevel
     safe_mode: bool
     authorization_verified: bool = False
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # ==================== 業務邏輯測試任務 ====================
@@ -461,7 +461,7 @@ class BizLogicResultPayload(BaseModel):
     status: str  # completed, failed, error
     findings: list[dict[str, Any]] = Field(default_factory=list)
     statistics: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # ==================== API 測試任務 ====================
@@ -523,7 +523,7 @@ class EASMDiscoveryResult(BaseModel):
     status: str  # "completed", "in_progress", "failed"
     discovered_assets: list[dict[str, Any]] = Field(default_factory=list)
     statistics: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # ============================================================================
@@ -552,7 +552,7 @@ class ScenarioResult(BaseModel):
     success: bool
     score: float = 0.0
     findings: list[dict[str, Any]] = Field(default_factory=list)
-    completed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -568,7 +568,7 @@ class StandardScenario(BaseModel):
     expected_plan: dict[str, Any]  # 預期的最佳攻擊計畫 (簡化為 dict 避免循環引用)
     success_criteria: dict[str, Any]  # 成功標準
     tags: list[str] = Field(default_factory=list)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -585,7 +585,7 @@ class ScenarioTestResult(BaseModel):
     score: float  # 綜合評分 (0.0 - 100.0)
     comparison: dict[str, Any]  # 與預期計畫的對比
     passed: bool
-    tested_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    tested_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -633,7 +633,7 @@ class TestExecution(BaseModel):
 
     # 執行狀態
     status: TestStatus = Field(description="執行狀態")
-    start_time: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    start_time: datetime = Field(default_factory=lambda: datetime.now(UTC))
     end_time: datetime | None = Field(default=None, description="結束時間")
     duration: float | None = Field(default=None, ge=0.0, description="執行時間(秒)")
 
@@ -691,7 +691,7 @@ class ExploitResult(BaseModel):
     retest_required: bool = Field(default=True, description="是否需要重測")
 
     # 時間戳
-    executed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    executed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
@@ -730,6 +730,6 @@ class TestStrategy(BaseModel):
     success_rate: float = Field(ge=0.0, le=1.0, description="成功率")
 
     # 時間戳
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")

@@ -14,11 +14,10 @@
 """
 
 import asyncio
-import logging
-import time
 from dataclasses import dataclass, field
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from pathlib import Path
+import time
 from typing import Any, Optional
 
 from aiva_common.utils import get_logger
@@ -28,15 +27,14 @@ logger = get_logger(__name__)
 # ExecutionContext 是核心依賴，必須可用
 from .executor.execution_status_monitor import ExecutionContext
 
-
 # === 數據模型定義 ===
 
 @dataclass
 class AttackTarget:
     """攻擊目標"""
     url: str
-    ip: Optional[str] = None
-    domain: Optional[str] = None
+    ip: str | None = None
+    domain: str | None = None
     ports: list[int] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -72,9 +70,9 @@ class ExecutionResult:
     """執行結果"""
     success: bool
     vulnerabilities: list[dict[str, Any]] = field(default_factory=list)
-    attack_plan: Optional[AttackPlan] = None
+    attack_plan: AttackPlan | None = None
     execution_details: dict[str, Any] = field(default_factory=dict)
-    learning_info: Optional[dict[str, Any]] = None  # 學習狀態信息
+    learning_info: dict[str, Any] | None = None  # 學習狀態信息
 
 
 @dataclass
@@ -136,7 +134,7 @@ class UnifiedAttackExecutor:
         learning_enabled: bool = True,
         auto_train_threshold: int = 100,
         min_train_interval: int = 3600,
-        data_directory: Optional[Path] = None
+        data_directory: Path | None = None
     ):
         """初始化統一執行器
 
@@ -190,7 +188,7 @@ class UnifiedAttackExecutor:
     def rag_engine(self):
         """延遲加載 RAG Engine"""
         if self._rag_engine is None:
-            from ..cognitive_core.rag import RAGEngine, KnowledgeBase, VectorStore
+            from ..cognitive_core.rag import KnowledgeBase, RAGEngine, VectorStore
             vector_store = VectorStore(
                 backend="memory",
                 persist_directory=self.data_directory / "vectors"
@@ -204,7 +202,9 @@ class UnifiedAttackExecutor:
         """延遲加載 Experience Manager"""
         if self._experience_manager is None:
             # 模組整合: external_learning → cognitive_core/learning_system
-            from ..cognitive_core.learning_system.experience_manager import ExperienceManager
+            from ..cognitive_core.learning_system.experience_manager import (
+                ExperienceManager,
+            )
             self._experience_manager = ExperienceManager(capacity=10000)
         return self._experience_manager
 
@@ -213,7 +213,9 @@ class UnifiedAttackExecutor:
         """延遲加載 Model Trainer"""
         if self._model_trainer is None:
             # 模組整合: external_learning → cognitive_core/learning_system
-            from ..cognitive_core.learning_system.learning.model_trainer import ModelTrainer
+            from ..cognitive_core.learning_system.learning.model_trainer import (
+                ModelTrainer,
+            )
             self._model_trainer = ModelTrainer()
         return self._model_trainer
 
@@ -221,7 +223,9 @@ class UnifiedAttackExecutor:
     def continuous_learning_engine(self):
         """延遲加載 Continuous Learning Engine"""
         if self._continuous_learning_engine is None:
-            from ..cognitive_core.learning_system.learning.continuous_learning import ContinuousLearningEngine
+            from ..cognitive_core.learning_system.learning.continuous_learning import (
+                ContinuousLearningEngine,
+            )
             self._continuous_learning_engine = ContinuousLearningEngine(
                 experience_manager=self.experience_manager,
                 model_trainer=self.model_trainer
@@ -262,8 +266,8 @@ class UnifiedAttackExecutor:
         self,
         target: str,
         objective: str,
-        scenario: Optional[dict] = None,
-        constraints: Optional[dict] = None,
+        scenario: dict | None = None,
+        constraints: dict | None = None,
         cli_command: Optional['CLICommand'] = None
     ) -> ExecutionResult:
         """統一執行接口 - 靶場和實戰都調用這個
@@ -306,8 +310,8 @@ class UnifiedAttackExecutor:
         self,
         target: str,
         objective: str,
-        scenario: Optional[dict] = None,
-        constraints: Optional[dict] = None,
+        scenario: dict | None = None,
+        constraints: dict | None = None,
         cli_command: Optional['CLICommand'] = None
     ) -> ExecutionResult:
         """CLI 參數包驅動執行（新架構）
@@ -325,8 +329,7 @@ class UnifiedAttackExecutor:
             ExecutionResult
         """
         import subprocess
-        import json
-        from ..cognitive_core.schemas import CLICommand
+
 
         logger.info("🚀 CLI 模式執行開始")
         start_time = time.time()
@@ -372,7 +375,7 @@ class UnifiedAttackExecutor:
                 )
                 stdout_text = stdout.decode() if stdout else ""
                 stderr_text = stderr.decode() if stderr else ""
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 proc.kill()
                 await proc.wait()
                 raise subprocess.TimeoutExpired(cli_command.to_cli_args(), cli_command.timeout)
@@ -475,7 +478,7 @@ class UnifiedAttackExecutor:
         success: bool,
         vulnerabilities: list,
         execution_time: float,
-        scenario: Optional[dict] = None
+        scenario: dict | None = None
     ) -> dict:
         """從 CLI 執行中學習
 
@@ -533,8 +536,8 @@ class UnifiedAttackExecutor:
         self,
         target: str,
         objective: str,
-        scenario: Optional[dict] = None,
-        constraints: Optional[dict] = None
+        scenario: dict | None = None,
+        constraints: dict | None = None
     ) -> ExecutionResult:
         """舊執行路徑（保留供調試對比）
 
@@ -549,7 +552,10 @@ class UnifiedAttackExecutor:
         start_time = time.time()
 
         # 1️⃣ 使用 CapabilityOrchestrator 生成執行計劃
-        from ..cognitive_core.capability_orchestrator import CapabilityOrchestrator, TaskRequirement
+        from ..cognitive_core.capability_orchestrator import (
+            CapabilityOrchestrator,
+            TaskRequirement,
+        )
 
         # 確保 RAG engine 已初始化，然後傳遞 knowledge base
         rag_kb = None
@@ -647,8 +653,8 @@ class UnifiedAttackExecutor:
         target: str,
         objective: str,
         execution_context: 'ExecutionContext',
-        scenario: Optional[dict] = None,
-        constraints: Optional[dict] = None
+        scenario: dict | None = None,
+        constraints: dict | None = None
     ) -> ExecutionResult:
         """統一執行接口（v2.1 環境無關設計）
 
@@ -691,8 +697,8 @@ class UnifiedAttackExecutor:
         objective: str,
         target_sensitivity: float,
         risk_tolerance: float,  # 預留用於未來風險評估
-        scenario: Optional[dict],
-        constraints: Optional[dict]
+        scenario: dict | None,
+        constraints: dict | None
     ) -> ExecutionResult:
         """統一執行邏輯（v2.1 黑盒測試導向）
 
@@ -795,8 +801,8 @@ class UnifiedAttackExecutor:
         target: str,
         objective: str,
         execution_context: 'ExecutionContext',
-        scenario: Optional[dict],
-        constraints: Optional[dict]
+        scenario: dict | None,
+        constraints: dict | None
     ) -> ExecutionResult:
         """[已棄用] 靶場環境執行
 
@@ -824,8 +830,8 @@ class UnifiedAttackExecutor:
         target: str,
         objective: str,
         execution_context: 'ExecutionContext',
-        scenario: Optional[dict],
-        constraints: Optional[dict]
+        scenario: dict | None,
+        constraints: dict | None
     ) -> ExecutionResult:
         """[已棄用] 生產環境執行
 
@@ -856,8 +862,8 @@ class UnifiedAttackExecutor:
         self,
         target: str,
         objective: str,
-        scenario: Optional[dict],
-        constraints: Optional[dict]
+        scenario: dict | None,
+        constraints: dict | None
     ) -> AttackPlan:
         """生成 RAG 增強的攻擊計劃
 
@@ -991,7 +997,7 @@ class UnifiedAttackExecutor:
         self,
         attack_plan: AttackPlan,
         execution_result: dict,
-        scenario: Optional[dict]
+        scenario: dict | None
     ) -> dict:
         """從執行結果中學習"""
 
@@ -1042,7 +1048,7 @@ class UnifiedAttackExecutor:
         self,
         attack_plan: AttackPlan,
         execution_result: dict,
-        scenario: Optional[dict]
+        scenario: dict | None
     ) -> list[ExperienceSample]:
         """提取訓練樣本 - 靶場和實戰使用相同邏輯"""
 
@@ -1181,9 +1187,10 @@ class UnifiedAttackExecutor:
             broker = self.message_broker  # 觸發 property，不可用時會拋出 ImportError
 
             # 🎯 異步傳遞訓練任務
-            from aiva_common.enums import Topic, ModuleName
-            from aiva_common.schemas import AivaMessage, MessageHeader
             from uuid import uuid4
+
+            from aiva_common.enums import ModuleName, Topic
+            from aiva_common.schemas import AivaMessage, MessageHeader
 
             training_task = {
                 "task_id": f"train_{uuid4().hex[:12]}",
@@ -1542,7 +1549,7 @@ class FeedbackOptimizer:
         self,
         strategy: str,
         reason_type: str
-    ) -> Optional[StrategyOptimization]:
+    ) -> StrategyOptimization | None:
         """生成策略優化建議"""
         scores = self.strategy_performance.get(strategy, [])
         if not scores:
@@ -1573,7 +1580,7 @@ class FeedbackOptimizer:
             reason=reason
         )
 
-    def _generate_error_fix(self, pattern: dict) -> Optional[StrategyOptimization]:
+    def _generate_error_fix(self, pattern: dict) -> StrategyOptimization | None:
         """生成錯誤修復建議"""
         strategy = pattern["strategy"]
 
@@ -1595,7 +1602,7 @@ class FeedbackOptimizer:
     def _generate_waf_bypass_optimization(
         self,
         opportunity: dict
-    ) -> Optional[StrategyOptimization]:
+    ) -> StrategyOptimization | None:
         """生成 WAF 繞過優化建議"""
         strategy = opportunity["strategy"]
         waf_rate = opportunity["waf_rate"]

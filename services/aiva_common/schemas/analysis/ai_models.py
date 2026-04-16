@@ -14,20 +14,20 @@ AI Analysis Models - 分析相關的AI模型
 
 # 從schemas/ai.py導入分析相關模型
 from ..ai import (
-    AITrainingStartPayload,
-    AITrainingProgressPayload, 
     AITrainingCompletedPayload,
-    ModelTrainingConfig,
+    AITrainingProgressPayload,
+    AITrainingStartPayload,
     ExperienceSample,
-    TraceRecord,
+    ModelTrainingConfig,
     RAGKnowledgeUpdatePayload,
     RAGQueryPayload,
     RAGResponsePayload,
+    TraceRecord,
 )
 
 __all__ = [
     "AITrainingStartPayload",
-    "AITrainingProgressPayload", 
+    "AITrainingProgressPayload",
     "AITrainingCompletedPayload",
     "ModelTrainingConfig",
     "ExperienceSample",

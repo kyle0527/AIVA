@@ -14,7 +14,6 @@ import logging
 from pathlib import Path
 
 # 動態匯入 - 添加路徑到 sys.path
-import sys
 from typing import Any, Union
 
 from sqlalchemy import create_engine, desc, func
@@ -41,8 +40,6 @@ logger = logging.getLogger(__name__)
 # 使用現實路徑導入 - 遵循CROSS_LANGUAGE_SCHEMA_SYNC_GUIDE.md規範
 # 直接導入，不使用降級邏輯 - 缺少依賴時應明確報錯
 import os
-from pathlib import Path
-import sys
 
 # 添加services路徑到Python path (現實路徑優於虛擬環境)
 services_path = Path(__file__).parent.parent.parent.parent

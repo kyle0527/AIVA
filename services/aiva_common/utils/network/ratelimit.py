@@ -226,16 +226,16 @@ class RateLimiter:
             latency: Response time in seconds
         """
         self._touch_host(host)
-        
+
         # Phase 1: Handle Retry-After
         retry_after_until = self._handle_retry_after(host, headers)
-        
+
         # Phase 2: Calculate adjustments
         adjustments = self._calculate_adjustments(status_code, latency, retry_after_until)
-        
+
         # Phase 3: Apply adjustments
         self._apply_adjustments(host, adjustments)
-        
+
         # Phase 4: Cleanup cooldown if success
         self._cleanup_cooldown_if_success(host, status_code, latency)
 
@@ -244,7 +244,7 @@ class RateLimiter:
         ra_until = self._parse_retry_after(host, headers)
         if ra_until is None:
             return None
-        
+
         prev = self._cooldown_until.get(host)
         self._cooldown_until[host] = max(prev or 0.0, ra_until)
         with contextlib.suppress(Exception):
@@ -259,16 +259,16 @@ class RateLimiter:
         """Parse Retry-After header value."""
         if not headers or not any(k.lower() == "retry-after" for k in headers):
             return None
-        
+
         try:
             ra_val = next((headers[k] for k in headers if k.lower() == "retry-after"), None)
             if ra_val is None:
                 return None
-            
+
             ra_val = str(ra_val).strip()
             if re.fullmatch(r"\d+", ra_val):
                 return time.monotonic() + float(ra_val)
-            
+
             return self._parse_http_date(host, ra_val)
         except (KeyError, AttributeError, ValueError) as e:
             self._log.debug("Failed to process Retry-After header for host %s: %s", host, str(e))
@@ -293,14 +293,14 @@ class RateLimiter:
         """Calculate penalty/boost adjustments from response signals."""
         penalty = [1.0, 1.0, 1.0]  # [global, host, base]
         boost = [1.0, 1.0, 1.0]
-        
+
         if retry_after_until is not None:
             penalty[2] *= 1.5  # base
             penalty[1] *= 2.0  # host
-        
+
         self._adjust_for_status_code(status_code, penalty, boost)
         self._adjust_for_latency(latency, penalty, boost)
-        
+
         return {"penalty": tuple(penalty), "boost": tuple(boost)}
 
     def _adjust_for_status_code(
@@ -309,7 +309,7 @@ class RateLimiter:
         """Adjust penalty/boost based on status code."""
         if status_code is None:
             return
-        
+
         if status_code == 429:
             penalty[0] = min(penalty[0], 0.7)   # global
             penalty[1] = min(penalty[1], 0.4)   # host
@@ -333,7 +333,7 @@ class RateLimiter:
         """Adjust penalty/boost based on latency."""
         if latency is None:
             return
-        
+
         if latency > 5.0:
             penalty[0] = min(penalty[0], 0.6)
             penalty[1] = min(penalty[1], 0.5)
@@ -357,7 +357,7 @@ class RateLimiter:
         """Apply calculated penalty or boost adjustments."""
         penalty = adjustments["penalty"]
         boost = adjustments["boost"]
-        
+
         # Apply penalties first (higher priority)
         if any(p < 1.0 for p in penalty):
             if penalty[0] < 1.0:
@@ -367,7 +367,7 @@ class RateLimiter:
             if penalty[1] < 1.0:
                 self._scale_host(host, penalty[1])
             return
-        
+
         # Apply boosts if no penalties
         if boost[0] > 1.0:
             self._scale_global(boost[0])
@@ -383,11 +383,11 @@ class RateLimiter:
         try:
             if not (status_code and 200 <= int(status_code) < 300 and latency is not None):
                 return
-            
+
             until = self._cooldown_until.get(host)
             if not until:
                 return
-            
+
             now = time.monotonic()
             if now + max(0.0, latency) * 2 < until:
                 self._cooldown_until.pop(host, None)
@@ -468,12 +468,12 @@ class RateLimiter:
         """Load state from persistent storage."""
         if not self.state_file or not self.state_file.exists():
             return
-        
+
         with self.state_lock:
             data = self._read_state_file()
             if data is None:
                 return
-            
+
             time_context = self._calculate_time_context(data)
             self._restore_global_bucket(data, time_context)
             self._clear_host_state()
@@ -496,7 +496,7 @@ class RateLimiter:
         now_mono = time.monotonic()
         saved_at_f = self._safe_float(data.get("saved_at"), 0.0)
         base_elapsed = max(0.0, now_wall - saved_at_f) if saved_at_f else 0.0
-        
+
         return {
             "now_wall": now_wall,
             "now_mono": now_mono,
@@ -508,19 +508,19 @@ class RateLimiter:
         global_state = data.get("global")
         if not isinstance(global_state, dict):
             return
-        
+
         rate = self._safe_float(global_state.get("rate"), self.global_rps)
         self._set_global_rate(rate)
-        
+
         tokens = self._safe_float(global_state.get("tokens"), self.global_bucket.tokens)
         updated_at = self._safe_float(global_state.get("updated"), None)
-        
+
         elapsed = (
             time_context["base_elapsed"]
             if updated_at is None
             else max(0.0, time_context["now_wall"] - updated_at)
         )
-        
+
         with self.global_bucket.lock:
             refill = tokens + elapsed * self.global_bucket.rate
             self.global_bucket.tokens = min(self.global_bucket.capacity, refill)
@@ -538,7 +538,7 @@ class RateLimiter:
         if not isinstance(overrides, dict):
             self.host_overrides = {}
             return
-        
+
         new_overrides: dict[str, float] = {}
         for host, value in overrides.items():
             safe_value = self._safe_float(value, None)
@@ -558,7 +558,7 @@ class RateLimiter:
         hosts = data.get("hosts")
         if not isinstance(hosts, dict):
             return
-        
+
         for host, bucket_data in hosts.items():
             if isinstance(bucket_data, dict):
                 self._restore_single_host_bucket(
@@ -572,20 +572,20 @@ class RateLimiter:
         rate = self._safe_float(bucket_data.get("rate"), self._host_rate(host))
         burst = max(1, int(rate))
         bucket = TokenBucket(rate, burst)
-        
+
         tokens = self._safe_float(bucket_data.get("tokens"), burst)
         updated_at = self._safe_float(bucket_data.get("updated"), None)
-        
+
         elapsed = (
             time_context["base_elapsed"]
             if updated_at is None
             else max(0.0, time_context["now_wall"] - updated_at)
         )
-        
+
         refill = tokens + elapsed * rate
         bucket.tokens = min(bucket.capacity, refill)
         bucket.updated = max(time_context["now_mono"] - elapsed, 0.0)
-        
+
         self.host_buckets[host] = bucket
         self._touch_host(host, time_context["now_mono"])
 

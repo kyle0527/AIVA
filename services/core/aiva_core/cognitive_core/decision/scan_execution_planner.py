@@ -7,18 +7,14 @@
 4. 首次扫描策略: 使用 Rust引擎深入扫描
 """
 
-from typing import List, Dict, Any, Optional
-from datetime import datetime, timezone
-from uuid import uuid4
+from datetime import UTC, datetime
 from enum import Enum
+from typing import Any
+from uuid import uuid4
 
 from aiva_common.schemas import (
     CommandType,
-    Phase0StartPayload,
-    Phase1StartPayload,
     ScanScope,
-    Authentication,
-    RateLimit,
 )
 from aiva_common.utils import get_logger
 
@@ -41,9 +37,9 @@ class ExecutionStep:
         capability: str,
         module: str,
         command_type: CommandType,
-        parameters: Dict[str, Any],
+        parameters: dict[str, Any],
         estimated_duration: int = 300,
-        depends_on: Optional[List[int]] = None
+        depends_on: list[int] | None = None
     ):
         self.step_id = step_id
         self.capability = capability
@@ -61,7 +57,7 @@ class ExecutionPlan:
         plan_id: str,
         objective: str,
         strategy: ScanStrategy,
-        steps: List[ExecutionStep],
+        steps: list[ExecutionStep],
         total_estimated_duration: int = 0
     ):
         self.plan_id = plan_id
@@ -71,7 +67,7 @@ class ExecutionPlan:
         self.total_estimated_duration = total_estimated_duration or sum(
             step.estimated_duration for step in steps
         )
-        self.created_at = datetime.now(timezone.utc)
+        self.created_at = datetime.now(UTC)
 
 
 class NextPhaseDecision:
@@ -81,7 +77,7 @@ class NextPhaseDecision:
         action: str,
         reason: str,
         next_step: str,
-        engines: Optional[List[str]] = None
+        engines: list[str] | None = None
     ):
         self.action = action
         self.reason = reason
@@ -100,10 +96,10 @@ class ExecutionPlanner:
     
     async def generate_plan(
         self,
-        targets: List[str],
-        constraints: Dict[str, Any],
+        targets: list[str],
+        constraints: dict[str, Any],
         is_new_target: bool = True,
-        historical_data: Optional[Dict[str, Any]] = None
+        historical_data: dict[str, Any] | None = None
     ) -> ExecutionPlan:
         """生成执行计划
         
@@ -132,8 +128,8 @@ class ExecutionPlanner:
     
     def _generate_initial_scan_plan(
         self,
-        targets: List[str],
-        constraints: Dict[str, Any]
+        targets: list[str],
+        constraints: dict[str, Any]
     ) -> ExecutionPlan:
         """生成首次扫描计划
         
@@ -178,9 +174,9 @@ class ExecutionPlanner:
     
     def _generate_informed_scan_plan(
         self,
-        targets: List[str],
-        constraints: Dict[str, Any],
-        historical_data: Optional[Dict[str, Any]]
+        targets: list[str],
+        constraints: dict[str, Any],
+        historical_data: dict[str, Any] | None
     ) -> ExecutionPlan:
         """生成基于历史的知情扫描计划
         
@@ -233,8 +229,8 @@ class ExecutionPlanner:
     
     def _build_scan_scope(
         self,
-        targets: List[str],
-        constraints: Dict[str, Any]
+        targets: list[str],
+        constraints: dict[str, Any]
     ) -> ScanScope:
         """构建扫描范围"""
         # 提取主机名
@@ -253,8 +249,8 @@ class ExecutionPlanner:
     
     def _create_typescript_scan_step(
         self,
-        targets: List[str],
-        constraints: Dict[str, Any]
+        targets: list[str],
+        constraints: dict[str, Any]
     ) -> ExecutionStep:
         """创建 TypeScript 扫描步骤 (SPA)"""
         return ExecutionStep(
@@ -273,8 +269,8 @@ class ExecutionPlanner:
     
     def _create_go_scan_step(
         self,
-        targets: List[str],
-        constraints: Dict[str, Any]
+        targets: list[str],
+        constraints: dict[str, Any]
     ) -> ExecutionStep:
         """创建 Go 扫描步骤 (SSRF/API)"""
         return ExecutionStep(
@@ -293,8 +289,8 @@ class ExecutionPlanner:
     
     def _create_python_crawl_step(
         self,
-        targets: List[str],
-        constraints: Dict[str, Any]
+        targets: list[str],
+        constraints: dict[str, Any]
     ) -> ExecutionStep:
         """创建 Python 爬虫步骤"""
         return ExecutionStep(
@@ -313,7 +309,7 @@ class ExecutionPlanner:
     
     def decide_next_phase(
         self,
-        rust_scan_result: Dict[str, Any]
+        rust_scan_result: dict[str, Any]
     ) -> NextPhaseDecision:
         """根据 Rust扫描结果决定下一阶段
         
@@ -365,7 +361,7 @@ class ExecutionPlanner:
             next_step="多引擎协同扫描"
         )
     
-    def _analyze_rust_result(self, result: Dict[str, Any]) -> Dict[str, Any]:
+    def _analyze_rust_result(self, result: dict[str, Any]) -> dict[str, Any]:
         """分析 Rust 扫描结果"""
         summary = result.get("summary", {})
         
@@ -393,7 +389,7 @@ class ExecutionPlanner:
             "missing_info": self._identify_missing_info(summary)
         }
     
-    def _identify_missing_info(self, summary: Dict[str, Any]) -> str:
+    def _identify_missing_info(self, summary: dict[str, Any]) -> str:
         """识别缺失的信息"""
         missing = []
         

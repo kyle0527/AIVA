@@ -5,7 +5,7 @@
 技術指紋和漏洞發現記錄等。
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -146,6 +146,6 @@ class VulnerabilityDiscovery(BaseModel):
     )
 
     # 時間戳
-    discovered_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")

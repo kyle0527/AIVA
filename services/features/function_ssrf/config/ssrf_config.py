@@ -1,5 +1,6 @@
+
 from pydantic import BaseModel
-from typing import List
+
 
 class SsrfConfig(BaseModel):
     enable_internal_scan: bool = True
@@ -14,7 +15,7 @@ class SsrfConfig(BaseModel):
     cloud_metadata_first: bool = True
     
     # 新增：雲端元數據端點列表
-    cloud_metadata_endpoints: List[str] = [
+    cloud_metadata_endpoints: list[str] = [
         "169.254.169.254",
         "metadata.google.internal",
         "100.100.100.200",

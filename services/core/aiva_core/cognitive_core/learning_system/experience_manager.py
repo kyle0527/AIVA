@@ -39,18 +39,18 @@ Experience Manager - 經驗管理器
 - ModuleKnowledgeManager (模組知識庫管理器)
 """
 
-import logging
 from collections import deque
 from datetime import datetime
-from typing import Any, Deque, Optional
+import logging
+from typing import Any
 from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
 # RAG 觸發器和通知系統（延遲導入避免循環依賴）
 try:
+    from .notification_system import NotificationSystem, get_notification_system
     from .rag_trigger import RAGTrigger, UnknownSituationAlert
-    from .notification_system import get_notification_system, NotificationSystem
 except ImportError:
     RAGTrigger = None
     UnknownSituationAlert = None
@@ -165,7 +165,7 @@ class ExperienceManager:
             enable_notifications: 是否啟用用戶通知
         """
         self.capacity = capacity
-        self.memory: Deque[ExperienceTransition] = deque(maxlen=capacity)
+        self.memory: deque[ExperienceTransition] = deque(maxlen=capacity)
         # 添加 buffer 別名以兼容外部調用（如 UnifiedExecutor）
         self.buffer = self.memory
         self._total_experiences = 0
@@ -746,7 +746,7 @@ class ExperienceManager:
         self,
         capability: str,
         current_data: dict[str, Any],
-        session_id: Optional[str] = None,
+        session_id: str | None = None,
     ) -> dict[str, Any]:
         """觸發學習流程（帶 RAG 支持）
         
@@ -786,7 +786,7 @@ class ExperienceManager:
         )
         
         # 1. 讀取三個數據源
-        logger.info(f"📚 [數據源 1/3] 讀取當前執行記錄...")
+        logger.info("📚 [數據源 1/3] 讀取當前執行記錄...")
         current_records = []
         if self.data_manager:
             try:
@@ -797,7 +797,7 @@ class ExperienceManager:
             except Exception as e:
                 logger.error(f"Failed to load current records: {e}")
         
-        logger.info(f"📚 [數據源 2/3] 讀取歷史數據...")
+        logger.info("📚 [數據源 2/3] 讀取歷史數據...")
         historical_data = []
         if self.data_manager:
             try:
@@ -811,7 +811,7 @@ class ExperienceManager:
             except Exception as e:
                 logger.error(f"Failed to load historical data: {e}")
         
-        logger.info(f"📚 [數據源 3/3] 讀取能力知識庫...")
+        logger.info("📚 [數據源 3/3] 讀取能力知識庫...")
         knowledge_base_data = []
         if self.knowledge_manager:
             try:
@@ -834,7 +834,7 @@ class ExperienceManager:
         rag_results = []
         
         if self.rag_trigger:
-            logger.info(f"🔍 檢查是否為已知情況...")
+            logger.info("🔍 檢查是否為已知情況...")
             alert = await self.rag_trigger.trigger_rag_if_needed(
                 current_data=current_data,
                 current_records=current_records,
@@ -851,7 +851,7 @@ class ExperienceManager:
                 logger.info("✅ 已知情況，使用現有知識庫")
         
         # 5. 生成優化建議
-        logger.info(f"💡 生成優化建議...")
+        logger.info("💡 生成優化建議...")
         optimization_plan = self._generate_optimization_plan(
             current_data=current_data,
             current_records=current_records,
@@ -861,15 +861,15 @@ class ExperienceManager:
         )
         
         # 6. 驗證效果（簡化版，實際需要執行測試）
-        logger.info(f"✅ 驗證優化效果...")
+        logger.info("✅ 驗證優化效果...")
         validation_passed = self._validate_optimization(optimization_plan)
         
         # 7. 保存結果（如果驗證通過）
         if validation_passed:
-            logger.info(f"✅ 驗證通過，保存新權重")
+            logger.info("✅ 驗證通過，保存新權重")
             self._save_optimization(capability, optimization_plan)
         else:
-            logger.warning(f"❌ 驗證未通過，丟棄優化")
+            logger.warning("❌ 驗證未通過，丟棄優化")
         
         # 通知學習完成
         if self.notification_system:
@@ -976,8 +976,8 @@ class ExperienceManager:
         將新權重和優化建議保存到文件
         """
         try:
-            from pathlib import Path
             import json
+            from pathlib import Path
             
             # 保存到 learning_system/data/optimizations/
             save_dir = Path("services/core/aiva_core/cognitive_core/learning_system/data/optimizations")

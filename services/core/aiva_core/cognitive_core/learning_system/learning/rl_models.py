@@ -7,9 +7,9 @@ import logging
 
 import numpy as np
 import torch
+from torch.distributions import Categorical
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.distributions import Categorical
 
 logger = logging.getLogger(__name__)
 

@@ -1,8 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-import difflib
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +14,7 @@ class CapabilityMatcher:
     3. 生成標準 CLI 指令
     """
     
-    def __init__(self, classification_path: Optional[str] = None):
+    def __init__(self, classification_path: str | None = None):
         if classification_path:
             self.classification_path = Path(classification_path)
         else:
@@ -23,8 +22,8 @@ class CapabilityMatcher:
             base_dir = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
             self.classification_path = base_dir / "services/integration/data/internal_exploration/external_classification.json"
             
-        self.capabilities: Dict[str, Any] = {}
-        self.flows: List[Dict[str, Any]] = []
+        self.capabilities: dict[str, Any] = {}
+        self.flows: list[dict[str, Any]] = []
         self._load_capabilities()
 
     def _load_capabilities(self):
@@ -34,7 +33,7 @@ class CapabilityMatcher:
                 logger.warning(f"Classification file not found at: {self.classification_path}")
                 return
 
-            with open(self.classification_path, 'r', encoding='utf-8') as f:
+            with open(self.classification_path, encoding='utf-8') as f:
                 data = json.load(f)
                 
             self.capabilities = data
@@ -50,7 +49,7 @@ class CapabilityMatcher:
         except Exception as e:
             logger.error(f"Failed to load capabilities: {e}", exc_info=True)
 
-    def match_intent(self, description: str, top_k: int = 1) -> List[Dict[str, Any]]:
+    def match_intent(self, description: str, top_k: int = 1) -> list[dict[str, Any]]:
         """根據描述匹配最佳 Flow
         
         Args:
@@ -92,14 +91,14 @@ class CapabilityMatcher:
         candidates.sort(key=lambda x: x[0], reverse=True)
         return [c[1] for c in candidates[:top_k]]
 
-    def format_command(self, flow: Dict[str, Any], target: str) -> str:
+    def format_command(self, flow: dict[str, Any], target: str) -> str:
         """格式化為標準 CLI 指令"""
         flow_id = flow.get("id")
         # 修正: 使用統一入口 aiva_cli.py
         # 假設在專案根目錄執行
         return f"python -m services.core.aiva_core.core_capabilities.cli.aiva_cli --flow {flow_id} --target {target}"
 
-    def get_flow_by_id(self, flow_id: int) -> Optional[Dict[str, Any]]:
+    def get_flow_by_id(self, flow_id: int) -> dict[str, Any] | None:
         """根據 ID 獲取 Flow"""
         for flow in self.flows:
             if flow.get("id") == flow_id:

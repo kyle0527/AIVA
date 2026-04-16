@@ -10,12 +10,14 @@ AIVA跨語言Schema統一定義 - 以手動維護版本為準
 """
 
 from __future__ import annotations
-from typing import Any, Dict, List, Optional, Union, Literal
+
 from datetime import datetime
+from typing import Any, Literal
+
 from pydantic import BaseModel, Field
 
-from .base_types import *
 from ...enums import AsyncTaskStatus
+from .base_types import *
 
 
 class RetryConfig(BaseModel):
@@ -40,13 +42,13 @@ class RetryConfig(BaseModel):
 class ResourceLimits(BaseModel):
     """資源限制配置"""
 
-    max_memory_mb: Optional[int] = Field(ge=1, default=None)
+    max_memory_mb: int | None = Field(ge=1, default=None)
     """最大內存限制(MB)"""
 
-    max_cpu_percent: Optional[float] = Field(ge=0.1, le=100.0, default=None)
+    max_cpu_percent: float | None = Field(ge=0.1, le=100.0, default=None)
     """最大CPU使用率(%)"""
 
-    max_execution_time: Optional[int] = Field(ge=1, default=None)
+    max_execution_time: int | None = Field(ge=1, default=None)
     """最大執行時間(秒)"""
 
     max_concurrent_tasks: int = Field(ge=1, le=100, default=10)
@@ -71,10 +73,10 @@ class AsyncTaskConfig(BaseModel):
     resource_limits: ResourceLimits
     """資源限制"""
 
-    tags: List[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list)
     """任務標籤"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """任務元數據"""
 
 
@@ -90,10 +92,10 @@ class AsyncTaskResult(BaseModel):
     status: AsyncTaskStatus
     """任務狀態"""
 
-    result: Optional[Dict[str, Any]] = None
+    result: dict[str, Any] | None = None
     """執行結果"""
 
-    error_message: Optional[str] = None
+    error_message: str | None = None
     """錯誤信息"""
 
     execution_time_ms: float = Field(ge=0)
@@ -102,16 +104,16 @@ class AsyncTaskResult(BaseModel):
     start_time: datetime
     """開始時間"""
 
-    end_time: Optional[datetime] = None
+    end_time: datetime | None = None
     """結束時間"""
 
     retry_count: int = Field(ge=0, default=0)
     """重試次數"""
 
-    resource_usage: Dict[str, Any] = Field(default_factory=dict)
+    resource_usage: dict[str, Any] = Field(default_factory=dict)
     """資源使用情況"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """結果元數據"""
 
 
@@ -124,7 +126,7 @@ class AsyncBatchConfig(BaseModel):
     batch_name: str
     """批次名稱"""
 
-    tasks: List[AsyncTaskConfig]
+    tasks: list[AsyncTaskConfig]
     """任務列表"""
 
     max_concurrent: int = Field(ge=1, le=50, default=5)
@@ -155,7 +157,7 @@ class AsyncBatchResult(BaseModel):
     failed_tasks: int = Field(ge=0, default=0)
     """失敗任務數"""
 
-    task_results: List[AsyncTaskResult] = Field(default_factory=list)
+    task_results: list[AsyncTaskResult] = Field(default_factory=list)
     """任務結果列表"""
 
     batch_status: Literal['pending', 'running', 'completed', 'failed', 'cancelled', 'partial'] = Field(default='pending')
@@ -164,7 +166,7 @@ class AsyncBatchResult(BaseModel):
     start_time: datetime
     """開始時間"""
 
-    end_time: Optional[datetime] = None
+    end_time: datetime | None = None
     """結束時間"""
 
     total_execution_time_ms: float = Field(ge=0, default=0)

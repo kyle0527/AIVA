@@ -18,6 +18,20 @@ from .ai_models import (
     ScenarioTestResult,
 )
 
+# 向後相容性別名
+from .aiva_core.cognitive_core.learning_system.tracing.trace_recorder import (
+    TraceRecorder,
+)
+
+# 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
+from .aiva_core.cognitive_core.learning_system.tracing.unified_tracer import (
+    ExecutionTrace,
+    TraceType,
+    UnifiedTracer,
+    get_global_tracer,
+    record_execution_trace,
+)
+
 # 從本模組導入核心邏輯模型（僅本地特定擴展）
 from .models import (
     AttackPathEdge,
@@ -37,23 +51,13 @@ from .models import (
     RiskAssessmentResult,
     RiskFactor,
     RiskTrendAnalysis,
-
     SystemOrchestration,
     TaskDependency,
     TaskQueue,
     TestStrategy,
     VulnerabilityCorrelation,
 )
-# 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
-from .aiva_core.cognitive_core.learning_system.tracing.unified_tracer import (
-    UnifiedTracer,
-    TraceType,
-    ExecutionTrace,
-    get_global_tracer,
-    record_execution_trace,
-)
-# 向後相容性別名
-from .aiva_core.cognitive_core.learning_system.tracing.trace_recorder import TraceRecorder
+
 # TraceLogger 已棄用，使用 UnifiedTracer
 
 __all__ = [

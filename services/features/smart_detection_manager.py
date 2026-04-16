@@ -11,14 +11,15 @@ Smart Detection Manager - 智能檢測管理器
 - 支援並發執行（可選）
 """
 
+from collections.abc import Callable
 import logging
 import time
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 # 檢測器函數類型定義
-DetectorFunc = Callable[[Dict[str, Any]], Dict[str, Any]]
+DetectorFunc = Callable[[dict[str, Any]], dict[str, Any]]
 
 
 class DetectionResult:
@@ -28,8 +29,8 @@ class DetectionResult:
         self, 
         detector_name: str, 
         success: bool, 
-        result: Optional[Dict[str, Any]] = None,
-        error: Optional[str] = None,
+        result: dict[str, Any] | None = None,
+        error: str | None = None,
         execution_time: float = 0.0
     ):
         self.detector_name = detector_name
@@ -38,7 +39,7 @@ class DetectionResult:
         self.error = error
         self.execution_time = execution_time
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """轉換為字典格式"""
         return {
             "detector": self.detector_name,
@@ -63,8 +64,8 @@ class SmartDetectionManager:
     
     def __init__(self) -> None:
         """初始化智能檢測管理器"""
-        self._detectors: Dict[str, DetectorFunc] = {}
-        self._execution_stats: Dict[str, Dict[str, Any]] = {}
+        self._detectors: dict[str, DetectorFunc] = {}
+        self._execution_stats: dict[str, dict[str, Any]] = {}
         logger.info("SmartDetectionManager initialized")
     
     def register(self, name: str, fn: DetectorFunc) -> None:
@@ -90,7 +91,7 @@ class SmartDetectionManager:
         }
         logger.info(f"Registered detector: {name}")
     
-    def unregister(self, name: str) -> Optional[DetectorFunc]:
+    def unregister(self, name: str) -> DetectorFunc | None:
         """
         取消註冊一個檢測器
         
@@ -108,7 +109,7 @@ class SmartDetectionManager:
             logger.warning(f"Attempted to unregister non-existent detector: {name}")
         return detector
     
-    def run_all(self, input_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def run_all(self, input_data: dict[str, Any]) -> list[dict[str, Any]]:
         """
         執行所有已註冊的檢測器
         
@@ -118,7 +119,7 @@ class SmartDetectionManager:
         Returns:
             所有檢測器的執行結果列表
         """
-        results: List[Dict[str, Any]] = []
+        results: list[dict[str, Any]] = []
         
         logger.info(f"Running {len(self._detectors)} detectors")
         
@@ -133,8 +134,8 @@ class SmartDetectionManager:
     def run_detector(
         self, 
         name: str, 
-        input_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        input_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         執行特定的檢測器
         
@@ -159,7 +160,7 @@ class SmartDetectionManager:
         self, 
         name: str, 
         fn: DetectorFunc, 
-        input_data: Dict[str, Any]
+        input_data: dict[str, Any]
     ) -> DetectionResult:
         """
         內部方法：執行單個檢測器並記錄統計
@@ -208,7 +209,7 @@ class SmartDetectionManager:
                 execution_time=execution_time
             )
     
-    def get_stats(self, detector_name: Optional[str] = None) -> Dict[str, Any]:
+    def get_stats(self, detector_name: str | None = None) -> dict[str, Any]:
         """
         獲取執行統計資訊
         
@@ -229,7 +230,7 @@ class SmartDetectionManager:
             "summary": self._get_summary_stats()
         }
     
-    def _get_summary_stats(self) -> Dict[str, Any]:
+    def _get_summary_stats(self) -> dict[str, Any]:
         """計算匯總統計資訊"""
         total_executions = sum(s["total_executions"] for s in self._execution_stats.values())
         total_successful = sum(s["successful_executions"] for s in self._execution_stats.values())
@@ -244,7 +245,7 @@ class SmartDetectionManager:
             "average_execution_time": total_time / max(total_executions, 1)
         }
     
-    def list_detectors(self) -> List[str]:
+    def list_detectors(self) -> list[str]:
         """
         列出所有已註冊的檢測器名稱
         
@@ -255,7 +256,7 @@ class SmartDetectionManager:
 
 
 # 單例模式的全局管理器實例
-_default_manager: Optional[SmartDetectionManager] = None
+_default_manager: SmartDetectionManager | None = None
 
 
 def get_smart_detection_manager() -> SmartDetectionManager:

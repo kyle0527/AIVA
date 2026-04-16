@@ -21,9 +21,9 @@ __all__ = [
     "PersistenceChecker",
 ]
 
-from .privilege_escalation import PrivilegeEscalationEngine, PrivEscVector
+from .lateral_engine import LateralMovementTester
 from .lateral_movement import LateralMovementEngine, LateralMovementVector
 from .persistence import PersistenceEngine, PersistenceVector
-from .privilege_engine import PrivilegeEscalator as PrivilegeEscalationTester
-from .lateral_engine import LateralMovementTester
 from .persistence_engine import PersistenceChecker
+from .privilege_engine import PrivilegeEscalator as PrivilegeEscalationTester
+from .privilege_escalation import PrivEscVector, PrivilegeEscalationEngine

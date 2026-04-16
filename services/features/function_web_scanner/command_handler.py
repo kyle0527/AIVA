@@ -22,24 +22,24 @@ Usage:
     result = await scanner_handler.handle_command(command)
 """
 
-import asyncio
-import time
-from typing import Any, Dict, Optional
 from datetime import datetime
+import time
 
 # aiva_common 標準導入
 from aiva_common.core.command_center import CommandHandler
 from aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,
-    CommandStatus,
     CommandContext,
+    CommandStatus,
     CommandType,
 )
 from aiva_common.utils import get_logger
 
 # 導入統一掃描器
-from services.features.function_web_scanner.integration_tools.web_tools import WebAttackManager
+from services.features.function_web_scanner.integration_tools.web_tools import (
+    WebAttackManager,
+)
 
 logger = get_logger(__name__)
 
@@ -60,7 +60,7 @@ class WebScannerCommandHandler(CommandHandler):
     async def handle_command(
         self,
         command: AICommand,
-        context: Optional[CommandContext] = None
+        context: CommandContext | None = None
     ) -> AICommandResult:
         """處理 AI 命令
 
@@ -157,7 +157,7 @@ class WebScannerCommandHandler(CommandHandler):
                 error_details={"exception_type": "ValueError", "parameter_error": str(e)}
             )
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             # 超時
             self.logger.error("⏱️  Web 掃描超時")
             return AICommandResult(

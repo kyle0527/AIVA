@@ -9,12 +9,13 @@
 4. 文件記錄（通知歷史）
 """
 
+from collections.abc import Callable
+from datetime import datetime
+from enum import Enum
 import json
 import logging
-from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Optional
-from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -49,8 +50,8 @@ class UserNotification:
         level: NotificationLevel,
         title: str,
         message: str,
-        details: Optional[dict[str, Any]] = None,
-        timestamp: Optional[datetime] = None,
+        details: dict[str, Any] | None = None,
+        timestamp: datetime | None = None,
     ):
         self.notification_id = notification_id
         self.notification_type = notification_type
@@ -328,7 +329,7 @@ class NotificationSystem:
     def get_notification_history(
         self,
         limit: int = 20,
-        notification_type: Optional[NotificationType] = None,
+        notification_type: NotificationType | None = None,
     ) -> list[dict[str, Any]]:
         """獲取通知歷史
         
@@ -358,7 +359,7 @@ class NotificationSystem:
 
 
 # 全局通知系統實例
-_notification_system: Optional[NotificationSystem] = None
+_notification_system: NotificationSystem | None = None
 
 
 def get_notification_system() -> NotificationSystem:

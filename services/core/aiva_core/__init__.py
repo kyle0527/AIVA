@@ -32,10 +32,10 @@ UI 層:
 
 __version__ = "4.1.1"
 
-import logging
-from typing import Any, Dict, Optional, Set, List
+from datetime import UTC, datetime
 from enum import Enum
-from datetime import datetime, UTC
+import logging
+from typing import Any, Dict, List, Optional, Set
 
 # 初始化 logger
 logger = logging.getLogger(__name__)
@@ -78,7 +78,7 @@ class StranglerFigMigrationController:
     
     def __init__(self, enable_metrics: bool = True):
         self.current_phase = MigrationPhase.TRANSITION
-        self.feature_flags: Dict[FeatureFlag, bool] = {
+        self.feature_flags: dict[FeatureFlag, bool] = {
             FeatureFlag.V1_CAPABILITY_REGISTRY: True,
             FeatureFlag.AI_MODULE_ORCHESTRATION: True,
             FeatureFlag.ENHANCED_MESSAGE_BROKER: True,
@@ -113,7 +113,7 @@ class StranglerFigMigrationController:
                 self.metrics_enabled = False
         
         # 路由表 - 決定使用新舊系統
-        self.routing_rules: Dict[str, Dict[str, Any]] = {
+        self.routing_rules: dict[str, dict[str, Any]] = {
             'capability_registry': {
                 'legacy_path': 'aiva_common.plugins',
                 'modern_path': 'aiva_core.plugins.ai_summary_plugin.global_capability_registry',
@@ -332,7 +332,7 @@ class StranglerFigMigrationController:
         self.migration_stats['features_in_transition'] = len(self.feature_flags) - self.migration_stats['features_migrated']
         self.migration_stats['last_update'] = datetime.now().isoformat()
     
-    def get_migration_status(self) -> Dict[str, Any]:
+    def get_migration_status(self) -> dict[str, Any]:
         """獲取遷移狀態 (含 Prometheus 指標)"""
         status = {
             'current_phase': self.current_phase.value,
@@ -410,7 +410,26 @@ from aiva_common.enums import (
     TaskStatus,
     Topic,
 )
-from aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
+
+# 從 core.models 導入核心業務邏輯模型
+# 從 aiva_common.schemas 導入共享標準模型
+from aiva_common.schemas import (
+    ConfigUpdatePayload,
+    CVEReference,
+    CVSSv3Metrics,
+    CWEReference,
+    FeedbackEventPayload,
+    FindingEvidence,
+    FindingImpact,
+    FindingPayload,
+    FindingRecommendation,
+    HeartbeatPayload,
+    ModuleStatus,
+    RemediationGeneratePayload,
+    RemediationResultPayload,
+    Target,
+    TaskUpdatePayload,
+)
 
 # 從 core.ai_models 導入 AI 系統相關模型
 from services.core.ai_models import (
@@ -443,23 +462,6 @@ from services.core.ai_models import (
     TraceRecord,
 )
 
-# 從 core.models 導入核心業務邏輯模型
-# 從 aiva_common.schemas 導入共享標準模型
-from aiva_common.schemas import (
-    ConfigUpdatePayload,
-    FeedbackEventPayload,
-    FindingEvidence,
-    FindingImpact,
-    FindingPayload,
-    FindingRecommendation,
-    HeartbeatPayload,
-    ModuleStatus,
-    RemediationGeneratePayload,
-    RemediationResultPayload,
-    Target,
-    TaskUpdatePayload,
-)
-
 # 從 core.models 導入核心擴展模型
 from services.core.models import (
     AttackPathEdge,
@@ -486,14 +488,12 @@ from services.core.models import (
     VulnerabilityCorrelation,
 )
 
-# 從新遷移的核心服務組件導入 (從 aiva_core_v2 遷移而來)
-from .task_planning.command_router import (
-    CommandContext,
-    CommandRouter,
-    CommandType,
-    ExecutionMode,
-    ExecutionResult,
-    get_command_router,
+from .cognitive_core.decision.skill_graph import AIVASkillGraph, skill_graph
+
+# 從核心組件導入
+from .core_capabilities.dialog.assistant import (
+    AIVACommandProcessor,
+    get_dialog_assistant,
 )
 from .service_backbone.context_manager import ContextManager, get_context_manager
 from .service_backbone.coordination.core_service_coordinator import (
@@ -503,11 +503,20 @@ from .service_backbone.coordination.core_service_coordinator import (
     process_command,
     shutdown_core_module,
 )
-from .cognitive_core.decision.skill_graph import AIVASkillGraph, skill_graph
 
-# 從核心組件導入
-from .core_capabilities.dialog.assistant import AIVACommandProcessor, get_dialog_assistant
-from .task_planning.planner.task_execution_planner import ExecutionPlanner, get_execution_planner
+# 從新遷移的核心服務組件導入 (從 aiva_core_v2 遷移而來)
+from .task_planning.command_router import (
+    CommandContext,
+    CommandRouter,
+    CommandType,
+    ExecutionMode,
+    ExecutionResult,
+    get_command_router,
+)
+from .task_planning.planner.task_execution_planner import (
+    ExecutionPlanner,
+    get_execution_planner,
+)
 
 # capability_evaluator 現在使用 aiva_common.ai.capability_evaluator 統一實現
 

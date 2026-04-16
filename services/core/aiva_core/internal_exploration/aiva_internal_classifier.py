@@ -44,13 +44,12 @@ v3.1 - 初始版本（存在分類錯誤）
 - 生成詳細的分類報告
 """
 
-import json
 import argparse
-import sys
-from pathlib import Path
-from typing import Any, Dict, List, Tuple, Set, Optional
 from collections import defaultdict
 from datetime import datetime
+import json
+from pathlib import Path
+from typing import Any
 
 # ==========================================
 # 路徑配置導入
@@ -62,9 +61,9 @@ try:
     PATHS_CONFIG_DIR = Path(__file__).resolve().parent.parent.parent.parent / "integration" / "data" / "internal_exploration"
     
     from services.integration.data.internal_exploration.paths_config import (
-        InternalPaths,
-        CombinedPaths,
         DATA_ROOT,
+        CombinedPaths,
+        InternalPaths,
         ensure_all_dirs,
     )
     USING_NEW_PATHS = True
@@ -254,11 +253,11 @@ class AIVAFlowClassifier:
             "multi_path_endpoints": defaultdict(list)
         }
     
-    def load_module_config(self) -> Dict:
+    def load_module_config(self) -> dict:
         """載入模組配置文件"""
         try:
             if Path(self.module_config_path).exists():
-                with open(self.module_config_path, 'r', encoding='utf-8') as f:
+                with open(self.module_config_path, encoding='utf-8') as f:
                     return json.load(f)
             else:
                 # 使用預設配置
@@ -268,7 +267,7 @@ class AIVAFlowClassifier:
                 print(f"載入配置失敗，使用預設配置: {e}")
             return self.get_default_config()
     
-    def get_default_config(self) -> Dict:
+    def get_default_config(self) -> dict:
         """獲取預設配置（向後相容）"""
         return {
             "modules": {
@@ -323,7 +322,7 @@ class AIVAFlowClassifier:
         if not analysis_file.exists():
             raise FileNotFoundError(f"找不到分析結果文件: {analysis_file}")
         
-        with open(analysis_file, 'r', encoding='utf-8') as f:
+        with open(analysis_file, encoding='utf-8') as f:
             data = json.load(f)
         
         # 處理 flow_chains 格式
@@ -650,7 +649,7 @@ class AIVAFlowClassifier:
             else:
                 return 'no_loop'
     
-    def _get_connector_type(self, loop_type: str) -> Optional[str]:
+    def _get_connector_type(self, loop_type: str) -> str | None:
         """根據循環類型返回對應的連接器
         
         Args:
@@ -712,7 +711,7 @@ class AIVAFlowClassifier:
             
             # ✅ 修復：使用 full_path 而不是 path
             if 'full_path' in flow and flow['full_path']:
-                for script, full_path in zip(flow['path'], flow['full_path']):
+                for script, full_path in zip(flow['path'], flow['full_path'], strict=False):
                     module = self._classify_module_from_path(full_path)  # ✅ 使用路徑
                     comp_type = self._classify_component_type(script)
                     description = self._get_script_description(script)
@@ -796,7 +795,7 @@ class AIVAFlowClassifier:
         if self.verbose:
             print(f"分類完成: {len(self.flows)} 條數據流")
     
-    def analyze_multi_path_endpoints(self) -> List[Dict]:
+    def analyze_multi_path_endpoints(self) -> list[dict]:
         """分析有多條路徑到達的終點"""
         multi_path_analysis = []
         
@@ -1032,7 +1031,7 @@ class AIVAFlowClassifier:
             if module_flows:
                 self._write_module_section(f, module_id, module_flows)
     
-    def _write_module_section(self, f, module_id: str, module_flows: List[Dict]):
+    def _write_module_section(self, f, module_id: str, module_flows: list[dict]):
         """寫入單個模組的數據流信息"""
         module_name = self.MODULES[module_id]
         f.write(f"## {module_name} ({module_id})\n\n")
@@ -1041,7 +1040,7 @@ class AIVAFlowClassifier:
         for flow in module_flows:
             self._write_single_flow_details(f, flow)
     
-    def _write_single_flow_details(self, f, flow: Dict):
+    def _write_single_flow_details(self, f, flow: dict):
         """寫入單個數據流的詳細信息"""
         f.write(f"### Flow {flow['id']}\n\n")
         f.write(f"- **長度**: {flow['length']} 步\n")
@@ -1056,7 +1055,7 @@ class AIVAFlowClassifier:
         
         f.write(SECTION_SEPARATOR)
     
-    def _write_classification_step(self, f, step_num: int, classification: Dict):
+    def _write_classification_step(self, f, step_num: int, classification: dict):
         """寫入單個分類步驟的信息"""
         script_name = classification['script']
         script_info = self.script_functions.get(script_name, {})
@@ -1074,7 +1073,7 @@ class AIVAFlowClassifier:
         
         f.write(f"   - 模組: {self.MODULES.get(classification['module'], classification['module'])}\n\n")
     
-    def _write_function_details(self, f, functions: Dict, file_name: str):
+    def _write_function_details(self, f, functions: dict, file_name: str):
         """寫入函數詳細信息"""
         func_names = list(functions.keys())
         for func_name in func_names:
@@ -1083,7 +1082,7 @@ class AIVAFlowClassifier:
             if func_name != func_names[-1]:
                 f.write("   \n")
     
-    def _generate_multi_path_report(self, multi_path_analysis: List[Dict]):
+    def _generate_multi_path_report(self, multi_path_analysis: list[dict]):
         """生成多路徑分析報告"""
         if not self.output_dir:
             return
@@ -1097,14 +1096,14 @@ class AIVAFlowClassifier:
         if self.verbose:
             print(f"生成多路徑分析報告: {report_file}")
     
-    def _write_multi_path_header(self, f, multi_path_analysis: List[Dict]):
+    def _write_multi_path_header(self, f, multi_path_analysis: list[dict]):
         """寫入多路徑報告標題"""
         f.write("# 多路徑終點分析報告\n\n")
         f.write(f"生成時間: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"找到 {len(multi_path_analysis)} 個有多條路徑到達的終點\n\n")
         f.write(SECTION_SEPARATOR)
     
-    def _write_single_endpoint_analysis(self, f, analysis: Dict):
+    def _write_single_endpoint_analysis(self, f, analysis: dict):
         """寫入單個終點的分析結果"""
         f.write(f"## 終點: {analysis['endpoint']}\n\n")
         f.write(f"**說明**: {analysis['endpoint_description']}\n\n")
@@ -1115,7 +1114,7 @@ class AIVAFlowClassifier:
         
         f.write("---\n\n")
     
-    def _write_endpoint_summary(self, f, analysis: Dict):
+    def _write_endpoint_summary(self, f, analysis: dict):
         """寫入終點摘要信息"""
         f.write(f"- **路徑總數**: {analysis['total_paths']}\n")
         f.write(f"- **路徑長度範圍**: {analysis['path_length_range'][0]} - {analysis['path_length_range'][1]} 步\n")
@@ -1124,7 +1123,7 @@ class AIVAFlowClassifier:
         modules_str = ', '.join([m for m in [self.MODULES.get(m, m) for m in analysis['all_modules_involved']] if m is not None])
         f.write(f"- **涉及模組**: {modules_str}\n\n")
     
-    def _write_path_details(self, f, paths: List[Dict]):
+    def _write_path_details(self, f, paths: list[dict]):
         """寫入路徑詳細信息"""
         f.write("### 路徑詳細對比\n\n")
         
@@ -1139,7 +1138,7 @@ class AIVAFlowClassifier:
                 f.write(f"{j}. {script}\n")
             f.write("\n")
     
-    def _write_path_difference_analysis(self, f, paths: List[Dict]):
+    def _write_path_difference_analysis(self, f, paths: list[dict]):
         """寫入路徑差異分析"""
         if len(paths) < 2:
             return
@@ -1156,7 +1155,7 @@ class AIVAFlowClassifier:
         self._write_script_comparison(f, unique_to_path1, unique_to_path2, common)
         self._write_usage_scenario_analysis(f, path1, path2)
     
-    def _write_script_comparison(self, f, unique_to_path1: Set[str], unique_to_path2: Set[str], common: Set[str]):
+    def _write_script_comparison(self, f, unique_to_path1: set[str], unique_to_path2: set[str], common: set[str]):
         """寫入腳本對比信息"""
         f.write("**路徑 1 vs 路徑 2 對比**:\n\n")
         f.write(f"- 共同腳本數: {len(common)}\n")
@@ -1168,7 +1167,7 @@ class AIVAFlowClassifier:
             f.write(f"  - {', '.join(unique_to_path2)}\n")
         f.write("\n")
     
-    def _write_usage_scenario_analysis(self, f, path1: Dict, path2: Dict):
+    def _write_usage_scenario_analysis(self, f, path1: dict, path2: dict):
         """寫入使用場景差異分析"""
         f.write("**使用場景差異推測**:\n\n")
         
@@ -1190,7 +1189,7 @@ class AIVAFlowClassifier:
             else:
                 f.write("- **推測**: 路徑 2 可能是快速路徑或直接調用,路徑 1 可能包含更多處理邏輯\n\n")
     
-    def _generate_json_export(self, multi_path_analysis: List[Dict]):
+    def _generate_json_export(self, multi_path_analysis: list[dict]):
         """生成 JSON 格式完整數據
         
         v3.3 (2026-01-21): 統一路徑配置
@@ -1257,7 +1256,7 @@ class AIVAFlowClassifier:
         if self.verbose:
             print(f"生成 JSON 數據導出: {json_file}")
     
-    def _generate_cli_command(self, flow: Dict) -> str:
+    def _generate_cli_command(self, flow: dict) -> str:
         """根據 flow 生成 CLI 命令
         
         v3.3 (2026-01-04): 新增方法
@@ -1294,7 +1293,7 @@ class AIVAFlowClassifier:
         else:
             return f"python -m {module_path}"
     
-    def _get_endpoint_function_info(self, flow: Dict) -> Dict:
+    def _get_endpoint_function_info(self, flow: dict) -> dict:
         """獲取終點函數的詳細信息
         
         v3.3 (2026-01-04): 新增方法
@@ -1329,7 +1328,7 @@ class AIVAFlowClassifier:
         
         return {'parameters': [], 'return_type': 'unknown'}
     
-    def _generate_structured_tags(self, flow: Dict) -> List[str]:
+    def _generate_structured_tags(self, flow: dict) -> list[str]:
         """生成結構化標籤（用於 5M AI 向量編碼）
         
         v3.3 (2026-01-04): 新增方法

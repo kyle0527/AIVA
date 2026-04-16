@@ -14,10 +14,10 @@ AIVA 系統健康檢查器
     run_health_check()
 """
 
+import logging
+import os
 import subprocess
 import sys
-import os
-import logging
 
 logger = logging.getLogger(__name__)
 NOT_AVAILABLE = "❌ 未安裝或不可用"
@@ -32,9 +32,9 @@ if not os.getenv("ENVIRONMENT"):
 def check_schemas():
     """檢查 AIVA Common Schemas 可用性"""
     try:
+        from aiva_common.enums import ModuleName
         from aiva_common.schemas.base import MessageHeader
         from aiva_common.schemas.security.findings import Target, Vulnerability
-        from aiva_common.enums import ModuleName
         
         # 測試建立實例
         MessageHeader(
@@ -50,7 +50,6 @@ def check_schemas():
 
 def check_tools():
     """檢查專業分析工具可用性"""
-    import subprocess
     tools = {}
     
     try:

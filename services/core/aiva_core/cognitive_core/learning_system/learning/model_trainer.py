@@ -5,7 +5,6 @@
 
 from datetime import UTC, datetime
 import logging
-import numpy as np
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -23,6 +22,7 @@ from aiva_common.schemas import (
     ScenarioTestResult,
     StandardScenario,
 )
+import numpy as np
 
 logger = logging.getLogger(__name__)
 MODULE_NAME = "aiva_core.learning.model_trainer"

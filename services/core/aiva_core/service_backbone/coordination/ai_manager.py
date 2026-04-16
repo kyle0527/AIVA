@@ -19,19 +19,19 @@ AIVA AI 組件管理器
     await manager.start()
 """
 
-import os
-import sys
 import asyncio
-import json
-import time
-import threading
-import logging
-import signal
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict, List, Any, Optional
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
+from datetime import datetime
 from enum import Enum
+import json
+import logging
+import os
+from pathlib import Path
+import signal
+import sys
+import threading
+import time
+from typing import Any
 
 try:
     import aiofiles
@@ -72,12 +72,12 @@ class ComponentHealth:
     """組件健康狀態"""
     name: str
     status: ComponentStatus
-    pid: Optional[int]
+    pid: int | None
     cpu_percent: float
     memory_mb: float
     uptime_seconds: float
     restart_count: int
-    last_error: Optional[str]
+    last_error: str | None
     timestamp: datetime
 
 @dataclass
@@ -86,7 +86,7 @@ class SystemMetrics:
     cpu_percent: float
     memory_percent: float
     disk_percent: float
-    network_io: Dict[str, int]
+    network_io: dict[str, int]
     timestamp: datetime
 
 class AIComponentManager:
@@ -104,13 +104,13 @@ class AIComponentManager:
         self.components_config = self.load_sot_configuration()
 
         # 運行時狀態
-        self.components: Dict[str, Any] = {}  # 存儲異步進程對象
-        self.component_health: Dict[str, ComponentHealth] = {}
-        self.system_metrics: Optional[SystemMetrics] = None
+        self.components: dict[str, Any] = {}  # 存儲異步進程對象
+        self.component_health: dict[str, ComponentHealth] = {}
+        self.system_metrics: SystemMetrics | None = None
 
         # 監控線程
-        self.monitor_thread: Optional[threading.Thread] = None
-        self.metrics_thread: Optional[threading.Thread] = None
+        self.monitor_thread: threading.Thread | None = None
+        self.metrics_thread: threading.Thread | None = None
 
         # 統計信息
         self.start_time = datetime.now()
@@ -141,7 +141,7 @@ class AIComponentManager:
         self.logger = logging.getLogger("AIComponentManager")
         self.logger.info("🚀 AIVA 持續運作 AI 組件管理器初始化")
 
-    def load_sot_configuration(self) -> Dict[str, Any]:
+    def load_sot_configuration(self) -> dict[str, Any]:
         """載入SOT配置 - 單一事實來源原則"""
         sot_config_file = self.project_root / "services" / "aiva_common" / "continuous_components_sot.json"
 
@@ -218,7 +218,7 @@ class AIComponentManager:
         # 嘗試讀取SOT配置文件
         if sot_config_file.exists():
             try:
-                with open(sot_config_file, 'r', encoding='utf-8') as f:
+                with open(sot_config_file, encoding='utf-8') as f:
                     config = json.load(f)
                 self.logger.info(f"✅ 已載入SOT配置: {sot_config_file}")
                 return config
@@ -266,7 +266,7 @@ class AIComponentManager:
             else:
                 self.logger.info(f"⏭️ 組件 {component_name} 已停用，跳過啟動")
 
-    async def start_component(self, component_name: str, config: Dict[str, Any]) -> bool:
+    async def start_component(self, component_name: str, config: dict[str, Any]) -> bool:
         """啟動單個組件"""
         try:
             self.logger.info(f"🚀 啟動組件: {component_name}")
@@ -614,7 +614,7 @@ class AIComponentManager:
             # 等待最多10秒
             try:
                 await asyncio.wait_for(process.wait(), timeout=10.0)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # 強制關閉
                 process.kill()
                 await process.wait()

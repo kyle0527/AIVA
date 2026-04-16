@@ -6,11 +6,11 @@ OWASP A08:2021 - Software and Data Integrity Failures
 支持多種語言和序列化格式的檢測
 """
 
-import time
 import base64
-import subprocess
-from typing import List, Optional
 from dataclasses import dataclass
+import subprocess
+import time
+
 import requests
 
 
@@ -25,7 +25,7 @@ class DeserializationFinding:
     owasp: str
     evidence: str
     success: bool
-    gadget_chain: Optional[str] = None
+    gadget_chain: str | None = None
 
 
 class DeserializationDetector:
@@ -60,7 +60,7 @@ class DeserializationDetector:
         'Jython1',              # jython-standalone:2.5.2
     ]
     
-    def __init__(self, ysoserial_path: Optional[str] = None, timeout: int = 10):
+    def __init__(self, ysoserial_path: str | None = None, timeout: int = 10):
         """
         初始化檢測器
         
@@ -75,7 +75,7 @@ class DeserializationDetector:
         self, 
         gadget: str, 
         command: str = 'sleep 5'
-    ) -> Optional[bytes]:
+    ) -> bytes | None:
         """
         使用 ysoserial 生成 Java 反序列化 payload
         
@@ -367,7 +367,7 @@ args: [5]'''
         language: str,
         method: str = 'POST',
         inject_point: str = 'param'  # 'param', 'cookie', 'header'
-    ) -> List[DeserializationFinding]:
+    ) -> list[DeserializationFinding]:
         """
         測試反序列化漏洞
         
@@ -443,7 +443,7 @@ args: [5]'''
         method: str,
         inject_point: str,
         baseline_time: float
-    ) -> Optional[DeserializationFinding]:
+    ) -> DeserializationFinding | None:
         """
         測試單個 payload
         

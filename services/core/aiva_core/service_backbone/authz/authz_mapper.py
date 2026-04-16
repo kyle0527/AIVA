@@ -6,9 +6,9 @@
 from datetime import datetime
 from typing import Any
 
+from aiva_common.enums import AccessDecision
 import structlog
 
-from aiva_common.enums import AccessDecision
 from .permission_matrix import PermissionMatrix
 
 logger = structlog.get_logger(__name__)

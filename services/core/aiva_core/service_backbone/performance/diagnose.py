@@ -16,10 +16,9 @@ AIVA 系統診斷工具
 """
 
 import asyncio
-import sys
-import subprocess
 import logging
-from pathlib import Path
+import subprocess
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +34,9 @@ async def check_engines():
     print_header("🔍 引擎可用性檢查")
     
     try:
-        from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+        from services.scan.coordinators.multi_engine_coordinator import (
+            MultiEngineCoordinator,
+        )
         
         coordinator = MultiEngineCoordinator()
         await coordinator.initialize()
@@ -47,17 +48,17 @@ async def check_engines():
             print(f"  - {engine}")
         
         if len(available) < 4:
-            print(f"\n⚠️  不可用引擎:")
+            print("\n⚠️  不可用引擎:")
             all_engines = {"python", "typescript", "rust", "go"}
             unavailable = all_engines - set(available)
             for engine in unavailable:
                 print(f"  - {engine}")
                 if engine == "go":
-                    print(f"    提示: 需要編譯 Go 掃描器")
-                    print(f"    命令: cd services/scan/engines/go_engine && go build -o scanner.exe ./cmd/ssrf-scanner")
+                    print("    提示: 需要編譯 Go 掃描器")
+                    print("    命令: cd services/scan/engines/go_engine && go build -o scanner.exe ./cmd/ssrf-scanner")
                 elif engine == "typescript":
-                    print(f"    提示: 需要編譯 TypeScript 引擎")
-                    print(f"    命令: cd services/scan/engines/typescript_engine && npm install && npm run build")
+                    print("    提示: 需要編譯 TypeScript 引擎")
+                    print("    命令: cd services/scan/engines/typescript_engine && npm install && npm run build")
         
         return len(available) > 0
         
@@ -103,7 +104,7 @@ def check_docker():
             print(f"  - {name} (localhost:{port})")
         
         if len(found) < 4:
-            print(f"\n⚠️  缺少的靶場:")
+            print("\n⚠️  缺少的靶場:")
             for name, port in targets.items():
                 if name not in found:
                     print(f"  - {name} (應在 localhost:{port})")
@@ -126,9 +127,15 @@ async def check_http():
     print_header("🌐 HTTP 連接測試")
     
     try:
-        from services.scan.engines.python_engine.core_crawling_engine.http_client_hi import HiHttpClient
-        from services.scan.engines.python_engine.authentication_manager import AuthenticationManager
-        from services.scan.engines.python_engine.header_configuration import HeaderConfiguration
+        from services.scan.engines.python_engine.authentication_manager import (
+            AuthenticationManager,
+        )
+        from services.scan.engines.python_engine.core_crawling_engine.http_client_hi import (
+            HiHttpClient,
+        )
+        from services.scan.engines.python_engine.header_configuration import (
+            HeaderConfiguration,
+        )
         
         auth = AuthenticationManager(None)
         headers = HeaderConfiguration(None)

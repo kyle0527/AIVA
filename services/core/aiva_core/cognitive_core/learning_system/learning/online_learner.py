@@ -13,14 +13,12 @@ Online Learner - 線上學習器
 版本: 2.0.0
 """
 
-import logging
-from typing import Any, Optional
+from typing import Any
 
+from aiva_common.utils import get_logger
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
-from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -139,7 +137,7 @@ class OnlineLearner:
         self,
         states: torch.Tensor,
         targets: torch.Tensor,
-        weights: Optional[torch.Tensor] = None
+        weights: torch.Tensor | None = None
     ) -> dict[str, Any]:
         """從小批次更新模型
         

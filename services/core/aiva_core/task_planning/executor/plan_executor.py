@@ -15,22 +15,21 @@ import logging
 from typing import Any
 from uuid import uuid4
 
+from aiva_common.core.error_handling import (
+    AIVAError,
+    ErrorContext,
+    ErrorSeverity,
+    ErrorType,
+)
 from aiva_common.schemas import (
     AttackPlan,
     AttackStep,
-    FindingPayload,
     FunctionTaskPayload,
     FunctionTaskTarget,
     PlanExecutionMetrics,
     PlanExecutionResult,
     SessionState,
     TraceRecord,
-)
-from aiva_common.core.error_handling import (
-    AIVAError,
-    ErrorContext,
-    ErrorSeverity,
-    ErrorType,
 )
 
 # 模組整合: external_learning → cognitive_core/learning_system
@@ -238,7 +237,7 @@ class PlanExecutor:
             trace_records: 執行軌跡
         """
         try:
-            from aiva_common.enums import Topic, ModuleName
+            from aiva_common.enums import ModuleName, Topic
             from aiva_common.schemas import AivaMessage, MessageHeader
             
             # 構建完成事件
@@ -541,7 +540,7 @@ class PlanExecutor:
                 "telemetry": telemetry_data,
             }
             
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning(f"任務 {task_id} 執行超時")
             return {
                 "task_id": task_id,

@@ -139,7 +139,9 @@ class UnifiedVectorStore:
         if self._embedding_model is None:
             try:
                 # 導入 AIVA 自研 Embedding 層
-                from services.core.aiva_core.cognitive_core.neural.aiva_embedding import AIVAEmbedding
+                from services.core.aiva_core.cognitive_core.neural.aiva_embedding import (
+                    AIVAEmbedding,
+                )
 
                 self._embedding_model = AIVAEmbedding(
                     model_name_or_path=self.embedding_model_name
