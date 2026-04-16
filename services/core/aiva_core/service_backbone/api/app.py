@@ -444,10 +444,7 @@ async def list_scans(
     """
     try:
         # 從 SessionStateManager 取得所有掃描記錄
-        # NOTE: SessionStateManager 需要實作 list_all_sessions() 方法
-        # all_scans = session_state_manager.list_all_sessions()
-        # 暫時返回空列表
-        all_scans = []
+        all_scans = session_state_manager.list_all_sessions()
 
         # 篩選狀態
         if status:
@@ -544,17 +541,21 @@ async def delete_scan(scan_id: str) -> dict[str, str]:
         操作結果訊息
     """
     try:
-        # NOTE: 刪除功能需要實作：
-        #   1. SimpleDataManager.delete_task(scan_id)
-        #   2. SessionStateManager.delete_session(scan_id)
+        # 從 SessionStateManager 刪除記錄
+        success = session_state_manager.delete_session(scan_id)
+        if success:
+            logger.info(f"🗑️ [API] Scan {scan_id} successfully deleted")
+            return {
+                "scan_id": scan_id,
+                "status": "deleted",
+                "message": "Scan deleted successfully"
+            }
+        else:
+            logger.warning(f"⚠️ [API] Scan {scan_id} not found for deletion")
+            raise HTTPException(status_code=404, detail=f"Scan {scan_id} not found")
 
-        logger.info(f"🗑️ [API] Scan {scan_id} delete requested (not implemented yet)")
-        return {
-            "scan_id": scan_id,
-            "status": "pending",
-            "message": "Delete functionality not yet implemented"
-        }
-
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ [API] Failed to delete scan {scan_id}: {e}")
         raise HTTPException(status_code=500, detail=str(e))

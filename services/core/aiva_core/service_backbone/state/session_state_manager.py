@@ -114,3 +114,26 @@ class SessionStateManager:
 
         logger.info(f"Updated session {session_id} status to: {status}")
 
+    def list_all_sessions(self) -> list[dict[str, Any]]:
+        """獲取所有會話狀態摘要"""
+        sessions = []
+        for scan_id, session in self._sessions.items():
+            sessions.append({
+                "scan_id": scan_id,
+                "status": session.get("status", "unknown"),
+                "phase": session.get("current_phase", "unknown"),
+                "progress": f"{session.get('tasks_completed', 0)}/{session.get('tasks_total', 0)}",
+                "created_at": session.get("created_at"),
+                "updated_at": session.get("updated_at")
+            })
+        return sessions
+
+    def delete_session(self, session_id: str) -> bool:
+        """刪除會話狀態"""
+        if session_id in self._sessions:
+            del self._sessions[session_id]
+            if session_id in self._session_history:
+                del self._session_history[session_id]
+            logger.info(f"Deleted session {session_id}")
+            return True
+        return False

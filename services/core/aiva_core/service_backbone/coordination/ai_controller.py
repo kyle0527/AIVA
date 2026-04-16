@@ -413,6 +413,7 @@ class AISubsystemController:
             "coordination_time": asyncio.get_event_loop().time()
         }
 
+        if not self.master_ai:
             return {
                 "status": "partial_success",
                 "processing_method": "multi_ai_coordination",

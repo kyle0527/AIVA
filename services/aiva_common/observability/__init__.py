@@ -12,7 +12,7 @@ from enum import Enum
 from typing import Any, Dict, Optional, Union
 from uuid import uuid4
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 # 嘗試導入 OpenTelemetry（可選依賴）
 try:

@@ -1,8 +1,9 @@
-import re
 import os
+import re
+
 
 def fix_file(filepath):
-    with open(filepath, 'r', encoding='utf-8') as f:
+    with open(filepath, encoding='utf-8') as f:
         content = f.read()
 
     # Skip if ConfigDict already there and no class Config
