@@ -100,7 +100,6 @@ SECURITY_CONFIG_EXAMPLE = {
             "allowed_origins": [
                 "http://localhost:3000",
                 "https://aiva.app",
-                "https://*.aiva.app",
             ],
             "allowed_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allowed_headers": [
@@ -110,7 +109,7 @@ SECURITY_CONFIG_EXAMPLE = {
                 "X-Trace-ID",
                 "X-Request-ID",
             ],
-            "allow_credentials": True,
+            "allow_credentials": False,
             "max_age": 86400,
         },
         # 速率限制設置
