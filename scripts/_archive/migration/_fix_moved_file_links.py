@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
+
+
 """修正移動文件後的內部連結"""
 
 import os
 import re
 from pathlib import Path
 from typing import List, Dict, Tuple
+project_root = Path(__file__).resolve().parent.parent.parent.parent
 
 # 文件移動映射
 MOVED_FILES = {
@@ -109,7 +112,7 @@ def fix_links_in_file(file_path: Path, root_dir: Path) -> Tuple[int, List[str]]:
     return 0, []
 
 def main():
-    root_dir = Path(r"C:\D\fold7\AIVA-git")
+    root_dir = project_root
     
     print("="*80)
     print("🔗 開始修正移動文件的內部連結")

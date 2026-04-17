@@ -1,86 +1,65 @@
 # 🔗 Common - 通用服務腳本
 
-> **版本**: v2.0  
-> **更新日期**: 2026年1月12日  
-> **檔案數量**: 10 個腳本  
-> **架構更新**: 移除多餘 FastAPI 服務，簡化為單一入口點
+> **所屬層級**: `scripts/common/`
+> **上一層級**: [Scripts 根目錄](../README.md)
+> **檔案數量**: 10+ 個腳本（含子目錄）
 
 ---
 
 ## 📋 目錄概述
 
-Common 目錄包含 AIVA 系統的通用服務工具，包括系統啟動、CLI 介面、驗證工具等基礎設施腳本。
+Common 目錄是 AIVA 系統通用基礎設施的集合點。它收納了系統啟動、CLI 介面操作、驗證、維護、及環境設定工具。
+這裡的腳本大多具備跨模組的特性，作為日常運維與測試的統一入口。
 
 ---
 
-## 📂 腳本說明
+## 🗂️ 子目錄導覽
 
-### 🚀 啟動腳本
+| 子目錄 | 說明 | 連結 |
+|--------|------|------|
+| `maintenance/` | 深入的維護與分析工具（路徑修復、報表生成、核心優化等） | [詳情](./maintenance/README.md) |
+| `launcher/` | 系統級別啟動腳本（啟動/停止系統元件） | - |
+| `setup/` | 環境初始化腳本 | - |
+| `validation/` | 系統健康與診斷腳本 | - |
+| `tools/` | 開發工具與依賴管理 | - |
+| `data/` | 腳本所需的本地資料庫與配置暫存 | - |
+
+---
+
+## 📂 核心腳本說明
+
+### 🚀 啟動與 CLI 介面
 
 | 腳本 | 功能說明 |
 |------|----------|
-| `start_ai_service.py` | ✅ 啟動 Core API 服務（系統唯一入口點） |
 | `start_ai_simple.py` | 簡化版 AI 服務啟動器 |
-| `run_aiva_cli.bat` | Windows 批次檔啟動 AIVA CLI |
-| `run_aiva_cli.sh` | Linux/Mac shell 啟動 AIVA CLI |
-| `run_capability_cli.bat` | Windows 批次檔啟動能力 CLI |
-| `run_capability_cli.sh` | Linux/Mac shell 啟動能力 CLI |
-
-### 🖥️ CLI 介面工具
-
-| 腳本 | 功能說明 |
-|------|----------|
-| `aiva_cli.py` | AIVA 主要命令列介面 |
-| `aiva_ai_menu.py` | AI 功能選單介面 |
-
-### ✅ 驗證工具
-
-| 腳本 | 功能說明 |
-|------|----------|
-| `validate_coordinator_drives_engines.py` | 驗證協調器驅動引擎的正確性 |
-| `validate_scan_system.py` | 驗證掃描系統的完整性 |
+| `run_aiva_cli.bat` / `.sh` | 啟動 AIVA 主要命令列介面 |
+| `run_capability_cli.bat` / `.sh` | 啟動 AIVA 能力查詢與測試 CLI |
 
 ---
 
-## 🚀 使用方式
+## 🚀 快速開始
 
-### 啟動 AI 服務
+### 啟動 CLI
 
 ```bash
-# Python 啟動
-python start_ai_service.py
-
-# Windows 批次檔
+# Windows
 .\run_aiva_cli.bat
 
 # Linux/Mac
 ./run_aiva_cli.sh
 ```
 
-### 使用 CLI
+### 系統診斷 (Validation)
 
-```bash
-# 啟動 AIVA CLI
-python aiva_cli.py
-
-# 啟動 AI 選單
-python aiva_ai_menu.py
-```
-
-### 執行驗證
-
-```bash
-# 驗證協調器
-python validate_coordinator_drives_engines.py
-
-# 驗證掃描系統
-python validate_scan_system.py
+```powershell
+cd validation
+.\diagnose_system.ps1
 ```
 
 ---
 
-## 📝 注意事項
+## 💡 最佳實踐
 
-- 啟動腳本需確保相關服務依賴已安裝
-- CLI 工具支援互動式操作
-- 驗證工具建議在系統更新後執行
+- 若要執行維護任務，請進入 `maintenance/` 目錄並參考其 [README.md](./maintenance/README.md)。
+- 啟動全系統或特定微服務時，可利用 `launcher/` 中的腳本，或使用本目錄下的捷徑批次檔。

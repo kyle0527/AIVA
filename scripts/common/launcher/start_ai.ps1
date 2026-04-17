@@ -1,10 +1,11 @@
 # AIVA AI 持續運作服務 - PowerShell 啟動腳本
+$PROJECT_ROOT = (Resolve-Path "$PSScriptRoot\..\..\..").Path
 
 Write-Host "🚀 AIVA AI 服務啟動器" -ForegroundColor Cyan
 Write-Host "=" * 60
 
 # 設置項目路徑
-$ProjectRoot = "C:\D\fold7\AIVA-git"
+$ProjectRoot = "$PROJECT_ROOT"
 $env:PYTHONPATH = $ProjectRoot
 
 # 顯示選單

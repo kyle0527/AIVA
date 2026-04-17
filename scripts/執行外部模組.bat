@@ -1,4 +1,5 @@
 @echo off
+set "PROJECT_ROOT=%~dp0.."
 chcp 65001 >nul 2>&1
 
 echo ========================================
@@ -22,7 +23,7 @@ if "%1"=="" (
     exit /b 0
 )
 
-cd /d C:\D\fold7\AIVA-git
+cd /d %PROJECT_ROOT%
 python scripts\run_module.py %1 %2
 
 pause

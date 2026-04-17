@@ -2,8 +2,8 @@
 # 整合樹狀圖、統計數據、程式碼分析
 
 param(
-    [string]$ProjectRoot = "C:\D\fold7\AIVA-git",
-    [string]$OutputDir = "C:\D\fold7\AIVA-git\_out"
+    [string]$ProjectRoot = (Resolve-Path "$PSScriptRoot\..\..\..").Path,
+    [string]$OutputDir = "$($ProjectRoot)\_out"
 )
 
 Write-Host "🚀 開始生成專案完整報告..." -ForegroundColor Cyan

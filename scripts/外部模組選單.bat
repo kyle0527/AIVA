@@ -1,6 +1,7 @@
 @echo off
+set "PROJECT_ROOT=%~dp0.."
 chcp 65001 >nul 2>&1
-set PYTHONPATH=C:\D\fold7\AIVA-git\services\core;C:\D\fold7\AIVA-git\services
+set PYTHONPATH=%PROJECT_ROOT%\services\core;%PROJECT_ROOT%\services
 set PYTHONIOENCODING=utf-8
 
 :MENU
@@ -22,7 +23,7 @@ set /p choice=Select (0-6):
 if "%choice%"=="0" goto END
 if "%choice%"=="6" goto LIST
 
-cd /d "C:\D\fold7\AIVA-git\services\core\aiva_core\internal_exploration\python_tools"
+cd /d "%PROJECT_ROOT%\services\core\aiva_core\internal_exploration\python_tools"
 
 set /p target=Enter target URL: 
 
@@ -34,7 +35,7 @@ pause
 goto MENU
 
 :LIST
-cd /d "C:\D\fold7\AIVA-git\services\core\aiva_core\internal_exploration\python_tools"
+cd /d "%PROJECT_ROOT%\services\core\aiva_core\internal_exploration\python_tools"
 python aiva_external_module_cli.py --list --lang python
 pause
 goto MENU

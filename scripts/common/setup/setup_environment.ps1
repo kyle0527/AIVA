@@ -20,7 +20,7 @@ Write-Host "使用全域環境策略 - 2025-11-25" -ForegroundColor Gray
 Write-Host ""
 
 # 切換到專案根目錄
-$ProjectRoot = "C:\D\fold7\AIVA-git"
+$ProjectRoot = (Resolve-Path "$PSScriptRoot\..\..\..").Path
 Set-Location $ProjectRoot
 
 # ============================================

@@ -153,7 +153,7 @@ if ($pythonInstalled) {
 # ============================================
 Write-Host "`n📁 檢查專案結構..." -ForegroundColor Yellow
 
-$projectRoot = "C:\D\fold7\AIVA-git"
+$projectRoot = (Resolve-Path "$PSScriptRoot\..\..\..").Path
 $requiredDirs = @(
     "services",
     "services\core",

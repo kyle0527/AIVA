@@ -54,7 +54,7 @@ if ($pythonProcesses) {
 if (-not $KeepInfrastructure) {
     Write-Host "`n🐳 停止 Docker 容器..." -ForegroundColor Yellow
     
-    $ProjectRoot = "C:\D\fold7\AIVA-git"
+    $ProjectRoot = (Resolve-Path "$PSScriptRoot\..\..\..").Path
     Push-Location "$ProjectRoot\docker"
     
     if ($Force) {
