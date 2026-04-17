@@ -70,6 +70,7 @@ _CORE_DIR = _SERVICES_DIR / "core"
 # 智能路徑添加：僅在需要時添加
 for p in [str(_CORE_DIR), str(_SERVICES_DIR), str(_PROJECT_ROOT)]:
     if p not in sys.path:
+        sys.path.insert(0, p)
 
 # 整合模块数据管理
 from services.integration.simple_data_manager import get_data_manager
@@ -240,6 +241,14 @@ async def startup() -> None:
     coordinator = AIVACoreServiceCoordinator()
     await coordinator.start()
     logger.info("✅ [啟動] CoreServiceCoordinator initialized (state manager mode)")
+
+    # ✅ 初始化能力註冊表
+    try:
+        from services.core.aiva_core.core_capabilities.capability_registry import initialize_capability_registry
+        await initialize_capability_registry()
+        logger.info("✅ [啟動] CapabilityRegistry initialized and synced")
+    except Exception as e:
+        logger.warning(f"⚠️  [啟動] CapabilityRegistry initialization failed: {e}")
 
     # ✅ Step 2: 初始化認知核心（AI 決策引擎 - 大腦）
     decision_agent = EnhancedDecisionAgent()

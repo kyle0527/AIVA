@@ -79,7 +79,7 @@ from .analysis import (
 # ==================== API 標準 (OpenAPI/AsyncAPI/GraphQL) ====================
 from .api_standards import (
     APISecurityTest,
-    APIVulnerabilityFinding,
+
     AsyncAPIChannel,
     AsyncAPIDocument,
     AsyncAPIInfo,
