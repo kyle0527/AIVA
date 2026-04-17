@@ -79,7 +79,7 @@ from .analysis import (
 # ==================== API 標準 (OpenAPI/AsyncAPI/GraphQL) ====================
 from .api_standards import (
     APISecurityTest,
-    APIVulnerabilityFinding,
+
     AsyncAPIChannel,
     AsyncAPIDocument,
     AsyncAPIInfo,
@@ -670,7 +670,7 @@ __all__ = [
     "GraphQLFieldDefinition",
     "GraphQLDirectiveDefinition",
     "APISecurityTest",
-    "APIVulnerabilityFinding",
+
     # 決策數據合約 (問題三修復)
     "IntentType",
     "TargetInfo",

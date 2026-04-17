@@ -1,102 +1,63 @@
 # function_info_leak - 敏感資訊洩漏檢測模組
 
-> **版本**: v2.0.0 | **狀態**: ✅ 完成 | **語言**: Python | **能力登錄**: ⬜ 待登錄（對應 `secret_detection`）
+> **版本**: v3.0.0 | **狀態**: ✅ 模組完成 | **語言**: Python
 
-## 模組概述
+## 🎯 模組概述
 
-專業級敏感資訊檢測模組，識別 HTTP 回應、HTML 內容、標頭等中的敏感資訊洩漏，涵蓋 50+ 種偵測類型。
+專業級敏感資訊檢測模組，負責識別 HTTP 回應、HTML 內容、標頭等之中的敏感資訊洩漏（API Key、Token、私鑰等），涵蓋 50+ 種偵測模式，並支援香農熵 (Shannon Entropy) 分析。
 
-### 功能完成狀態
+### 功能清單
 
-| 功能 | 狀態 | 說明 |
-|------|------|------|
-| 50+ 種偵測模式 | ✅ 完成 | AWS/GCP/Azure/GitHub/Stripe 等主流平台 |
-| 熵值分析 | ✅ 完成 | 香農熵識別高隨機性密鑰 |
-| 智能誤報過濾 | ✅ 完成 | 上下文感知、白名單、變數名識別 |
-| 信心度評分 | ✅ 完成 | 0.0–1.0 浮點數評分 |
-| 風險評分機制 | ✅ 完成 | 0–100 總分，4 級風險等級 |
-| SARIF 格式輸出 | ✅ 完成 | 符合 SARIF v2.1.0 標準 |
-| 多格式輸出 | ✅ 完成 | Text / JSON / SARIF |
-| HTTP 標頭掃描 | ✅ 完成 | 獨立標頭分析方法 |
+| 功能 | 說明 |
+|------|------|
+| 50+ 種偵測模式 | AWS/GCP/Azure/GitHub/Stripe 等主流平台之金鑰與 Token 辨識 |
+| 熵值分析 | 利用香農熵識別未符合特定模式的高隨機性密鑰 |
+| 智能誤報過濾 | 上下文感知、白名單過濾、變數名識別 |
+| 多格式輸出 | 支援匯出為 Text / JSON / SARIF 格式報告 |
 
-## 架構
+## 📐 架構設計
 
 ```
 function_info_leak/
+├── __init__.py                 # 模組入口匯出
 └── sensitive_info_detector.py  # 全部實作（SensitiveInfoDetector）
 ```
 
-> 此模組為單一檔案實作，所有邏輯集中於 `sensitive_info_detector.py`。
+> 此模組為單一檔案實作，所有邏輯集中於 `sensitive_info_detector.py`，不依賴外部執行檔。
 
-## 執行方式
+## 🚀 執行方式
 
-### 透過 AIVA 執行器（推薦）
-
-```bash
-python services/core/aiva_core/internal_exploration/aiva_external_executor.py \
-    --lang python --func SensitiveInfoDetector.detect_in_response \
-    --target https://example.com
-```
-
-### 直接使用
+### 作為 Python 模組匯入
 
 ```python
-from services.features.function_info_leak.sensitive_info_detector import SensitiveInfoDetector
+from services.features.function_info_leak import SensitiveInfoDetector
 
 detector = SensitiveInfoDetector()
 
-# 掃描完整 HTTP 回應（主要入口）
-result = detector.detect_in_response(response_body, headers=headers, url="https://example.com")
+# 掃描完整 HTTP 回應內容
+result = detector.detect_in_response(response_body="...", headers={}, url="https://example.com")
 
-# 掃描 HTML 內容
-result = detector.detect_in_html(html_content, url="https://example.com")
-
-# 掃描 HTTP 標頭
-result = detector.detect_in_headers(headers, url="https://example.com")
-
-# 輸出報告
-print(detector.format_report(result, format="text"))
-detector.export_report(result, "report.sarif", format="sarif")
+# 輸出 JSON 報告
+print(detector.format_report(result, format="json"))
 ```
 
-## 偵測類型（50+）
+## 🔧 內部 API 參考
 
-| 類型 | 嚴重度 | 範例 |
-|------|:------:|------|
-| AWS Access Key | 🔴 CRITICAL | `AKIAIOSFODNN7EXAMPLE` |
-| AWS Secret Key | 🔴 CRITICAL | `wJalrXUtnFEMI/...` |
-| RSA / EC 私鑰 | 🔴 CRITICAL | `-----BEGIN RSA PRIVATE KEY-----` |
-| Stripe Secret Key | 🔴 CRITICAL | `sk_live_51H8xyz...` |
-| GitHub Token | 🟠 HIGH | `ghp_wWPw5k4aXcaT4fN...` |
-| GitLab Token | 🟠 HIGH | `glpat-xxxxxxxxxxxx` |
-| JWT Token | 🟠 HIGH | `eyJhbGciOiJIUzI1NiIs...` |
-| 資料庫連線字串 | 🟠 HIGH | `mongodb://user:pass@host` |
-| PII（Email/SSN/電話） | 🟡 MEDIUM | 個人識別資訊 |
-| 高熵字串 | 🟡 MEDIUM | 熵值 > 4.5 的任意字串 |
-
-## 可調用方法（公開 API）
-
-| 方法 | 說明 |
+| 類別 / 方法 | 說明 |
 |------|------|
-| `detect_in_response(response_body, headers, url)` | 掃描完整 HTTP 回應（主要入口） |
-| `detect_in_html(html_content, url)` | 掃描 HTML 內容 |
-| `detect_in_headers(headers, url)` | 掃描 HTTP 標頭 |
-| `format_report(result, format)` | 格式化輸出（text / json / sarif） |
-| `export_report(result, output_file, format)` | 輸出報告至檔案 |
-| `get_statistics(results)` | 多次掃描統計分析 |
-| `calculate_entropy(data)` | 計算字串香農熵 |
+| `SensitiveInfoDetector.detect_in_response(...)` | 掃描完整 HTTP 回應（主要入口） |
+| `SensitiveInfoDetector.detect_in_html(...)` | 掃描 HTML 內容 |
+| `SensitiveInfoDetector.detect_in_headers(...)` | 掃描 HTTP 標頭 |
+| `SensitiveInfoDetector.format_report(result, format)` | 格式化輸出（text / json / sarif） |
+| `SensitiveInfoDetector.export_report(...)` | 輸出報告至檔案 |
 
-## 風險評分
+## 🔒 偵測類型與風險等級
 
-```
-CRITICAL: critical_count > 0 或 score ≥ 75
-HIGH:     high_count > 0 或 score ≥ 50
-MEDIUM:   medium_count > 0 或 score ≥ 25
-LOW:      其他
-```
+- 🔴 **CRITICAL**: 包含 AWS Access/Secret Key, RSA/EC 私鑰, Stripe Secret Key 等。
+- 🟠 **HIGH**: 包含 GitHub/GitLab Token, JWT Token, 資料庫連線字串等。
+- 🟡 **MEDIUM**: 包含 PII（Email/SSN/電話）及 高熵字串 (熵值 > 4.5)。
+- 🟢 **LOW**: 低風險資訊。
 
 ## 注意事項
-
-- 僅限授權安全測試使用
-- 偵測結果中敏感值會自動雜湊（`hash` 欄位），不以明文儲存
-- 誤報過濾：白名單關鍵字（`example`/`sample`/`test`/`demo`）自動降低信心度
+- 偵測結果物件中敏感值通常僅保留部分或遮罩，避免在日誌中二次洩漏。
+- 若出現 `example` / `test` 等字眼，引擎會自動降低信心度。

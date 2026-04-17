@@ -13,6 +13,7 @@ import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, "..", "..", ".."))
 if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 # 設定 Log
 logging.basicConfig(stream=sys.stderr, level=logging.INFO, format='[%(levelname)s] %(message)s')
@@ -23,81 +24,58 @@ def run_xss_test(url: str, param: str, method: str = "GET", timeout: int = 30):
     """完全同步的 XSS 測試
     
     不使用 async，直接用 requests 庫（同步）
+    這只是一個簡化的展示。
     """
     import requests
+    from .payload_generator import XssPayloadGenerator
     
-    logger.info(f"開始 XSS 測試: {url} (參數: {param})")
+    payloads = XssPayloadGenerator.generate_all_payloads()
+    results = []
     
-    # 測試 payloads
-    payloads = [
-        "<script>alert('XSS')</script>",
-        "<img src=x onerror=alert('XSS')>",
-        "'\"><script>alert(String.fromCharCode(88,83,83))</script>",
-        "<svg/onload=alert('XSS')>",
-    ]
-    
-    findings = []
-    
-    for payload in payloads:
+    for p in payloads:
         try:
-            # 構建測試 URL
-            if method == "GET":
-                test_url = f"{url}?{param}={payload}"
-                response = requests.get(test_url, timeout=timeout)
+            if method.upper() == "GET":
+                target_url = f"{url}?{param}={p.payload}"
+                r = requests.get(target_url, timeout=timeout)
             else:
-                response = requests.post(url, data={param: payload}, timeout=timeout)
-            
-            # 檢查是否存在漏洞
-            if payload in response.text:
-                findings.append({
-                    "payload": payload,
-                    "status": response.status_code,
-                    "vulnerable": True,
-                    "evidence": response.text[:200]
-                })
-                logger.info(f"✓ 發現漏洞: {payload}")
-            
-        except Exception as e:
-            logger.error(f"測試失敗: {payload} - {e}")
-    
-    return findings
+                r = requests.post(url, data={param: p.payload}, timeout=timeout)
 
+            if p.payload in r.text:
+                results.append({
+                    "vulnerable": True,
+                    "payload": p.payload,
+                    "type": p.context,
+                    "method": method
+                })
+        except requests.RequestException as e:
+            logger.debug(f"Request failed: {e}")
+            
+    return results
 
 def main():
-    """主函數 - 完全同步"""
-    parser = argparse.ArgumentParser(description="AIVA XSS Scanner (Sync CLI)")
-    
+    parser = argparse.ArgumentParser(description="AIVA XSS Vulnerability Scanner CLI (Sync)")
     parser.add_argument("--url", required=True, help="目標 URL")
-    parser.add_argument("--param", default="q", help="測試參數名稱")
-    parser.add_argument("--method", choices=["GET", "POST"], default="GET", help="HTTP 方法")
-    parser.add_argument("--timeout", type=int, default=30, help="超時秒數")
+    parser.add_argument("--param", required=True, help="測試參數")
+    parser.add_argument("--method", default="GET", choices=["GET", "POST"])
     
     args = parser.parse_args()
-    
+
     try:
-        # 直接執行測試（同步）
-        findings = run_xss_test(
-            url=args.url,
-            param=args.param,
-            method=args.method,
-            timeout=args.timeout
-        )
-        
-        # 輸出 JSON 結果
-        output = {
+        findings = run_xss_test(args.url, args.param, args.method)
+        print(json.dumps({
             "target": args.url,
+            "status": "success",
             "findings_count": len(findings),
-            "vulnerable": len(findings) > 0,
             "findings": findings
-        }
-        
-        print(json.dumps(output, indent=2, ensure_ascii=False))
+        }, ensure_ascii=False, indent=2))
         
     except Exception as e:
-        logger.error(f"執行錯誤: {e}", exc_info=True)
-        print(json.dumps({"error": str(e)}, ensure_ascii=False))
+        print(json.dumps({
+            "target": args.url,
+            "status": "failed",
+            "error": str(e)
+        }))
         sys.exit(1)
 
-
 if __name__ == "__main__":
-    main()  # ← 不需要 asyncio.run()！
+    main()

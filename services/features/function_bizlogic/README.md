@@ -1,79 +1,83 @@
 # function_bizlogic - 業務邏輯漏洞測試模組
 
-> **版本**: v1.0.0 | **狀態**: ✅ 引擎完成，⬜ CLI 入口待接通 | **語言**: Python | **能力登錄**: ⬜ 待登錄
+> **版本**: v3.0.0 | **狀態**: ✅ 模組完成 | **語言**: Python
 
 ## 模組概述
 
-業務邏輯漏洞測試模組，測試競爭條件、價格竄改、工作流程繞過等業務層面的安全問題。
+業務邏輯漏洞測試模組，透過對業務流程進行深度探測，發掘無法被傳統掃描器識別的漏洞，例如競爭條件、價格竄改、工作流程繞過等業務層面的安全問題。
 
-### 功能完成狀態
+### 功能清單
 
-| 功能 | 狀態 | 說明 |
-|------|------|------|
-| 競爭條件測試 | ✅ 完成 | 並行請求分析、餘額競爭、優惠券重用 |
-| 價格竄改測試 | ✅ 完成 | 負數價格、零元、溢位、參數竄改 |
-| 工作流程繞過 | ✅ 完成 | 步驟跳過、直接結帳、支付繞過、驗證繞過 |
-| 綜合掃描入口 | ✅ 完成 | BizLogicManager.comprehensive_scan() |
-| CLI 入口接通 | ⬜ 待完成 | aiva_external_executor 尚未對應 |
+| 功能 | 說明 |
+|------|------|
+| 競爭條件測試 | 並行請求分析、餘額競爭、優惠券重用漏洞測試 |
+| 價格竄改測試 | 負數價格、零元、溢位、參數竄改測試 |
+| 工作流程繞過 | 步驟跳過、直接結帳、支付繞過、驗證繞過測試 |
+| 獨立 CLI 工具 | `__main__.py` 支援命令列介面直接呼叫所有測試模組 |
 
-## 架構
+## 架構設計
 
 ```
 function_bizlogic/
-├── race_condition_scanner.py     # 競爭條件（RaceConditionScanner）
-├── price_manipulation_scanner.py # 價格竄改（PriceManipulationScanner）
-├── workflow_bypass_scanner.py    # 工作流程繞過（WorkflowBypassScanner）
-├── business_schemas.py           # 資料模型（AttackSurfaceAnalysis 等）
-├── finding_helper.py             # 發現結果輔助工具
+├── __main__.py                   # 獨立 CLI 執行入口
+├── __init__.py                   # 模組入口匯出
+├── race_condition_scanner.py     # 競爭條件偵測器 (RaceConditionScanner)
+├── price_manipulation_scanner.py # 價格竄改偵測器 (PriceManipulationScanner)
+├── workflow_bypass_scanner.py    # 工作流程繞過偵測器 (WorkflowBypassScanner)
+├── business_schemas.py           # 資料模型 (AttackSurfaceAnalysis 等)
+├── finding_helper.py             # 發現結果生成輔助工具
 └── integration_tools/
-    └── bizlogic_tools.py         # BizLogicManager（綜合入口）
+    └── bizlogic_tools.py         # BizLogicManager (Python 綜合入口)
 ```
 
 ## 執行方式
 
-### 直接使用
+### 透過獨立 CLI 執行 (推薦)
 
-```python
-from services.features.function_bizlogic.race_condition_scanner import RaceConditionScanner
-from services.features.function_bizlogic.price_manipulation_scanner import PriceManipulationScanner
-from services.features.function_bizlogic.workflow_bypass_scanner import WorkflowBypassScanner
+透過 CLI 可以直接以 JSON 格式取得漏洞掃描結果，非常適合腳本或外部整合：
 
-# 競爭條件
-scanner = RaceConditionScanner(target_url="https://example.com")
-results = await scanner.run_all_tests(test_endpoints=["/api/purchase", "/api/coupon"])
+```bash
+# 執行價格操控測試
+python -m services.features.function_bizlogic price --url "https://example.com" --endpoint "/api/checkout"
 
-# 價格竄改
-price = PriceManipulationScanner()
-results = await price.run_all_tests("/api/checkout")
+# 執行競態條件測試
+python -m services.features.function_bizlogic race --url "https://example.com"
 
-# 工作流程繞過
-bypass = WorkflowBypassScanner()
-results = await bypass.run_all_tests()
+# 執行流程繞過測試
+python -m services.features.function_bizlogic workflow --url "https://example.com"
 ```
 
-## 可調用方法（公開 API）
+### 作為 Python 模組匯入
+
+可以匯入掃描器或使用統一的 `BizLogicManager` 來整合入其他專案：
+
+```python
+from services.features.function_bizlogic import BizLogicManager
+
+manager = BizLogicManager()
+# 執行完整業務邏輯漏洞掃描
+results = manager.comprehensive_scan(
+    target_url="https://example.com",
+    options={"auth_token": "Bearer token"}
+)
+```
+
+## 可調用方法（內部 API）
 
 | 類別 | 方法 | 說明 |
 |------|------|------|
-| `RaceConditionScanner` | `test_concurrent_requests(endpoint, method, payload, concurrent_count)` | 競爭條件測試 |
+| `RaceConditionScanner` | `test_concurrent_requests()` | 競爭條件測試 |
 | `RaceConditionScanner` | `test_balance_manipulation(...)` | 餘額競爭測試 |
-| `RaceConditionScanner` | `test_coupon_reuse(coupon_endpoint, coupon_code)` | 優惠券重用測試 |
-| `RaceConditionScanner` | `run_all_tests(test_endpoints)` | 執行所有競爭條件測試 |
-| `PriceManipulationScanner` | `test_negative_price(endpoint, price_param)` | 負數價格測試 |
-| `PriceManipulationScanner` | `test_zero_price(endpoint, price_param)` | 零元價格測試 |
-| `PriceManipulationScanner` | `test_overflow_price(endpoint)` | 溢位價格測試 |
-| `PriceManipulationScanner` | `run_all_tests(endpoint)` | 執行所有價格竄改測試 |
-| `WorkflowBypassScanner` | `test_step_skipping(workflow_steps, skip_step_index)` | 步驟跳過測試 |
-| `WorkflowBypassScanner` | `test_payment_bypass(order_endpoint, payment_endpoint)` | 支付繞過測試 |
-| `WorkflowBypassScanner` | `run_all_tests()` | 執行所有工作流程繞過測試 |
-| `BizLogicManager` | `comprehensive_scan(target_url, options)` | 綜合掃描入口 |
-
-## 待完成工作
-
-- 接通 `aiva_external_executor.py` 的 CLI 入口
-- 將 `race_condition` / `price_manipulation` / `workflow_bypass` 新增至 `CAPABILITY_CONFIGS`
+| `RaceConditionScanner` | `test_coupon_reuse(...)` | 優惠券重用測試 |
+| `PriceManipulationScanner` | `test_negative_price(...)` | 負數價格測試 |
+| `PriceManipulationScanner` | `test_zero_price(...)` | 零元價格測試 |
+| `PriceManipulationScanner` | `test_overflow_price(...)` | 溢位價格測試 |
+| `WorkflowBypassScanner` | `test_step_skipping(...)` | 步驟跳過測試 |
+| `WorkflowBypassScanner` | `test_payment_bypass(...)` | 支付繞過測試 |
+| `BizLogicManager` | `comprehensive_scan(...)` | 綜合掃描入口 |
 
 ## 注意事項
 
-- 僅限授權滲透測試使用
-- 競爭條件測試可能對目標系統造成資料不一致，建議在測試環境執行
+- ⚠️ 競爭條件測試對系統負載極高，請注意請求量。
+- 測試可能對目標系統造成資料不一致 (如產生實際的付款流程修改)，**強烈建議在測試環境執行**。
+- 僅限授權滲透測試使用。

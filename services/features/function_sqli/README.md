@@ -1,31 +1,33 @@
 # function_sqli - SQL 注入檢測模組
 
-> **版本**: v2.0.0 | **狀態**: ✅ 完成 | **語言**: Python | **能力登錄**: ✅ 已登錄 (`sqli_multi_engine`)
+> **版本**: v3.0.0 | **狀態**: ✅ 完成 | **語言**: Python
 
 ## 模組概述
 
-AIVA 平台的 SQL 注入綜合檢測模組，涵蓋從基礎 Payload 測試到進階智慧掃描的完整能力。
+AIVA 平台的 SQL 注入綜合檢測模組，涵蓋從基礎 Payload 測試到進階智慧掃描的完整能力。此模組已經全面拋棄舊的 CommandHandler 架構，支援 CLI 驅動或直接被外部模組呼叫。
 
 ### 功能完成狀態
 
-| 功能 | 狀態 | 說明 |
-|------|------|------|
-| Boolean-based SQLi | ✅ 完成 | 模糊邏輯 + 回應差異分析 |
-| Error-based SQLi | ✅ 完成 | 20+ 資料庫錯誤模式 |
-| Time-based Blind SQLi | ✅ 完成 | 動態延遲閾值 |
-| Union-based SQLi | ✅ 完成 | 欄位數自動偵測 |
-| Out-of-Band (OOB) | ✅ 完成 | DNS/HTTP 外帶回調 |
-| HackingTool 整合 | ✅ 完成 | sqlmap 等外部工具管理 |
-| WAF 繞過 | ✅ 完成 | 4 級混淆（0=無，3=最強） |
-| NoSQL 注入 | ✅ 完成 | MongoDB 等 NoSQL 目標 |
-| 資料庫指紋識別 | ✅ 完成 | MySQL/PostgreSQL/Oracle/MSSQL |
+| 功能 | 說明 |
+|------|------|
+| Boolean-based SQLi | 模糊邏輯 + 回應差異分析 |
+| Error-based SQLi | 20+ 資料庫錯誤模式 |
+| Time-based Blind SQLi | 動態延遲閾值 |
+| Union-based SQLi | 欄位數自動偵測 |
+| Out-of-Band (OOB) | DNS/HTTP 外帶回調 (依據 OOB_INTERACTSH_PLAN) |
+| HackingTool 整合 | sqlmap 等外部工具管理 |
+| WAF 繞過 | 4 級混淆（0=無，3=最強） |
+| NoSQL 注入 | MongoDB 等 NoSQL 目標 |
+| 資料庫指紋識別 | MySQL/PostgreSQL/Oracle/MSSQL |
 
 ## 架構
 
 ```
 function_sqli/
+├── hackingtool_sql_cli.py      # 工具管理 CLI
 ├── smart_detection_manager.py  # 主入口與編排器（SmartDetectionManager）
-├── config.py                   # 集中配置（SqliConfig）
+├── config/
+│   └── sqli_config.py          # 集中配置（SqliConfig）
 ├── payload_wrapper_encoder.py  # Payload 編碼與 Tamper 邏輯
 ├── detection_models.py         # 共享資料模型（DetectionResult）
 ├── backend_db_fingerprinter.py # 資料庫指紋識別
@@ -46,26 +48,28 @@ function_sqli/
 
 ## 執行方式
 
-### 透過 AIVA 執行器（推薦）
+### 工具管理 CLI
 
 ```bash
-# 智慧偵測（自動選擇最佳引擎）
-python services/core/aiva_core/internal_exploration/aiva_external_executor.py \
-    --lang python --func SmartDetectionManager.scan_target --target https://example.com
+# 查看 SQL 工具安裝狀態
+python services/features/function_sqli/hackingtool_sql_cli.py status
 
-# 綜合掃描（整合所有工具）
-python services/core/aiva_core/internal_exploration/aiva_external_executor.py \
-    --lang python --func HackingToolSQLCLI.main --target https://example.com
+# 測試特定目標
+python services/features/function_sqli/hackingtool_sql_cli.py test sqlmap https://example.com
 ```
 
-### 直接使用
+### 直接作為 Python 模組使用
 
 ```python
 from services.features.function_sqli.smart_detection_manager import SmartDetectionManager
-from services.features.function_sqli.config import SqliConfig
+from services.features.function_sqli.config.sqli_config import SqliConfig
 
 config = SqliConfig(waf_evasion_level=1)
 manager = SmartDetectionManager(config)
+
+# 執行目標檢測
+task = {"url": "https://example.com/api/users?id=1"}
+result = manager.scan_target(task)
 ```
 
 ## 配置說明（SqliConfig）
@@ -75,19 +79,6 @@ manager = SmartDetectionManager(config)
 | `waf_evasion_level` | 0 | 0=無，1=低（隨機大小寫），2=中（Space2Comment），3=高（雙重 URL 編碼） |
 | `stability_threshold` | 0.85 | 頁面穩定性最低相似度（0.0–1.0） |
 | `fuzzy_similarity_threshold` | 0.1 | Boolean 誤報過濾閾值（0.0–1.0） |
-
-## 可調用方法（公開 API）
-
-| 類別 | 方法 | 說明 |
-|------|------|------|
-| `SmartDetectionManager` | `scan_target(task)` | 主要掃描入口 |
-| `SmartDetectionManager` | `start_detection(target, config)` | 開始偵測 session |
-| `SmartDetectionManager` | `get_detection_status(session_id)` | 查詢狀態 |
-| `SmartDetectionManager` | `stop_detection(session_id)` | 停止偵測 |
-
-| `HackingToolSQLManager` | `get_tool_recommendations(target_type)` | 外部工具推薦 |
-| `HackingToolSQLManager` | `install_all_tools()` | 批次安裝外部工具 |
-| `BackendDbFingerprinter` | `fingerprint(response)` | 資料庫指紋識別 |
 
 ## 掃描流程
 
@@ -100,4 +91,4 @@ manager = SmartDetectionManager(config)
 
 - 僅限授權滲透測試使用
 - 預設安全模式：不執行破壞性操作
-- 外部工具（sqlmap）需另行安裝：`HackingToolSQLManager.install_all_tools()`
+- 外部工具（sqlmap）需另行安裝

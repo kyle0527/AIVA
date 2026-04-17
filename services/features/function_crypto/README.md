@@ -1,62 +1,91 @@
-# function_crypto - 密碼學分析模組
+# function_crypto - 密碼學配置掃描器 (純 Rust CLI)
 
-> **版本**: v1.0.0 | **狀態**: ⬜ Rust 核心完成，Python binding 缺失 | **語言**: Rust | **能力登錄**: ⬜ 待登錄
+> **版本**: v3.0.0 | **狀態**: ✅ Rust 核心完成 | **語言**: Rust
 
-## 模組概述
+## 🎯 模組概述
 
-基於 Rust 的密碼學分析工具，透過 CLI binary 執行，提供加密強度分析、弱加密偵測、密鑰長度驗證等功能。
+本模組為基於 Rust 實作的密碼學配置掃描器，透過編譯出的 CLI 執行檔 (`crypto-scanner`) 進行掃描。專注於網路層可觀察的密碼學配置，包含 TLS 分析、Cookie 安全、HTTP 安全標頭與 JS 內的密碼學配置問題。
 
-### 功能完成狀態
+> **設計理念**: 本模組沒有 Python 包裝層，由 AI Commander (或其他呼叫端) 直接使用 `subprocess` 執行 CLI，並自行解析標準輸出之 JSON 結構。
 
-| 功能 | 狀態 | 說明 |
-|------|------|------|
-| Rust CLI binary | ✅ 完成 | `rust_core/` 下的 Rust 實作 |
-| Python binding | ⬜ 未完成 | 缺少 Python wrapper |
-| AIVA 執行器整合 | ⬜ 未完成 | `external_classification.json` 中僅有 1 個 flow |
+### 功能清單
 
-## 架構
+| 功能 | 說明 |
+|------|------|
+| JavaScript 分析 | `scan-js` 檢查 JS 檔案中的寫死金鑰、不安全演算法與弱亂數。 |
+| TLS 配置分析 | `analyze-tls` 分析目標伺服器的 TLS 憑證與協議配置。 |
+| Cookie 安全分析 | `analyze-cookies` 分析 Session 與敏感 Cookie 的安全屬性。 |
+| 安全標頭分析 | `analyze-headers` 分析 HSTS、CSP 等安全標頭。 |
+
+## 📐 架構設計
 
 ```
 function_crypto/
-├── rust_core/          # Rust 實作（crypto-scanner binary）
-│   ├── src/
+├── __init__.py           # Python 模組入口 (僅提供文件說明，無實體類別匯出)
+├── rust_core/            # Rust 核心實作
 │   ├── Cargo.toml
-│   └── ...
-├── clap_analysis.json  # CLI 參數分析（clap 框架）
-├── clap_cli_reference.md # CLI 參考文件
-├── cli_commands.sh     # CLI 指令範例
-└── batch_verify.ps1    # 批次驗證腳本（Windows）
+│   └── src/
+│       ├── main.rs
+│       ├── tls_analyzer.rs
+│       ├── cookie_analyzer.rs
+│       ├── header_analyzer.rs
+│       └── js_crypto_analyzer.rs
+├── cli_commands.sh       # 開發時期輔助指令紀錄
+└── clap_analysis.json    # CLI 解析輔助紀錄
 ```
 
-## 執行方式
+## 🚀 執行方式
 
-### 直接呼叫 Rust binary
+### 1. 編譯 Rust 專案
+
+本模組必須先編譯 Rust 原始碼：
 
 ```bash
-# 先編譯
 cd services/features/function_crypto/rust_core
 cargo build --release
-
-# 執行（參考 cli_commands.sh）
-./target/release/crypto-scanner --help
 ```
 
-### 透過 AIVA 執行器
+### 2. 透過 CLI 直接呼叫
+
+編譯後會產生 `crypto-scanner` 執行檔，呼叫方式如下：
 
 ```bash
-# Rust 能力透過 external_classification.json 呼叫
-python services/core/aiva_core/internal_exploration/aiva_external_executor.py \
-    --lang rust --func crypto-scanner
+# JavaScript 分析
+./rust_core/target/release/crypto-scanner scan-js --content "const key = '123456';" --url "https://target.com/app.js"
+
+# TLS 配置分析
+./rust_core/target/release/crypto-scanner analyze-tls --target example.com --port 443
+
+# Cookie 安全分析
+./rust_core/target/release/crypto-scanner analyze-cookies --cookies-json '{"session": "xyz"}' --url "https://target.com"
+
+# 安全標頭分析
+./rust_core/target/release/crypto-scanner analyze-headers --headers-json '{"Server": "nginx"}' --url "https://target.com"
 ```
 
-## 待完成工作
+### 3. Python 中呼叫 (範例)
 
-- 建立 Python wrapper（`crypto_wrapper.py`）以接通 subprocess 呼叫
-- 將 `sast_scan` 或 `secret_detection` 能力對應至此模組
-- 補全 `CAPABILITY_CONFIGS` 中的 `sast_scan` entry
+模組內不提供 wrapper，必須自行使用 `subprocess` 呼叫：
+
+```python
+import subprocess
+import json
+
+cmd = [
+    "services/features/function_crypto/rust_core/target/release/crypto-scanner",
+    "analyze-tls",
+    "--target", "example.com",
+    "--port", "443"
+]
+
+result = subprocess.run(cmd, capture_output=True, text=True)
+if result.returncode == 0:
+    data = json.loads(result.stdout)
+    print(data)
+```
 
 ## 注意事項
 
-- 需先執行 `cargo build --release` 編譯 Rust binary
-- 目前無法透過 Python 直接 import，必須使用 subprocess 呼叫 binary
-- `batch_verify.ps1` 為 Windows 腳本，Linux 環境請使用 `cli_commands.sh`
+- 不需使用 Python 呼叫或尋找 Python `CommandHandler`。
+- 回傳一律為標準化 JSON。
+- 專注黑盒網路層與前端原始碼掃描，並不包含針對後端原始碼的靜態白盒分析 (SAST)。

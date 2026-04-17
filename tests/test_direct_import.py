@@ -38,7 +38,7 @@ def test_direct_import():
             params = list(sig.parameters.keys())
             print(f"__init__ parameters: {params}")
             
-            expected_params = ['self', 'data_directory', 'dispatcher', 'unified_executor', 'multilang_coordinator', 'internal_loop']
+            expected_params = ['self', 'unified_executor', 'multilang_coordinator', 'internal_loop', 'session_state_manager']
             if set(expected_params).issubset(set(params)):
                 print("SUCCESS: All expected parameters present")
                 return True
