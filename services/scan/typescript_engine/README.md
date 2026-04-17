@@ -23,7 +23,7 @@
 ```
 typescript_engine/
 ├── src/
-│   ├── index.ts                              # RabbitMQ 任務消費者
+│   ├── index.ts                              # CLI 任務處理器
 │   ├── dom-security-analyzer.ts              # DOM 安全分析器
 │   ├── spa-route-analyzer.ts                 # SPA 路由分析器
 │   ├── websocket-security-analyzer.ts        # WebSocket 分析器
@@ -123,10 +123,10 @@ npm start
 
 ## 📊 集成方式
 
-### RabbitMQ 消息隊列
+### CLI 輸入輸出
 
-**消費隊列**: `task.scan.dynamic`  
-**發布隊列**: `findings.new`
+**標準輸入 (stdin)**: 接收 JSON 格式的任務
+**標準輸出 (stdout)**: 輸出 JSON 格式的結果
 
 **任務格式**:
 ```json

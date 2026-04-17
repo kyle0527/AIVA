@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/kyle0527/aiva/services/scan/go_engine/internal/cspm/scanner"
+	"github.com/kyle0527/aiva/services/scan/engines/go_engine/internal/cspm/scanner"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 
 	log.Println("[INFO] CSPM Scanner initialized in standalone mode")
 
-	// v2.0 架構: 使用 CLI 模式，由 Python Coordinator 調用
+	// v2.0 架構: 使用 CLI 模式，由 AI 直接調用
 	// 接收 JSON 參數，輸出 JSON 結果，無需 RabbitMQ
 	// 目前只是驗證編譯
 	_ = cspmScanner

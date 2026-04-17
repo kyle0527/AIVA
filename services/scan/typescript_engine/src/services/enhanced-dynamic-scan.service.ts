@@ -4,16 +4,16 @@
  */
 
 import { Browser, Page, BrowserContext } from 'playwright-core';
-import { logger } from '../utils/logger';
-import { NetworkInterceptor } from './network-interceptor.service';
-import { InteractionSimulator } from './interaction-simulator.service';
-import { EnhancedContentExtractor } from './enhanced-content-extractor.service';
+import { logger } from '../utils/logger.js';
+import { NetworkInterceptor } from './network-interceptor.service.js';
+import { InteractionSimulator } from './interaction-simulator.service.js';
+import { EnhancedContentExtractor } from './enhanced-content-extractor.service.js';
 import { 
   DynamicScanTask, 
   DynamicScanResult, 
   DynamicContent,
   InteractionResult
-} from '../interfaces/dynamic-scan.interfaces';
+} from '../interfaces/dynamic-scan.interfaces.js';
 
 export class EnhancedDynamicScanService {
   private browser: Browser;
@@ -271,7 +271,7 @@ export class EnhancedDynamicScanService {
       await context.close();
       return true;
     } catch (error) {
-      logger.error('Health check failed', error);
+      logger.error(`Health check failed: ${error}`);
       return false;
     }
   }
