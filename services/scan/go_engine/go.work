@@ -1,8 +1,11 @@
 go 1.23.1
 
 use (
-	.
-	./cmd/cspm-scanner
+	./internal/sca
+	./internal/cspm
+	./internal/ssrf
 	./cmd/sca-scanner
+	./cmd/cspm-scanner
 	./cmd/ssrf-scanner
+	./pkg/models
 )

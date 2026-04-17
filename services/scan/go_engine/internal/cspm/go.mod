@@ -5,7 +5,6 @@ go 1.23.1
 require (
 	github.com/aws/aws-sdk-go-v2/config v1.27.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.51.0
-	github.com/kyle0527/aiva/services/function/common/go/aiva_common_go v0.0.0
 	github.com/sirupsen/logrus v1.9.3
 	go.uber.org/zap v1.26.0
 )
@@ -33,4 +32,3 @@ require (
 	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
 )
 
-replace github.com/kyle0527/aiva/services/function/common/go/aiva_common_go => ../../../../../features/common/go/aiva_common_go

@@ -35,7 +35,7 @@ use auth_brute_v2::{AuthBruteForcer, AuthProtocol, RateLimitStrategy};
 enum ScanModeArg {
     /// 快速偵察模式 (Phase0) - 用於獲取基礎資料給四種語言引擎搭配使用
     Fast,
-    /// 深度分析模式 (Phase1) - 由 AI 決定如何搭配，協調模組執行
+    /// 深度分析模式 (Phase1) - 由 AI 決定並直接調用
     Deep,
 }
 
@@ -339,7 +339,7 @@ async fn scan_single_target(
         }
         
         ScanMode::DeepAnalysis => {
-            // Phase1: 深度分析 - 由 AI 決定，協調模組執行
+            // Phase1: 深度分析 - 由 AI 決定並直接調用
             info!("[Phase1] 深度分析模式 - 掃描 {}", url);
             
             // 1. 完整端點發現 - 使用 EndpointDiscoverer 深度掃描
