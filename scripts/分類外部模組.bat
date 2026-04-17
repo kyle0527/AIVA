@@ -1,6 +1,7 @@
 @echo off
+set "PROJECT_ROOT=%~dp0.."
 chcp 65001 >nul 2>&1
-set PYTHONPATH=C:\D\fold7\AIVA-git\services\core;C:\D\fold7\AIVA-git\services
+set PYTHONPATH=%PROJECT_ROOT%\services\core;%PROJECT_ROOT%\services
 set PYTHONIOENCODING=utf-8
 
 echo ========================================
@@ -8,7 +9,7 @@ echo   AIVA External Module Classifier
 echo ========================================
 echo.
 
-cd /d "C:\D\fold7\AIVA-git\services\core\aiva_core\internal_exploration\python_tools"
+cd /d "%PROJECT_ROOT%\services\core\aiva_core\internal_exploration\python_tools"
 
 if "%1"=="" (
     echo Usage: script.bat [input_dir] [output_dir]

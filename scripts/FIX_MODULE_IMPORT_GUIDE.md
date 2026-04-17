@@ -98,8 +98,8 @@ chmod +x scripts/run_capability_cli.sh
 
 #### Windows (PowerShell):
 ```powershell
-$env:PYTHONPATH="C:\D\fold7\AIVA-git\services\core;C:\D\fold7\AIVA-git\services"
-cd C:\D\fold7\AIVA-git\services\core
+$env:PYTHONPATH="$PROJECT_ROOT\services\core;$PROJECT_ROOT\services"
+cd $PROJECT_ROOT\services\core
 python -m aiva_core.internal_exploration.python_tools.aiva_cli_implementation --flow 51
 ```
 
@@ -113,7 +113,7 @@ python -m aiva_core.internal_exploration.python_tools.aiva_cli_implementation --
 ### 方式 3: 使用 Python -m（從正確目錄）
 
 ```bash
-cd C:\D\fold7\AIVA-git\services\core
+cd $PROJECT_ROOT\services\core
 
 # 執行 Flow CLI
 python -m aiva_core.internal_exploration.python_tools.aiva_cli_implementation --flow 51
@@ -147,7 +147,7 @@ scripts\run_aiva_cli.bat --flow 51 --dry-run
 ```
 🚀 準備執行 Flow 51: real_bio_net_adapter
 >> [Step 1/3] scalable_bio_trainer
-   - File: C:\D\fold7\AIVA-git\services\core\aiva_core\external_learning\learning\scalable_bio_trainer.py
+   - File: $PROJECT_ROOT\services\core\aiva_core\external_learning\learning\scalable_bio_trainer.py
    - Module: aiva_core.external_learning.learning.scalable_bio_trainer
    - Class: ScalableBioTrainer
 ...
@@ -185,7 +185,7 @@ echo %PYTHONPATH%  # Windows CMD
 $env:PYTHONPATH    # Windows PowerShell
 
 # 使用完整路徑的腳本
-C:\D\fold7\AIVA-git\scripts\run_aiva_cli.bat --flow 51
+$PROJECT_ROOT\scripts\run_aiva_cli.bat --flow 51
 ```
 
 ### 問題 2: 找不到 enriched_classification.json

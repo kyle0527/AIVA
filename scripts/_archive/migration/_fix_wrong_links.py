@@ -1,26 +1,29 @@
 #!/usr/bin/env python3
+import os
+
 """修正錯誤的連結替換"""
 
 import re
 from pathlib import Path
+project_root = Path(__file__).resolve().parent.parent.parent.parent
 
 # 需要修正的文件和錯誤連結映射
 fixes = {
-    r'C:\D\fold7\AIVA-git\services\scan\README.md': [
+    str(project_root / 'services' / 'scan' / 'README.md'): [
         {
             'old': 'docs/guides/services/rust_engine_USAGE_GUIDE.md',
             'new': '../../reports/architecture/COORDINATOR_USAGE_GUIDE.md',
             'context': 'COORDINATOR_USAGE_GUIDE'
         }
     ],
-    r'C:\D\fold7\AIVA-git\services\features\README.md': [
+    str(project_root / 'services' / 'features' / 'README.md'): [
         {
             'old': '../../docs/guides/services/rust_engine_USAGE_GUIDE.md',
             'new': '../../guides/development/METRICS_USAGE_GUIDE.md',
             'context': '性能監控規範'
         }
     ],
-    r'C:\D\fold7\AIVA-git\services\scan\coordinators\README.md': [
+    str(project_root / 'services' / 'scan' / 'coordinators' / 'README.md'): [
         {
             'old': '../../../docs/guides/services/rust_engine_USAGE_GUIDE.md',
             'new': './COORDINATOR_USAGE_GUIDE.md',
@@ -37,7 +40,7 @@ fixes = {
             'line_contains': 'PYTHON_ENGINE_USAGE_GUIDE'
         },
     ],
-    r'C:\D\fold7\AIVA-git\services\integration\docs\README.md': [
+    str(project_root / 'services' / 'integration' / 'docs' / 'README.md'): [
         {
             'old': '../../../docs/guides/services/rust_engine_USAGE_GUIDE.md',
             'new': '../../features/INTEGRATION_USAGE_GUIDE.md',
