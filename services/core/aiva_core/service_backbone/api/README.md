@@ -8,52 +8,35 @@
 
 提供統一的函數調用接口和 AI 服務能力，支援跨模組的動態能力調用，解決「規劃器如何實際調用工具」的架構問題。
 
-## 核心組件
+## 📄 檔案詳細資訊 (Files Details)
 
-### ai_service.py ⭐ 新增
-- `AIService` - AI 持續運行服務
-  - API 模式 (FastAPI)
-  - 監控模式 (系統健康監控)
-  - 互動模式 (CLI 互動)
+### `ai_service.py`
+**說明**: AIVA AI 持續運作服務
 
-### app.py
-- `AIVAServer` - FastAPI 主應用伺服器
-- `create_app()` - 應用工廠函數
-- `start_server()` - 伺服器啟動函數
+**類別 (Classes)**:
+- `AIService` - AI 持續運作服務
+**函式 (Functions)**:
+- `signal_handler()` - 處理中斷信號
+- `main()` - 主函數
 
-### sse.py
-- Server-Sent Events 長連接傳輸端點
-- 用於實時更新 AI 處理狀態
+### `app.py`
+**說明**: 無特定描述。
 
-### __init__.py
-- 模組初始化和導出
 
-## 調用流程
+### `sse.py`
+**說明**: SSE (Server-Sent Events) 端點處理器
 
-```
-任務執行器 (TaskExecutor)
-        ↓
-UnifiedFunctionCaller
-        ↓
-CapabilityRegistry（查找能力）
-        ↓
-實際能力模組執行
-        ↓
-FunctionCallResult（封裝結果）
-```
+**類別 (Classes)**:
+- `LogEvent` - 日誌事件
+- `StatusEvent` - 狀態事件
 
-## 使用方式
+### `unified_function_caller.py`
+**說明**: 統一功能調用器 - 跨語言模組調用系統
 
-```python
-caller = UnifiedFunctionCaller()
-result = await caller.call_function(
-    module="features.scanner",
-    function="execute_scan",
-    params={"target": "http://example.com"}
-)
-```
+**類別 (Classes)**:
+- `FunctionCallResult` - 功能調用結果
+- `ModuleEndpoint` - 模組端點配置
+- `UnifiedFunctionCaller` - 統一功能調用器
+**函式 (Functions)**:
+- `get_unified_caller()` - 獲取統一調用器實例
 
-## 依賴關係
-
-- `core_capabilities.capability_registry` - 能力註冊表
-- 支援異步調用 (`async/await`)

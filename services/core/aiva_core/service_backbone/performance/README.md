@@ -8,64 +8,44 @@
 
 系統效能監控和資源管理模組，提供指標收集、健康狀態監控、並行處理、系統診斷和統一記憶體管理功能。
 
-## 核心組件
+## 📄 檔案詳細資訊 (Files Details)
 
-### health_check.py ⭐ 新增
-- `check_schemas()` - Schema 完整性檢查
-- `check_tools()` - 工具可用性檢查
-- `check_directories()` - 目錄結構檢查
+### `diagnose.py`
+**說明**: AIVA 系統診斷工具
 
-### diagnose.py ⭐ 新增
-- `check_engines()` - 引擎狀態檢查 (Go/Rust/Node)
-- `check_docker()` - Docker 環境檢查
-- `check_http()` - HTTP 服務檢查
+**函式 (Functions)**:
+- `print_header()`
+- `check_docker()` - 檢查 Docker 靶場狀態
 
-### monitoring.py
-- `ComponentHealth` - 組件健康狀態枚舉（str, Enum）
-- `Metric` - 指標結構
-- `MetricsCollector` - 指標收集器
-  - 收集系統指標
-  - 效能數據聚合
-  - 健康狀態追蹤
+### `health_check.py`
+**說明**: AIVA 系統健康檢查器
 
-### parallel_processor.py
-- `ParallelMessageProcessor` - 並行消息處理器
-  - 多線程消息處理
-  - 任務隊列管理
-  - 併發控制
+**函式 (Functions)**:
+- `check_schemas()` - 檢查 AIVA Common Schemas 可用性
+- `check_tools()` - 檢查專業分析工具可用性
+- `check_ai_explorer()` - 檢查 AI 系統探索器可用性
+- `check_directories()` - 檢查關鍵目錄結構
 
-**注意**: 實際檔案名為 `parallel_processor.py` (不是 `parallel_executor.py`)
+### `monitoring.py`
+**說明**: 系統整合監控模組
 
-### unified_memory_manager.py
-- `UnifiedMemoryManager` - 統一記憶體管理器
-  - 記憶體分配和釋放
-  - 記憶體池管理
-  - 垃圾回收優化
-  - 記憶體使用統計
+**類別 (Classes)**:
+- `ComponentHealth` - 組件健康狀態
+- `Metric` - 監控指標
+- `MetricsCollector` - 效能指標收集器 - 中央監控服務
+**函式 (Functions)**:
+- `monitor_performance()` - 效能監控裝飾器
 
-**注意**: 實際檔案名為 `unified_memory_manager.py` (不是 `unified_resource_manager.py`)
+### `parallel_processor.py`
+**說明**: 並行訊息處理器模組
 
-- `ComponentPool` - 組件池
-  - 組件實例池化
-  - 資源重用
-  - 生命週期管理
+**類別 (Classes)**:
+- `ParallelMessageProcessor` - 並行訊息處理器 - 替代原本的單線程處理
 
-### __init__.py
-- 模組初始化和導出
+### `unified_memory_manager.py`
+**說明**: 統一記憶體管理器 - 整合AI專用與通用記憶體管理功能
 
-## 監控指標類型
+**類別 (Classes)**:
+- `UnifiedMemoryManager` - 統一記憶體管理器 - 整合AI快取與系統記憶體管理
+- `ComponentPool` - 組件對象池 - 避免頻繁建立/銷毀對象
 
-| 指標類型 | 描述 |
-|----------|------|
-| CPU 使用率 | 處理器負載 |
-| 記憶體使用 | RAM 佔用 |
-| 處理延遲 | 請求回應時間 |
-| 隊列深度 | 待處理任務數 |
-| 錯誤率 | 失敗請求比例 |
-
-## 依賴關係
-
-- `enum` - 枚舉類型支援
-- `threading` - 多線程支援
-- `collections` - 數據結構
-- 無外部套件依賴（純 Python 實現）

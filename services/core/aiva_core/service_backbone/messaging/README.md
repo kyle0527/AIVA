@@ -7,57 +7,30 @@
 
 統一的消息代理系統，管理 RabbitMQ 連接和消息路由，支援任務分發和結果收集。
 
-## 核心組件
+## 📄 檔案詳細資訊 (Files Details)
 
-### message_broker.py
+### `message_broker.py`
+**說明**: Message Broker - 消息代理
+
+**類別 (Classes)**:
 - `MessageBroker` - 消息代理
-  - RabbitMQ 連接管理
-  - 消息發布/訂閱
-  - Exchange 和 Queue 管理
-  - Consumer 任務管理
+- `RPCClient` - RPC 客戶端
+- `EventPriority` - 事件優先級 (整合自 AI 模組)
+- `AIVAEvent` - AIVA 統一事件格式 (整合自 AI 模組)
+- `EventSubscription` - 事件訂閱 (整合自 AI 模組)
+- `EnhancedMessageBroker` - 增強的消息代理 (整合事件驅動系統)
+**函式 (Functions)**:
+- `get_enhanced_message_broker()` - 獲取全域增強消息代理實例
 
-- `RPCClient` - RPC 客戶端，支援同步調用模式
-- `EventPriority` - 事件優先級枚舉
-- `AIVAEvent` - AIVA 事件結構
-- `EventSubscription` - 事件訂閱結構
-- `EnhancedMessageBroker` - 增強版消息代理（繼承 MessageBroker）
-  - 支援事件優先級
-  - 支援批量發送
-  - 支援消息追蹤
+### `result_collector.py`
+**說明**: Result Collector - 結果收集器
 
-### task_dispatcher.py
-- `TaskDispatcher` - 任務分發器
-  - 將任務分發到對應的處理隊列
-  - 支援負載均衡
-  - 任務重試機制
-
-### result_collector.py
+**類別 (Classes)**:
 - `ResultCollector` - 結果收集器
-  - 收集任務執行結果
-  - 結果聚合和統計
-  - 超時處理
 
-### __init__.py
-- 模組初始化和導出
+### `task_dispatcher.py`
+**說明**: Task Dispatcher - 任務派發器
 
-## 消息流程
+**類別 (Classes)**:
+- `TaskDispatcher` - 任務派發器
 
-```
-TaskDispatcher（分發任務）
-        ↓
-MessageBroker（發送到 RabbitMQ）
-        ↓
-Features/Integration 模組（處理）
-        ↓
-MessageBroker（接收結果）
-        ↓
-ResultCollector（收集結果）
-```
-
-## 依賴關係
-
-- `aio_pika` - RabbitMQ 異步客戶端
-- `aiva_common.config` - get_settings（RabbitMQ 配置）
-- `aiva_common.schemas` - AivaMessage
-- `aiva_common.enums.modules` - ModuleName
-- `aiva_common.error_handling` - 統一錯誤處理

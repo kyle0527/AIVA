@@ -311,3 +311,54 @@ mutated_payloads = mutate_payload()
 **License**: Internal Use Only  
 **Maintainer**: AIVA Security Team  
 **Last Updated**: 2026-04-05
+
+## 📄 檔案詳細資訊 (Files Details)
+
+### `base.py`
+**說明**: 內嵌知識基礎模組 - 定義通用數據類型和基礎結構
+
+**類別 (Classes)**:
+- `ConfidenceLevel` - 置信度等級 - 用於 AI 決策判斷
+- `VulnerabilityType` - 漏洞類型枚舉
+- `DatabaseType` - 資料庫類型
+- `WAFVendor` - WAF 廠商
+- `CloudProvider` - 雲端供應商
+- `DetectionResult` - 漏洞檢測結果 - AI 決策系統的標準輸入格式
+- `AttackContext` - 攻擊上下文 - 描述當前攻擊場景
+- `ResponseAnalysis` - HTTP 響應分析結果
+- `PayloadResult` - Payload 執行結果
+- `KnowledgeRegistry` - 知識註冊表 - 支援動態擴展內嵌知識
+
+### `cve_identification.py`
+**說明**: 高危險 CVE 識別模組
+
+**類別 (Classes)**:
+- `SignalTier` - 檢測信號層級
+- `CVESignature` - CVE 檢測簽名
+- `CVEMatch` - CVE 匹配結果
+- `CVEIdentifier` - 高危 CVE 識別器
+
+### `vulnerability_detection.py`
+**說明**: 漏洞檢測判斷邏輯模組 - SQLi/XSS/SSRF/IDOR
+
+**類別 (Classes)**:
+- `VulnerabilityDetector` - 漏洞檢測器 - AIVA 決策系統的核心判斷引擎
+
+### `waf_bypass.py`
+**說明**: WAF 繞過技術字典引擎
+
+**類別 (Classes)**:
+- `BypassCategory` - 繞過技術類別
+- `BypassTechnique` - 繞過技術定義
+- `WAFBypassEngine` - WAF 繞過引擎
+
+### `web_architecture.py`
+**說明**: Web 架構安全漏洞檢測模組
+
+**類別 (Classes)**:
+- `ArchitectureType` - Web 架構類型
+- `AuthScheme` - 認證方案
+- `ArchitectureFingerprint` - 架構指紋
+- `JWTAnalysis` - JWT 分析結果
+- `GraphQLSchema` - GraphQL Schema 分析
+- `WebArchitectureAnalyzer` - Web 架構安全分析器

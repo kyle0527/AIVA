@@ -503,3 +503,14 @@ class RAGClient:
                ↓             ↓
          AI學習 ←──────────┘
 ```
+
+## 📄 檔案詳細資訊 (Files Details)
+
+### `module_knowledge_manager.py`
+**說明**: Module Knowledge Manager - 模組知識庫管理器
+
+**類別 (Classes)**:
+- `ExecutionContext` - 外部模組執行上下文
+- `KnowledgeMatch` - 知識庫匹配結果
+- `LearningRecommendation` - 學習建議
+- `ModuleKnowledgeManager` - 模組知識庫管理器

@@ -7,51 +7,34 @@
 
 授權和權限管理系統，提供權限矩陣、風險評估和視覺化功能。
 
-## 核心組件
+## 📄 檔案詳細資訊 (Files Details)
 
-### permission_matrix.py
-- `PermissionMatrix` - 權限矩陣管理器
-  - 定義和管理操作權限
-  - 權限檢查和驗證
-  - 權限變更追蹤
+### `authz_mapper.py`
+**說明**: AuthZ Mapper - 權限映射器
 
-- `RiskLevel` - 風險等級枚舉（str, Enum）
-- `OperationContext` - 操作上下文結構
-- `RiskGuard` - 風險守衛
-  - 評估操作風險
-  - 阻止高風險操作
-  - 風險緩解建議
+**類別 (Classes)**:
+- `AuthZMapper` - 權限映射器
+**函式 (Functions)**:
+- `main()` - 測試範例
 
-### authz_mapper.py
-- `AuthZMapper` - 授權映射器
-  - 映射用戶角色到權限
-  - 動態權限計算
-  - 繼承權限處理
+### `matrix_visualizer.py`
+**說明**: Matrix Visualizer - 權限矩陣視覺化
 
-### matrix_visualizer.py
-- `MatrixVisualizer` - 矩陣視覺化器
-  - 生成權限矩陣圖表
-  - 支援多種輸出格式
-  - 差異對比視覺化
+**類別 (Classes)**:
+- `MatrixVisualizer` - 權限矩陣視覺化器
+**函式 (Functions)**:
+- `main()` - 測試範例
 
-### __init__.py
-- 模組初始化和導出
+### `permission_matrix.py`
+**說明**: 無特定描述。
 
-## 權限檢查流程
+**類別 (Classes)**:
+- `PermissionMatrix` - 權限矩陣
+- `RiskLevel` - 風險等級枚舉 (整合自 aiva_core_v1)
+- `OperationContext` - 操作上下文
+- `RiskGuard` - 風險控制守衛 (整合自 aiva_core_v1 Guard)
+**函式 (Functions)**:
+- `main()` - 測試範例
+- `get_risk_guard()` - 獲取全域風險守衛實例
+- `authorize_operation()` - 便捷的操作授權函數
 
-```
-操作請求
-    ↓
-AuthZMapper（角色→權限映射）
-    ↓
-PermissionMatrix（權限檢查）
-    ↓
-RiskGuard（風險評估）
-    ↓
-允許/拒絕
-```
-
-## 依賴關係
-
-- `enum` - 枚舉類型支援
-- 無外部套件依賴

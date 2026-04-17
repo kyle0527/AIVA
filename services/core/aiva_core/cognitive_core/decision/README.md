@@ -101,3 +101,49 @@ plan = await planner.generate_plan(
     is_new_target=True
 )
 ```
+
+## 📄 檔案詳細資訊 (Files Details)
+
+### `bounty_strategy_agent.py`
+**說明**: Bug Bounty 特化決策代理
+
+**類別 (Classes)**:
+- `BountyStrategyAgent` - Bug Bounty 特化策略決策代理
+
+### `enhanced_decision_agent.py`
+**說明**: AIVA 決策代理增強模組
+
+**類別 (Classes)**:
+- `DecisionContext` - 決策上下文
+- `Decision` - 決策結果
+- `EnhancedDecisionAgent` - 增強的決策代理（繼承 KnowledgeDecisionMixin 取得知識決策方法）
+**函式 (Functions)**:
+- `demo_enhanced_decision_agent()` - 示範增強決策代理功能
+
+### `knowledge_decision_mixin.py`
+**說明**: Knowledge Decision Mixin - 知識驅動決策混入
+
+**類別 (Classes)**:
+- `_MixinHostProtocol` - Mixin 宿主類別應實現的協議
+- `KnowledgeDecisionMixin` - 知識驅動決策混入
+
+### `scan_execution_planner.py`
+**說明**: 执行计划生成器
+
+**類別 (Classes)**:
+- `ScanStrategy` - 扫描策略
+- `ExecutionStep` - 执行步骤
+- `ExecutionPlan` - 执行计划
+- `NextPhaseDecision` - 下一阶段决策
+- `ExecutionPlanner` - 执行计划生成器
+
+### `skill_graph.py`
+**說明**: AIVA 技能圖 (Skill Graph) 模組
+
+**類別 (Classes)**:
+- `SkillNode` - 技能節點
+- `SkillEdge` - 技能邊關係
+- `SkillPath` - 技能執行路徑
+- `SkillGraphBuilder` - 技能圖構建器
+- `SkillGraphAnalyzer` - 技能圖分析器
+- `AIVASkillGraph` - AIVA 技能圖主類
