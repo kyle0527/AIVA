@@ -9,15 +9,15 @@ import click
 # ManifestLoader 已棄用 - manifests/capabilities 目錄已移除
 
 def load_flow_definitions() -> list[dict[str, Any]]:
-    """從 latest_classification.json 讀取所有 flows
+    """從 external_classification.json 讀取所有 flows
     
     Returns:
         List[Dict]: Flow 定義列表
     """
     possible_paths = [
-        Path("C:/Users/User/Downloads/data/internal_exploration/latest_classification.json"),
-        Path("C:/D/fold7/AIVA-git/data/internal_exploration/latest_classification.json"),
-        Path("C:/D/fold7/AIVA-git/services/integration/data/internal_exploration/latest_classification.json"),
+        Path("C:/Users/User/Downloads/data/internal_exploration/external_classification.json"),
+        Path("C:/D/fold7/AIVA-git/data/internal_exploration/external_classification.json"),
+        Path("/app/services/integration/data/internal_exploration/external_classification.json"),
     ]
     
     for path in possible_paths:

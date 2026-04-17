@@ -106,7 +106,7 @@ class HighLevelIntent(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     created_by: str = Field(default="enhanced_decision_agent", description="決策來源")
 
-    model_config = ConfigDict(json_schema_extra = {)
+    model_config = ConfigDict(json_schema_extra = {})
 
 
 class DecisionToASTContract(BaseModel):
@@ -128,7 +128,7 @@ class DecisionToASTContract(BaseModel):
         description="規劃器的具體決策 (例如: tool_selection, step_ordering, etc.)"
     )
 
-    model_config = ConfigDict(json_schema_extra = {)
+    model_config = ConfigDict(json_schema_extra = {})
 
 
 class DecisionFeedback(BaseModel):
@@ -167,4 +167,4 @@ class DecisionFeedback(BaseModel):
     completed_at: datetime = Field(default_factory=datetime.utcnow)
     execution_time: float = Field(description="執行時間（秒）")
 
-    model_config = ConfigDict(json_schema_extra = {)
+    model_config = ConfigDict(json_schema_extra = {})

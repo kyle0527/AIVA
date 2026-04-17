@@ -31,6 +31,7 @@ from pathlib import Path
 # 添加專案根目錄到 sys.path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 # NOTE: Pylance 可能報告 "無法解析匯入" 警告
 # 這是因為 sys.path 在運行時動態添加，Pylance 靜態分析時無法識別
