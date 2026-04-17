@@ -291,69 +291,6 @@ class ExecutionResult(BaseModel):
     metadata: dict[str, Any] | None = Field(None, description="額外元數據")
 
 
-# 基礎能力抽象類
-class BaseCapability:
-    """基礎能力類 - 所有能力實現的基類"""
-
-    def __init__(self):
-        self._name: str = ""
-        self._version: str = "1.0.0"
-        self._description: str = ""
-        self._dependencies: list[str] = []
-
-    @property
-    def name(self) -> str:
-        """能力名稱"""
-        return self._name
-
-    @name.setter
-    def name(self, value: str):
-        self._name = value
-
-    @property
-    def version(self) -> str:
-        """能力版本"""
-        return self._version
-
-    @version.setter
-    def version(self, value: str):
-        self._version = value
-
-    @property
-    def description(self) -> str:
-        """能力描述"""
-        return self._description
-
-    @description.setter
-    def description(self, value: str):
-        self._description = value
-
-    @property
-    def dependencies(self) -> list[str]:
-        """能力依賴"""
-        return self._dependencies
-
-    @dependencies.setter
-    def dependencies(self, value: list[str]):
-        self._dependencies = value
-
-    def initialize(self) -> bool:
-        """初始化能力 - 子類可覆寫為 async"""
-        return True
-
-    async def execute(self, command: str, parameters: dict[str, Any] | None = None) -> dict[str, Any]:
-        """執行能力"""
-        raise NotImplementedError("子類必須實現 execute 方法")
-
-    def cleanup(self) -> bool:
-        """清理資源 - 子類可覆寫為 async"""
-        return True
-
-    def health_check(self) -> bool:
-        """健康檢查 - 子類可覆寫為 async"""
-        return True
-
-
 # 常用的驗證函數
 def validate_capability_id(capability_id: str) -> bool:
     """驗證能力ID格式"""

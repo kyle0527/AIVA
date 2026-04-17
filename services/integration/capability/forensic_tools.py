@@ -20,9 +20,6 @@ from rich.table import Table
 from rich.text import Text
 from rich.theme import Theme
 
-# Local imports - 使用正確的導入路徑
-from .models import BaseCapability
-
 # Setup theme and console
 _theme = Theme({"purple": "#7B61FF"})
 console = Console(theme=_theme)
@@ -460,101 +457,21 @@ class ForensicManager:
         console.print(table)
 
 
-class ForensicCapability(BaseCapability):
-    """Forensic analysis capability - AIVA integration"""
-
-    def __init__(self):
-        super().__init__()
-        self.name = "forensic_tools"
-        self.version = "1.0.0"
-        self.description = "Digital Forensics Toolkit - Direct port from HackingTool"
-        self.dependencies = ["wireshark", "autopsy", "bulk-extractor"]
-        self.manager = ForensicManager()
-
-    async def initialize(self) -> bool:
-        """Initialize capability"""
-        try:
-            console.print("[yellow]Initializing forensic analysis toolkit...[/yellow]")
-            console.print("[red]⚠️  For authorized forensic analysis only![/red]")
-            console.print("[cyan]Digital forensics and incident response tools[/cyan]")
-
-            return True
-
-        except Exception as e:
-            logger.error(f"Initialization failed: {e}")
-            return False
-
-    async def execute(self, command: str, parameters: dict[str, Any]) -> dict[str, Any]:
-        """Execute command"""
-        try:
-            if command == "interactive_menu":
-                self.manager.show_options()
-                return {"success": True, "message": "Interactive menu completed"}
-
-            elif command == "list_tools":
-                tools_info = []
-                for tool in self.manager.tools:
-                    tools_info.append({
-                        "title": tool.name,
-                        "description": tool.description,
-                        "project_url": getattr(tool, "PROJECT_URL", ""),
-                        "installed": tool.is_installed()
-                    })
-                return {"success": True, "data": {"tools": tools_info}}
-
-            elif command == "show_details":
-                self.manager.pretty_print()
-                return {"success": True, "message": "Tool details displayed"}
-
-            elif command == "run_tool":
-                tool_name = parameters.get('tool_name')
-                if not tool_name:
-                    return {"success": False, "error": "Missing tool_name parameter"}
-
-                tool = next((t for t in self.manager.tools if t.name == tool_name), None)
-                if not tool:
-                    return {"success": False, "error": f"Tool {tool_name} not found"}
-
-                result = tool.run()
-                self.manager.forensic_results.append(result)
-                return {"success": True, "data": asdict(result)}
-
-            else:
-                return {"success": False, "error": f"Unknown command: {command}"}
-
-        except Exception as e:
-            logger.error(f"Command execution failed: {e}")
-            return {"success": False, "error": str(e)}
-
-    async def cleanup(self) -> bool:
-        """Cleanup resources"""
-        try:
-            self.manager.forensic_results.clear()
-            return True
-        except Exception as e:
-            logger.error(f"Cleanup failed: {e}")
-            return False
-
-
-# Note: Registration is now handled via async registration function
-# See register_standardized_capabilities.py for proper registration flow
-# CapabilityRegistry.register("forensic_tools", ForensicCapability)
-
-
 if __name__ == "__main__":
-    # Test case - same as HackingTool
+    # Test case - standalone test
     async def test_forensic_tools():
-        capability = ForensicCapability()
-        await capability.initialize()
+        console.print("[yellow]Initializing forensic analysis toolkit...[/yellow]")
+        console.print("[red]⚠️  For authorized forensic analysis only![/red]")
+        console.print("[cyan]Digital forensics and incident response tools[/cyan]")
+
+        manager = ForensicManager()
 
         console.print("[bold red]⚠️  Digital forensics toolkit - Direct port from HackingTool![/bold red]")
         console.print("[yellow]For authorized forensic analysis only![/yellow]")
 
         # Show tools and start interactive menu
-        capability.manager.pretty_print()
-        capability.manager.show_options()
-
-        await capability.cleanup()
+        manager.pretty_print()
+        manager.show_options()
 
     # Run test
     asyncio.run(test_forensic_tools())
