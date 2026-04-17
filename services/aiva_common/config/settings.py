@@ -58,7 +58,7 @@ class MessageQueueSettings(BaseAIVASettings):
     """消息隊列配置"""
 
     broker_url: str = Field(
-        default="amqp://guest:guest@localhost:5672//", description="消息代理 URL"
+        default="amqp://localhost:5672//", description="消息代理 URL"
     )
     result_backend: str | None = Field(default=None, description="結果後端 URL")
     task_serializer: str = Field(default="json", description="任務序列化格式")
@@ -80,7 +80,7 @@ class SecuritySettings(BaseAIVASettings):
     )
     password_min_length: int = Field(default=8, ge=6, description="密碼最小長度")
     allowed_hosts: str = Field(default="*", description="允許的主機列表（逗號分隔）")
-    cors_origins: str = Field(default="*", description="CORS 允許的來源（逗號分隔）")
+    cors_origins: str = Field(default="", description="CORS 允許的來源（逗號分隔）")
 
     @computed_field
     @property
