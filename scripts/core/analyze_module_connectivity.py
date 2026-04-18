@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+
 """
 分析模組間連結完整性
 檢查跨模組調用、孤立模組、連接斷裂等問題
@@ -8,6 +10,7 @@ import json
 from pathlib import Path
 from collections import defaultdict
 from typing import Dict, Set, List, Tuple
+project_root = Path(__file__).resolve().parent.parent.parent
 
 def get_module(path: str) -> str:
     """從路徑提取模組名稱"""
@@ -17,7 +20,7 @@ def get_module(path: str) -> str:
     return 'unknown'
 
 def main():
-    base_path = Path(r"C:\D\fold7\AIVA-git")
+    base_path = project_root
     classification_file = base_path / "services" / "integration" / "data" / "internal_exploration" / "latest_classification.json"
     
     print("\n" + "="*70)

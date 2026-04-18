@@ -1,4 +1,5 @@
 @echo off
+set "PROJECT_ROOT=%~dp0.."
 chcp 65001 >nul 2>&1
 REM ==========================================
 REM AIVA 完整系統啟動腳本
@@ -13,7 +14,7 @@ echo ========================================
 echo.
 
 REM 設置環境變量
-set PYTHONPATH=C:\D\fold7\AIVA-git;C:\D\fold7\AIVA-git\services
+set PYTHONPATH=%PROJECT_ROOT%;%PROJECT_ROOT%\services
 set PYTHONIOENCODING=utf-8
 set AIVA_ENV=production
 
@@ -40,7 +41,7 @@ echo      文檔: http://localhost:8000/docs
 echo.
 
 REM 在後台啟動 Core API
-start "AIVA Core API" /MIN cmd /c "cd /d C:\D\fold7\AIVA-git && python -m uvicorn services.core.aiva_core.service_backbone.api.app:app --host 0.0.0.0 --port 8000 --reload"
+start "AIVA Core API" /MIN cmd /c "cd /d %PROJECT_ROOT% && python -m uvicorn services.core.aiva_core.service_backbone.api.app:app --host 0.0.0.0 --port 8000 --reload"
 
 REM 等待 API 啟動
 timeout /t 5 /nobreak >nul
@@ -49,13 +50,13 @@ echo.
 echo [3/5] 啟動掃描引擎 Worker...
 
 REM 啟動 Rust Engine Worker
-start "Rust Engine Worker" /MIN cmd /c "cd /d C:\D\fold7\AIVA-git\services\scan\rust_engine && cargo run --release"
+start "Rust Engine Worker" /MIN cmd /c "cd /d %PROJECT_ROOT%\services\scan\rust_engine && cargo run --release"
 
 REM 啟動 Python Engine Worker  
-start "Python Engine Worker" /MIN cmd /c "cd /d C:\D\fold7\AIVA-git && python -m services.scan.python_engine.worker"
+start "Python Engine Worker" /MIN cmd /c "cd /d %PROJECT_ROOT% && python -m services.scan.python_engine.worker"
 
 REM 啟動 TypeScript Engine Worker
-start "TypeScript Engine Worker" /MIN cmd /c "cd /d C:\D\fold7\AIVA-git\services\scan\typescript_engine && npm start"
+start "TypeScript Engine Worker" /MIN cmd /c "cd /d %PROJECT_ROOT%\services\scan\typescript_engine && npm start"
 
 echo ✅ 掃描引擎已啟動 (Rust, Python, TypeScript)
 
@@ -63,13 +64,13 @@ echo.
 echo [4/5] 啟動功能 Worker...
 
 REM 啟動 SSRF Worker
-start "SSRF Worker" /MIN cmd /c "cd /d C:\D\fold7\AIVA-git && python -m services.features.function_ssrf.worker"
+start "SSRF Worker" /MIN cmd /c "cd /d %PROJECT_ROOT% && python -m services.features.function_ssrf.worker"
 
 REM 啟動 BizLogic Worker
-start "BizLogic Worker" /MIN cmd /c "cd /d C:\D\fold7\AIVA-git && python -m services.features.function_bizlogic.worker"
+start "BizLogic Worker" /MIN cmd /c "cd /d %PROJECT_ROOT% && python -m services.features.function_bizlogic.worker"
 
 REM 啟動 XSS Worker
-start "XSS Worker" /MIN cmd /c "cd /d C:\D\fold7\AIVA-git && python -m services.features.function_xss.worker"
+start "XSS Worker" /MIN cmd /c "cd /d %PROJECT_ROOT% && python -m services.features.function_xss.worker"
 
 echo ✅ 功能 Worker 已啟動
 
@@ -108,7 +109,7 @@ echo 按任意鍵查看實時日誌...
 pause
 
 REM 打開日誌查看
-start "AIVA Logs" cmd /c "cd /d C:\D\fold7\AIVA-git\logs && powershell -Command Get-Content -Path aiva_core\app.log -Wait -Tail 50"
+start "AIVA Logs" cmd /c "cd /d %PROJECT_ROOT%\logs && powershell -Command Get-Content -Path aiva_core\app.log -Wait -Tail 50"
 
 echo.
 echo 日誌查看已啟動，按 Ctrl+C 可停止

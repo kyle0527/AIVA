@@ -276,7 +276,7 @@ async def startup() -> None:
 
             # 設置環境變量（如果未設置）
             if 'RABBITMQ_URL' not in os.environ:
-                os.environ['RABBITMQ_URL'] = 'amqp://guest:guest@localhost:5672/'
+                os.environ['RABBITMQ_URL'] = 'amqp://localhost:5672/'
 
             broker = RabbitBroker()
             await asyncio.wait_for(broker.connect(), timeout=5.0)

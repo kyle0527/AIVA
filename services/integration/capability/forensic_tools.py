@@ -234,10 +234,12 @@ class BulkExtractor(ForensicTool):
 
     def gui_mode(self):
         """GUI Mode implementation"""
+        import subprocess
         console.print(Panel(Text(self.name, justify="center"), style=PURPLE_STYLE))
         console.print("[bold magenta]Cloning repository and attempting to run GUI...[/]")
-        os.system("sudo git clone https://github.com/simsong/bulk_extractor.git")
-        os.system("ls src/ && cd .. && cd java_gui && ./BEViewer")
+        subprocess.run(["sudo", "git", "clone", "https://github.com/simsong/bulk_extractor.git"], shell=False)
+        subprocess.run(["ls", "src/"], shell=False)
+        subprocess.run(["./BEViewer"], cwd="../java_gui", shell=False)
         console.print(
             "[magenta]If you get an error after clone go to /java_gui/src/ and compile the .jar file && run ./BEViewer[/]")
         console.print(
@@ -245,11 +247,17 @@ class BulkExtractor(ForensicTool):
 
     def cli_mode(self):
         """CLI Mode implementation"""
+        import subprocess
         console.print(Panel(Text(self.name + " - CLI Mode", justify="center"), style=PURPLE_STYLE))
-        os.system("sudo apt install bulk-extractor")
+        subprocess.run(["sudo", "apt", "install", "-y", "bulk-extractor"], shell=False)
         console.print("[magenta]Showing bulk_extractor help and options:[/]")
-        os.system("bulk_extractor -h")
-        os.system('echo "bulk_extractor [options] imagefile" | boxes -d headline | lolcat')
+        subprocess.run(["bulk_extractor", "-h"], shell=False)
+
+        # Pipeline handling using subprocess.Popen
+        p1 = subprocess.Popen(["echo", "bulk_extractor [options] imagefile"], stdout=subprocess.PIPE, shell=False)
+        p2 = subprocess.Popen(["boxes", "-d", "headline"], stdin=p1.stdout, stdout=subprocess.PIPE, shell=False)
+        p1.stdout.close()
+        subprocess.run(["lolcat"], stdin=p2.stdout, shell=False)
 
     def custom_run(self):
         """Custom run with mode selection"""
@@ -304,15 +312,8 @@ class Toolsley(ForensicTool):
         console.print(f"[blue]Visit: {self.project_url}[/blue]")
 
         # Cross-platform URL opening
-        import platform
-        system = platform.system().lower()
-
-        if system == "windows":
-            os.system(f"start {self.project_url}")
-        elif system == "darwin":
-            os.system(f"open {self.project_url}")
-        else:
-            os.system(f"xdg-open {self.project_url}")
+        import webbrowser
+        webbrowser.open(self.project_url)
 
 
 class ForensicManager:

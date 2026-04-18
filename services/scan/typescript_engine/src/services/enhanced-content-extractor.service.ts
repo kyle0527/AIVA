@@ -4,13 +4,13 @@
  */
 
 import { Page } from 'playwright-core';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 import { 
   DynamicContent,
   ExtractionConfig,
   JSVariable,
   EventListener 
-} from '../interfaces/dynamic-scan.interfaces';
+} from '../interfaces/dynamic-scan.interfaces.js';
 
 export class EnhancedContentExtractor {
   private page: Page;

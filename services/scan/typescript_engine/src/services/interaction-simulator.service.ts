@@ -4,12 +4,12 @@
  */
 
 import { Page } from 'playwright-core';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 import { 
   InteractionConfig, 
   InteractionResult, 
   DOMChange 
-} from '../interfaces/dynamic-scan.interfaces';
+} from '../interfaces/dynamic-scan.interfaces.js';
 
 export class InteractionSimulator {
   private page: Page;

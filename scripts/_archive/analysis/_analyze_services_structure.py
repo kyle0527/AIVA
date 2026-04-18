@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+
 """分析 services 目錄中的 MD 文件並建議重組方案"""
 
 import os
@@ -6,10 +8,11 @@ import json
 from pathlib import Path
 from typing import Dict, List
 import re
+project_root = Path(__file__).resolve().parent.parent.parent.parent
 
 def analyze_services():
     """分析 services 目錄"""
-    services_dir = Path(r"C:\D\fold7\AIVA-git\services")
+    services_dir = (project_root / "services")
     
     # 掃描所有 MD 文件
     md_files = list(services_dir.rglob("*.md"))
@@ -176,13 +179,13 @@ def analyze_services():
             target_dir = str(Path(m['to']).parent)
             target_dirs.add(target_dir)
         for target_dir in sorted(target_dirs):
-            report.append(f'New-Item -ItemType Directory -Force -Path "C:\\D\\fold7\\AIVA-git\\{target_dir}"\n')
+            report.append(f'New-Item -ItemType Directory -Force -Path "{project_root}/{target_dir}"\n')
         report.append("```\n\n")
         
         report.append("### 2. 移動文件\n\n")
         report.append("```powershell\n")
         for m in moves:
-            report.append(f'Move-Item -Path "C:\\D\\fold7\\AIVA-git\\{m["from"]}" -Destination "C:\\D\\fold7\\AIVA-git\\{m["to"]}" -Force\n')
+            report.append(f'Move-Item -Path "{project_root}/{m["from"]}" -Destination "{project_root}/{m["to"]}" -Force\n')
         report.append("```\n\n")
     else:
         report.append("✅ 無需執行移動操作\n\n")
@@ -217,7 +220,7 @@ def analyze_services():
     report.append("*報告生成時間: 2025年11月27日*\n")
     
     # 保存報告
-    report_file = Path(r"C:\D\fold7\AIVA-git\SERVICES_MD_REORGANIZATION_PLAN.md")
+    report_file = (project_root / "SERVICES_MD_REORGANIZATION_PLAN.md")
     with open(report_file, 'w', encoding='utf-8') as f:
         f.write(''.join(report))
     
@@ -230,7 +233,7 @@ def analyze_services():
         'moves': moves
     }
     
-    json_file = Path(r"C:\D\fold7\AIVA-git\_services_reorganization.json")
+    json_file = (project_root / "_services_reorganization.json")
     with open(json_file, 'w', encoding='utf-8') as f:
         json.dump(json_data, f, indent=2, ensure_ascii=False)
     

@@ -8,8 +8,8 @@
 # 5. 同時輸出純文字檔案和彩色終端機顯示
 
 param(
-    [string]$ProjectRoot = 'C:\D\fold7\AIVA-git',
-    [string]$OutputDir = 'C:\D\fold7\AIVA-git\_out',
+    [string]$ProjectRoot = (Resolve-Path "$PSScriptRoot\..\..\..").Path,
+    [string]$OutputDir = "$($ProjectRoot)\_out",
     [string]$PreviousTreeFile = '',
     [switch]$ShowColorInTerminal,
     [switch]$AddChineseComments
