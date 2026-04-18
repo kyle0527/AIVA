@@ -242,6 +242,14 @@ async def startup() -> None:
     await coordinator.start()
     logger.info("✅ [啟動] CoreServiceCoordinator initialized (state manager mode)")
 
+    # ✅ 初始化能力註冊表
+    try:
+        from services.core.aiva_core.core_capabilities.capability_registry import initialize_capability_registry
+        await initialize_capability_registry()
+        logger.info("✅ [啟動] CapabilityRegistry initialized and synced")
+    except Exception as e:
+        logger.warning(f"⚠️  [啟動] CapabilityRegistry initialization failed: {e}")
+
     # ✅ Step 2: 初始化認知核心（AI 決策引擎 - 大腦）
     decision_agent = EnhancedDecisionAgent()
     logger.info("✅ [啟動] EnhancedDecisionAgent initialized (Cognitive Core - Brain)")

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-02-02T15:23:12.843641",
+    "generated_at": "2026-04-17T11:03:23.775047",
     "generator": "aiva_external_classifier.py",
     "version": "3.3",
     "description": "外部模組多語言整合分類數據",
@@ -19630,7 +19630,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from OastHttpCallbackStore.register_probe to isinstance"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 402,
@@ -19683,7 +19683,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from OastHttpCallbackStore.fetch_events to events.append"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 403,
@@ -19727,7 +19727,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from BlindXssListenerValidator.__init__ to OastHttpCallbackStore"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 404,
@@ -19769,7 +19769,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from BlindXssListenerValidator.provision_payload to self._store.register_probe"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 405,
@@ -19803,7 +19803,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from BlindXssListenerValidator.collect_events to self._store.fetch_events"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 406,
@@ -19839,7 +19839,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XSSCommandHandler.__init__ to self.logger.info"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 407,
@@ -19901,7 +19901,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XSSCommandHandler.handle_command to self.logger.error"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 408,
@@ -19970,7 +19970,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from XSSCommandHandler._execute_xss_scan to self.xss_manager.comprehensive_scan"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 409,
@@ -20028,7 +20028,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from XSSCommandHandler._build_scan_options to default_options.update"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 410,
@@ -20070,7 +20070,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from DomXssDetector.analyze to window.strip"
+          "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
         },
         {
           "id": 411,
@@ -20106,7 +20106,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from HackingToolXSSConfig.__init__ to self._calculate_priority_order"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 412,
@@ -20140,7 +20140,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from HackingToolXSSConfig._calculate_priority_order to sorted"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 413,
@@ -20182,7 +20182,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from HackingToolXSSConfig.validate_tool_requirements to self.get_tool_config"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 414,
@@ -20226,7 +20226,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from HackingToolXSSConfig.export_config to print"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 415,
@@ -20279,7 +20279,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from HackingToolXSSConfig.get_execution_plan to execution_plan.append"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 416,
@@ -20341,7 +20341,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XssPayloadGenerator.generate to ordered.setdefault"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 417,
@@ -20383,7 +20383,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XssResultPublisher.__init__ to new_id"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 418,
@@ -20436,7 +20436,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XssResultPublisher.publish_status to self._publish"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 419,
@@ -20480,7 +20480,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XssResultPublisher.publish_finding to self._publish"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 420,
@@ -20529,7 +20529,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XssResultPublisher.publish_error to self.publish_status"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 421,
@@ -20580,7 +20580,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from XssResultPublisher._publish to self._broker.publish"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 422,
@@ -20630,7 +20630,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from StoredXssDetector.execute to client.aclose"
+          "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
         },
         {
           "id": 423,
@@ -20681,7 +20681,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from StoredXssDetector._submit_payload to payload.encode"
+          "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
         },
         {
           "id": 424,
@@ -20737,7 +20737,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from StoredXssDetector._verify_persistence to html.escape"
+          "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
         },
         {
           "id": 425,
@@ -20795,7 +20795,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from StoredXssDetector._inject_query to urlencode"
+          "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
         },
         {
           "id": 426,
@@ -20831,7 +20831,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from _QueueEntry to field"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 427,
@@ -20865,7 +20865,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XssTaskQueue.__init__ to itertools.count"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 428,
@@ -20918,7 +20918,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XssTaskQueue.put to self._condition.notify_all"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 429,
@@ -20964,7 +20964,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XssTaskQueue.get to self._entries.pop"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 430,
@@ -20998,7 +20998,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XssTaskQueue.close to self._condition.notify_all"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 431,
@@ -21032,7 +21032,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from XssTaskQueue._discard_invalid_locked to heapq.heappop"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 432,
@@ -21074,7 +21074,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from TraditionalXssDetector.__init__ to max"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 433,
@@ -21124,7 +21124,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from TraditionalXssDetector.execute to client.aclose"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 434,
@@ -21177,7 +21177,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from TraditionalXssDetector._build_request_parts to target.body.encode"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 435,
@@ -21237,7 +21237,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from _inject_query to urlencode"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 436,
@@ -21288,7 +21288,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from _payload_in_response to unescape"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 437,
@@ -21352,7 +21352,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from _verify_execution_context to match.group"
+          "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
         },
         {
           "id": 438,
@@ -21401,7 +21401,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from _detect_waf_interference to response_text.lower"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 439,
@@ -21451,7 +21451,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from run_reflected_test to detector.execute"
+          "use_case": "[XSS反射型] 檢測反射型 XSS，payload 在當前響應中立即觸發"
         },
         {
           "id": 440,
@@ -21497,7 +21497,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from run_dom_test to detector.analyze"
+          "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
         },
         {
           "id": 441,
@@ -21547,7 +21547,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from run_stored_test to detector.execute"
+          "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
         },
         {
           "id": 442,
@@ -21593,7 +21593,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from main to print"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 443,
@@ -21660,7 +21660,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from run_xss_test to findings.append"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 444,
@@ -21706,7 +21706,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from CrossLanguageXSSEngine.__init__ to Path"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 445,
@@ -21748,7 +21748,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from CrossLanguageXSSEngine.initialize to self.logger.error"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 446,
@@ -21791,7 +21791,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._validate_tool_availability to available_tools.append"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 447,
@@ -21831,7 +21831,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._check_dalfox_availability to self.logger.warning"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 448,
@@ -21871,7 +21871,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._check_xspear_availability to self.logger.warning"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 449,
@@ -21911,7 +21911,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._check_xsser_availability to self.logger.warning"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 450,
@@ -21951,7 +21951,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._detect_language_environments to LanguageEnvironment"
+          "use_case": "[XSS環境偵測] 檢測目標使用的程式語言和框架，用於選擇最佳 payload"
         },
         {
           "id": 451,
@@ -21989,7 +21989,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._check_go_environment to shutil.which"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 452,
@@ -22027,7 +22027,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._check_ruby_environment to shutil.which"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 453,
@@ -22065,7 +22065,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._check_python_environment to shutil.which"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 454,
@@ -22103,7 +22103,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._check_rust_environment to shutil.which"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 455,
@@ -22170,7 +22170,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from CrossLanguageXSSEngine.detect to self.logger.warning"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 456,
@@ -22234,7 +22234,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._get_available_execution_plans to self.logger.warning"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 457,
@@ -22298,7 +22298,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._execute_parallel_detection to detection_results.append"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 458,
@@ -22367,7 +22367,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._execute_tool_detection to self._parse_tool_output"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 459,
@@ -22431,7 +22431,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._execute_go_tool to ValueError"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 460,
@@ -22495,7 +22495,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._execute_ruby_tool to ValueError"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 461,
@@ -22553,7 +22553,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._execute_python_tool to run_pattern.format"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 462,
@@ -22609,7 +22609,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._execute_rust_tool to ValueError"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 463,
@@ -22681,7 +22681,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._parse_tool_output to self._parse_regex_output"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 464,
@@ -22759,7 +22759,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._create_result_from_json to item.get"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 465,
@@ -22808,7 +22808,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._parse_regex_output to self._process_regex_matches"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 466,
@@ -22866,7 +22866,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._process_regex_matches to float"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 467,
@@ -22924,7 +22924,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._run_command to process.wait"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 468,
@@ -22966,7 +22966,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from CrossLanguageXSSEngine._is_language_available to self.language_environments.get"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 469,
@@ -23000,7 +23000,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from CrossLanguageXSSEngine.get_available_tools to available_tools.append"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 470,
@@ -23038,7 +23038,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from CrossLanguageXSSEngine.cleanup to self.logger.error"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 471,
@@ -23072,7 +23072,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from CrossLanguageXSSEngine.__del__ to self.cleanup"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 472,
@@ -23108,7 +23108,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from get_xss_engine to _xss_engine_instance.initialize"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 473,
@@ -23164,7 +23164,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from detect_xss to get_xss_engine"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 474,
@@ -23198,7 +23198,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from DalfoxIntegration.__init__ to self._find_dalfox_path"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 475,
@@ -23232,7 +23232,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from DalfoxIntegration.install_dalfox to process.communicate"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 476,
@@ -23292,7 +23292,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from DalfoxIntegration.scan_target to self._parse_dalfox_output"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 477,
@@ -23343,7 +23343,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from DalfoxIntegration._parse_dalfox_output to vulnerabilities.append"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 478,
@@ -23379,7 +23379,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XSSPayloadGenerator.__init__ to self._load_context_specific_payloads"
+          "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
         },
         {
           "id": 479,
@@ -23439,7 +23439,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XSSPayloadGenerator.generate_payloads to payloads.extend"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 480,
@@ -23490,7 +23490,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from DOMXSSDetector.scan_dom_xss to vulnerabilities.extend"
+          "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
         },
         {
           "id": 481,
@@ -23545,7 +23545,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from DOMXSSDetector._analyze_javascript to vulnerabilities.append"
+          "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
         },
         {
           "id": 482,
@@ -23600,7 +23600,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-          "use_case": "XSS testing from DOMXSSDetector._test_dom_payloads to vulnerabilities.append"
+          "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
         },
         {
           "id": 483,
@@ -23646,7 +23646,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from StoredXSSDetector.scan_stored_xss to vulnerabilities.extend"
+          "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
         },
         {
           "id": 484,
@@ -23704,7 +23704,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-          "use_case": "XSS testing from StoredXSSDetector._submit_payloads to session.get"
+          "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
         },
         {
           "id": 485,
@@ -23762,7 +23762,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-          "use_case": "XSS testing from StoredXSSDetector._check_stored_execution to vulnerabilities.append"
+          "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
         },
         {
           "id": 486,
@@ -23804,7 +23804,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from BlindXSSDetector.__init__ to self._generate_blind_payloads"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 487,
@@ -23850,7 +23850,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from BlindXSSDetector.scan_blind_xss to vulnerabilities.append"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 488,
@@ -23899,7 +23899,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-          "use_case": "XSS testing from BlindXSSDetector._submit_blind_payloads to method"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 489,
@@ -23956,7 +23956,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-          "use_case": "XSS testing from BlindXSSDetector._submit_via_forms to session.get"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 490,
@@ -24007,7 +24007,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-          "use_case": "XSS testing from BlindXSSDetector._submit_via_parameters to session.get"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 491,
@@ -24060,7 +24060,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-          "use_case": "XSS testing from BlindXSSDetector._submit_via_headers to session.get"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 492,
@@ -24111,7 +24111,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-          "use_case": "XSS testing from BlindXSSDetector._submit_via_user_agent to session.get"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 493,
@@ -24153,7 +24153,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XSSManager.__init__ to BlindXSSDetector"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 494,
@@ -24204,7 +24204,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from XSSManager._parse_target to parameters.items"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 495,
@@ -24266,7 +24266,7 @@
           },
           "is_operable": true,
           "operability_reason": "✅ 可操作 - 符合序列化原則",
-          "use_case": "XSS testing from XSSManager.comprehensive_scan to self.scan_results.extend"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 496,
@@ -24321,7 +24321,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from XSSManager._custom_xss_scan to vulnerabilities.append"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 497,
@@ -24363,7 +24363,7 @@
           },
           "is_operable": false,
           "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-          "use_case": "XSS testing from XSSManager._generate_summary to all_vulns.extend"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         }
       ]
     },
@@ -45499,7 +45499,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from OastHttpCallbackStore.register_probe to isinstance"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 402,
@@ -45552,7 +45552,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from OastHttpCallbackStore.fetch_events to events.append"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 403,
@@ -45596,7 +45596,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from BlindXssListenerValidator.__init__ to OastHttpCallbackStore"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 404,
@@ -45638,7 +45638,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from BlindXssListenerValidator.provision_payload to self._store.register_probe"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 405,
@@ -45672,7 +45672,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from BlindXssListenerValidator.collect_events to self._store.fetch_events"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 406,
@@ -45708,7 +45708,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XSSCommandHandler.__init__ to self.logger.info"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 407,
@@ -45770,7 +45770,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XSSCommandHandler.handle_command to self.logger.error"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 408,
@@ -45839,7 +45839,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from XSSCommandHandler._execute_xss_scan to self.xss_manager.comprehensive_scan"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 409,
@@ -45897,7 +45897,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from XSSCommandHandler._build_scan_options to default_options.update"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 410,
@@ -45939,7 +45939,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from DomXssDetector.analyze to window.strip"
+      "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
     },
     {
       "id": 411,
@@ -45975,7 +45975,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from HackingToolXSSConfig.__init__ to self._calculate_priority_order"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 412,
@@ -46009,7 +46009,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from HackingToolXSSConfig._calculate_priority_order to sorted"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 413,
@@ -46051,7 +46051,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from HackingToolXSSConfig.validate_tool_requirements to self.get_tool_config"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 414,
@@ -46095,7 +46095,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from HackingToolXSSConfig.export_config to print"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 415,
@@ -46148,7 +46148,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from HackingToolXSSConfig.get_execution_plan to execution_plan.append"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 416,
@@ -46210,7 +46210,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XssPayloadGenerator.generate to ordered.setdefault"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 417,
@@ -46252,7 +46252,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XssResultPublisher.__init__ to new_id"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 418,
@@ -46305,7 +46305,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XssResultPublisher.publish_status to self._publish"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 419,
@@ -46349,7 +46349,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XssResultPublisher.publish_finding to self._publish"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 420,
@@ -46398,7 +46398,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XssResultPublisher.publish_error to self.publish_status"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 421,
@@ -46449,7 +46449,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from XssResultPublisher._publish to self._broker.publish"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 422,
@@ -46499,7 +46499,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from StoredXssDetector.execute to client.aclose"
+      "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
     },
     {
       "id": 423,
@@ -46550,7 +46550,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from StoredXssDetector._submit_payload to payload.encode"
+      "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
     },
     {
       "id": 424,
@@ -46606,7 +46606,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from StoredXssDetector._verify_persistence to html.escape"
+      "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
     },
     {
       "id": 425,
@@ -46664,7 +46664,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from StoredXssDetector._inject_query to urlencode"
+      "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
     },
     {
       "id": 426,
@@ -46700,7 +46700,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from _QueueEntry to field"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 427,
@@ -46734,7 +46734,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XssTaskQueue.__init__ to itertools.count"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 428,
@@ -46787,7 +46787,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XssTaskQueue.put to self._condition.notify_all"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 429,
@@ -46833,7 +46833,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XssTaskQueue.get to self._entries.pop"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 430,
@@ -46867,7 +46867,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XssTaskQueue.close to self._condition.notify_all"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 431,
@@ -46901,7 +46901,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from XssTaskQueue._discard_invalid_locked to heapq.heappop"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 432,
@@ -46943,7 +46943,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from TraditionalXssDetector.__init__ to max"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 433,
@@ -46993,7 +46993,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from TraditionalXssDetector.execute to client.aclose"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 434,
@@ -47046,7 +47046,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from TraditionalXssDetector._build_request_parts to target.body.encode"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 435,
@@ -47106,7 +47106,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from _inject_query to urlencode"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 436,
@@ -47157,7 +47157,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from _payload_in_response to unescape"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 437,
@@ -47221,7 +47221,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from _verify_execution_context to match.group"
+      "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
     },
     {
       "id": 438,
@@ -47270,7 +47270,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from _detect_waf_interference to response_text.lower"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 439,
@@ -47320,7 +47320,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from run_reflected_test to detector.execute"
+      "use_case": "[XSS反射型] 檢測反射型 XSS，payload 在當前響應中立即觸發"
     },
     {
       "id": 440,
@@ -47366,7 +47366,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from run_dom_test to detector.analyze"
+      "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
     },
     {
       "id": 441,
@@ -47416,7 +47416,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from run_stored_test to detector.execute"
+      "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
     },
     {
       "id": 442,
@@ -47462,7 +47462,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from main to print"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 443,
@@ -47529,7 +47529,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from run_xss_test to findings.append"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 444,
@@ -47575,7 +47575,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from CrossLanguageXSSEngine.__init__ to Path"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 445,
@@ -47617,7 +47617,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from CrossLanguageXSSEngine.initialize to self.logger.error"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 446,
@@ -47660,7 +47660,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._validate_tool_availability to available_tools.append"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 447,
@@ -47700,7 +47700,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._check_dalfox_availability to self.logger.warning"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 448,
@@ -47740,7 +47740,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._check_xspear_availability to self.logger.warning"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 449,
@@ -47780,7 +47780,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._check_xsser_availability to self.logger.warning"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 450,
@@ -47820,7 +47820,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._detect_language_environments to LanguageEnvironment"
+      "use_case": "[XSS環境偵測] 檢測目標使用的程式語言和框架，用於選擇最佳 payload"
     },
     {
       "id": 451,
@@ -47858,7 +47858,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._check_go_environment to shutil.which"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 452,
@@ -47896,7 +47896,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._check_ruby_environment to shutil.which"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 453,
@@ -47934,7 +47934,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._check_python_environment to shutil.which"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 454,
@@ -47972,7 +47972,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._check_rust_environment to shutil.which"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 455,
@@ -48039,7 +48039,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from CrossLanguageXSSEngine.detect to self.logger.warning"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 456,
@@ -48103,7 +48103,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._get_available_execution_plans to self.logger.warning"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 457,
@@ -48167,7 +48167,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._execute_parallel_detection to detection_results.append"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 458,
@@ -48236,7 +48236,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._execute_tool_detection to self._parse_tool_output"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 459,
@@ -48300,7 +48300,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._execute_go_tool to ValueError"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 460,
@@ -48364,7 +48364,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._execute_ruby_tool to ValueError"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 461,
@@ -48422,7 +48422,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._execute_python_tool to run_pattern.format"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 462,
@@ -48478,7 +48478,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._execute_rust_tool to ValueError"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 463,
@@ -48550,7 +48550,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._parse_tool_output to self._parse_regex_output"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 464,
@@ -48628,7 +48628,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._create_result_from_json to item.get"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 465,
@@ -48677,7 +48677,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._parse_regex_output to self._process_regex_matches"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 466,
@@ -48735,7 +48735,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._process_regex_matches to float"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 467,
@@ -48793,7 +48793,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._run_command to process.wait"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 468,
@@ -48835,7 +48835,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from CrossLanguageXSSEngine._is_language_available to self.language_environments.get"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 469,
@@ -48869,7 +48869,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from CrossLanguageXSSEngine.get_available_tools to available_tools.append"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 470,
@@ -48907,7 +48907,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from CrossLanguageXSSEngine.cleanup to self.logger.error"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 471,
@@ -48941,7 +48941,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from CrossLanguageXSSEngine.__del__ to self.cleanup"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 472,
@@ -48977,7 +48977,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from get_xss_engine to _xss_engine_instance.initialize"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 473,
@@ -49033,7 +49033,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from detect_xss to get_xss_engine"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 474,
@@ -49067,7 +49067,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from DalfoxIntegration.__init__ to self._find_dalfox_path"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 475,
@@ -49101,7 +49101,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from DalfoxIntegration.install_dalfox to process.communicate"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 476,
@@ -49161,7 +49161,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from DalfoxIntegration.scan_target to self._parse_dalfox_output"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 477,
@@ -49212,7 +49212,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from DalfoxIntegration._parse_dalfox_output to vulnerabilities.append"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 478,
@@ -49248,7 +49248,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XSSPayloadGenerator.__init__ to self._load_context_specific_payloads"
+      "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
     },
     {
       "id": 479,
@@ -49308,7 +49308,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XSSPayloadGenerator.generate_payloads to payloads.extend"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 480,
@@ -49359,7 +49359,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from DOMXSSDetector.scan_dom_xss to vulnerabilities.extend"
+      "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
     },
     {
       "id": 481,
@@ -49414,7 +49414,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from DOMXSSDetector._analyze_javascript to vulnerabilities.append"
+      "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
     },
     {
       "id": 482,
@@ -49469,7 +49469,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-      "use_case": "XSS testing from DOMXSSDetector._test_dom_payloads to vulnerabilities.append"
+      "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
     },
     {
       "id": 483,
@@ -49515,7 +49515,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from StoredXSSDetector.scan_stored_xss to vulnerabilities.extend"
+      "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
     },
     {
       "id": 484,
@@ -49573,7 +49573,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-      "use_case": "XSS testing from StoredXSSDetector._submit_payloads to session.get"
+      "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
     },
     {
       "id": 485,
@@ -49631,7 +49631,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-      "use_case": "XSS testing from StoredXSSDetector._check_stored_execution to vulnerabilities.append"
+      "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
     },
     {
       "id": 486,
@@ -49673,7 +49673,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from BlindXSSDetector.__init__ to self._generate_blind_payloads"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 487,
@@ -49719,7 +49719,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from BlindXSSDetector.scan_blind_xss to vulnerabilities.append"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 488,
@@ -49768,7 +49768,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-      "use_case": "XSS testing from BlindXSSDetector._submit_blind_payloads to method"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 489,
@@ -49825,7 +49825,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-      "use_case": "XSS testing from BlindXSSDetector._submit_via_forms to session.get"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 490,
@@ -49876,7 +49876,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-      "use_case": "XSS testing from BlindXSSDetector._submit_via_parameters to session.get"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 491,
@@ -49929,7 +49929,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-      "use_case": "XSS testing from BlindXSSDetector._submit_via_headers to session.get"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 492,
@@ -49980,7 +49980,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 依賴 Web Context (request/session 參數)",
-      "use_case": "XSS testing from BlindXSSDetector._submit_via_user_agent to session.get"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 493,
@@ -50022,7 +50022,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XSSManager.__init__ to BlindXSSDetector"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 494,
@@ -50073,7 +50073,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from XSSManager._parse_target to parameters.items"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 495,
@@ -50135,7 +50135,7 @@
       },
       "is_operable": true,
       "operability_reason": "✅ 可操作 - 符合序列化原則",
-      "use_case": "XSS testing from XSSManager.comprehensive_scan to self.scan_results.extend"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 496,
@@ -50190,7 +50190,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from XSSManager._custom_xss_scan to vulnerabilities.append"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 497,
@@ -50232,7 +50232,7 @@
       },
       "is_operable": false,
       "operability_reason": "❌ 私有函數 (以 _ 開頭)",
-      "use_case": "XSS testing from XSSManager._generate_summary to all_vulns.extend"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 498,

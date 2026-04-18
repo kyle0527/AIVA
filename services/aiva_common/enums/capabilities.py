@@ -294,6 +294,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [CapabilityParameter.COOKIE, CapabilityParameter.TIMEOUT],
         "default_timeout": 30,
         "risk_level": "high",
+        "module": "services.features.function_sqli.smart_detection_manager",
+        "class_name": "SmartDetectionManager",
+        "method": "scan_target",
+        "entrypoint": "services/features/function_sqli/smart_detection_manager.py",
     },
     AttackCapability.SQL_INJECTION_BLIND.value: {
         "name": "盲注 SQL 注入",
@@ -302,6 +306,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [CapabilityParameter.COOKIE, CapabilityParameter.TIMEOUT],
         "default_timeout": 60,
         "risk_level": "high",
+        "module": "services.features.function_sqli.engines.boolean_detection_engine",
+        "class_name": "BooleanDetectionEngine",
+        "method": "detect",
+        "entrypoint": "services/features/function_sqli/engines/boolean_detection_engine.py",
     },
     AttackCapability.NOSQL_INJECTION.value: {
         "name": "NoSQL 注入攻擊",
@@ -330,6 +338,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [CapabilityParameter.COOKIE],
         "default_timeout": 30,
         "risk_level": "medium",
+        "module": "services.features.function_xss.traditional_detector",
+        "class_name": "TraditionalXssDetector",
+        "method": "execute",
+        "entrypoint": "services/features/function_xss/traditional_detector.py",
     },
     AttackCapability.XSS_STORED.value: {
         "name": "存儲型 XSS",
@@ -338,6 +350,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [CapabilityParameter.COOKIE, CapabilityParameter.TOKEN],
         "default_timeout": 60,
         "risk_level": "high",
+        "module": "services.features.function_xss.stored_detector",
+        "class_name": "StoredXssDetector",
+        "method": "execute",
+        "entrypoint": "services/features/function_xss/stored_detector.py",
     },
 
     # Port Scan
@@ -348,6 +364,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [CapabilityParameter.TARGET_PORT_RANGE, CapabilityParameter.THREADS],
         "default_timeout": 120,
         "risk_level": "low",
+        "module": "services.features.function_web_scanner.scanners.port_scanner",
+        "class_name": "PortScanner",
+        "method": "scan",
+        "entrypoint": "services/features/function_web_scanner/scanners/port_scanner.py",
     },
     ScanCapability.PORT_SCAN_FULL.value: {
         "name": "完整端口掃描",
@@ -356,6 +376,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [CapabilityParameter.THREADS],
         "default_timeout": 600,
         "risk_level": "low",
+        "module": "services.features.function_web_scanner.scanners.port_scanner",
+        "class_name": "PortScanner",
+        "method": "scan",
+        "entrypoint": "services/features/function_web_scanner/scanners/port_scanner.py",
     },
 
     # Vulnerability Scan
@@ -366,6 +390,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [CapabilityParameter.DEPTH, CapabilityParameter.TIMEOUT],
         "default_timeout": 300,
         "risk_level": "medium",
+        "module": "services.features.function_web_scanner.integration_tools.web_tools",
+        "class_name": "WebAttackManager",
+        "method": "comprehensive_scan",
+        "entrypoint": "services/features/function_web_scanner/integration_tools/web_tools.py",
     },
 
     # Recon
@@ -376,6 +404,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [],
         "default_timeout": 30,
         "risk_level": "info",
+        "module": None,
+        "class_name": None,
+        "method": None,
+        "entrypoint": None,
     },
     ReconCapability.DNS_LOOKUP.value: {
         "name": "DNS 查詢",
@@ -384,6 +416,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [],
         "default_timeout": 30,
         "risk_level": "info",
+        "module": None,
+        "class_name": None,
+        "method": None,
+        "entrypoint": None,
     },
     ReconCapability.SUBDOMAIN_ENUMERATION.value: {
         "name": "子域名枚舉",
@@ -392,6 +428,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [CapabilityParameter.WORDLIST, CapabilityParameter.THREADS],
         "default_timeout": 300,
         "risk_level": "info",
+        "module": "services.features.function_web_scanner.scanners.subdomain_scanner",
+        "class_name": "SubdomainScanner",
+        "method": "scan",
+        "entrypoint": "services/features/function_web_scanner/scanners/subdomain_scanner.py",
     },
 
     # Analysis
@@ -402,6 +442,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [],
         "default_timeout": 600,
         "risk_level": "info",
+        "module": None,
+        "class_name": None,
+        "method": None,
+        "entrypoint": "crypto-scanner",
     },
     AnalysisCapability.SECRET_DETECTION.value: {
         "name": "密鑰檢測",
@@ -410,6 +454,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [],
         "default_timeout": 120,
         "risk_level": "high",
+        "module": "services.features.function_info_leak.sensitive_info_detector",
+        "class_name": "SensitiveInfoDetector",
+        "method": "detect_in_response",
+        "entrypoint": "services/features/function_info_leak/sensitive_info_detector.py",
     },
 
     # Forensic
@@ -420,6 +468,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [],
         "default_timeout": 300,
         "risk_level": "info",
+        "module": "services.features.function_forensic.manager",
+        "class_name": "ForensicManager",
+        "method": "analyze_memory_dump",
+        "entrypoint": "services/features/function_forensic/manager.py",
     },
     ForensicCapability.STEGANOGRAPHY_DETECT.value: {
         "name": "隱寫術檢測",
@@ -428,6 +480,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
         "optional_params": [],
         "default_timeout": 60,
         "risk_level": "info",
+        "module": "services.features.function_steganography.manager",
+        "class_name": "SteganographyManager",
+        "method": "detect_hidden_data",
+        "entrypoint": "services/features/function_steganography/manager.py",
     },
     ForensicCapability.STEGANOGRAPHY_EXTRACT.value: {
         "name": "隱寫術提取",
