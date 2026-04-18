@@ -77,8 +77,10 @@ from .analysis import (
 )
 
 # ==================== API 標準 (OpenAPI/AsyncAPI/GraphQL) ====================
+from .vulnerability_finding import APIVulnerabilityFinding
 from .api_standards import (
     APISecurityTest,
+
     AsyncAPIChannel,
     AsyncAPIDocument,
     AsyncAPIInfo,
@@ -98,6 +100,7 @@ from .api_standards import (
     OpenAPIServer,
 )
 from .api_standards import (
+    APISecurityTest,
     AsyncAPIComponents as AsyncComponents,  # OpenAPI 3.1; AsyncAPI 3.0; GraphQL; API 安全測試
 )
 from .api_standards import AsyncAPIOperation as AsyncOperation
