@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+
 """
 分析各模組獨特終點能力
 扣除多路徑重複後的獨特終點數量及對內/對外分類
@@ -8,6 +10,7 @@ import json
 from pathlib import Path
 from collections import defaultdict
 from typing import Dict, List, Set, Tuple
+project_root = Path(__file__).resolve().parent.parent.parent
 
 def classify_capability(start: str, end: str) -> str:
     """
@@ -32,7 +35,7 @@ def classify_capability(start: str, end: str) -> str:
         return 'External'
 
 def main():
-    base_path = Path(r"C:\D\fold7\AIVA-git")
+    base_path = project_root
     classification_file = base_path / "services" / "integration" / "data" / "internal_exploration" / "latest_classification.json"
     
     print("\n" + "="*60)

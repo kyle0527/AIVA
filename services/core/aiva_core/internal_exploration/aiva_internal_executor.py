@@ -105,7 +105,7 @@ ANALYSIS_RESULTS_PATH = INTEGRATION_BASE_PATH / "analysis_results" / "external"
 
 try:
     # 正確的 integration 模組路徑
-    from services.integration.capability.config import CapabilityRegistryConfig  # noqa: F401
+    from services.core.aiva_core.core_capabilities.capability_registry import CapabilityRegistryConfig  # noqa: F401
     CLI_OUTPUT_DIR = AIVA_ROOT / "services" / "integration" / "cli_outputs"
     CLI_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     print(f"[OK] 使用 Integration 模組 CLI 輸出路徑: {CLI_OUTPUT_DIR}")

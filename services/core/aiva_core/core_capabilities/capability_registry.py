@@ -121,8 +121,8 @@ class CapabilityRegistry:
             return
 
         # 導入 integration.CapabilityRegistry（延遲導入避免循環依賴）
-        from services.integration.capability.registry import (
-            registry as integration_registry,
+        from services.core.aiva_core.core_capabilities.capability_registry import (
+            global_registry as integration_registry,
         )
         
         self._integration_registry = integration_registry

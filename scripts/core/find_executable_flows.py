@@ -1,15 +1,19 @@
+from pathlib import Path
+
+
 """
 尋找可以無參數實例化的類別進行測試
 """
 import json
 import sys
 import os
+project_root = Path(__file__).resolve().parent.parent.parent
 
 # 設定 PYTHONPATH
-sys.path.insert(0, r'C:\D\fold7\AIVA-git\services')
-sys.path.insert(0, r'C:\D\fold7\AIVA-git\services\core')
+sys.path.insert(0, str(project_root / 'services'))
+sys.path.insert(0, str(project_root / 'services' / 'core'))
 
-with open('C:/Users/User/Downloads/data/internal_exploration/latest_classification.json', 'r', encoding='utf-8') as f:
+with open(project_root / 'data' / 'internal_exploration' / 'latest_classification.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 # 測試可實例化的模組

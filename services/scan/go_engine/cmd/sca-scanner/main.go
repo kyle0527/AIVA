@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/kyle0527/aiva/services/scan/go_engine/internal/sca/scanner"
+	"github.com/kyle0527/aiva/services/scan/engines/go_engine/internal/sca/scanner"
 )
 
 func main() {
@@ -13,11 +13,12 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// 創建 SCA 掃描器
-	scaScanner := scanner.NewSCAScanner()
+	logger := log.New(os.Stdout, "", log.LstdFlags|log.Lshortfile)
+	scaScanner := scanner.NewSCAScanner(logger)
 
 	log.Println("[INFO] SCA Scanner initialized in standalone mode")
 
-	// v2.0 架構: 使用 CLI 模式，由 Python Coordinator 調用
+	// v2.0 架構: 使用 CLI 模式，由 AI 直接調用
 	// 接收 JSON 參數，輸出 JSON 結果，無需 RabbitMQ
 	// 目前只是驗證編譯
 	_ = scaScanner

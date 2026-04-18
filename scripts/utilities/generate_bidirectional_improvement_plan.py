@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+
 """
 模組雙向連結改進方案分析
 基於現有架構提出最小侵入性的改進建議
@@ -7,9 +9,10 @@
 import json
 from pathlib import Path
 from collections import defaultdict
+project_root = Path(__file__).resolve().parent.parent.parent
 
 def main():
-    base_path = Path(r"C:\D\fold7\AIVA-git")
+    base_path = project_root
     classification_file = base_path / "services" / "integration" / "data" / "internal_exploration" / "latest_classification.json"
     
     print("\n" + "="*70)

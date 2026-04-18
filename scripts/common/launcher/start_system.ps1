@@ -10,7 +10,7 @@ param(
 )
 
 $ErrorActionPreference = "Continue"
-$ProjectRoot = "C:\D\fold7\AIVA-git"
+$ProjectRoot = (Resolve-Path "$PSScriptRoot\..\..\..").Path
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "🚀 AIVA 智慧漏洞評估系統 - 啟動中..." -ForegroundColor Green

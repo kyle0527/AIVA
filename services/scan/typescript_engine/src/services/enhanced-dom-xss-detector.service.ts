@@ -44,7 +44,7 @@ export class DOMXSSDetector {
    */
   async interceptSinks(page: Page, marker: string): Promise<void> {
     await page.addInitScript(
-      (sinks, marker) => {
+      ([sinks, marker]: [string[], string]) => {
         // 存儲檢測結果
         (window as any).__xss_found = [];
 
@@ -146,8 +146,8 @@ export class DOMXSSDetector {
           console.warn('Failed to intercept innerHTML:', e);
         }
       },
-      this.dangerousSinks,
-      marker
+      [this.dangerousSinks, marker] as any
+
     );
   }
 

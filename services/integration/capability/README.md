@@ -430,7 +430,7 @@ class ExtendedCapabilityType(CapabilityType):
 ### 自定義發現邏輯
 
 ```python
-from services.integration.capability.registry import CapabilityRegistry
+from services.core.aiva_core.core_capabilities.capability_registry import CapabilityRegistry
 
 class CustomRegistry(CapabilityRegistry):
     async def discover_custom_capabilities(self):

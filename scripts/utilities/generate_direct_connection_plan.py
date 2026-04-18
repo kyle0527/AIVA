@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+
 """
 模組連接打通方案
 直接修改三個單向模組，讓它們能夠發送訊息到其他模組
@@ -7,8 +9,10 @@
 import json
 from pathlib import Path
 
+project_root = Path(__file__).resolve().parent.parent.parent
+
 def main():
-    base_path = Path(r"C:\D\fold7\AIVA-git")
+    base_path = project_root
     
     print("\n" + "="*70)
     print("🔧 打通模組連接方案")

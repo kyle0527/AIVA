@@ -42,7 +42,7 @@ except ImportError:
     console = None
 
 # 使用相對導入 (使用延遲初始化接口以符合 assistant.py)
-from services.integration.capability.registry import registry as capability_registry
+from services.core.aiva_core.core_capabilities.capability_registry import global_registry as capability_registry
 
 from ...cognitive_core.ai_capability_query import AICapabilityQuery
 from .assistant import dialog_assistant, get_dialog_assistant

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+
 """深度分析 services 目錄結構與實際內容的一致性"""
 
 import os
@@ -6,6 +8,7 @@ import json
 from pathlib import Path
 from typing import Dict, List, Set
 import re
+project_root = Path(__file__).resolve().parent.parent.parent.parent
 
 class ServicesAnalyzer:
     def __init__(self, services_dir: str):
@@ -270,7 +273,7 @@ class ServicesAnalyzer:
         if self.results['empty_dirs']:
             report.append("```powershell\n")
             for d in self.results['empty_dirs']:
-                report.append(f'Remove-Item -Path "C:\\D\\fold7\\AIVA-git\\services\\{d}" -Force -Recurse\n')
+                report.append(f'Remove-Item -Path "{project_root}/services\\{d}" -Force -Recurse\n')
             report.append("```\n\n")
         else:
             report.append("無需操作\n\n")
@@ -306,21 +309,21 @@ class ServicesAnalyzer:
         return ''.join(report)
 
 def main():
-    services_dir = r"C:\D\fold7\AIVA-git\services"
+    services_dir = str(project_root / "services")
     
     analyzer = ServicesAnalyzer(services_dir)
     results = analyzer.analyze_all()
     
     # 生成報告
     report = analyzer.generate_report()
-    report_file = Path(r"C:\D\fold7\AIVA-git\SERVICES_STRUCTURE_ANALYSIS_REPORT.md")
+    report_file = (project_root / "SERVICES_STRUCTURE_ANALYSIS_REPORT.md")
     with open(report_file, 'w', encoding='utf-8') as f:
         f.write(report)
     
     print(f"\n✅ 報告已保存: {report_file}")
     
     # 保存 JSON
-    json_file = Path(r"C:\D\fold7\AIVA-git\_services_structure_analysis.json")
+    json_file = (project_root / "_services_structure_analysis.json")
     with open(json_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
     

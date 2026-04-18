@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	schemas "github.com/kyle0527/aiva/services/features/common/go/aiva_common_go/schemas/generated"
+	"github.com/kyle0527/aiva/services/scan/engines/go_engine/pkg/models"
 )
 
 // CSPMMisconfig 本地 CSPM 錯誤配置類型
@@ -34,14 +34,14 @@ func NewCSPMScanner() *CSPMScanner {
 }
 
 // Scan 執行 CSPM 掃描
-func (s *CSPMScanner) Scan(ctx context.Context, task *schemas.ScanTaskPayload) ([]*schemas.FindingPayload, error) {
-	var findings []*schemas.FindingPayload
+func (s *CSPMScanner) Scan(ctx context.Context, task *models.ScanTaskPayload) ([]*models.FindingPayload, error) {
+	var findings []*models.FindingPayload
 
 	// 從 task metadata 或 URL 中提取 provider 信息
 	provider := "generic"
 	// 可以從 URL scheme 提取，例如 "aws://..." 或從 ScanTaskPayload 的 RepositoryInfo 中提取
 
-	log.Printf("[INFO] Starting CSPM scan for task_id=%s\n", task.TaskID)
+	log.Printf("[INFO] Starting CSPM scan for task_id=%s\n", task.ScanID)
 
 	// 根據提供商選擇掃描方法
 	var misconfigs []CSPMMisconfig
@@ -67,7 +67,7 @@ func (s *CSPMScanner) Scan(ctx context.Context, task *schemas.ScanTaskPayload) (
 	// 轉換為 FindingPayload
 	scanID := fmt.Sprintf("scan_cspm_%d", time.Now().UnixNano())
 	for _, misconfig := range misconfigs {
-		finding := s.createFinding(task.TaskID, scanID, provider, misconfig)
+		finding := s.createFinding(task.ScanID, scanID, provider, misconfig)
 		findings = append(findings, &finding)
 	}
 
@@ -75,30 +75,30 @@ func (s *CSPMScanner) Scan(ctx context.Context, task *schemas.ScanTaskPayload) (
 }
 
 // scanAWS 掃描 AWS 配置
-func (s *CSPMScanner) scanAWS(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
+func (s *CSPMScanner) scanAWS(ctx context.Context, task *models.ScanTaskPayload) ([]CSPMMisconfig, error) {
 	return s.scanWithTrivy(ctx, task, "aws")
 }
 
 // scanAzure 掃描 Azure 配置
-func (s *CSPMScanner) scanAzure(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
+func (s *CSPMScanner) scanAzure(ctx context.Context, task *models.ScanTaskPayload) ([]CSPMMisconfig, error) {
 	return s.scanWithTrivy(ctx, task, "azure")
 }
 
 // scanGCP 掃描 GCP 配置
-func (s *CSPMScanner) scanGCP(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
+func (s *CSPMScanner) scanGCP(ctx context.Context, task *models.ScanTaskPayload) ([]CSPMMisconfig, error) {
 	return s.scanWithTrivy(ctx, task, "gcp")
 }
 
 // scanKubernetes 掃描 Kubernetes 配置
-func (s *CSPMScanner) scanKubernetes(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
+func (s *CSPMScanner) scanKubernetes(ctx context.Context, task *models.ScanTaskPayload) ([]CSPMMisconfig, error) {
 	// 從 Target.URL 中提取配置路徑
-	configPath := task.Target.URL.(string)
-	if configPath == "" {
+	configPathStr := task.Target.URL
+	if configPathStr == "" {
 		return nil, fmt.Errorf("kubernetes config path is required")
 	}
 
 	// 使用 Trivy 掃描 Kubernetes manifests
-	cmd := exec.CommandContext(ctx, "trivy", "config", "--format", "json", configPath)
+	cmd := exec.CommandContext(ctx, "trivy", "config", "--format", "json", configPathStr)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		// Trivy 在發現問題時會返回非零退出碼，這是正常的
@@ -109,14 +109,14 @@ func (s *CSPMScanner) scanKubernetes(ctx context.Context, task *schemas.ScanTask
 }
 
 // scanGeneric 掃描通用配置文件
-func (s *CSPMScanner) scanGeneric(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
+func (s *CSPMScanner) scanGeneric(ctx context.Context, task *models.ScanTaskPayload) ([]CSPMMisconfig, error) {
 	// 從 Target.URL 中提取配置路徑
-	configPath := task.Target.URL.(string)
-	if configPath == "" {
-		configPath = "."
+	configPathStr := task.Target.URL
+	if configPathStr == "" {
+		configPathStr = "."
 	}
 
-	cmd := exec.CommandContext(ctx, "trivy", "config", "--format", "json", configPath)
+	cmd := exec.CommandContext(ctx, "trivy", "config", "--format", "json", configPathStr)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Println("[WARN] Trivy returned non-zero exit code")
@@ -126,7 +126,7 @@ func (s *CSPMScanner) scanGeneric(ctx context.Context, task *schemas.ScanTaskPay
 }
 
 // scanWithTrivy 使用 Trivy 掃描雲端配置
-func (s *CSPMScanner) scanWithTrivy(ctx context.Context, _ *schemas.ScanTaskPayload, provider string) ([]CSPMMisconfig, error) {
+func (s *CSPMScanner) scanWithTrivy(ctx context.Context, _ *models.ScanTaskPayload, provider string) ([]CSPMMisconfig, error) {
 	// Trivy 雲端掃描命令
 	cmd := exec.CommandContext(ctx, "trivy", provider, "--format", "json")
 
@@ -197,42 +197,36 @@ func (s *CSPMScanner) createFinding(
 	scanID string,
 	provider string,
 	misconfig CSPMMisconfig,
-) schemas.FindingPayload {
+) models.FindingPayload {
 	findingID := fmt.Sprintf("finding_cspm_%d", time.Now().UnixNano())
+	_ = findingID
 
 	// 映射嚴重性
 	severity := mapSeverity(misconfig.Severity)
 	businessImpact := fmt.Sprintf("%s 級別的雲端配置錯誤可能導致安全風險", severity)
 
-	return schemas.FindingPayload{
-		FindingID: findingID,
-		TaskID:    taskID,
-		ScanID:    scanID,
-		Status:    "confirmed",
-		Vulnerability: schemas.Vulnerability{
-			Name:        misconfig.Title,
-			CWE:         stringPtr(misconfig.ID),
+	return models.FindingPayload{
+
+		TaskID: taskID,
+
+		Vulnerability: &models.Vulnerability{
+			Name: misconfig.Title,
+
 			Severity:    severity,
 			Confidence:  "firm",
 			Description: stringPtr(misconfig.Description),
 		},
-		Target: schemas.Target{
+		Target: &models.Target{
 			URL: misconfig.FilePath,
 		},
-		Evidence: &schemas.FindingEvidence{
+		Evidence: &models.FindingEvidence{
 			Proof: stringPtr(fmt.Sprintf("Rule ID: %s, Provider: %s", misconfig.ID, provider)),
 		},
-		Impact: &schemas.FindingImpact{
+		Impact: &models.FindingImpact{
 			BusinessImpact: stringPtr(businessImpact),
 		},
-		Recommendation: &schemas.FindingRecommendation{
+		Recommendation: &models.FindingRecommendation{
 			Fix: stringPtr(misconfig.Resolution),
-		},
-		Metadata: map[string]interface{}{
-			"provider":    provider,
-			"rule_id":     misconfig.ID,
-			"file_path":   misconfig.FilePath,
-			"resource_id": misconfig.ResourceID,
 		},
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -254,4 +248,3 @@ func mapSeverity(trivySeverity string) string {
 		return "INFORMATIONAL"
 	}
 }
-

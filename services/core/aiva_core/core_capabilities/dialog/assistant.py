@@ -9,8 +9,8 @@ from typing import Any
 
 from aiva_common.utils.logging import get_logger
 
-from services.integration.capability import CapabilityRegistry
-from services.integration.capability.registry import registry as global_registry
+from services.core.aiva_core.core_capabilities.capability_registry import CapabilityRegistry
+from services.core.aiva_core.core_capabilities.capability_registry import global_registry
 
 logger = get_logger(__name__)
 

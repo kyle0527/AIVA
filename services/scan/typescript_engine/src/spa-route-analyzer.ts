@@ -82,7 +82,7 @@ export class SPARouteSecurityAnalyzer {
       if ((window as any).Nuxt) {
         return 'Nuxt.js';
       }
-      if (window.history.pushState) {
+      if (typeof window.history.pushState === "function") {
         return 'Generic SPA';
       }
       return null;
