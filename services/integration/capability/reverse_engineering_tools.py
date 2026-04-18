@@ -21,7 +21,6 @@ from rich.theme import Theme
 
 # Local imports - 使用正確的導入路徑
 from .models import (
-    BaseCapability,
     InputParameter,
 )
 
@@ -512,106 +511,21 @@ class ReverseEngineeringManager:
         console.print(table)
 
 
-class ReverseEngineeringCapability(BaseCapability):
-    """Reverse engineering analysis capability - AIVA integration"""
-
-    def __init__(self):
-        super().__init__()
-        self.name = "reverse_engineering_tools"
-        self.version = "1.0.0"
-        self.description = "Reverse Engineering Toolkit - Direct port from HackingTool"
-        self.dependencies = ["python3-pip", "git", "openjdk-8-jdk", "gradle"]
-        self.manager = ReverseEngineeringManager()
-
-    async def initialize(self) -> bool:
-        """Initialize capability"""
-        try:
-            console.print("[yellow]Initializing reverse engineering toolkit...[/yellow]")
-            console.print("[red]⚠️  For authorized reverse engineering analysis only![/red]")
-            console.print("[cyan]Mobile app reverse engineering and analysis tools[/cyan]")
-
-            return True
-
-        except Exception as e:
-            logger.error(f"Initialization failed: {e}")
-            return False
-
-    async def execute(self, command: str, parameters: dict[str, Any]) -> dict[str, Any]:
-        """Execute command - 使用標準化屬性"""
-        try:
-            if command == "interactive_menu":
-                self.manager.show_options()
-                return {"success": True, "message": "Interactive menu completed"}
-
-            elif command == "list_tools":
-                tools_info = []
-                for tool in self.manager.tools:
-                    tools_info.append({
-                        "id": tool.id,
-                        "name": tool.name,
-                        "description": tool.description,
-                        "project_url": tool.project_url,
-                        "tags": tool.tags,
-                        "installed": tool.is_installed(),
-                        "runnable": tool.runnable
-                    })
-                return {"success": True, "data": {"tools": tools_info}}
-
-            elif command == "show_details":
-                self.manager.pretty_print()
-                return {"success": True, "message": "Tool details displayed"}
-
-            elif command == "run_tool":
-                tool_name = parameters.get('tool_name')
-                if not tool_name:
-                    return {"success": False, "error": "Missing tool_name parameter"}
-
-                tool = next((t for t in self.manager.tools if t.name == tool_name), None)
-                if not tool:
-                    return {"success": False, "error": f"Tool {tool_name} not found"}
-
-                result = tool.run()
-                self.manager.re_results.append(result)
-                return {"success": True, "data": asdict(result)}
-
-            else:
-                return {"success": False, "error": f"Unknown command: {command}"}
-
-        except Exception as e:
-            logger.error(f"Command execution failed: {e}")
-            return {"success": False, "error": str(e)}
-
-    async def cleanup(self) -> bool:
-        """Cleanup resources"""
-        try:
-            self.manager.re_results.clear()
-            return True
-        except Exception as e:
-            logger.error(f"Cleanup failed: {e}")
-            return False
-
-
-# 暫時移除舊的註冊方式 - 待所有文件修復完成後統一註冊
-# 注意: 建議改用 await registry.register_capability(capability_record) 標準化註冊方式
-#
-# Register capability
-# CapabilityRegistry.register("reverse_engineering_tools", ReverseEngineeringCapability)
-
-
 if __name__ == "__main__":
-    # Test case - same as HackingTool
+    # Test case - standalone test
     async def test_reverse_engineering_tools():
-        capability = ReverseEngineeringCapability()
-        await capability.initialize()
+        console.print("[yellow]Initializing reverse engineering toolkit...[/yellow]")
+        console.print("[red]⚠️  For authorized reverse engineering analysis only![/red]")
+        console.print("[cyan]Mobile app reverse engineering and analysis tools[/cyan]")
+
+        manager = ReverseEngineeringManager()
 
         console.print("[bold red]⚠️  Reverse engineering toolkit - Direct port from HackingTool![/bold red]")
         console.print("[yellow]For authorized reverse engineering analysis only![/yellow]")
 
         # Show tools and start interactive menu
-        capability.manager.pretty_print()
-        capability.manager.show_options()
-
-        await capability.cleanup()
+        manager.pretty_print()
+        manager.show_options()
 
     # Run test
     asyncio.run(test_reverse_engineering_tools())

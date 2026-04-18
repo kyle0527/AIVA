@@ -19,6 +19,7 @@
 
 ### 🎯 核心文檔
 - **📖 [Integration Core 核心模組](aiva_integration/README.md)** - 核心實現詳解 (7層架構、API參考)
+- **📖 [Capability Tools 獨立工具集](capability/README.md)** - 數位鑑識、隱寫術、逆向工程等獨立工具
 
 ### � 本文檔內容
 - [�🚀 快速開始](#-快速開始) - 環境設置與基本使用

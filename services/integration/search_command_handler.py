@@ -28,6 +28,7 @@ import os
 from typing import Any
 
 import aiohttp
+from aiva_common.core.command_center import CommandHandler
 from aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,
@@ -41,7 +42,7 @@ from aiva_common.utils import get_logger
 logger = get_logger(__name__)
 
 
-class SearchCommandHandler:
+class SearchCommandHandler(CommandHandler):
     """網路搜索命令處理器
     
     支持的搜索類型：

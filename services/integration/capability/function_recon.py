@@ -26,8 +26,6 @@ from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 from rich.prompt import Prompt
 from rich.table import Table
 
-from services.integration.capability.registry import CapabilityRegistry, CapabilityType
-
 LOGGER = logging.getLogger(__name__)
 
 console = Console()
@@ -966,125 +964,6 @@ class ReconCLI:
             
             self.console.print(types_table)
 
-
-# 註冊到能力系統
-async def register_recon_capabilities():
-    """註冊偵察能力到系統"""
-    from .models import CapabilityRecord, ProgrammingLanguage
-    
-    registry = CapabilityRegistry()
-    
-    # 註冊網絡掃描能力
-    network_capability = CapabilityRecord(
-        id="recon.network_scan",
-        name="網絡掃描",
-        description="使用Nmap進行網絡發現和端口掃描",
-        module="function_recon",
-        language=ProgrammingLanguage.PYTHON,
-        entrypoint="NetworkScanner",
-        capability_type=CapabilityType.SCANNER,
-        dependencies=["nmap"],
-        tags=["reconnaissance", "network", "security"],
-        category="network_scanner",
-        topic="",
-        last_probe=None,
-        last_success=None,
-        config={},
-        environment_vars={},
-        rag_trigger=None,
-        feature_signature=None
-    )
-    await registry.register_capability(network_capability)
-    
-    # 註冊DNS偵察能力
-    dns_capability = CapabilityRecord(
-        id="recon.dns",
-        name="DNS偵察",
-        description="DNS查詢和反向解析",
-        module="function_recon",
-        language=ProgrammingLanguage.PYTHON,
-        entrypoint="DNSRecon",
-        capability_type=CapabilityType.ANALYZER,
-        dependencies=["dnspython"],
-        tags=["reconnaissance", "dns", "network"],
-        category="dns_tools",
-        topic="",
-        last_probe=None,
-        last_success=None,
-        config={},
-        environment_vars={},
-        rag_trigger=None,
-        feature_signature=None
-    )
-    await registry.register_capability(dns_capability)
-    
-    # 註冊Web偵察能力
-    web_capability = CapabilityRecord(
-        id="recon.web",
-        name="Web偵察",
-        description="網站信息收集和管理面板發現",
-        module="function_recon",
-        language=ProgrammingLanguage.PYTHON,
-        entrypoint="WebRecon",
-        capability_type=CapabilityType.SCANNER,
-        dependencies=["requests"],
-        tags=["reconnaissance", "web", "osint"],
-        category="web_tools",
-        topic="",
-        last_probe=None,
-        last_success=None,
-        config={},
-        environment_vars={},
-        rag_trigger=None,
-        feature_signature=None
-    )
-    await registry.register_capability(web_capability)
-    
-    # 註冊OSINT能力
-    osint_capability = CapabilityRecord(
-        id="recon.osint",
-        name="開源情報收集",
-        description="電子郵件和敏感信息收集",
-        module="function_recon",
-        language=ProgrammingLanguage.PYTHON,
-        entrypoint="OSINTRecon",
-        capability_type=CapabilityType.ANALYZER,
-        dependencies=["requests", "dnspython"],
-        tags=["reconnaissance", "osint", "intelligence"],
-        category="osint_tools",
-        topic="",
-        last_probe=None,
-        last_success=None,
-        config={},
-        environment_vars={},
-        rag_trigger=None,
-        feature_signature=None
-    )
-    await registry.register_capability(osint_capability)
-    
-    # 註冊綜合偵察管理器
-    manager_capability = CapabilityRecord(
-        id="recon.manager",
-        name="偵察管理器",
-        description="綜合偵察和信息收集管理",
-        module="function_recon",
-        language=ProgrammingLanguage.PYTHON,
-        entrypoint="FunctionReconManager",
-        capability_type=CapabilityType.UTILITY,
-        dependencies=["nmap", "requests", "dnspython"],
-        tags=["reconnaissance", "management", "orchestration"],
-        category="recon_management",
-        topic="",
-        last_probe=None,
-        last_success=None,
-        config={},
-        environment_vars={},
-        rag_trigger=None,
-        feature_signature=None
-    )
-    await registry.register_capability(manager_capability)
-    
-    LOGGER.info("偵察能力已註冊到系統")
 
 
 # 主程序入口

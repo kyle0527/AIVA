@@ -19,7 +19,6 @@ from .function_recon import (
     ReconTarget,
     ReconTargetType,
     WebRecon,
-    register_recon_capabilities,
 )
 from .lifecycle import InstallationResult, ToolLifecycleEvent, ToolLifecycleManager
 from .lifecycle_cli import LifecycleCLI
@@ -38,7 +37,6 @@ from .models import (
     create_sample_capability,
     validate_capability_id,
 )
-from .registry import CapabilityRegistry, registry
 from .toolkit import CapabilityToolkit, toolkit
 
 __version__ = "1.0.0"
@@ -48,9 +46,7 @@ __description__ = "AIVA 統一能力註冊與管理系統"
 # 匯出主要組件
 __all__ = [
     # 核心組件
-    "CapabilityRegistry",
     "CapabilityToolkit", 
-    "registry",
     "toolkit",
     "app",
     
@@ -70,7 +66,6 @@ __all__ = [
     "ReconTarget",
     "ReconTargetType",
     "ReconStatus",
-    "register_recon_capabilities",
     
     # 資料模型
     "CapabilityRecord",
@@ -127,39 +122,3 @@ def get_info() -> dict:
         ]
     }
 
-
-# 快速啟動函數
-async def quick_start():
-    """快速啟動能力註冊中心"""
-    from aiva_common.utils.logging import get_logger
-    
-    logger = get_logger(__name__)
-    
-    logger.info("🚀 AIVA 能力註冊中心快速啟動")
-    
-    # 執行自動發現
-    logger.info("🔍 開始自動發現能力...")
-    discovery_stats = await registry.discover_capabilities()
-    
-    logger.info(
-        "發現完成",
-        discovered_count=discovery_stats["discovered_count"],
-        languages=discovery_stats["languages"]
-    )
-    
-    # 顯示統計資訊  
-    stats = await registry.get_capability_stats()
-    logger.info(
-        "系統統計",
-        total_capabilities=stats["total_capabilities"],
-        by_language=stats["by_language"],
-        health_summary=stats["health_summary"]
-    )
-    
-    logger.info("✅ 能力註冊中心已就緒")
-    
-    return {
-        "status": "ready",
-        "discovery_stats": discovery_stats,
-        "system_stats": stats
-    }

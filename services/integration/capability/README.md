@@ -1,43 +1,21 @@
-# AIVA 能力註冊中心
+# AIVA Integration Capability Tools (數位鑑識與輔助工具)
+
+> **⚠️ 架構更新注意 (AIVA v2.0):**
+> AIVA 系統已經棄用了原有的 `CapabilityRegistry` 與 `BaseCapability` 註冊系統。所有的服務整合現在皆遵循 `CommandHandler` 架構（參見 [aiva_common/core/command_center.py](../../aiva_common/core/command_center.py)）或轉型為獨立 CLI 工具。
+>
+> 詳情請參閱 [上層整合架構文件](../README.md)。
+
+本目錄包含了 AIVA 系統中用於特定領域的獨立輔助工具集，包含數位鑑識 (Forensics)、隱寫術 (Steganography)、逆向工程 (Reverse Engineering) 以及 Bug Bounty 報告生成等。這些工具目前主要以 CLI 或腳本形式提供給安全研究員或 AI 進行調用。
 
 ## 📑 目錄
 
 - [📋 概述](#概述)
-- [✨ 主要功能](#主要功能)
-  - [🔍 智能能力發現](#智能能力發現)
-  - [📊 統一能力管理](#統一能力管理)
-  - [💚 健康監控](#健康監控)
-  - [🔧 開發者工具](#開發者工具)
-  - [🚀 高性能架構](#高性能架構)
+- [✨ 包含的工具集](#包含的工具集)
 - [🏗️ 系統架構](#系統架構)
 - [🛠️ 安裝和配置](#安裝和配置)
-  - [前置需求](#前置需求)
-  - [安裝步驟](#安裝步驟)
-- [🚀 快速開始](#快速開始)
-  - [1. 快速啟動模式](#1-快速啟動模式)
-  - [2. 正常啟動服務](#2-正常啟動服務)
-  - [3. 僅執行能力發現](#3-僅執行能力發現)
-- [🖥️ 命令行工具](#命令行工具)
-  - [發現和註冊](#發現和註冊)
-  - [查看和管理](#查看和管理)
-  - [測試和驗證](#測試和驗證)
-  - [文件和綁定產生](#文件和綁定產生)
-  - [統計資訊](#統計資訊)
-- [🔌 API 使用](#api-使用)
-  - [主要 API 端點](#主要-api-端點)
-    - [能力管理](#能力管理)
-    - [發現和統計](#發現和統計)
-  - [API 使用示例](#api-使用示例)
-- [📝 能力定義格式](#能力定義格式)
-  - [YAML 格式示例](#yaml-格式示例)
-  - [JSON 格式示例](#json-格式示例)
-- [🔧 配置選項](#配置選項)
-  - [資料庫配置](#資料庫配置)
-  - [發現配置](#發現配置)
-  - [監控配置](#監控配置)
-  - [API 配置](#api-配置)
 - [🧩 整合 aiva_common](#整合-aivacommon)
-  - [使用的標準化列舉](#使用的標準化列舉)
+- [🐛 故障排除](#故障排除)
+- [🤝 貢獻指南](#貢獻指南)
   - [使用的工具和插件](#使用的工具和插件)
   - [遵循的標準](#遵循的標準)
 - [📊 監控和診斷](#監控和診斷)
@@ -49,71 +27,47 @@
   - [自定義發現邏輯](#自定義發現邏輯)
   - [添加新的測試類型](#添加新的測試類型)
 - [🐛 故障排除](#故障排除)
-  - [常見問題](#常見問題)
-  - [調試模式](#調試模式)
-- [📚 API 參考](#api-參考)
-- [🤝 貢獻指南](#貢獻指南)
-- [📄 許可證](#許可證)
-- [📞 支援](#支援)
-
 ---
-
 
 ## 📋 概述
 
-AIVA 能力註冊中心是一個統一的服務發現和管理平台，專為 AIVA 系統的多語言、多模組架構設計。它提供了自動化的能力發現、註冊、監控和管理功能，完全遵循 `aiva_common` 的標準和最佳實踐。
+本模組集成了從開源安全工具（如 HackingTool）移植而來的多種進階安全分析工具。它們已被重構以符合 AIVA 的資料模型，並可作為獨立管理器運行。
 
-## ✨ 主要功能
+## ✨ 包含的工具集
 
-### 🔍 智能能力發現
-- **自動掃描**: 自動發現 Python、Go、Rust、TypeScript 模組中的能力
-- **動態註冊**: 實時註冊新發現的能力，無需手動配置
-- **依賴分析**: 自動分析能力間的依賴關係
+### 🔍 數位鑑識工具 (`forensic_tools.py`)
+- **Autopsy**: 開源數位鑑識平台。
+- **Wireshark**: 網路封包分析工具。
+- **BulkExtractor**: 快速資料提取工具。
+- **Guymager**: 磁碟映像建立工具。
 
-### 📊 統一能力管理
-- **標準化介面**: 基於 `aiva_common` 規範的統一資料模型
-- **類型安全**: 完整的 Pydantic v2 類型驗證和序列化
-- **豐富的元數據**: 支援詳細的能力描述、參數定義和配置選項
+### 🎭 隱寫術工具 (`steganography_tools.py`)
+- 提供對多媒體檔案進行資料隱藏與檢測的工具。
+- 支援 Steghide、Stegcracker 等後端。
 
-### 💚 健康監控
-- **即時監控**: 持續監控所有已註冊能力的健康狀態
-- **性能分析**: 收集延遲、成功率、資源使用等關鍵指標
-- **智能告警**: 基於可配置閾值的自動告警機制
+### 📱 逆向工程工具 (`reverse_engineering_tools.py`)
+- 行動應用程式（主要是 Android）的逆向與分析工具。
 
-### 🔧 開發者工具
-- **跨語言綁定**: 自動產生多種語言的客戶端程式碼
-- **API 文件**: 自動產生 OpenAPI/Swagger 文件
-- **CLI 工具**: 豐富的命令行管理介面
-
-### 🚀 高性能架構
-- **異步處理**: 基於 FastAPI 和 asyncio 的高性能異步架構
-- **SQLite 儲存**: 輕量級但功能完整的持久化存儲
-- **RESTful API**: 標準 REST API，支援 JSON 和 YAML 格式
+### 💰 Bug Bounty 報告系統 (`bug_bounty_reporting.py`)
+- 協助安全研究員生成標準化漏洞報告。
+- 支援各層級漏洞的 PoC 自動生成。
 
 ## 🏗️ 系統架構
 
 ```
-AIVA 能力註冊中心
-├── 📦 registry.py          # 核心註冊中心服務
-├── 📄 models.py            # 統一資料模型 (基於 aiva_common)
-├── 🔧 toolkit.py           # 能力管理工具集
-├── ⚙️ config.py            # 配置管理
-├── 🖥️ cli.py               # 命令行介面
-├── 🚀 start_registry.py    # 服務啟動腳本
-└── 📚 examples.py          # 使用示例
+AIVA Capability Tools
+├── 📄 models.py                       # 統一資料模型 (基於 aiva_common)
+├── 🔧 forensic_tools.py               # 數位鑑識管理器
+├── 🔧 steganography_tools.py          # 隱寫術管理器
+├── 🔧 reverse_engineering_tools.py    # 逆向工程管理器
+└── 🔧 bug_bounty_reporting.py         # Bug Bounty 報告管理器
 ```
 
 ## 🛠️ 安裝和配置
 
 ### 前置需求
 
-```bash
-# Python 3.9+
-python --version
-
-# 必要的依賴套件
-pip install fastapi uvicorn pydantic sqlite3 aiofiles aiohttp
-```
+請確保系統已經安裝對應的後端工具，如 nmap, wireshark, git 等。
 
 ### 安裝步驟
 
@@ -476,7 +430,7 @@ class ExtendedCapabilityType(CapabilityType):
 ### 自定義發現邏輯
 
 ```python
-from services.integration.capability.registry import CapabilityRegistry
+from services.core.aiva_core.core_capabilities.capability_registry import CapabilityRegistry
 
 class CustomRegistry(CapabilityRegistry):
     async def discover_custom_capabilities(self):

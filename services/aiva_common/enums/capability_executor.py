@@ -54,7 +54,7 @@ from .capabilities import (
 
 # 避免循環導入
 if TYPE_CHECKING:
-    from services.integration.capability.registry import CapabilityRegistry
+    from services.core.aiva_core.core_capabilities.capability_registry import CapabilityRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -163,7 +163,7 @@ class CapabilityExecutor:
         """延遲載入 CapabilityRegistry（避免循環導入）"""
         if self._capability_registry is None:
             try:
-                from services.integration.capability.registry import registry
+                from services.core.aiva_core.core_capabilities.capability_registry import global_registry as registry
                 self._capability_registry = registry
                 logger.info("CapabilityRegistry loaded successfully")
             except ImportError as e:

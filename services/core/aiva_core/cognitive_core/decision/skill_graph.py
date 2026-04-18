@@ -27,7 +27,7 @@ from aiva_common.core.error_handling import (
 )
 from aiva_common.utils.logging import get_logger
 
-from services.integration.capability.registry import CapabilityRegistry
+from services.core.aiva_core.core_capabilities.capability_registry import CapabilityRegistry
 
 logger = get_logger(__name__)
 MODULE_NAME = "aiva_core.decision.skill_graph"

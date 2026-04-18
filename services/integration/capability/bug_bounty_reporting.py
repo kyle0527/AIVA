@@ -441,73 +441,13 @@ class BugBountyTracker:
         }
 
 
-class BugBountyCapability:
-    """Bug Bounty 報告系統 - AIVA 整合
-
-    這是一個獨立的能力模組，實現了標準的能力接口。
-    可以通過 CapabilityRegistry 進行註冊和管理。
-    """
+class BugBountyManager:
+    """Bug Bounty 報告管理系統 - 提供互動選單和命令行介面"""
 
     def __init__(self):
-        self.name = "bug_bounty_reporting"
-        self.version = "1.0.0"
-        self.description = "Bug Bounty Vulnerability Reporting and PoC Generation System"
-        self.dependencies = ["curl", "python3-requests"]
         self.tracker = BugBountyTracker()
 
-    async def initialize(self) -> bool:
-        """初始化功能"""
-        try:
-            console.print("[yellow]初始化 Bug Bounty 報告系統...[/yellow]")
-            console.print("[green]💰 支援高中低價值漏洞發現與報告[/green]")
-            console.print("[cyan]🎯 為了生活，每個漏洞都重要！[/cyan]")
-
-            return True
-
-        except Exception as e:
-            logger.error(f"Initialization failed: {e}")
-            return False
-
-    async def execute(self, command: str, parameters: dict[str, Any]) -> dict[str, Any]:
-        """執行命令"""
-        try:
-            if command == "interactive_menu":
-                self._show_main_menu()
-                return {"success": True, "message": "Interactive menu completed"}
-
-            elif command == "add_finding":
-                return self._handle_add_finding(parameters)
-
-            elif command == "list_findings":
-                return self._handle_list_findings(parameters)
-
-            elif command == "generate_poc":
-                return self._handle_generate_poc(parameters)
-
-            elif command == "statistics":
-                stats = self.tracker.get_statistics()
-                return {
-                    "success": True,
-                    "message": "Statistics retrieved successfully",
-                    "data": stats
-                }
-
-            else:
-                return {
-                    "success": False,
-                    "message": f"Unknown command: {command}",
-                    "errors": [f"Command '{command}' is not recognized"]
-                }
-
-        except Exception as e:
-            logger.error(f"Command execution failed: {e}")
-            return {
-                "success": False,
-                "message": "Command execution failed",
-                "errors": [str(e)]
-            }
-
-    def _show_main_menu(self):
+    def show_main_menu(self):
         """顯示主選單"""
         while True:
             console.print("\n")
@@ -937,30 +877,27 @@ class BugBountyCapability:
 
 
 # 提供工廠函數用於創建和獲取實例
-_capability_instance: BugBountyCapability | None = None
+_manager_instance: BugBountyManager | None = None
 
 
-def get_bug_bounty_capability() -> BugBountyCapability:
-    """獲取 Bug Bounty 能力實例（單例模式）"""
-    global _capability_instance
-    if _capability_instance is None:
-        _capability_instance = BugBountyCapability()
-    return _capability_instance
+def get_bug_bounty_manager() -> BugBountyManager:
+    """獲取 Bug Bounty 管理實例（單例模式）"""
+    global _manager_instance
+    if _manager_instance is None:
+        _manager_instance = BugBountyManager()
+    return _manager_instance
 
 
 if __name__ == "__main__":
     # 測試用例
     async def test_bug_bounty_system():
-        capability = get_bug_bounty_capability()
-        await capability.initialize()
+        manager = get_bug_bounty_manager()
 
         console.print("[bold red]💰 Bug Bounty 報告系統測試[/bold red]")
         console.print("[yellow]支援各種價值等級的漏洞發現與報告！[/yellow]")
 
         # 顯示互動選單
-        capability._show_main_menu()
-
-        await capability.cleanup()
+        manager.show_main_menu()
 
     # 運行測試
     asyncio.run(test_bug_bounty_system())
