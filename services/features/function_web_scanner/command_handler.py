@@ -5,7 +5,7 @@ Web Scanner 功能模組命令處理器
 使用原生的 Web Scanner 檢測功能 (WebAttackManager)。
 
 Usage:
-    from services.features.function_web_scanner.command_handler import WebScannerCommandHandler
+    from .command_handler import WebScannerCommandHandler
     from aiva_common.schemas.commands import AICommand, CommandType
 
     # 直接創建處理器
@@ -37,7 +37,7 @@ from aiva_common.schemas.commands import (
 from aiva_common.utils import get_logger
 
 # 導入統一掃描器
-from services.features.function_web_scanner.integration_tools.web_tools import (
+from .integration_tools.web_tools import (
     WebAttackManager,
 )
 

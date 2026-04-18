@@ -6,6 +6,6 @@ function_postex.detectors
 此處重新匯出以保持向後相容。
 """
 
-from services.features.function_postex.detector.postex_detector import PostExDetector
+from ..detector.postex_detector import PostExDetector
 
 __all__ = ["PostExDetector"]

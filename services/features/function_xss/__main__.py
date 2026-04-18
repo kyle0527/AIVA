@@ -15,7 +15,7 @@ project_root = os.path.abspath(os.path.join(current_dir, "..", "..", ".."))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from services.features.function_xss.scanner import XssScanner
+from .scanner import XssScanner
 
 # 設定 Log
 logging.basicConfig(stream=sys.stderr, level=logging.INFO, format='[%(levelname)s] %(message)s')

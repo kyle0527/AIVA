@@ -9,10 +9,10 @@ from aiva_common.schemas import (
     FunctionTaskTestConfig,
 )
 
-from services.features.function_xss.dom_xss_detector import DomXssDetector
-from services.features.function_xss.payload_generator import XssPayloadGenerator
-from services.features.function_xss.stored_detector import StoredXssDetector
-from services.features.function_xss.traditional_detector import TraditionalXssDetector
+from .dom_xss_detector import DomXssDetector
+from .payload_generator import XssPayloadGenerator
+from .stored_detector import StoredXssDetector
+from .traditional_detector import TraditionalXssDetector
 
 logger = logging.getLogger(__name__)
 

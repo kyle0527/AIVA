@@ -5,7 +5,7 @@ XSS 功能模組命令處理器
 使用原生的 XSS 檢測功能 (XssScanner)。
 
 Usage:
-    from services.features.function_xss.command_handler import XSSCommandHandler
+    from .command_handler import XSSCommandHandler
     from aiva_common.schemas.commands import AICommand, CommandType
 
     # 直接創建處理器
@@ -37,7 +37,7 @@ from aiva_common.schemas.commands import (
 from aiva_common.utils import get_logger
 
 # 導入新的統一掃描器
-from services.features.function_xss.scanner import XssScanner
+from .scanner import XssScanner
 
 logger = get_logger(__name__)
 

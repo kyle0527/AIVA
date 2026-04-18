@@ -7,6 +7,6 @@ Post-Exploitation 主檢測器 (相容層)
 """
 
 # 重新匯出主路徑的 PostExDetector，避免命名衝突
-from services.features.function_postex.detector.postex_detector import PostExDetector
+from ..detector.postex_detector import PostExDetector
 
 __all__ = ["PostExDetector"]

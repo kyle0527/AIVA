@@ -9,13 +9,13 @@ from aiva_common.schemas import (
 )
 from aiva_common.utils import get_logger, new_id
 
-from services.features.function_postex.engines.lateral_engine import (
+from ..engines.lateral_engine import (
     LateralMovementTester,
 )
-from services.features.function_postex.engines.persistence_engine import (
+from ..engines.persistence_engine import (
     PersistenceChecker,
 )
-from services.features.function_postex.engines.privilege_engine import (
+from ..engines.privilege_engine import (
     PrivilegeEscalator as PrivilegeEscalationTester,
 )
 

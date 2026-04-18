@@ -19,6 +19,12 @@ from pathlib import Path
 # 添加 AIVA 路徑
 from aiva_common.utils.logging import get_logger
 
+import sys, os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, "..", "..", ".."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 from services.features.function_sqli.hackingtool_config import HACKINGTOOL_SQL_CONFIGS
 from services.features.function_sqli.hackingtool_manager import sql_tool_manager
 

@@ -5,7 +5,7 @@ Wordlist Generator 功能模組命令處理器
 包裝現有的字典生成功能,使其可以被 AI 通過 AICommandCenter 調用。
 
 Usage:
-    from services.features.function_wordlist_generator.handler import WordlistGeneratorCommandHandler
+    from .handler import WordlistGeneratorCommandHandler
     from aiva_common.schemas.commands import AICommand, CommandType
     
     # 直接創建處理器

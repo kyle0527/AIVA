@@ -17,10 +17,10 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 # --- 導入測試器與輔助工具 ---
-from services.features.function_bizlogic.price_manipulation_scanner import PriceManipulationScanner as PriceManipulationTester
-from services.features.function_bizlogic.race_condition_scanner import RaceConditionScanner as RaceConditionTester
-from services.features.function_bizlogic.workflow_bypass_scanner import WorkflowBypassScanner as WorkflowBypassTester
-from services.features.function_bizlogic.finding_helper import create_bizlogic_finding
+from .price_manipulation_scanner import PriceManipulationScanner as PriceManipulationTester
+from .race_condition_scanner import RaceConditionScanner as RaceConditionTester
+from .workflow_bypass_scanner import WorkflowBypassScanner as WorkflowBypassTester
+from .finding_helper import create_bizlogic_finding
 
 # 設定 Log (輸出到 stderr 以免干擾 stdout 的 JSON 輸出)
 logging.basicConfig(stream=sys.stderr, level=logging.INFO, format='[%(levelname)s] %(message)s')
