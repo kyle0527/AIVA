@@ -9,6 +9,7 @@ import asyncio
 from dataclasses import asdict, dataclass
 from datetime import datetime
 import logging
+import shlex
 import os
 import subprocess
 from typing import Any
@@ -93,8 +94,7 @@ class ForensicTool:
             try:
                 console.print(f"[yellow]Executing: {cmd}[/yellow]")
                 result = subprocess.run(
-                    cmd,
-                    shell=True,
+                    shlex.split(cmd, posix=(os.name != 'nt')),
                     timeout=300,
                     capture_output=True,
                     text=True
@@ -158,7 +158,7 @@ class ForensicTool:
             else:
                 for cmd in self.run_commands:
                     console.print(f"[yellow]Executing: {cmd}[/yellow]")
-                    subprocess.run(cmd, shell=True)
+                    subprocess.run(shlex.split(cmd, posix=(os.name != 'nt')))
 
         except Exception as e:
             end_time = datetime.now()

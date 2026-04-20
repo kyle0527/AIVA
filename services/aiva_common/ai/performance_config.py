@@ -190,7 +190,6 @@ class PerformanceOptimizer:
         self._cache: dict[str, dict[str, Any]] = {}
         self._performance_metrics: dict[str, Any] = {}
 
-    @lru_cache(maxsize=128)
     def get_cached_result(self, key: str, operation_type: str) -> Any | None:
         """獲取緩存結果"""
         cache_key = f"{operation_type}:{key}"

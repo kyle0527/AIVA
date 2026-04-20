@@ -9,6 +9,7 @@ import asyncio
 import importlib.util
 import json
 import logging
+import shlex
 import os
 from pathlib import Path
 import sys
@@ -264,10 +265,9 @@ class AIVASOPComplianceChecker:
         print("4.2 檢查系統執行...")
         try:
             import subprocess
-            check_cmd = "echo SOP compliance check" if os.name != 'nt' else "echo SOP compliance check"
+            check_cmd_args = ["python", "-c", "print('SOP compliance check')"] if os.name == 'nt' else ["echo", "SOP compliance check"]
             result = subprocess.run(
-                check_cmd,
-                shell=True,
+                check_cmd_args,
                 capture_output=True,
                 text=True,
                 timeout=10

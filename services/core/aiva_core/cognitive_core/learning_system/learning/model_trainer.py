@@ -140,7 +140,7 @@ class ModelTrainer:
 
         # 4. 保存模型
         new_version = self._increment_version(self.model_version)
-        model_path = self.model_dir / f"model_{new_version}.pkl"
+        model_path = self.model_dir / f"model_{new_version}.skops"
         await self._save_model(model_path)
 
         completed_at = datetime.now(UTC)
@@ -209,7 +209,7 @@ class ModelTrainer:
 
         # 3. 保存模型
         new_version = self._increment_version(self.model_version)
-        model_path = self.model_dir / f"model_rl_{new_version}.pkl"
+        model_path = self.model_dir / f"model_rl_{new_version}.skops"
         await self._save_model(model_path)
 
         completed_at = datetime.now(UTC)
@@ -1085,7 +1085,7 @@ class ModelTrainer:
             return
 
         try:
-            import pickle
+            import skops.io as sio
 
             # 確保目錄存在
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -1107,7 +1107,7 @@ class ModelTrainer:
 
             # 保存模型
             with open(path, "wb") as f:
-                pickle.dump(model_data, f)
+                sio.dump(model_data, f)
 
             logger.info(f"✅ Model saved successfully to {path}")
             logger.info(f"   Model version: {self.model_version}")
@@ -1125,19 +1125,22 @@ class ModelTrainer:
         Returns:
             是否成功
         """
-        model_path = self.model_dir / f"model_{version}.pkl"
+        model_path = self.model_dir / f"model_{version}.skops"
 
         if not model_path.exists():
             logger.error(f"Model {version} not found at {model_path}")
             return False
 
         try:
-            import pickle
-
-            # 載入模型數據
+            import skops.io as sio
             with open(model_path, "rb") as f:
-                model_data = pickle.load(f)
+                model_data = sio.load(f, trusted=True)
+        except Exception as e:
+            logger.error(f"Failed to load model from skops: {e}", exc_info=True)
+            return False
 
+
+        try:
             # 恢復模型狀態
             self.current_model = model_data.get("model")
             self.model_version = model_data.get("version", version)
