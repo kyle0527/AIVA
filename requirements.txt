@@ -37,6 +37,7 @@ protobuf>=4.25.0                # Protocol Buffers
 torch>=2.1.0                    # PyTorch - 5M bio neural network & RL
 numpy>=1.24.0                   # Numerical computing
 scikit-learn>=1.3.0             # ML utilities (model_trainer)
+skops>=0.9.0                    # Safe ML model serialization (replaces pickle)
 
 # ══════════════════════════════════════════════
 #  NLP & Embeddings (RAG / Cognitive Core)

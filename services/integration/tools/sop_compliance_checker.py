@@ -265,7 +265,7 @@ class AIVASOPComplianceChecker:
         print("4.2 檢查系統執行...")
         try:
             import subprocess
-            check_cmd_args = ["python", "-c", "print('SOP compliance check')"] if os.name == 'nt' else ["echo", "SOP compliance check"]
+            check_cmd_args = ["cmd", "/c", "echo", "SOP compliance check"] if os.name == 'nt' else ["echo", "SOP compliance check"]
             result = subprocess.run(
                 check_cmd_args,
                 capture_output=True,

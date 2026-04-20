@@ -1125,18 +1125,28 @@ class ModelTrainer:
         Returns:
             是否成功
         """
-        model_path = self.model_dir / f"model_{version}.skops"
+        model_path_skops = self.model_dir / f"model_{version}.skops"
+        model_path_pkl = self.model_dir / f"model_{version}.pkl"
 
-        if not model_path.exists():
-            logger.error(f"Model {version} not found at {model_path}")
-            return False
-
-        try:
-            import skops.io as sio
-            with open(model_path, "rb") as f:
-                model_data = sio.load(f, trusted=True)
-        except Exception as e:
-            logger.error(f"Failed to load model from skops: {e}", exc_info=True)
+        if model_path_skops.exists():
+            try:
+                import skops.io as sio
+                with open(model_path_skops, "rb") as f:
+                    model_data = sio.load(f, trusted=True)
+            except Exception as e:
+                logger.error(f"Failed to load model from skops: {e}", exc_info=True)
+                return False
+        elif model_path_pkl.exists():
+            logger.warning(f"Loading legacy pickle model {version} - consider re-training")
+            try:
+                import pickle
+                with open(model_path_pkl, "rb") as f:
+                    model_data = pickle.load(f)  # noqa: S301
+            except Exception as e:
+                logger.error(f"Failed to load legacy model: {e}", exc_info=True)
+                return False
+        else:
+            logger.error(f"Model {version} not found")
             return False
 
 
