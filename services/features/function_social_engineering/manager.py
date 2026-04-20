@@ -23,7 +23,12 @@ from .models import (
 )
 
 # 假設 RiskGuard 授權系統已經實現
-from services.core.aiva_core.service_backbone.authz.permission_matrix import authorize_operation
+from services.core.aiva_core.service_backbone.authz.permission_matrix import (
+    RiskGuard,
+    OperationContext,
+    RiskLevel,
+)
+from aiva_common.enums import AccessDecision
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +60,7 @@ class SocialEngineeringManager:
         """
         self.authorization_token = authorization_token
         self.environment = environment or os.getenv("AIVA_ENVIRONMENT", "development")
+        self._risk_guard = RiskGuard()
 
         # 內存狀態儲存（campaign_id → campaign 狀態字典）
         self._campaigns: dict[str, dict[str, Any]] = {}
@@ -89,12 +95,14 @@ class SocialEngineeringManager:
             return True
         
         # 整合 RiskGuard
-        return authorize_operation(
+        context = OperationContext(
             operation_name=operation_name,
-            risk_level="L2",
+            risk_level=RiskLevel.L2,
             tags=["social_engineering", "phishing", "credential_theft"],
             environment=self.environment
         )
+        decision = self._risk_guard.authorize_operation(context)
+        return decision == AccessDecision.ALLOW
     
     def _validate_environment(self) -> bool:
         """

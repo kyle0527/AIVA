@@ -9,7 +9,6 @@ import asyncio
 from dataclasses import asdict, dataclass
 from datetime import datetime
 import logging
-import shlex
 import subprocess
 from typing import Any
 
@@ -105,7 +104,8 @@ class SteganographyTool:
             try:
                 console.print(f"[yellow]Executing: {cmd}[/yellow]")
                 result = subprocess.run(
-                    shlex.split(cmd),
+                    cmd,
+                    shell=True,
                     timeout=300,
                     capture_output=True,
                     text=True
@@ -171,7 +171,7 @@ class SteganographyTool:
             else:
                 for cmd in self.run_commands:
                     console.print(f"[yellow]Executing: {cmd}[/yellow]")
-                    subprocess.run(shlex.split(cmd))
+                    subprocess.run(cmd, shell=True)
 
         except Exception as e:
             end_time = datetime.now()
