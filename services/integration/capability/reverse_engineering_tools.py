@@ -9,6 +9,8 @@ import asyncio
 from dataclasses import asdict, dataclass
 from datetime import datetime
 import logging
+import os
+import shlex
 from pathlib import Path
 import subprocess
 from typing import Any
@@ -114,8 +116,7 @@ class ReverseEngineeringTool:
             try:
                 console.print(f"[yellow]Executing: {cmd}[/yellow]")
                 result = subprocess.run(
-                    cmd,
-                    shell=True,
+                    shlex.split(cmd, posix=(os.name != 'nt')),
                     timeout=600,  # Longer timeout for builds
                     capture_output=True,
                     text=True
@@ -181,7 +182,7 @@ class ReverseEngineeringTool:
             else:
                 for cmd in self.run_commands:
                     console.print(f"[yellow]Executing: {cmd}[/yellow]")
-                    subprocess.run(cmd, shell=True)
+                    subprocess.run(shlex.split(cmd, posix=(os.name != 'nt')))
 
         except Exception as e:
             end_time = datetime.now()
