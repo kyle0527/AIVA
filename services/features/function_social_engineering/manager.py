@@ -23,7 +23,12 @@ from .models import (
 )
 
 # 假設 RiskGuard 授權系統已經實現
-# from services.core.aiva_core.authorization import authorize_operation
+from services.core.aiva_core.service_backbone.authz.permission_matrix import (
+    RiskGuard,
+    OperationContext,
+    RiskLevel,
+)
+from aiva_common.enums import AccessDecision
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +60,7 @@ class SocialEngineeringManager:
         """
         self.authorization_token = authorization_token
         self.environment = environment or os.getenv("AIVA_ENVIRONMENT", "development")
+        self._risk_guard = RiskGuard()
 
         # 內存狀態儲存（campaign_id → campaign 狀態字典）
         self._campaigns: dict[str, dict[str, Any]] = {}
@@ -88,24 +94,15 @@ class SocialEngineeringManager:
             logger.info(f"Authorization via token for: {operation_name}")
             return True
         
-        # TODO: 整合 RiskGuard
-        # return authorize_operation(
-        #     operation_name=operation_name,
-        #     risk_level="L2",
-        #     tags=["social_engineering", "phishing", "credential_theft"],
-        #     environment=self.environment
-        # )
-        
-        # 臨時：檢查環境變數
-        allow_attack = os.getenv("AIVA_ALLOW_ATTACK", "0") == "1"
-        if not allow_attack:
-            logger.warning(
-                f"Operation {operation_name} denied: AIVA_ALLOW_ATTACK not set"
-            )
-            return False
-        
-        logger.info(f"Authorization granted for: {operation_name}")
-        return True
+        # 整合 RiskGuard
+        context = OperationContext(
+            operation_name=operation_name,
+            risk_level=RiskLevel.L2,
+            tags=["social_engineering", "phishing", "credential_theft"],
+            environment=self.environment
+        )
+        decision = self._risk_guard.authorize_operation(context)
+        return decision == AccessDecision.ALLOW
     
     def _validate_environment(self) -> bool:
         """
