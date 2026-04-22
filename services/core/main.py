@@ -47,6 +47,9 @@ from fastapi.responses import JSONResponse
 import httpx
 from pydantic import BaseModel, Field
 
+# 使用 aiva_common 統一的掃描請求/響應模型
+from aiva_common.schemas import ScanRequest, ScanResponse
+
 # 配置日志
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -104,27 +107,6 @@ async def startup_checks():
     else:
         logger.info("✅ [main.py] app.py (Port 8000) is ready!")
         logger.info("✅ [main.py] AIVA External Gateway is ready to accept requests")
-
-
-# ============================================================================
-# 请求/响应模型
-# ============================================================================
-
-class ScanRequest(BaseModel):
-    """扫描请求模型"""
-    target: str = Field(..., description="目标 URL")
-    scan_type: str = Field(default="full", description="扫描类型")
-    max_depth: int = Field(default=3, description="最大爬取深度")
-    timeout: int = Field(default=300, description="超时时间（秒）")
-
-
-class ScanResponse(BaseModel):
-    """扫描响应模型"""
-    scan_id: str
-    status: str
-    message: str
-    target: str
-    estimated_time: int | None = None
 
 
 # ============================================================================

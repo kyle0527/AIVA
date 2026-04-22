@@ -44,6 +44,10 @@ test_credentials/
 *.key
 *.crt
 
+# gRPC 生成的 protobuf 檔案（已廢棄，原始 .proto 可保留作文件用途）
+services/aiva_common/protocols/*_pb2.py
+services/aiva_common/protocols/*_pb2_grpc.py
+
 # 大型日誌文件
 logs/*.log
 logs/**/*.log

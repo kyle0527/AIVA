@@ -83,7 +83,7 @@ from tenacity import (
 )
 
 from aiva_common.config import get_settings
-from aiva_common.schemas import AivaMessage, ScanCompletedPayload, Phase0CompletedPayload
+from aiva_common.schemas import AivaMessage, ScanCompletedPayload, Phase0CompletedPayload, ScanRequest, ScanResponse
 from aiva_common.schemas.commands import AICommand, AICommandResult, CommandType, CommandStatus, CommandPriority
 from aiva_common.utils import get_logger
 # 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
@@ -128,32 +128,6 @@ except ImportError:
 from services.core.aiva_core.service_backbone.coordination.core_service_coordinator import (
     AIVACoreServiceCoordinator,
 )
-
-# ✅ 引入內部閉環和外部學習組件
-# ⚠️ 暫時註釋：這些模組尚未實現
-# from services.core.aiva_core.internal_exploration.connectors.update_self_awareness import (
-#     periodic_update,
-# )
-# from services.core.aiva_core.external_learning.connectors.external_loop_connector import (
-#     ExternalLoopConnector,
-# )
-
-# ==================== 請求/響應模型 ====================
-
-class ScanRequest(BaseModel):
-    """掃描請求"""
-    target: str
-    scan_type: str = "comprehensive"  # comprehensive, quick, deep
-    max_depth: int = 3
-    timeout: int = 1800
-
-class ScanResponse(BaseModel):
-    """掃描響應"""
-    scan_id: str
-    status: str
-    message: str
-    target: str
-    estimated_time: int  # 預估時間（秒）
 
 # ==================== FastAPI 應用 ====================
 
@@ -322,6 +296,7 @@ async def startup() -> None:
             multilang_coordinator=multilang_coordinator,    # ✅ 注入多語言協調器
             internal_loop_connector=decision_agent.internal_connector if decision_agent else None,  # ✅ 注入內部閉環
             session_state_manager=session_state_manager,    # ✅ 注入狀態管理器（進度追蹤）
+            decision_agent=decision_agent,                  # ✅ 注入決策代理（避免重複載入模型）
         )
 
         # Commander 已經初始化完成，直接可用（不需要註冊到 coordinator）
@@ -371,6 +346,12 @@ async def startup() -> None:
     _background_tasks.append(asyncio.create_task(
         monitor_execution_status(),
         name="execution_monitor"
+    ))
+
+    # ✅ 定期清理過期 session（每小時執行，防止 OOM）
+    _background_tasks.append(asyncio.create_task(
+        session_state_manager.start_cleanup_loop(interval_hours=1),
+        name="session_cleanup"
     ))
 
     logger.info("✅ [啟動] Background monitor started (v2.0 AICommand mode)")
@@ -756,6 +737,8 @@ async def start_scan(request: ScanRequest) -> ScanResponse:
                 name=f"phase0_{scan_id}"
             )
             _background_tasks.append(task)
+            # ✅ task 完成後從 list 移除，防止無界增長
+            task.add_done_callback(lambda t: _background_tasks.remove(t) if t in _background_tasks else None)
 
             # 初始化會話狀態
             session_state_manager.update_session_status(

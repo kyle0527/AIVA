@@ -49,26 +49,36 @@ class AIVAEmbedding(nn.Module):
         
         self.max_seq_length = max_seq_length
         self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
+        self.available = False  # 標記模型是否成功載入
         
         # 載入預訓練的 Transformer（all-MiniLM-L6-v2 的權重）
+        # 如果下載/載入失敗，降級為不可用狀態（不中斷啟動）
         logger.info(f"🔧 載入預訓練權重: {model_name_or_path}")
-        self.transformer = AutoModel.from_pretrained(model_name_or_path)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
-        
-        # 移到指定設備
-        self.transformer.to(self.device)
-        self.transformer.eval()  # 預設為推理模式
-        
-        # 記錄模型信息
-        embedding_dim = self.transformer.config.hidden_size
-        num_params = sum(p.numel() for p in self.transformer.parameters())
-        
-        logger.info("✅ AIVA Embedding 模型初始化完成:")
-        logger.info(f"   - 預訓練權重: {model_name_or_path}")
-        logger.info(f"   - 輸出維度: {embedding_dim}")
-        logger.info(f"   - 參數量: {num_params:,} ({num_params/1e6:.1f}M)")
-        logger.info(f"   - 最大長度: {max_seq_length}")
-        logger.info(f"   - 設備: {self.device}")
+        try:
+            self.transformer = AutoModel.from_pretrained(model_name_or_path)
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+            
+            # 移到指定設備
+            self.transformer.to(self.device)
+            self.transformer.eval()  # 預設為推理模式
+            self.available = True
+            
+            # 記錄模型信息
+            embedding_dim = self.transformer.config.hidden_size
+            num_params = sum(p.numel() for p in self.transformer.parameters())
+            
+            logger.info("✅ AIVA Embedding 模型初始化完成:")
+            logger.info(f"   - 預訓練權重: {model_name_or_path}")
+            logger.info(f"   - 輸出維度: {embedding_dim}")
+            logger.info(f"   - 參數量: {num_params:,} ({num_params/1e6:.1f}M)")
+            logger.info(f"   - 最大長度: {max_seq_length}")
+            logger.info(f"   - 設備: {self.device}")
+        except Exception as e:
+            logger.warning(
+                "⚠️  AIVA Embedding 載入失敗，將使用 fallback 模式（系統可繼續啟動）: %s", e
+            )
+            self.transformer = None
+            self.tokenizer = None
     
     def _mean_pooling(
         self, 
@@ -118,6 +128,9 @@ class AIVAEmbedding(nn.Module):
         Returns:
             embeddings: 句子向量 [batch_size, hidden_size]
         """
+        if not self.available or self.transformer is None:
+            raise RuntimeError("AIVAEmbedding: transformer not loaded (available=False)")
+
         # 通過 Transformer 獲取 token embeddings
         with torch.no_grad():  # 推理時不需要梯度
             outputs = self.transformer(
@@ -166,7 +179,26 @@ class AIVAEmbedding(nn.Module):
         # 統一處理為列表
         if isinstance(sentences, str):
             sentences = [sentences]
-        
+
+        # Transformer 未載入時返回 hash-based fallback 向量
+        if not self.available or self.tokenizer is None:
+            logger.debug("AIVAEmbedding in fallback mode — returning hash-based vectors")
+            import hashlib
+            fallback_dim = 384
+            vecs = []
+            for s in sentences:
+                seed = int(hashlib.md5(s.encode(errors="replace")).hexdigest(), 16) % (2**32)
+                rng = np.random.default_rng(seed)
+                v = rng.standard_normal(fallback_dim).astype(np.float32)
+                norm = np.linalg.norm(v)
+                if norm > 0:
+                    v /= norm
+                vecs.append(v)
+            arr = np.stack(vecs)
+            if convert_to_tensor:
+                return torch.from_numpy(arr)
+            return arr
+
         # 使用指定設備
         target_device = device or self.device
         

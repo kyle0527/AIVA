@@ -45,24 +45,26 @@ class UnifiedVectorStore:
         """
         import os
         
-        # 從環境變量獲取或使用無密碼本地開發配置
-        self.database_url = (
-            database_url or os.getenv(
-                "AIVA_DATABASE_URL",
-                "postgresql://postgres:change_me_in_production@localhost:5432/aiva_db"  # 開發環境密碼 - 生產環境需更改
-            )
-        )
+        # 從環境變量獲取資料庫連接字符串；若未設定則使用純記憶體後端（見下方初始化邏輯）
+        self.database_url = database_url or os.getenv("AIVA_DATABASE_URL")
         self.table_name = table_name
         self.embedding_dimension = embedding_dimension
         self.embedding_model_name = embedding_model
         self.legacy_persist_directory = legacy_persist_directory
 
-        # PostgreSQL 向量存儲後端
-        self.pg_store = PostgreSQLVectorStore(
-            database_url=self.database_url,
-            table_name=self.table_name,
-            embedding_dimension=self.embedding_dimension,
-        )
+        # 若有 database_url 才啟用 PostgreSQL 後端，否則降級為純記憶體模式
+        if self.database_url:
+            self.pg_store: PostgreSQLVectorStore | None = PostgreSQLVectorStore(
+                database_url=self.database_url,
+                table_name=self.table_name,
+                embedding_dimension=self.embedding_dimension,
+            )
+        else:
+            logger.warning(
+                "⚠️  AIVA_DATABASE_URL not set — UnifiedVectorStore using memory-only fallback. "
+                "Set AIVA_DATABASE_URL to enable persistent vector storage."
+            )
+            self.pg_store = None
 
         # 舊的文件存儲（用於遷移）
         self.legacy_store: VectorStore | None = None
@@ -85,9 +87,8 @@ class UnifiedVectorStore:
 
     async def initialize(self) -> None:
         """初始化統一向量存儲"""
-        # 初始化 PostgreSQL 後端
-        await self.pg_store.initialize()
-
+        if self.pg_store is not None:
+            await self.pg_store.initialize()
         # 如果有舊數據，執行遷移
         if self.legacy_store:
             await self._migrate_from_legacy()
@@ -182,6 +183,10 @@ class UnifiedVectorStore:
 
         兼容原有 VectorStore 接口
         """
+        if self.pg_store is None:
+            logger.debug("add_document: pg_store not available (memory-only mode), skipping %s", doc_id)
+            return
+
         # 生成嵌入
         model = self._get_embedding_model()
 
@@ -232,6 +237,10 @@ class UnifiedVectorStore:
 
         兼容原有 VectorStore 接口
         """
+        if self.pg_store is None:
+            logger.debug("search: pg_store not available (memory-only mode), returning empty list")
+            return []
+
         # 生成查詢嵌入
         model = self._get_embedding_model()
 
@@ -270,6 +279,8 @@ class UnifiedVectorStore:
 
         兼容原有 VectorStore 接口
         """
+        if self.pg_store is None:
+            return False
         return await self.pg_store.delete_document(doc_id)
 
     async def get_document(self, doc_id: str) -> dict[str, Any] | None:
@@ -277,6 +288,9 @@ class UnifiedVectorStore:
 
         兼容原有 VectorStore 接口
         """
+        if self.pg_store is None:
+            return None
+
         result = await self.pg_store.get_document(doc_id)
 
         if result:
@@ -294,6 +308,16 @@ class UnifiedVectorStore:
 
         兼容原有 VectorStore 接口
         """
+        if self.pg_store is None:
+            return {
+                "total_documents": 0,
+                "backend": "memory-only (AIVA_DATABASE_URL not set)",
+                "embedding_model": self.embedding_model_name,
+                "database_url": None,
+                "table_name": self.table_name,
+                "embedding_dimension": self.embedding_dimension,
+            }
+
         pg_stats = await self.pg_store.get_statistics()
 
         return {
@@ -308,7 +332,8 @@ class UnifiedVectorStore:
 
     async def close(self) -> None:
         """關閉連接"""
-        await self.pg_store.close()
+        if self.pg_store is not None:
+            await self.pg_store.close()
 
     # ==================== v2.1 去語意化反射引擎方法 ====================
 
@@ -361,6 +386,9 @@ class UnifiedVectorStore:
         }
         
         # 異步添加到 PostgreSQL（在事件循環中執行）
+        if self.pg_store is None:
+            logger.debug("add_capability_from_registry: pg_store not available, skipping %s", cap_id)
+            return
         try:
             loop = asyncio.get_running_loop()
             asyncio.create_task(
@@ -409,6 +437,10 @@ class UnifiedVectorStore:
         """
         import asyncio
         
+        if self.pg_store is None:
+            logger.debug("search_by_environment: pg_store not available, returning empty list")
+            return []
+
         # 將環境特徵編碼為查詢向量
         from .vector_store import VectorStore
         temp_store = VectorStore(backend="memory")

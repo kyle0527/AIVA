@@ -1,10 +1,15 @@
 from datetime import UTC, datetime
 from typing import Any
 
+import asyncio
+
 from aiva_common.schemas import ScanCompletedPayload, TaskUpdatePayload
 from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
+
+_MAX_HISTORY_PER_SESSION = 20
+_SESSION_TTL_HOURS = 24
 
 
 class SessionStateManager:
@@ -103,14 +108,17 @@ class SessionStateManager:
         if additional_data:
             self._sessions[session_id].update(additional_data)
 
-        # 記錄狀態變更歷史
-        self._session_history[session_id].append(
+        # 記錄狀態變更歷史（最多保留 _MAX_HISTORY_PER_SESSION 筆）
+        history = self._session_history[session_id]
+        history.append(
             {
                 "timestamp": datetime.now(UTC).isoformat(),
                 "status": status,
                 "data": additional_data or {},
             }
         )
+        if len(history) > _MAX_HISTORY_PER_SESSION:
+            del history[:-_MAX_HISTORY_PER_SESSION]
 
         logger.info(f"Updated session {session_id} status to: {status}")
 
@@ -137,3 +145,46 @@ class SessionStateManager:
             logger.info(f"Deleted session {session_id}")
             return True
         return False
+
+    def cleanup_old_sessions(self, max_age_hours: int = _SESSION_TTL_HOURS) -> int:
+        """刪除超過指定時間的舊會話，返回刪除數量
+
+        Args:
+            max_age_hours: 會話最大保留時數，預設 24 小時
+
+        Returns:
+            已刪除的會話數量
+        """
+        cutoff = datetime.now(UTC).timestamp() - max_age_hours * 3600
+        to_delete = []
+
+        for session_id, session in self._sessions.items():
+            created_str = session.get("created_at")
+            if not created_str:
+                continue
+            try:
+                created_ts = datetime.fromisoformat(created_str).timestamp()
+                if created_ts < cutoff:
+                    to_delete.append(session_id)
+            except ValueError:
+                pass
+
+        for session_id in to_delete:
+            self.delete_session(session_id)
+
+        if to_delete:
+            logger.info("cleanup_old_sessions: removed %d expired sessions", len(to_delete))
+
+        return len(to_delete)
+
+    async def start_cleanup_loop(self, interval_hours: int = 1) -> None:
+        """定期清理過期會話的後台循環（每 interval_hours 小時執行一次）
+
+        應在 FastAPI startup 中透過 asyncio.create_task() 啟動。
+        """
+        while True:
+            await asyncio.sleep(interval_hours * 3600)
+            try:
+                self.cleanup_old_sessions()
+            except Exception as exc:
+                logger.warning("cleanup_old_sessions error: %s", exc)

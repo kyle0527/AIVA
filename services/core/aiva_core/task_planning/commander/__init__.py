@@ -45,6 +45,7 @@ class CommanderCoordinator:
         multilang_coordinator: Any | None = None,   # ✅ 接收多語言協調器
         internal_loop_connector: Any | None = None, # ✅ 接收內部閉環連接器
         session_state_manager: Any | None = None,   # ✅ 接收會話狀態管理器
+        decision_agent: Any | None = None,          # ✅ 接收已初始化的決策代理（避免重複載入模型）
     ):
         """初始化協調器
         
@@ -55,6 +56,7 @@ class CommanderCoordinator:
             multilang_coordinator: 多語言引擎協調器（依賴注入）
             internal_loop_connector: 內部閉環連接器（依賴注入）
             session_state_manager: 會話狀態管理器（進度追蹤）
+            decision_agent: 已初始化的 EnhancedDecisionAgent（依賴注入，避免重複載入模型）
         """
         self.data_directory = data_directory or Path("./data/commander")
         self.data_directory.mkdir(parents=True, exist_ok=True)
@@ -65,6 +67,7 @@ class CommanderCoordinator:
         self.multilang_coordinator = multilang_coordinator
         self.internal_loop = internal_loop_connector
         self.session_state_manager = session_state_manager
+        self._injected_decision_agent = decision_agent  # 注入的決策代理，供 PlanBuilder 使用
         
         # 延遲初始化子模組
         self._capability_manager: CapabilityManager | None = None
@@ -86,17 +89,26 @@ class CommanderCoordinator:
     def plan_builder(self) -> PlanBuilder:
         """延遲加載計劃建構器"""
         if self._plan_builder is None:
-            # 初始化 PlanBuilder 所需的依賴
-            from services.core.aiva_core.cognitive_core.decision.enhanced_decision_agent import (
-                EnhancedDecisionAgent,
-            )
+            # 優先使用注入的 decision_agent，避免重複載入 5M 模型（+18 MB）和 Embedding（+90 MB）
+            decision_engine = self._injected_decision_agent
+
+            if decision_engine is None:
+                # 僅在未注入時才新建（向後兼容）
+                logger.warning(
+                    "⚠️  No decision_agent injected into CommanderCoordinator; "
+                    "creating a new EnhancedDecisionAgent (may cause duplicate model loading)"
+                )
+                from services.core.aiva_core.cognitive_core.decision.enhanced_decision_agent import (
+                    EnhancedDecisionAgent,
+                )
+                decision_engine = EnhancedDecisionAgent()
+
             from services.core.aiva_core.cognitive_core.learning_system.experience_manager import (
                 ExperienceManager,
             )
             from services.core.aiva_core.cognitive_core.rag.rag_engine import RAGEngine
 
             rag_engine = RAGEngine()
-            decision_engine = EnhancedDecisionAgent()
             experience_manager = ExperienceManager()
 
             self._plan_builder = PlanBuilder(

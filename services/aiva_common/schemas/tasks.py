@@ -733,3 +733,25 @@ class TestStrategy(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+
+
+# ==================== 通用掃描 API 請求/響應 ====================
+
+
+class ScanRequest(BaseModel):
+    """通用掃描請求（供 main.py 和 app.py 共用）"""
+
+    target: str = Field(..., description="目標 URL")
+    scan_type: str = Field(default="comprehensive", description="掃描類型 (comprehensive/quick/deep/full)")
+    max_depth: int = Field(default=3, ge=1, le=10, description="最大爬取深度")
+    timeout: int = Field(default=1800, ge=30, description="超時時間（秒）")
+
+
+class ScanResponse(BaseModel):
+    """通用掃描響應（供 main.py 和 app.py 共用）"""
+
+    scan_id: str
+    status: str
+    message: str
+    target: str
+    estimated_time: int | None = Field(default=None, description="預估時間（秒）")
