@@ -119,8 +119,12 @@ class AIVAEmbedding(nn.Module):
         attention_mask: torch.Tensor
     ) -> torch.Tensor:
         """
-        前向傳播
-        
+        前向傳播（低階 PyTorch 方法）
+
+        當 transformer 未載入時拋出 RuntimeError。
+        如需降級行為請使用高階的 :meth:`encode` 方法，它在不可用時會自動回退到
+        hash-based 向量。
+
         Args:
             input_ids: Token IDs [batch_size, seq_len]
             attention_mask: Attention mask [batch_size, seq_len]

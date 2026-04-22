@@ -184,7 +184,11 @@ class UnifiedVectorStore:
         兼容原有 VectorStore 接口
         """
         if self.pg_store is None:
-            logger.debug("add_document: pg_store not available (memory-only mode), skipping %s", doc_id)
+            logger.warning(
+                "add_document: AIVA_DATABASE_URL not set, document '%s' will not be persisted "
+                "(memory-only mode). Set AIVA_DATABASE_URL to enable persistent storage.",
+                doc_id,
+            )
             return
 
         # 生成嵌入

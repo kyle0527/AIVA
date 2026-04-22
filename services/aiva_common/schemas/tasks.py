@@ -743,7 +743,7 @@ class ScanRequest(BaseModel):
 
     target: str = Field(..., description="目標 URL")
     scan_type: str = Field(default="comprehensive", description="掃描類型 (comprehensive/quick/deep/full)")
-    max_depth: int = Field(default=3, ge=1, le=10, description="最大爬取深度")
+    max_depth: int = Field(default=3, ge=1, le=10, description="最大爬取深度（1–10）")
     timeout: int = Field(default=1800, ge=30, description="超時時間（秒）")
 
 

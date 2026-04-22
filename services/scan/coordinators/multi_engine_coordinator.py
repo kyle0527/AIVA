@@ -198,7 +198,7 @@ class MultiEngineCoordinator:
                     "target": target,
                 })
         except Exception as exc:
-            logger.debug("XXEDetector skipped: %s", exc)
+            logger.warning("XXEDetector on %s raised %s: %s", target, type(exc).__name__, exc)
 
         # 被動分析
         try:
@@ -216,7 +216,7 @@ class MultiEngineCoordinator:
                     "target": target,
                 })
         except Exception as exc:
-            logger.debug("PassiveAnalyzer skipped: %s", exc)
+            logger.warning("PassiveAnalyzer on %s raised %s: %s", target, type(exc).__name__, exc)
 
         return findings
 
