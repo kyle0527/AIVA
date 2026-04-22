@@ -191,7 +191,7 @@ class AIVACoreServiceCoordinator:
                 allowed_origins=["http://localhost:3000", "https://aiva.app"],
                 allowed_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
                 allowed_headers=["Content-Type", "Authorization", "X-API-Key"],
-                allow_credentials=True,
+                allow_credentials=False,
             )
 
             # 添加白名單路徑
