@@ -893,6 +893,8 @@ async def _process_phase0_result(scan_id: str, result: dict) -> None:
                     name=f"phase1_{scan_id}"
                 )
                 _background_tasks.append(task)
+                # ✅ task 完成後從 list 移除，防止無界增長
+                task.add_done_callback(lambda t: _background_tasks.remove(t) if t in _background_tasks else None)
                 session_state_manager.update_session_status(
                     scan_id, "phase1_started", {"engines": decision.params.get("engines", [])}
                 )
