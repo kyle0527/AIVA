@@ -386,6 +386,8 @@ from .tasks import (
     RemediationGeneratePayload,
     RemediationResultPayload,
     ScanCompletedPayload,
+    ScanRequest,
+    ScanResponse,
     ScanStartPayload,
     Scenario,
     ScenarioResult,
