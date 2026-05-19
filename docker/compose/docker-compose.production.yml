@@ -3,7 +3,7 @@ version: "3.9"
 services:
   # 資料庫服務
   postgres:
-    image: postgres:16-alpine
+    image: postgres:alpine
     environment:
       POSTGRES_USER: aiva
       POSTGRES_PASSWORD: aiva_secure_password
@@ -23,7 +23,7 @@ services:
 
   # 消息隊列服務
   rabbitmq:
-    image: rabbitmq:3-management-alpine
+    image: rabbitmq:management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: aiva
       RABBITMQ_DEFAULT_PASS: aiva_mq_password
@@ -42,7 +42,7 @@ services:
 
   # Redis 快取服務
   redis:
-    image: redis:7-alpine
+    image: redis:alpine
     command: redis-server --appendonly yes --requirepass aiva_redis_password
     ports:
       - "6379:6379"
